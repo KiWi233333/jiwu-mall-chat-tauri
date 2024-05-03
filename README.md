@@ -1,5 +1,5 @@
 <h1 align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
-<img src="./public/images/logo/logo.png" width = "100" height = "100" alt="图片名称" align=center />
+<img src="./public/logo.png" width = "100" height = "100" alt="图片名称" align=center />
 &
 <img src="./.doc/tauri.png" width = "100" height = "100" alt="图片名称" align=center />
  </h1>
