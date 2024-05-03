@@ -1,0 +1,79 @@
+// {
+//   "root": true,
+//   "env": {
+//     "browser": true,
+//     "node": true,
+//     "es6": true
+//   },
+//   "extends": [
+//     "plugin:vue/vue3-essential",
+//     "@antfu",
+//     "@unocss"
+//   ],
+//   "plugins": ["vue"],
+//   "parserOptions": {
+//     "ecmaVersion": 2020,
+//     "sourceType": "module",
+//     "parser": "@typescript-eslint/eslint-plugin"
+//   },
+//   "rules": {
+//     // vue
+//     "vue/multi-word-component-names": ["off", {}],
+//     "vue/no-mutating-props": ["warn", {
+//       "shallowOnly": false
+//     }],
+//     // base
+//     "no-console": "off",
+//     "no-multiple-empty-lines": ["warn", { "max": 2, "maxBOF": 1 }],// 空行
+//     "semi": ["error", "always"], // 结尾;
+//     "quotes": ["error", "double"], // 双引号
+//     "no-trailing-spaces": "error",
+//     // ts
+//     "@typescript-eslint/indent": "off",
+//     "@typescript-eslint/semi": "off",
+//     "@typescript-eslint/ban-ts-comment": "off",
+//     "@typescript-eslint/quotes": ["error", "double"], // 双引号
+//     "prefer-promise-reject-errors": "off",
+//     "no-tabs": ["error", { "allowIndentationTabs": true }],
+//     // css
+//     "@stylistic/js/no-tabs": "off"
+//   }
+// };
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "@antfu", 
+    "@unocss",
+    "plugin:vue/vue3-essential"
+  ],
+  "plugins": ["vue"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "parser": "@typescript-eslint/parser"
+  },
+  "rules": {     
+    // vue
+    "@stylistic/js/no-tabs": "off",
+    "vue/multi-word-component-names": ["off", {}],
+    "vue/no-mutating-props": ["off"],
+    // base 
+    "n/prefer-global/process": "off",
+    "unused-imports/no-unused-vars":  "off", 
+    "no-console":"off",
+    "no-multiple-empty-lines": ["warn", { "max": 2, "maxBOF": 1 }],// 空行
+    "semi": ["error", "always"], // 结尾;
+    "quotes":["error", "double"], // 双引号
+    "no-trailing-spaces": "error",
+    "@stylistic/js/no-multiple-empty-lines":"off",
+    // ts
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/ban-ts-comment": "off", 
+    "@typescript-eslint/quotes":["error", "double"] // 双引号
+  }  
+}

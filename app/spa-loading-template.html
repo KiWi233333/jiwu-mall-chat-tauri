@@ -1,0 +1,64 @@
+<style>
+  /* loading */
+  #first-app-loading {
+    transition: all 0.3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #fff;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: Alimama;
+  }
+
+  #first-app-loading .flex-row-c-c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #first-app-loading h2 {
+    letter-spacing: 0.75rem;
+    animation: loading-fade-in-out 1.4s ease-in-out infinite;
+  }
+
+
+  .dark #first-app-loading {
+    background-color: #1a1a1a;
+    color: #f3f3f3;
+  }
+
+  @keyframes loading-fade-in-out {
+    0% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.2;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
+
+<body>
+  <!-- 获取模式 -->
+  <script>
+    const mode = localStorage.getItem("vueuse-color-scheme");
+    if (mode)
+      document.documentElement.classList.toggle(mode);
+  </script>
+  <div id="first-app-loading">
+    <h2 style="display: flex; align-items: center;">
+      <img loading="lazy" src="/logo.png" style="width: 2rem;height: 2rem;margin: 0 1rem 0 0 ;" />
+      极物圈
+    </h2>
+  </div>
+</body>

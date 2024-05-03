@@ -1,0 +1,92 @@
+<script lang="ts" setup>
+const props = withDefaults(defineProps<{
+  user?: Partial<(UserInfoVO | PostUserSeVO)>
+  dto: PostTotalDTO
+  gridClass?: string
+  cardClass?: string
+}>(), {
+  gridClass: "grid grid-cols-4 grid-gap-4",
+  cardClass: "",
+
+});
+
+const store = useUserStore();
+const dataList = ref<{
+  label: string
+  value: number
+}[]>([
+  {
+    label: "帖子",
+    value: 0,
+  },
+  {
+    label: "评论",
+    value: 0,
+  },
+  {
+    label: "收藏",
+    value: 0,
+  },
+  {
+    label: "点赞",
+    value: 0,
+  },
+]);
+async function loadData() {
+  if (props?.dto?.userId) {
+    const res = await getPostTotal({
+      userId: props?.dto?.userId,
+    }, store.getToken);
+
+    if (res.code === StatusCode.SUCCESS) {
+      dataList.value[0].value = res.data.postCount;
+      dataList.value[1].value = res.data.postCommentCount;
+      dataList.value[2].value = res.data.postCollectCount;
+      dataList.value[3].value = res.data.postLikeCount;
+    }
+  }
+}
+loadData();
+</script>
+
+<template>
+  <div class="flex flex-col gap-3 rounded-4px v-card">
+    <NuxtLink
+      :to="{
+        path: `/user/info`,
+        query: {
+          id: props?.dto?.userId,
+        },
+      }" class="flex flex-col"
+    >
+      <CardElImage
+        loading="lazy"
+        transition-300
+        hover:transform-scale-110
+        class="mx-a h-5rem w-5rem rounded-1/2 border-default"
+        :src="`${BaseUrlImg + user?.avatar}?imageView2/0/format/webp/interlace/1/q/70`"
+        :alt="user?.nickname"
+        fit="cover"
+      />
+      <h4 text-center>
+        {{ user?.nickname }}
+      </h4>
+    </NuxtLink>
+    <div :class="gridClass">
+      <!-- 卡片 -->
+      <div
+        v-for="(p, i) in dataList"
+        :key="i"
+        class="w-full p-2 text-center leading-1.8em transition-200 hover-scale-110"
+        :class="cardClass"
+      >
+        <div class="title text-1em">
+          {{ p.label }}
+        </div>
+        <span class="text-1em">
+          {{ p.value }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>

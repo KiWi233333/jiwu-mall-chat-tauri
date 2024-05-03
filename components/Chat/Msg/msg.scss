@@ -1,0 +1,58 @@
+// @unocss-include
+.msg {
+  --at-apply: "max-w-full w-fit flex gap-2 pl-2 pr-4rem py-3";
+
+  .avatar {
+    --at-apply: "h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default";
+  }
+  .nickname {
+    --at-apply: "flex flex-row gap-2";
+  }
+  .msg-popper {
+    --at-apply: "transform-origin-ct transition-300 transition-transform w-fit p-2 px-4 leading-1.2em  card-default";
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+      rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    border-radius: 4px 1rem 1rem 1rem;
+  }
+}
+
+.reply-shaing {
+  --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-5)] animate-pulse animate-duration-1200 transition-opacity";
+}
+
+.body {
+  --at-apply: "flex flex-col gap-2";
+}
+.self {
+  &.msg {
+    --at-apply: "pr-2 pl-4rem py-3 ";
+  }
+  .body {
+    align-items: end;
+  }
+  padding-left: 4em;
+  margin-left: auto;
+  .nickname {
+    margin-left: auto;
+  }
+  .flex,
+  .flex-ml-a {
+    margin-left: auto;
+    align-items: end;
+  }
+  flex-direction: row-reverse;
+  .flex-row {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+  .msg-popper,
+  .self-child {
+    margin-left: auto;
+    border-radius: 1rem 4px 1rem 1rem;
+    --at-apply: "bg-[var(--el-color-primary)] dark:bg-[var(--el-color-primary)] text-white";
+  }
+  .flex-col {
+    justify-content: right;
+  }
+}

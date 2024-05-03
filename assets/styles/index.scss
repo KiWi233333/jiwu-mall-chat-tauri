@@ -1,0 +1,223 @@
+// 自定义类
+.position-c-c {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/**  ------------------------------element-plus---------------------------------------  **/
+// 背景颜色
+.bg-mark {
+  position: absolute;
+  z-index: -99;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(
+      104.24% 141.88% at 8.26% 9.64%,
+      #b95be6 0%,
+      rgb(185 91 230 / 18%) 69.92%,
+      rgb(185 91 230 / 0%) 100%
+    ),
+    radial-gradient(
+      103.57% 140.97% at 14.06% 105.21%,
+      #f97c59 0%,
+      rgb(249 124 89 / 19%) 72.45%,
+      rgb(249 124 89 / 0%) 100%
+    );
+  border-radius: 50%;
+  filter: blur(60px);
+  transform: translate(50%, -50%);
+}
+
+// 文本折叠
+.text-overflow-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.text-overflow-3 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.text-overflow-4 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.text-overflow-h {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: var(--h);
+  -webkit-box-orient: vertical;
+}
+
+.text-overflow-5 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+// 渐变背景
+.bg-linear {
+  background-image: linear-gradient(to right, var(--el-color-primary) 0, transparent 50%);
+  backdrop-filter: blur(1em);
+  // background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+}
+
+// 盒子卡片
+.v-card {
+  transition: all $transition-delay;
+  background-color: #ffffffd7;
+  border-radius: 4px;
+  backdrop-filter: saturate(180%) blur(12px);
+}
+
+.dark .v-card {
+  backdrop-filter: saturate(180%) blur(12px);
+  background-color: #292929be;
+  background-image: radial-gradient(ellipse 80% 50% at 50% -22%, rgb(33 33 107 / 10%), transparent);
+}
+
+// element-plus
+// 消息确认框
+.el-message-box {
+  .el-message-box__btns {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0.4em 0 0.8em;
+
+    .el-button {
+      min-width: 40%;
+      height: auto;
+      margin: 0 auto;
+    }
+  }
+
+  .el-message-box__header {
+    font-size: 2em;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+
+  .el-message-box__content {
+    margin: 0.4em 1em;
+  }
+
+  .el-message-box__title {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+}
+
+// 单选钮
+.el-radio-group {
+  font-size: medium;
+
+  .el-radio__inner {
+    border-radius: 4px;
+    transform: scale(1.1);
+  }
+}
+
+// 按钮
+.el-button {
+  transition: $transition-delay;
+}
+
+// popper
+.el-popper-init {
+  padding: 2px 4px;
+}
+
+.el-form-item {
+  .el-form-item__error {
+    margin-top: 0.5em;
+  }
+}
+/**  ------------------------------vuepress-markdown---------------------------------------  **/
+.v-md-editor,
+.vuepress-markdown-body {
+  font-family: inherit !important;
+  padding: 1rem;
+  border-radius: 8px;
+
+  &,
+  * {
+    color: var(--el-color-black);
+    background-color: #fff;
+  }
+}
+
+.dark {
+  .v-md-editor,
+  .vuepress-markdown-body {
+    &,
+    * {
+      color: #fff;
+      background-color: transparent;
+
+      .v-md-editor__toolbar-item:hover {
+        color: #000;
+      }
+
+      .v-md-editor__menu--list {
+        background-color: transparent;
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+.transition-200,
+.transition-300,
+.transition {
+  will-change: transform, opacity, height, width, background-color, shadow;
+}
+
+/**  ------------------------------right-menu---------------------------------------  **/
+.mx-context-menu-items .mx-item-row {
+  margin: 6px 0;
+  
+}
+.mx-context-menu {
+  .mx-icon-placeholder {
+    i {
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+  }
+  
+}
+//   //在这里覆盖默认css变量的值
+//   --mx-menu-backgroud: var(--el-color-primary);
+//   --mx-menu-active-backgroud: var(--el-color-primary);
+//   --mx-menu-hover-backgroud: var(--el-color-primary);
+
+//   //自定义菜单外层样式
+//   // padding: 8px 0;
+//   // box-shadow: 0px 5px 7px 1px var(--mx-menu-shadow-color);
+//   // border: 1px solid var(--mx-menu-border-color);
+
+//   //自定义其他菜单部件的样式
+//   .mx-context-menu-item {
+//     // border-radius: 5px;
+//     // margin: 0 6px;
+//     // padding: 3px 6px;
+//   }
+
+//   //这里篇幅有限，完整的每个部件的样式请在 ContextMenu.scss 中查看
+// }

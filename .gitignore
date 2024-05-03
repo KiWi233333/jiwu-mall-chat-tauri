@@ -1,0 +1,19 @@
+# Nuxt
+node_modules
+*.log*
+.nuxt
+.nitro
+.cache
+.output
+.env
+dist
+.DS_Store
+
+# Electron
+electron-dist
+debug.log
+debug.log
+*.log
+debug.json
+errors.json
+JiwuChat Setup.exe

@@ -1,0 +1,98 @@
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  //  node_modules/element-plus/theme-chalk/src/common/var.scss"
+  $border-radius: ("base": 6px, "small": 12px, "round": 20px, "circle": 100%),
+  $colors: (
+    "white": #f9fafb,
+    "black": #1d1d1d,
+    "main": #5d33f6,
+    "primary": (
+      "base": #5d33f6
+    ),
+
+    "success": (
+      "base": #67c23a
+    ),
+    "warning": (
+      "base": #ffbf11f1
+    ),
+    "danger": (
+      "base": #ff4545
+    ),
+    "error": (
+      "base": #ff2323f6
+    ),
+    "info": (
+      "base": #10cf80
+    )
+  ),
+  $bg-color: ("black": #111111, "primary": #303133),
+  $text-color: (
+    "primary": #303133,
+    "regular": #606266,
+    "secondary": #909399,
+    "placeholder": #a8abb2,
+    "disabled": #c0c4cc
+  ),
+
+  // $drawer
+  $drawer: ("padding-primary": 0px),
+  //
+  $carousel:
+    (
+      "arrow-font-size": 20px,
+      "arrow-size": 36px,
+      "arrow-background": rgba(31, 45, 61, 0.4),
+      "arrow-hover-background": rgba(31, 45, 61, 0.4),
+      "indicator-width": 30px,
+      "indicator-height": 2px,
+      "indicator-padding-horizontal": 4px,
+      "indicator-padding-vertical": 12px,
+      "indicator-out-color": getCssVar("border-color-hover")
+    ),
+  // el-card
+  $card:
+    (
+      "border-color": getCssVar("border-color", "light"),
+      "border-radius": 4px,
+      "padding": 2px,
+      "bg-color": getCssVar("fill-color", "blank")
+    ),
+  // message
+  $message:
+    (
+      "bg-color": getCssVar("color", "info", "light-9"),
+      "border-color": getCssVar("border-color-lighter"),
+      "padding": 10px 14px,
+      "close-size": 16px,
+      "close-icon-color": getCssVar("text-color-placeholder"),
+      "close-hover-color": getCssVar("text-color-secondary")
+    ),
+  $messagebox: (
+    "title-color": getCssVar("text-color-primary"),
+    "width": 320px,
+    "border-radius": 12px,
+    "font-size": getCssVar("font-size-large"),
+    "content-font-size": getCssVar("font-size-base"),
+    "content-color": getCssVar("text-color-regular"),
+    "error-font-size": 14px,
+    "padding-primary": 1rem
+  ),
+  $checkbox: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "border-radius": 4px),
+  $radio: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "input-border-radius": 4px),
+  $menu: (
+      // 'active-color': getCssVar('color-primary'),
+      // 'text-color': getCssVar('text-color-primary'),
+      // 'hover-text-color': getCssVar('color-primary'),
+      // 'bg-color': getCssVar('fill-color', 'blank'),
+      // 'hover-bg-color': getCssVar('color-primary-light-9'),
+      // 'item-height': 56px,
+      // 'sub-item-height': calc(#{getCssVar('menu-item-height')} - 6px),
+      // 'horizontal-sub-item-height': 36px,
+      // 'item-font-size': getCssVar('font-size-base'),
+      // 'item-hover-fill': getCssVar('color-primary-light-9'),
+      // 'border-color': getCssVar('border-color'),
+      // 'base-level-padding': 20px,
+      // 'level-padding': 20px,
+      // 'icon-width': 24px,
+    ) 
+);
