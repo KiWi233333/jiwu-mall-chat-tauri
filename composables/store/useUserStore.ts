@@ -1,7 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import { invoke } from "@tauri-apps/api";
 import { type UserInfoVO, type UserWallet, getUserInfo, getUserInfoSSR } from "../api/user/info";
 import { toLogout } from "../api/user";
 import { getUserWallet } from "../api/user/wallet";
+import { useWindow } from "../tauri/window";
 import type { CommCategory } from "@/composables/api/community/category";
 import type { IndexMenuType } from "~/components/menu";
 
@@ -69,41 +71,30 @@ export const useUserStore = defineStore(
      * @param token 用户token
      */
     const loadUserWallet = async (token: string): Promise<boolean> => {
-      // const wallet = await getUserWallet(token);
-      // if (wallet.code === StatusCode.SUCCESS) {
-      //   useUserStore().$patch({
-      //     userWallet: {
-      //       ...wallet.data,
-      //     },
-      //   });
-      //   return true;
-      // }
-      // else {
-      //   return false;
-      // }
-      return true;
+      const wallet = await getUserWallet(token);
+      if (wallet.code === StatusCode.SUCCESS) {
+        userWallet.value = wallet.data as UserWallet;
+        return true;
+      }
+      else {
+        return false;
+      }
     };
 
     /**
      * 用户登录
-     * @param token token
+     * @param t t
      */
-    const onUserLogin = async (token: string, saveLocal?: boolean) => {
-      // 用户信息
-      const store = useUserStore();
+    const onUserLogin = async (t: string, saveLocal?: boolean) => {
       // 钱包
-      loadUserWallet(token);
-      const res = await getUserInfo(token);
+      loadUserWallet(t);
+      const res = await getUserInfo(t);
       if (res.code && res.code === StatusCode.SUCCESS) {
-        store.$patch({
-          userInfo: {
-            ...res.data,
-          },
-        });
+        userInfo.value = res.data as UserInfoVO;
+        isLogin.value = true;
+        token.value = t;
       }
-      else {
-        onUserExit(token);
-      }
+      else { onUserExit(t); }
     };
 
     // 退出登录
@@ -152,11 +143,11 @@ export const useUserStore = defineStore(
      * @param t token
      */
     async function onUserExit(t?: string) {
-      navigateTo("/login", { replace: true });
       if (t) {
         clearUserStore();
-        return await toLogout(t);
+        await toLogout(t);
       }
+      return true;
     }
     /**
      * 清空store缓存

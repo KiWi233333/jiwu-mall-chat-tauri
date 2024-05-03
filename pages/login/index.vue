@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { invoke } from "@tauri-apps/api";
 import { appKeywords } from "@/constants/index";
 
 useSeoMeta({
@@ -11,50 +12,38 @@ definePageMeta({
   key: route => route.fullPath,
   layout: false,
 });
-onMounted(() => {
-  user.showLoginForm = true;
-});
 </script>
 
 <template>
   <div
-    v-auto-animate
-    class="forms flex-row-c-c"
+    v-if="user.showLoginForm || user.showRegisterForm" relative h-full w-full
+    overflow-visible
   >
-    <!-- 登录 -->
-    <FormLoginForm
-      v-if="user.showLoginForm"
-      key="login-form" class="rounded-6px bg-white shadow-2xl border-default dark:bg-dark-7"
-    />
-    <!-- 注册 -->
-    <FormRegisterForm
-      v-else-if="user.showRegisterForm"
-      key="register-form" class="rounded-6px bg-white shadow-2xl border-default dark:bg-dark-7"
-    />
+    <div class="form absolute left-0 top-0 select-none">
+      <div data-tauri-drag-region flex items-center justify-end gap-3 px-4 pt-4>
+        <MenuController key="header" :show-max="false" />
+      </div>
+      <Transition
+        name="popup"
+        mode="in-out"
+      >
+        <!-- 登录 -->
+        <FormLoginForm
+          v-if="user.showLoginForm"
+          key="login-form"
+        />
+        <!-- 注册 -->
+        <FormRegisterForm
+          v-else-if="user.showRegisterForm"
+          key="register-form"
+        />
+      </Transition>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.forms {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: transparent;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.fadeInOutShadow-enter-active {
-  animation: 0.2s fadeIn $animate-cubic;
-}
-
-.fadeInOutShadow-leave-active {
-  animation: 0.2s fadeOut $animate-cubic;
-}
-
-.animate__animated {
-  animation-duration: 0.2s;
+.form {
+  --at-apply: "relative mx-a w-420px rounded-6px bg-white shadow-lg  dark:bg-dark-7"
 }
 </style>

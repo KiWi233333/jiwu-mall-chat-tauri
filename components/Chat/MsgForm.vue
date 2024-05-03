@@ -339,7 +339,7 @@ onMounted(() => {
         <BtnElButton
           :disabled="!user.isLogin"
           transition-icon
-          class="group absolute bottom-0 right-0 ml-a shadow"
+          class="group absolute ml-a shadow -bottom-1 -right-1"
           icon-class="i-solar:map-arrow-right-bold-duotone block -rotate-45 mr-1"
           type="info"
           @click="onSubmit()"
@@ -367,11 +367,11 @@ onMounted(() => {
 .input {
   :deep(.el-input__count) {
     left: 0px;
+    background-color: transparent;
     transition: opacity 0.2s;
     opacity: 0;
   }
   :deep(.el-textarea__inner) {
-
     box-shadow: none !important;
     background-color: transparent;
     caret-color: var(--el-color-primary);

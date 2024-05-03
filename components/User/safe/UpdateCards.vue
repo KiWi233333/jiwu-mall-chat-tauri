@@ -15,7 +15,6 @@ async function toExistLogin() {
       setTimeout(() => {
         user.$reset();
       }, 50);
-      navigateTo("/");
     }
   });
 }

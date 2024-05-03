@@ -1,23 +1,10 @@
 <script setup lang="ts">
+import { invoke } from "@tauri-apps/api";
 import { appKeywords, appName } from "@/constants/index";
 
 // 1、确认是否登录
 const user = useUserStore();
 const setting = useSettingStore();
-// 退出登录时候
-watch(
-  () => user.isLogin,
-  async (val) => {
-    if (val) {
-      // 获取用户信息
-      user.onCheckLogin();
-    }
-  },
-  {
-    immediate: true,
-  },
-);
-
 // https://nuxt.com.cn/docs/guide/directory-structure/app
 // 准备完成关闭加载
 onMounted(() => {
@@ -93,30 +80,50 @@ watch(() => setting.settingPage.modeToggle.value, (val) => {
 onUnmounted(() => {
   window.removeEventListener("keydown", keyToggleTheme);
 });
+// 登录
+watch(
+  () => user.isLogin,
+  (val) => {
+    setTimeout(async () => {
+      const user = useUserStore();
+      if (user.isLogin) {
+        user.showLoginForm = false;
+        await user.onUserLogin(user.getTokenFn(), true);
+        await invoke("close_login_page");
+      }
+      else {
+        user.showLoginForm = true;
+        user.clearUserStore();
+        await invoke("open_login_page");
+      }
+    }, 0);
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>
-  <div id="app">
-    <NuxtPage />
-  </div>
+  <NuxtPage />
 </template>
 
 <style lang="scss">
-// .page-enter-active,
-// .page-leave-active {
-//   opacity: 1;
-//   transition-duration: 0.1s;
-//   transition-property: opacity;
-//   will-change: opacity;
-// }
+.page-enter-active,
+.page-leave-active {
+  opacity: 1;
+  transition-duration: 0.1s;
+  transition-property: opacity;
+  will-change: opacity;
+}
 
-// .page-enter-from,
-// .page-leave-to {
-//   opacity: 0;
-// }
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
 
-// .dark .page-enter-from,
-// .dark .page-leave-to {
-//   opacity: 0.7;
-// }
+.dark .page-enter-from,
+.dark .page-leave-to {
+  opacity: 0.7;
+}
 </style>

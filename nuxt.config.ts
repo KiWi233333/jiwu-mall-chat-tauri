@@ -15,6 +15,8 @@ export default defineNuxtConfig({
   },
   // spa情况下loading状态
   // spaLoadingTemplate: "./app/spa-loading-template.html",
+  pageTransition: { name: "page", mode: "out-in" },
+  layoutTransition: { name: "layout", mode: "out-in" },
   // 模块
   modules: [
     // 工具

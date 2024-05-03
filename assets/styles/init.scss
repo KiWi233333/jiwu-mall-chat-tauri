@@ -119,27 +119,25 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
   height: 0;
-  background-color: #fbfbfc;
+  background-color: transparent;
 }
 
 /* 定义滚动条轨道 内部
   内阴影+圆角 */
 ::-webkit-scrollbar-track {
-  background-color: #fbfbfc;
   border-radius: 0.8rem;
-  box-shadow: inset 0 0 6px rgb(0 0 0 / 20%);
+  background-color: #fff;
 }
 
 .dark ::-webkit-scrollbar-track {
-  background-color: #252525;
+  background-color: transparent;
 }
 
 /* 定义滑块
   内阴影+圆角 */
 ::-webkit-scrollbar-thumb {
-  background-color: #252525;
+  background-color: #aaaaaa71;
   border-radius: 0.8rem;
-  box-shadow: inset 0 0 6px rgb(134 134 134 / 20%);
 }
 
 .dark ::-webkit-scrollbar-thumb {

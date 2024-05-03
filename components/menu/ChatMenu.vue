@@ -65,15 +65,9 @@ const setting = useSettingStore();
 <template>
   <div
     class="menu relative z-998 h-auto max-w-1/2 bg-light bg-opacity-80 transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
-    :class="{
-      'max-w-0': setting.showChatMenu,
-    }"
   >
     <el-menu
       class="sm:w-12rem"
-      :class="{
-        hidden: setting.showChatMenu,
-      }"
       :router="true"
       :default-active="route.path"
       :collapse="setting.isUserFold"

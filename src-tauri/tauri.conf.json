@@ -6,12 +6,24 @@
     "distDir": "../.output/public"
   },
   "package": {
-    "productName": "jiwu-mall-chat",
+    "productName": "极物聊天",
     "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "window": {
+        "all": false,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": true,
+        "setAlwaysOnTop": true,
+        "minimize": true,
+        "unmaximize": true,
+        "unminimize": true,
+        "startDragging": true
+      }
     },
     "bundle": {
       "active": true,
@@ -21,13 +33,7 @@
         "depends": []
       },
       "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
       "identifier": "com.tauri.dev",
       "longDescription": "",
       "macOS": {
@@ -54,12 +60,39 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 720,
+        "label": "main",
+        "height": 820,
         "resizable": true,
-        "title": "jiwu-mall-chat",
-        "width": 1290
+        "title": "极物聊天",
+        "width": 1290,
+        "center": true,
+        "minWidth": 345,
+        "minHeight": 724,
+        "focus": true,
+        "url": "/",
+        "decorations": false,
+        "hiddenTitle": true,
+        "transparent": true,
+        "visible": false
+      },
+      {
+        "label": "login",
+        "width": 420,
+        "height": 580,
+        "resizable": false,
+        "decorations": false,
+        "url": "/login",
+        "title": "登录 | 极物聊天",
+        "center": true,
+        "focus": true,
+        "hiddenTitle": true,
+        "transparent": true
       }
-    ]
+    ],
+    "systemTray": {
+      "title": "极物聊天",
+      "iconPath": "../public/logo.png",
+      "iconAsTemplate": true
+    }
   }
 }

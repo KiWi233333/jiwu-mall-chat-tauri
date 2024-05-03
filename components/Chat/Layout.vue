@@ -81,7 +81,7 @@ watch(
 </script>
 
 <template>
-  <main class="h-100vh flex flex-col overflow-hidden border-default v-card">
+  <main class="h-100vh flex flex-col overflow-hidden shadow-lg v-card">
     <div
       v-if="user.isLogin && ws.status === WsStatusEnum.OPEN"
       class="relative h-full flex flex-col"
@@ -125,27 +125,6 @@ watch(
         </template>
       </OtherError>
     </div>
-    <!-- <div v-else class="main-box h-100vh flex-row-c-c">
-      <OtherError msg="未登录,请登录后查看!" icon="i-solar:eye-line-duotone w-8rem h-8rem animate-[0.2s_fade-in_3]">
-        <template #footer>
-          <BtnElButton
-            plain
-            @click="$router.back()"
-          >
-            返 回
-          </BtnElButton>
-          <BtnElButton
-            icon-class="i-solar:user-rounded-outline mr-2"
-            class="hover:shadow-md"
-            type="primary"
-            transition-icon
-            @click="user.showLoginForm = true "
-          >
-            登 录
-          </BtnElButton>
-        </template>
-      </OtherError>
-    </div> -->
   </main>
 </template>
 

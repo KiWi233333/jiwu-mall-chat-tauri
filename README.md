@@ -42,15 +42,18 @@
 ```sh
 # node 版本 >= 16
 npm install -g pnpm
+
 pnpm install
-# 一键运行
-npm run install
 ```
 
 ### ✨ 开发
 
 ```sh
-pnpm run dev
+# 建议分开运行
+# 1）启动nuxt
+pnpm run dev:nuxt 
+# 2）启动tauri
+pnpm run dev:tauri 
 ```
 
 ### 📦 打包

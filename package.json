@@ -5,7 +5,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt dev",
+    "dev": "nuxi info",
+    "dev:tauri": "tauri dev",
+    "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
     "build": "nuxt generate"
   },
@@ -55,6 +57,7 @@
   },
   "dependencies": {
     "@nuxtjs/color-mode": "3.3.2",
+    "@tauri-apps/api": "^1.5.4",
     "currency.js": "2.0.4",
     "element-china-area-data": "6.1.0",
     "qiniu-js": "3.4.2"

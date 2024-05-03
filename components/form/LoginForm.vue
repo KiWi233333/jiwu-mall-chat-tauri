@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { invoke } from "@tauri-apps/api/tauri";
 import {
   DeviceType,
   getLoginCodeByType,
@@ -12,19 +13,12 @@ const loginType = ref<LoginType>(LoginType.EMAIL);
 const isLoading = ref<boolean>(false);
 const autoLogin = ref<boolean>(false);
 // 表单
-const initForm = {
-  username: "ikun233", // 用户名
-  password: "123456", // 密码
-  phone: "", // 手机号
-  email: "", // 邮箱
+const userForm = useLocalStorage("userForm", {
+  username: "",
+  password: "",
   code: "", // 验证码
-};
-const userForm = reactive({
-  username: "ikun233", // 用户名
-  password: "123456", // 密码
-  phone: "", // 手机号
-  email: "", // 邮箱
-  code: "", // 验证码
+  email: "", // 邮箱登录
+  phone: "", // 手机登录
 });
 const rules = reactive({
   username: [
@@ -81,16 +75,16 @@ async function getLoginCode(type: LoginType) {
   // 获取邮箱验证码
   if (type === LoginType.EMAIL) {
     // 简单校验
-    if (userForm.email.trim() === "")
+    if (userForm.value.email.trim() === "")
       return;
-    if (!checkEmail(userForm.email)) {
+    if (!checkEmail(userForm.value.email)) {
       isLoading.value = false;
       return ElMessage.error("邮箱格式不正确！");
     }
     // 开启
     isLoading.value = true;
     // 请求验证码
-    data = await getLoginCodeByType(userForm.email, DeviceType.EMAIL);
+    data = await getLoginCodeByType(userForm.value.email, DeviceType.EMAIL);
     // 成功
     if (data.code === StatusCode.SUCCESS) {
       ElMessage.success({
@@ -102,15 +96,15 @@ async function getLoginCode(type: LoginType) {
   }
   // 获取手机号验证码
   else if (type === LoginType.PHONE) {
-    if (userForm.phone.trim() === "")
+    if (userForm.value.phone.trim() === "")
       return;
-    if (!checkPhone(userForm.phone)) {
+    if (!checkPhone(userForm.value.phone)) {
       isLoading.value = false;
       ElMessage.closeAll("error");
       return ElMessage.error("手机号格式不正确！");
     }
     isLoading.value = true;
-    data = await getLoginCodeByType(userForm.phone, DeviceType.PHONE);
+    data = await getLoginCodeByType(userForm.value.phone, DeviceType.PHONE);
     if (data.code === 20000) {
       // 开启定时器
       useInterval(phoneTimer, phoneCodeStorage, 60, -1);
@@ -118,7 +112,7 @@ async function getLoginCode(type: LoginType) {
         message: data.message,
         duration: 5000,
       });
-      // userForm.code = data.data;
+      // userForm.value.code = data.data;
     }
     else {
       ElMessage.closeAll("error");
@@ -176,16 +170,16 @@ async function onLogin(formEl: any | undefined) {
     try {
       switch (loginType.value) {
         case LoginType.PWD:
-          res = await toLoginByPwd(userForm.username, userForm.password);
+          res = await toLoginByPwd(userForm.value.username, userForm.value.password);
           break;
         case LoginType.PHONE:
-          res = await toLoginByPhone(userForm.phone, userForm.code);
+          res = await toLoginByPhone(userForm.value.phone, userForm.value.code);
           break;
         case LoginType.EMAIL:
-          res = await toLoginByEmail(userForm.email, userForm.code);
+          res = await toLoginByEmail(userForm.value.email, userForm.value.code);
           break;
         case LoginType.ADMIN:
-          res = await toLoginByPwd(userForm.username, userForm.password, true);
+          res = await toLoginByPwd(userForm.value.username, userForm.value.password, true);
           break;
       }
     }
@@ -206,7 +200,6 @@ async function onLogin(formEl: any | undefined) {
           showRegisterForm: false,
           isLogin: true,
         });
-        navigateTo("/");
         return;
       }
       // 登录失败
