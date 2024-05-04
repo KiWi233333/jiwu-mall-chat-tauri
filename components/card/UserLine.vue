@@ -49,22 +49,6 @@ const onUpdateSuccess: UploadProps["onSuccess"] = async (data) => {
     ElMessage.error(data.message);
   }
 };
-// 退出登录
-function exitLogin() {
-  ElMessageBox.confirm("是否确认退出登录？", "退出登录", {
-    confirmButtonText: "确认退出",
-    lockScroll: false,
-    cancelButtonText: "取消",
-    center: true,
-    type: "warning",
-  })
-    .then(() => {
-      // 退出登录
-      user.onUserExit(user.token);
-      ElMessage.success("退出成功！");
-    })
-    .catch(() => {});
-}
 // 自动导入
 // @unocss-include
 const menuList = ref([
@@ -262,7 +246,7 @@ const menuList = ref([
                   type="danger"
                   plain transition-icon ml-3
                   icon-class="i-solar:logout-3-broken"
-                  @click="exitLogin"
+                  @click="user.exitLogin"
                 >
                   退出登录
                 </BtnElButton>

@@ -24,7 +24,7 @@ export async function getWin(label: string) {
  * @desc 设置窗口
  * @param type {string} 'show'|'hide'|'close'|'min'|'max'|'max2min'|'exit'|'relaunch'
  */
-export async function setWin(type) {
+export async function setWin(type: "show" | "hide" | "close" | "min" | "max" | "max2min" | "exit" | "relaunch" | string) {
   await emit(`win-${type}`);
 }
 

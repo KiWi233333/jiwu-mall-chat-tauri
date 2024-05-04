@@ -50,7 +50,10 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": {
+          "language": "zh-CN"
+        }
       }
     },
     "security": {
@@ -70,19 +73,6 @@
         "minWidth": 345,
         "minHeight": 724,
         "decorations": false,
-        "hiddenTitle": true,
-        "transparent": true,
-        "visible": false
-      },
-      {
-        "label": "login",
-        "width": 420,
-        "height": 580,
-        "resizable": false,
-        "decorations": false,
-        "url": "/login",
-        "title": "登录 | 极物聊天",
-        "center": true,
         "hiddenTitle": true,
         "transparent": true
       }

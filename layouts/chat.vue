@@ -1,6 +1,7 @@
 
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { invoke } from "@tauri-apps/api";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 
 // @unocss-include
@@ -76,6 +77,11 @@ watch(
     immediate: true,
   },
 );
+
+function onLogin() {
+  // invoke("window_to_login_page");
+  window?.location?.reload?.();
+}
 </script>
 
 <template>
@@ -137,7 +143,7 @@ watch(
             class="hover:shadow-md"
             type="primary"
             transition-icon
-            @click="user.showLoginForm = true "
+            @click="onLogin"
           >
             登 录
           </BtnElButton>

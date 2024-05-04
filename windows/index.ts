@@ -4,7 +4,7 @@
  * @time    2024.5.4
  */
 
-import { WebviewWindow, appWindow, getAll, getCurrent } from "@tauri-apps/api/window";
+import { WebviewWindow, type WindowOptions, appWindow, getAll, getCurrent } from "@tauri-apps/api/window";
 import { exit, relaunch } from "@tauri-apps/api/process";
 import { emit, listen } from "@tauri-apps/api/event";
 
@@ -37,7 +37,7 @@ class Windows {
   }
 
   // 获取窗口
-  getWin(label) {
+  getWin(label: string) {
     return WebviewWindow.getByLabel(label);
   }
 
@@ -47,7 +47,7 @@ class Windows {
   }
 
   // 创建新窗口
-  async createWin(options) {
+  async createWin(options: WindowOptions) {
     const args = Object.assign({}, windowConfig, options);
 
     // 判断窗口是否存在

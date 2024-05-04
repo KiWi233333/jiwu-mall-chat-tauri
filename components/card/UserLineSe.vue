@@ -1,24 +1,5 @@
 <script lang="ts" setup>
-import { invoke } from "@tauri-apps/api";
-
 const user = useUserStore();
-const isShow = ref<boolean>(false);
-// 退出登录
-function exitLogin() {
-  ElMessageBox.confirm("确认退出登录？", "退出登录", {
-    confirmButtonText: "确认退出",
-    cancelButtonText: "取消",
-    lockScroll: false,
-    type: "warning",
-  })
-    .then(async (e) => {
-      // 退出登录
-      await user.onUserExit(user.token);
-      await invoke("window_to_login_page");
-      ElMessage.success("退出成功！");
-    })
-    .catch(() => {});
-}
 </script>
 
 <template>
@@ -47,7 +28,7 @@ function exitLogin() {
           </NuxtLink>
           <span
             class="cursor-pointer rounded-6px py-2"
-            @click="exitLogin"
+            @click="user.exitLogin"
           >
             退出登录
           </span>

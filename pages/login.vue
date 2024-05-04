@@ -15,13 +15,13 @@ definePageMeta({
 
 <template>
   <div
-    v-if="user.showLoginForm || user.showRegisterForm" relative h-full w-full
-    overflow-visible
+    v-if="user.showLoginForm || user.showRegisterForm"
+    relative h-100vh w-100vw flex-row-c-c overflow-visible shadow border-default card-default bg-color
   >
-    <div class="form absolute left-0 top-0 select-none">
-      <div data-tauri-drag-region flex items-center justify-end gap-3 px-4 pt-4>
-        <MenuController key="header" :show-max="false" />
-      </div>
+    <div data-tauri-drag-region class="fixed left-0 top-0 w-full flex items-center justify-end gap-3 border-0 border-b-1px p-4 border-default">
+      <MenuController key="header" :show-max="false" />
+    </div>
+    <div class="select-none">
       <Transition
         name="popup"
         mode="in-out"
@@ -43,6 +43,6 @@ definePageMeta({
 
 <style scoped lang="scss">
 .form {
-  --at-apply: "relative mx-a w-420px rounded-6px bg-white shadow-lg  dark:bg-dark-7"
+  --at-apply: "relative mx-a w-420px rounded-6px card-default"
 }
 </style>

@@ -11,7 +11,7 @@ import { LoginType } from "~/types/user/index.js";
 
 const loginType = ref<LoginType>(LoginType.EMAIL);
 const isLoading = ref<boolean>(false);
-const autoLogin = ref<boolean>(false);
+const autoLogin = ref<boolean>(true);
 // 表单
 const userForm = useLocalStorage("userForm", {
   username: "",
@@ -193,15 +193,14 @@ async function onLogin(formEl: any | undefined) {
           message: "登录成功！",
           duration: 2000,
         });
-        await store.onUserLogin(res.data, autoLogin.value);
         store.$patch({
           token: res.data,
           isLogin: true,
           showLoginForm: false,
           showRegisterForm: false,
         });
-        // TODO
-        await invoke("window_to_main_page");
+        await store.onUserLogin(res.data, autoLogin.value);
+
         return;
       }
       // 登录失败
