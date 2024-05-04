@@ -85,7 +85,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
             id: item.userId,
           });
           navigateTo({
-            path: "/chat/friend",
+            path: "/friend",
             query: {
               id: item.userId,
             },

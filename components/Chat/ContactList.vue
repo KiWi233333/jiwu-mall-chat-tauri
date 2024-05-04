@@ -195,7 +195,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         label: "联系人",
         onClick: () => {
           chat.setTheFriendOpt(FriendOptType.Empty);
-          navigateTo("/chat/friend");
+          navigateTo("/friend");
         },
       },
     ];

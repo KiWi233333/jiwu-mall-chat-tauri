@@ -66,7 +66,7 @@ async function toSend(roomId: number) {
   chat.setContact(res.data);
   nextTick(() => {
     navigateTo({
-      path: "/chat",
+      path: "/",
     });
   });
 }

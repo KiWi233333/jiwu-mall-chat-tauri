@@ -83,7 +83,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
             id: item.fromUser.userId,
           });
           nextTick(() => {
-            navigateTo("/chat/friend");
+            navigateTo("/friend");
           });
         },
       },

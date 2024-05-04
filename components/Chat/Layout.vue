@@ -113,7 +113,7 @@ watch(
           >
             重新连接
           </BtnElButton>
-          <BtnElButton
+          <!-- <BtnElButton
             icon-class="i-solar:home-2-bold mr-2"
             class="hover:shadow-md"
             plain
@@ -121,7 +121,7 @@ watch(
             @click="navigateTo('/')"
           >
             回到首页
-          </BtnElButton>
+          </BtnElButton> -->
         </template>
       </OtherError>
     </div>

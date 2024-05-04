@@ -79,28 +79,33 @@ watch(() => setting.settingPage.modeToggle.value, (val) => {
 onUnmounted(() => {
   window.removeEventListener("keydown", keyToggleTheme);
 });
+onMounted(() => {
+  window.addEventListener("contextmenu", (e) => {
+    e.preventDefault();// 阻止默认行为，防止右键菜单弹出
+  });
+});
 </script>
 
 <template>
-  <NuxtPage />
+  <div id="app">
+    <NuxtPage />
+  </div>
 </template>
 
 <style lang="scss">
-.page-enter-active,
-.page-leave-active {
-  opacity: 1;
-  transition-duration: 0.1s;
-  transition-property: opacity;
-  will-change: opacity;
-}
+// .page-enter-active,
+// .page-leave-active {
+//   transition-duration: 0.2s;
+//   transition-property: filter;
+// }
 
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-}
+// .page-enter-from,
+// .page-leave-to {
+//   filter: blur(6px);
+// }
 
-.dark .page-enter-from,
-.dark .page-leave-to {
-  opacity: 0.7;
-}
+// .dark .page-enter-from,
+// .dark .page-leave-to {
+//   filter: blur(6px);
+// }
 </style>

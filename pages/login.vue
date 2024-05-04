@@ -18,8 +18,14 @@ definePageMeta({
     v-if="user.showLoginForm || user.showRegisterForm"
     relative h-100vh w-100vw flex-row-c-c overflow-visible shadow border-default card-default bg-color
   >
-    <div data-tauri-drag-region class="fixed left-0 top-0 w-full flex items-center justify-end gap-3 border-0 border-b-1px p-4 border-default">
-      <MenuController key="header" :show-max="false" />
+    <div data-tauri-drag-region class="fixed left-0 top-0 w-full flex items-center justify-between gap-3 p-4">
+      <div class="left flex-row-c-c gap-3 tracking-0.2em">
+        <CardElImage src="/logo.png" class="h-1.6rem w-1.6rem" />
+        <strong>极物圈 | 登录</strong>
+      </div>
+      <div flex items-center gap-4>
+        <MenuController key="header" :show-max="false" />
+      </div>
     </div>
     <div class="select-none">
       <Transition
@@ -43,6 +49,6 @@ definePageMeta({
 
 <style scoped lang="scss">
 .form {
-  --at-apply: "relative mx-a w-420px rounded-6px card-default"
+  --at-apply: "border-default relative mx-a w-420px rounded-6px card-default"
 }
 </style>

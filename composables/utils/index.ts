@@ -53,7 +53,6 @@ export function getDayStartEnd(date: Date = new Date()): Date[] {
 /**
  * 复制文字
  * @param text 复制的文本
- * @returns
  */
 export function useCopyText(text: string) {
   // 动态创建 textarea 标签

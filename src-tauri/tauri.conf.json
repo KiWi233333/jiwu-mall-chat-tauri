@@ -86,8 +86,7 @@
       }
     ],
     "systemTray": {
-      "title": "极物聊天",
-      "iconPath": "../public/logo.png",
+      "iconPath": "icons/icon.png",
       "iconAsTemplate": true
     }
   }

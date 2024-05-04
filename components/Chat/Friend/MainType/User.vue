@@ -84,7 +84,7 @@ async function toSend(uid: string) {
   chat.setContact(res.data);
   nextTick(() => {
     navigateTo({
-      path: "/chat",
+      path: "/",
     });
   });
 }
