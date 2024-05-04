@@ -8,7 +8,7 @@ const setting = useSettingStore();
 // https://nuxt.com.cn/docs/guide/directory-structure/app
 // 准备完成关闭加载
 onMounted(() => {
-  const app = document.querySelector("#app");
+  const app = document.body;
   if (app)
     app.classList.remove("stop-transition");
   ElMessage.closeAll("error");
@@ -55,6 +55,7 @@ function keyToggleTheme(e: KeyboardEvent) {
 }
 setting.isThemeChangeLoad = true;
 setting.isThemeChangeLoad = true;
+
 onMounted(() => {
   // 覆盖
   window.addEventListener("keydown", keyToggleTheme);
@@ -82,6 +83,22 @@ onUnmounted(() => {
 onMounted(() => {
   window.addEventListener("contextmenu", (e) => {
     e.preventDefault();// 阻止默认行为，防止右键菜单弹出
+  });
+});
+
+const timer = ref<any>(null);
+onMounted(() => {
+  window.addEventListener("resize", () => {
+    if (timer.value)
+      clearTimeout(timer.value);// 清除之前的定时器，避免重复触发
+    const app = document.documentElement;
+    if (app)
+      app.classList.add("stop-transition");
+    timer.value = setTimeout(() => {
+      const app = document.documentElement;
+      if (app)
+        app.classList.remove("stop-transition");
+    }, 1000);
   });
 });
 </script>
