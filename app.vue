@@ -98,7 +98,7 @@ onMounted(() => {
       const app = document.documentElement;
       if (app)
         app.classList.remove("stop-transition");
-    }, 1000);
+    }, 600);
   });
 });
 </script>

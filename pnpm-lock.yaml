@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@nuxtjs/color-mode':
-    specifier: 3.3.2
-    version: 3.3.2
+    specifier: 3.4.1
+    version: 3.4.1
   '@tauri-apps/api':
     specifier: ^1.5.4
     version: 1.5.4
@@ -47,8 +47,8 @@ devDependencies:
     specifier: 4.1.2
     version: 4.1.2(vue@3.4.26)
   '@imengyu/vue3-context-menu':
-    specifier: 1.3.8
-    version: 1.3.8
+    specifier: 1.4.1
+    version: 1.4.1
   '@kangc/v-md-editor':
     specifier: 2.3.18
     version: 2.3.18(@vue/compiler-sfc@3.4.26)(vue@3.4.26)
@@ -1018,8 +1018,8 @@ packages:
       vue: 3.4.26(typescript@5.3.2)
     dev: true
 
-  /@imengyu/vue3-context-menu@1.3.8:
-    resolution: {integrity: sha512-XvFVv97Bnh1jiMTdQiH3YN/mNnE3BDtn2/sXObyIILVtfzrLtLcbSLiwh47776b05RxACRSLKWP2Ef0t8QNepg==}
+  /@imengyu/vue3-context-menu@1.4.1:
+    resolution: {integrity: sha512-34WInBVx0Mr0zSsRCQWG7ezHk0JzOuZqE4T8ywI82mbk/jfWBRtTkKHYSZbtmw2oYEfDFwCWdM/gur7QFAXYMA==}
     dev: true
 
   /@ioredis/commands@1.2.0:
@@ -1615,12 +1615,13 @@ packages:
       - vue-tsc
     dev: true
 
-  /@nuxtjs/color-mode@3.3.2:
-    resolution: {integrity: sha512-BLpBfrYZngV2QWFQ4HNEFwAXa3Pno43Ge+2XHcZJTTa1Z4KzRLvOwku8yiyV3ovIaaXKGwduBdv3Z5Ocdp0/+g==}
+  /@nuxtjs/color-mode@3.4.1:
+    resolution: {integrity: sha512-vZgJqDstxInGw3RGSWbLoCLXtU1mvh1LLeuEA/X3a++DYA4ifwSbNoiSiOyb9qZHFEwz1Xr99H71sXV4IhOaEg==}
     dependencies:
       '@nuxt/kit': 3.11.2
-      lodash.template: 4.5.0
       pathe: 1.1.2
+      pkg-types: 1.1.0
+      semver: 7.6.0
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -8164,10 +8165,6 @@ packages:
       lodash-es: 4.17.21
     dev: true
 
-  /lodash._reinterpolate@3.0.0:
-    resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
-    dev: false
-
   /lodash.defaults@4.2.0:
     resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
     dev: true
@@ -8183,19 +8180,6 @@ packages:
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
     dev: true
-
-  /lodash.template@4.5.0:
-    resolution: {integrity: sha512-84vYFxIkmidUiFxidA/KjjH9pAycqW+h980j7Fuz5qxRtO9pgB7MDFTdys1N7A5mcucRiDyEq4fusljItR1T/A==}
-    dependencies:
-      lodash._reinterpolate: 3.0.0
-      lodash.templatesettings: 4.2.0
-    dev: false
-
-  /lodash.templatesettings@4.2.0:
-    resolution: {integrity: sha512-stgLz+i3Aa9mZgnjr/O+v9ruKZsPsndy7qPZOchbqk2cnTU1ZaldKK+v7m54WoKIyxiuMZTKT2H81F8BeAc3ZQ==}
-    dependencies:
-      lodash._reinterpolate: 3.0.0
-    dev: false
 
   /lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}

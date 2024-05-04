@@ -40,6 +40,11 @@ useSeoMeta({
 function onSave() {
   ElNotification.success("保存成功！");
 }
+
+const theme = computed({
+  get: () => setting.settingPage.modeToggle.value,
+  set: (val: string) => setting.settingPage.modeToggle.value = val,
+});
 </script>
 
 <template>
@@ -62,7 +67,7 @@ function onSave() {
           <!-- 黑暗 -->
           <div class="group flex-row-bt-c">
             深色模式
-            <el-radio-group v-model="setting.settingPage.modeToggle.value" class="inputs w-12rem" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
+            <el-radio-group v-model="theme" class="inputs w-12rem" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
               <el-radio-button v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading" class="flex-1" :label="p.value">
                 {{ p.name }}
               </el-radio-button>

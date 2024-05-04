@@ -32,20 +32,23 @@ const isTop = ref(false);
           p-2 @click="user.exitLogin()"
         />
       </div>
-      <div class="flex items-center gap-3 border-0 border-l-1px pl-3 border-default">
+      <div class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
         <MenuController>
           <template #start="{ data }">
-            <i
-              :title="isTop ? '取消置顶' : '置顶'"
-              i-solar:pin-broken cursor-pointer
-              transition-200
-              :class="isTop ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
-              @click="() => {
+            <ElButton
+              text text-amber-1 size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="() => {
                 if (data.onToggleWindow) {
                   isTop = data.onToggleWindow('alwaysOnTop').isAlwaysOnTopVal
                 }
               }"
-            />
+            >
+              <i
+                :title="isTop ? '取消置顶' : '置顶'"
+                i-solar:pin-broken cursor-pointer
+                transition-200
+                :class="isTop ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
+              />
+            </ElButton>
           </template>
         </MenuController>
       </div>

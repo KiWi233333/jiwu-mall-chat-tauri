@@ -23,7 +23,7 @@ definePageMeta({
         <CardElImage src="/logo.png" class="h-1.6rem w-1.6rem" />
         <strong>极物圈 | 登录</strong>
       </div>
-      <div flex items-center gap-4>
+      <div flex items-center gap-2>
         <MenuController key="header" :show-max="false" />
       </div>
     </div>

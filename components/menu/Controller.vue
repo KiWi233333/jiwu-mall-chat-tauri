@@ -51,19 +51,27 @@ const data = {
 
 <template>
   <slot name="start" :data="data" />
-  <i
+  <ElButton
     v-if="showMin"
-    i-carbon:subtract p-3 btn-primary title="最小化"
-    @click="onToggleWindow('min')"
-  />
-  <i
-    v-if="showMax"
-    :class="isMaximized ? 'i-tabler:minimize' : 'i-tabler:maximize'"
-    :title="isMaximized ? '还原' : '最大化'"
-    class="text-0.9rem"
-    btn-primary @click="onToggleWindow('max')"
-  />
-  <i v-if="showClose" i-carbon:close btn-primary title="关闭" @click="onToggleWindow('close')" />
+    text size="small" style="font-size: 1.4rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('min')"
+  >
+    <i
+      i-carbon:subtract btn-primary title="最小化"
+    />
+  </ElButton>
+  <ElButton
+    v-if="showMax" text
+    size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('max')"
+  >
+    <i
+      :class="isMaximized ? 'i-tabler:minimize' : 'i-tabler:maximize'"
+      :title="isMaximized ? '还原' : '最大化'"
+      btn-primary
+    />
+  </ElButton>
+  <ElButton v-if="showClose" text text-amber-1 size="small" style="font-size: 1.2rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="onToggleWindow('close')">
+    <i i-carbon:close btn-primary title="关闭" />
+  </ElButton>
   <slot name="end" />
 </template>
 
