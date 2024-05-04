@@ -1,7 +1,7 @@
 <h1 align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
-<img src="./public/logo.png" width = "100" height = "100" alt="图片名称" align=center />
+<img src="./public/logo.png" width = "80" height = "80" alt="图片名称" align=center />
 &
-<img src="./.doc/tauri.png" width = "100" height = "100" alt="图片名称" align=center />
+<img src="./.doc/tauri.png" width = "80" height = "80" alt="图片名称" align=center />
  </h1>
  <h2 align=center style="font-size: 22px;">极物聊天 Tauri APP</h2>
 
