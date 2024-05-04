@@ -42,7 +42,9 @@
         "exceptionDomain": "",
         "frameworks": [],
         "providerShortName": null,
-        "signingIdentity": null
+        "signingIdentity": null,
+        "license": "./LICENSE/LICENSE.txt",
+        "minimumSystemVersion": "10.13"
       },
       "resources": [],
       "shortDescription": "",
@@ -51,8 +53,14 @@
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
         "timestampUrl": "",
+        "nsis": {
+          "license": "./LICENSE/LICENSE.txt",
+          "installMode": "both",
+          "installerIcon": "./icons/128x128.png"
+        },
         "wix": {
-          "language": "zh-CN"
+          "language": "zh-CN",
+          "license": "./LICENSE/LICENSE.txt"
         }
       }
     },
