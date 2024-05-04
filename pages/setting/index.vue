@@ -3,6 +3,7 @@ import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
 const isLoading = ref(false);
+const user = useUserStore();
 const setting = useSettingStore();
 // 字体监听
 watchDebounced(
@@ -69,8 +70,10 @@ function onSave() {
           </div>
         </section>
         <!-- 保存 -->
-        <div class="btns mt-a flex-row-bt-c">
-          <i />
+        <div class="btns mt-a flex items-center">
+          <BtnElButton class="ml-a shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true" round @click="user.exitLogin()">
+            退出登录
+          </BtnElButton>
           <BtnElButton class="ml-a shadow" icon-class="i-solar:diskette-bold" type="info" :transition-icon="true" round @click="onSave">
             保存
           </BtnElButton>

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { invoke } from "@tauri-apps/api";
+
 const user = useUserStore();
 const isShow = ref<boolean>(false);
 // 退出登录
@@ -9,9 +11,10 @@ function exitLogin() {
     lockScroll: false,
     type: "warning",
   })
-    .then((e) => {
+    .then(async (e) => {
       // 退出登录
-      user.onUserExit(user.token);
+      await user.onUserExit(user.token);
+      await invoke("window_to_login_page");
       ElMessage.success("退出成功！");
     })
     .catch(() => {});

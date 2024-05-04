@@ -18,6 +18,7 @@
         "hide": true,
         "show": true,
         "maximize": true,
+        "create": true,
         "setAlwaysOnTop": true,
         "minimize": true,
         "unmaximize": true,
@@ -27,14 +28,14 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+      "category": "SocialNetworking",
+      "copyright": "Kiwi2333",
       "deb": {
         "depends": []
       },
       "externalBin": [],
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "com.tauri.dev",
+      "identifier": "Kiwi2333",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -68,8 +69,6 @@
         "center": true,
         "minWidth": 345,
         "minHeight": 724,
-        "focus": true,
-        "url": "/",
         "decorations": false,
         "hiddenTitle": true,
         "transparent": true,
@@ -84,7 +83,6 @@
         "url": "/login",
         "title": "登录 | 极物聊天",
         "center": true,
-        "focus": true,
         "hiddenTitle": true,
         "transparent": true
       }

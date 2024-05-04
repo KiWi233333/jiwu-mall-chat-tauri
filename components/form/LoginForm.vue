@@ -193,13 +193,15 @@ async function onLogin(formEl: any | undefined) {
           message: "登录成功！",
           duration: 2000,
         });
-        store.onUserLogin(res.data, autoLogin.value);
+        await store.onUserLogin(res.data, autoLogin.value);
         store.$patch({
           token: res.data,
+          isLogin: true,
           showLoginForm: false,
           showRegisterForm: false,
-          isLogin: true,
         });
+        // TODO
+        await invoke("window_to_main_page");
         return;
       }
       // 登录失败

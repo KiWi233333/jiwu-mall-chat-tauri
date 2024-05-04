@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { invoke } from "@tauri-apps/api";
 import { appKeywords } from "@/constants/index";
 
 useSeoMeta({

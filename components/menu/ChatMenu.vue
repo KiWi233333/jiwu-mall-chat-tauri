@@ -73,8 +73,8 @@ const setting = useSettingStore();
       :collapse="setting.isUserFold"
     >
       <!-- 顶部 -->
-      <div class="grid grid-cols-1 w-full grid-gap-6 py-4 pt-6 transition-300 transition-300 hover:bg-transparent">
-        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="relative z-100 mx-a h-6 w-6 sm:mr-a border-default card-default" alt="头像" />
+      <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 transition-300 transition-300 hover:bg-transparent">
+        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="relative z-100 mx-a h-2.4rem w-2.4rem sm:mr-a border-default card-default" alt="头像" />
         <!-- 会话 -->
         <span
           block sm:hidden

@@ -39,7 +39,6 @@ useSeoMeta({
   keywords: appKeywords,
 });
 
-
 const colorMode = useColorMode();
 function keyToggleTheme(e: KeyboardEvent) {
   if (setting.isThemeChangeLoad)
@@ -80,28 +79,6 @@ watch(() => setting.settingPage.modeToggle.value, (val) => {
 onUnmounted(() => {
   window.removeEventListener("keydown", keyToggleTheme);
 });
-// 登录
-watch(
-  () => user.isLogin,
-  (val) => {
-    setTimeout(async () => {
-      const user = useUserStore();
-      if (user.isLogin) {
-        user.showLoginForm = false;
-        await user.onUserLogin(user.getTokenFn(), true);
-        await invoke("close_login_page");
-      }
-      else {
-        user.showLoginForm = true;
-        user.clearUserStore();
-        await invoke("open_login_page");
-      }
-    }, 0);
-  },
-  {
-    immediate: true,
-  },
-);
 </script>
 
 <template>

@@ -110,6 +110,7 @@ export const useUserStore = defineStore(
         .then(() => {
           // 退出登录
           onUserExit(token.value);
+          invoke("window_to_login_page");
           if (document)
             ElMessage.success("退出成功！");
         })
@@ -145,9 +146,8 @@ export const useUserStore = defineStore(
     async function onUserExit(t?: string) {
       if (t) {
         clearUserStore();
-        await toLogout(t);
+        return await toLogout(t);
       }
-      return true;
     }
     /**
      * 清空store缓存
