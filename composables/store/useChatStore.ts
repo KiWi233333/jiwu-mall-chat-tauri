@@ -181,10 +181,7 @@ export const useChatStore = defineStore(
   },
   {
     // https://prazdevs.github.io/pinia-plugin-persistedstate/frameworks/nuxt-3.html
-    persist: {
-      // storage: persistedState.localStorage,
-      storage: false,
-    },
+    persist: false,
   },
 );
 if (import.meta.hot)
