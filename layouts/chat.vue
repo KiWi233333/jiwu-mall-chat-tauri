@@ -122,9 +122,9 @@ function onLogin() {
             class="hover:shadow-md"
             plain
             transition-icon
-            @click="navigateTo('/')"
+            @click="navigateTo('/login')"
           >
-            回到首页
+            去登录
           </BtnElButton>
         </template>
       </OtherError>
