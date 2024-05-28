@@ -2,14 +2,14 @@
   "name": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "description": "jiwu-mall-chat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "nuxi info",
     "dev:tauri": "tauri dev",
     "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
-    "build": "nuxi generate"
+    "build": "tauri build"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.43.1",
