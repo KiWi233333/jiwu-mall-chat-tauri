@@ -66,19 +66,16 @@ const setting = useSettingStore();
   <div
     class="menu relative z-998 h-auto max-w-1/2 bg-light bg-opacity-80 transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
   >
-    <el-menu
-      class="sm:w-12rem"
-      :router="true"
-      :default-active="route.path"
-      :collapse="setting.isUserFold"
-    >
+    <el-menu class="sm:w-12rem" :router="true" :default-active="route.path" :collapse="setting.isUserFold">
       <!-- 顶部 -->
       <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 transition-300 transition-300 hover:bg-transparent">
-        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="relative z-100 mx-a h-2.4rem w-2.4rem sm:mr-a border-default card-default" alt="头像" />
+        <CardElImage
+          :src="BaseUrlImg + user?.userInfo?.avatar"
+          class="relative z-100 mx-a h-2.4rem w-2.4rem sm:mr-a border-default card-default" alt="头像"
+        />
         <!-- 会话 -->
         <span
-          block sm:hidden
-          class="mx-a transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
+          block sm:hidden class="mx-a transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
           @click="setting.isOpenContact = !setting.isOpenContact"
         >
           <i class="i-solar:chat-square-bold-duotone" cursor-pointer p-3 />
@@ -86,26 +83,17 @@ const setting = useSettingStore();
       </div>
       <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
       <!-- 个人信息 -->
-      <el-menu-item
-        v-for="p in menuList"
-        :key="p.path"
-        :index="p.path"
-      >
+      <el-menu-item v-for="p in menuList" :key="p.path" :index="p.path">
         <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :max="99">
-          <i
-            class="icon"
-            :class="route.path === p.path ? p.activeIcon : p.icon"
-          />
+          <i class="icon" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
         <span class="title overflow-hidden px-6 font-500 tracking-0.2em">{{ p.title }}</span>
       </el-menu-item>
     </el-menu>
     <div
       v-if="setting.isChatFold"
-      class="absolute left-0 top-0 block h-100vh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden"
-      style="background-color: #2222223a;
-    "
-      @click="setting.isChatFold = false"
+      class="absolute left-0 top-0 block h-100vh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden" style="background-color: #2222223a;
+    " @click="setting.isChatFold = false"
     />
     <!-- 折叠 -->
     <!-- <span

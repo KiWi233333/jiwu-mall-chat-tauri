@@ -30,54 +30,6 @@ function onContextMenu(e: MouseEvent) {
 
 const user = useUserStore();
 const ws = useWs();
-const timer = ref();
-
-
-// 通知消息类型  WsMsgBodyType
-const noticeType = [
-  WsMsgBodyType.MESSAGE, // 普通消息
-];
-
-
-// 初始化
-function load() {
-  ws.initDefault((e) => {
-    timer.value = setInterval(() => {
-      if (ws.status === WsStatusEnum.CLOSE) {
-        clearInterval(timer.value);
-        timer.value = null;
-        load();
-      }
-      else {
-        // 心跳
-        ws.sendHeart();
-      }
-    }, 20000);
-    ws.onMessage((msg) => {
-      // 消息通知
-      if (ws.isWindBlur && noticeType.includes(msg.type)) {
-        const body = msg.data as ChatMessageVO;
-        useWebToast(
-          `${body.fromUser.nickName}:`, // 发送人
-        `${body.message.content}`, // 发送消息
-        {
-          icon: BaseUrlImg + body.fromUser.avatar,
-        });
-      }
-    });
-  });
-}
-// 退出登录时候
-watch(
-  () => user.isLogin,
-  async (val) => {
-    if (val)
-      load();
-  },
-  {
-    immediate: true,
-  },
-);
 </script>
 
 <template>
@@ -95,35 +47,6 @@ watch(
         <MenuChatMenu />
         <slot />
       </div>
-    </div>
-    <div
-      v-else-if="user.isLogin && ws.status !== WsStatusEnum.OPEN"
-      v-bind="$attrs"
-      class="main-box h-100vh flex-row-c-c overflow-hidden"
-    >
-      <OtherError :msg="ws.status === WsStatusEnum.CLOSE ? '服务连接失败，请重试' : '服务断开连接，请重连'" icon="i-solar:eye-line-duotone w-8rem h-8rem animate-[0.2s_fade-in_3]">
-        <template #footer>
-          <BtnElButton
-            v-auth
-            icon-class="i-solar:refresh-outline mr-2"
-            class="hover:shadow-md"
-            type="primary"
-            transition-icon
-            @click="load()"
-          >
-            重新连接
-          </BtnElButton>
-          <!-- <BtnElButton
-            icon-class="i-solar:home-2-bold mr-2"
-            class="hover:shadow-md"
-            plain
-            transition-icon
-            @click="navigateTo('/')"
-          >
-            回到首页
-          </BtnElButton> -->
-        </template>
-      </OtherError>
     </div>
   </main>
 </template>

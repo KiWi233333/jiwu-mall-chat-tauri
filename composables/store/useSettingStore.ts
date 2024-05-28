@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import type { CommCategory } from "@/composables/api/community/category";
 import type { IndexMenuType } from "~/components/menu";
 
 // @unocss-include
@@ -7,6 +6,10 @@ import type { IndexMenuType } from "~/components/menu";
 export const useSettingStore = defineStore(
   "setting",
   () => {
+    const sysPermission = ref({
+      isNotification: false,
+      isNotificationSound: true,
+    });
     // 用户页折叠
     const isUserFold = ref(true);
     const isUserCollapse = ref(true);
@@ -26,27 +29,6 @@ export const useSettingStore = defineStore(
       { url: "/chat", icon: "i-solar:chat-round-bold-duotone", title: "聊天", children: [] },
       { url: "/setting", icon: "i-solar:settings-linear", title: "设置", children: [] },
     ]);
-
-    // 路由
-    async function loadMenus() {
-      const { data } = await getCommCategory();
-      menuList.value[2].children = data.value?.data?.map(p => toMenuTypeFn(p)) || [];
-    }
-
-    // 路由
-    function toMenuTypeFn(p: CommCategory): IndexMenuType {
-      const arr: IndexMenuType = {
-        url: `/community/category/${p.id}`,
-        icon: "",
-        image: p.image,
-        title: p.name,
-        children: [],
-      };
-      if (p.children?.length)
-        arr.children = p.children?.map(item => toMenuTypeFn(item)) as IndexMenuType[];
-      return arr;
-    }
-
 
     // ---------------------设置-----------------
     const settingPage = ref({
@@ -88,11 +70,11 @@ export const useSettingStore = defineStore(
       isFold,
       isUserCollapse,
       isUserFold,
+      sysPermission,
       settingPage,
       isThemeChangeLoad,
       showChatMenu,
       // actions
-      loadMenus,
       // getter
     };
   },

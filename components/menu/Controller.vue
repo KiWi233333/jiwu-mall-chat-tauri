@@ -21,17 +21,20 @@ function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
     appWindow.toggleMaximize();
   };
   if (type === "close") {
-    ElMessageBox.confirm("是否关闭应用？", {
+    ElMessageBox.confirm("是否关闭至托盘？", {
       title: "提示",
-      type: "warning",
       confirmButtonText: "关闭",
       confirmButtonClass: "el-button--danger",
       center: true,
       cancelButtonText: "取消",
-      lockScroll: false,
+      lockScroll: true,
       callback: async (action: string) => {
-        if (action === "confirm")
-          appWindow.close();
+        if (action === "confirm") {
+          appWindow.minimize();
+          setTimeout(() => {
+            appWindow.hide();
+          }, 300);
+        }
       },
     });
   }

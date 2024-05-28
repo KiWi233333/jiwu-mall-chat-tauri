@@ -1,7 +1,7 @@
 
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { invoke } from "@tauri-apps/api";
+import { sendNotification } from "@tauri-apps/api/notification";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 
 // @unocss-include
@@ -37,7 +37,6 @@ const noticeType = [
   WsMsgBodyType.MESSAGE, // 普通消息
 ];
 
-
 // 初始化
 function load() {
   ws.initDefault((e) => {
@@ -54,13 +53,13 @@ function load() {
     }, 20000);
     ws.onMessage((msg) => {
       // 消息通知
-      if (ws.isWindBlur && noticeType.includes(msg.type)) {
+      // if (ws.isWindBlur && noticeType.includes(msg.type)) {
+      if (noticeType.includes(msg.type)) {
         const body = msg.data as ChatMessageVO;
-        useWebToast(
-          `${body.fromUser.nickName}:`, // 发送人
-        `${body.message.content}`, // 发送消息
-        {
+        sendNotification({
           icon: BaseUrlImg + body.fromUser.avatar,
+          title: body.fromUser.nickName,
+          body: `${body.message.content || "消息通知"}`,
         });
       }
     });
@@ -112,7 +111,6 @@ function onLogin() {
             icon-class="i-solar:refresh-outline mr-2"
             class="hover:shadow-md"
             type="primary"
-            transition-icon
             @click="load()"
           >
             重新连接
@@ -121,10 +119,9 @@ function onLogin() {
             icon-class="i-solar:home-2-bold mr-2"
             class="hover:shadow-md"
             plain
-            transition-icon
             @click="navigateTo('/login')"
           >
-            去登录
+            重新登录
           </BtnElButton>
         </template>
       </OtherError>

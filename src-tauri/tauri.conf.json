@@ -12,6 +12,14 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "http": {
+        "all": false,
+        "request": true,
+        "scope": ["https://jiwu.kiwi2333.top"]
+      },
+      "notification": {
+        "all": true
+      },
       "window": {
         "all": false,
         "close": true,
@@ -78,8 +86,8 @@
         "title": "极物聊天",
         "width": 1290,
         "center": true,
-        "minWidth": 345,
-        "minHeight": 724,
+        "minWidth": 442,
+        "minHeight": 788,
         "decorations": false,
         "hiddenTitle": true,
         "transparent": true

@@ -112,27 +112,16 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
 
 
 // 撤回消息
-function refundMsg(roomId: number, msgId: number) {
-  ElMessageBox.confirm("是否确认撤回消息？", "撤回提示", {
-    lockScroll: false,
-    confirmButtonText: "确 认",
-    confirmButtonClass: "el-button--primary is-plain border-default ",
-    cancelButtonText: "取 消",
-    center: true,
-    callback: async (action: string) => {
-      if (action !== "confirm")
-        return;
-      const res = await refundChatMessage(roomId, msgId, user.getToken);
-      if (res.code === StatusCode.SUCCESS) {
-        ElMessage.success("撤回成功！");
-        if (props.data.message.id === msgId) {
-          props.data.message.type = MessageType.RECALL;
-          props.data.message.content = `${chat.theContact.type === RoomType.GROUP ? `"${props.data.fromUser.nickName}"` : "\"对方\""}撤回了一条消息`;
-          props.data.message.body = undefined;
-        }
-      }
-    },
-  });
+async function refundMsg(roomId: number, msgId: number) {
+  const res = await refundChatMessage(roomId, msgId, user.getToken);
+  if (res.code === StatusCode.SUCCESS) {
+    ElMessage.success("撤回成功！");
+    if (props.data.message.id === msgId) {
+      props.data.message.type = MessageType.RECALL;
+      props.data.message.content = `${chat.theContact.type === RoomType.GROUP ? `"${props.data.fromUser.nickName}"` : "\"对方\""}撤回了一条消息`;
+      props.data.message.body = undefined;
+    }
+  }
 }
 
 

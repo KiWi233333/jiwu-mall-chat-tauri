@@ -189,10 +189,10 @@ async function onLogin(formEl: any | undefined) {
     if (res.code === 20000) {
       // 登录成功
       if (res.data !== "") {
-        ElMessage.success({
-          message: "登录成功！",
-          duration: 2000,
-        });
+        // ElMessage.success({
+        //   message: "登录成功！",
+        //   duration: 2000,
+        // });
         store.$patch({
           token: res.data,
           isLogin: true,
@@ -200,7 +200,6 @@ async function onLogin(formEl: any | undefined) {
           showRegisterForm: false,
         });
         await store.onUserLogin(res.data, autoLogin.value);
-
         return;
       }
       // 登录失败
@@ -227,7 +226,7 @@ async function onLogin(formEl: any | undefined) {
   <!-- 登录 -->
   <el-form
     ref="formRef"
-    v-loading="isLoading"
+    :disabled="isLoading"
     label-position="top"
     hide-required-asterisk
     :rules="rules"

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { invoke } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
+import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
+import type { PayloadType } from "./types/tauri";
 import { appKeywords, appName } from "@/constants/index";
 
 // 1、确认是否登录
@@ -87,7 +89,7 @@ onMounted(() => {
 });
 
 const timer = ref<any>(null);
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener("resize", () => {
     if (timer.value)
       clearTimeout(timer.value);// 清除之前的定时器，避免重复触发
@@ -99,6 +101,24 @@ onMounted(() => {
       if (app)
         app.classList.remove("stop-transition");
     }, 600);
+  });
+
+  // 获取通知权限
+  let permissionGranted = await isPermissionGranted();
+  if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === "granted";
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
+  else {
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
+
+  // 监听路由事件
+  listen<PayloadType>("router", (e) => {
+    const path = e.payload.message; // 路径
+    if (path)
+      navigateTo(path);
   });
 });
 </script>
