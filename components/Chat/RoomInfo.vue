@@ -3,9 +3,6 @@ import { WsStatusEnum } from "~/composables/types/WsType";
 
 const chat = useChatStore();
 const setting = useSettingStore();
-const ws = useWs();
-
-
 // 获取类型
 const getType = computed(() => {
   let msg = "";
@@ -39,18 +36,18 @@ const getType = computed(() => {
         {{ getType }}
       </el-tag>
       <!-- 断开会话 -->
-      <i
+      <!-- <i
         v-if="ws.status === WsStatusEnum.OPEN"
         circle plain
         class="ml-a cursor-pointer btn-danger"
         transition="all  op-60 group-hover:op-100 300  cubic-bezier(0.61, 0.225, 0.195, 1.3)"
         i-solar:power-bold
         p-2.2 @click="ws.close()"
-      />
+      /> -->
       <!-- 查看群成员 -->
       <i
         v-if="chat.theContact.type === RoomType.GROUP"
-        class="flex-row-c-c grid-gap-2 btn-primary"
+        class="ml-a flex-row-c-c grid-gap-2 btn-primary"
         transition="all  op-60 group-hover:op-100 300  cubic-bezier(0.61, 0.225, 0.195, 1.3)"
         i-solar:users-group-two-rounded-bold-duotone
         p-2.2 @click="setting.isOpenGroupMember = !setting.isOpenGroupMember"

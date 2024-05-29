@@ -21,22 +21,26 @@ function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
     appWindow.toggleMaximize();
   };
   if (type === "close") {
-    ElMessageBox.confirm("是否关闭至托盘？", {
-      title: "提示",
-      confirmButtonText: "关闭",
-      confirmButtonClass: "el-button--danger",
-      center: true,
-      cancelButtonText: "取消",
-      lockScroll: true,
-      callback: async (action: string) => {
-        if (action === "confirm") {
-          appWindow.minimize();
-          setTimeout(() => {
-            appWindow.hide();
-          }, 300);
-        }
-      },
-    });
+    appWindow.minimize();
+    setTimeout(() => {
+      appWindow.hide();
+    }, 300);
+    // ElMessageBox.confirm("是否关闭至托盘？", {
+    //   title: "提示",
+    //   confirmButtonText: "关闭",
+    //   confirmButtonClass: "el-button--danger",
+    //   center: true,
+    //   cancelButtonText: "取消",
+    //   lockScroll: true,
+    //   callback: async (action: string) => {
+    //     if (action === "confirm") {
+    //       appWindow.minimize();
+    //       setTimeout(() => {
+    //         appWindow.hide();
+    //       }, 300);
+    //     }
+    //   },
+    // });
   }
   if (type === "alwaysOnTop") {
     isAlwaysOnTopVal.value = !isAlwaysOnTopVal.value;

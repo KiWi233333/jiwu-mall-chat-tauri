@@ -34,6 +34,13 @@ fn main() {
                 ..
             } => {
                 let window = app.get_window("main").unwrap();
+                let is_visible = window.is_visible().unwrap();
+                if !is_visible {
+                    window.show().unwrap();
+                    window.unminimize().unwrap();
+                    window.set_focus().unwrap();
+                    return;
+                }
                 let is_focus = window.is_focused().unwrap();
                 if !is_focus {
                     let is_min = window.is_minimized().unwrap();

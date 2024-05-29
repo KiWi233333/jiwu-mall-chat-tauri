@@ -37,20 +37,19 @@ const noticeType = [
   WsMsgBodyType.MESSAGE, // 普通消息
 ];
 
+// 创建 Web Worker
+let worker: Worker;
 // 初始化
-function load() {
+function reload() {
+  worker?.terminate?.();
+  worker = new Worker("useWsWoker.js");
+  // 初始化 WebSocket 连接
   ws.initDefault((e) => {
-    timer.value = setInterval(() => {
-      if (ws.status === WsStatusEnum.CLOSE) {
-        clearInterval(timer.value);
-        timer.value = null;
-        load();
-      }
-      else {
-        // 心跳
-        ws.sendHeart();
-      }
-    }, 20000);
+    // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
+    worker.postMessage({
+      status: ws.status,
+      noticeType,
+    });
     ws.onMessage((msg) => {
       // 消息通知
       // if (ws.isWindBlur && noticeType.includes(msg.type)) {
@@ -64,23 +63,29 @@ function load() {
       }
     });
   });
+
+  // Web Worker 消息处理
+  worker.addEventListener("message", (e) => {
+    console.log(e.data.type, e.data?.data);
+    if (e.data.type === "reload")
+      reload();
+    if (e.data.type === "heart")
+      ws.sendHeart();
+    if (e.data.type === "log")
+      console.log(e.data.data);
+  });
 }
 // 退出登录时候
 watch(
   () => user.isLogin,
   async (val) => {
     if (val)
-      load();
+      reload();
   },
   {
     immediate: true,
   },
 );
-
-function onLogin() {
-  // invoke("window_to_login_page");
-  window?.location?.reload?.();
-}
 </script>
 
 <template>
@@ -111,7 +116,7 @@ function onLogin() {
             icon-class="i-solar:refresh-outline mr-2"
             class="hover:shadow-md"
             type="primary"
-            @click="load()"
+            @click="reload()"
           >
             重新连接
           </BtnElButton>
@@ -126,27 +131,6 @@ function onLogin() {
         </template>
       </OtherError>
     </div>
-    <!-- <div v-else class="main-box h-100vh flex-row-c-c">
-      <OtherError msg="未登录,请登录后查看!" icon="i-solar:eye-line-duotone w-8rem h-8rem animate-[0.2s_fade-in_3]">
-        <template #footer>
-          <BtnElButton
-            plain
-            @click="$router.back()"
-          >
-            返 回
-          </BtnElButton>
-          <BtnElButton
-            icon-class="i-solar:user-rounded-outline mr-2"
-            class="hover:shadow-md"
-            type="primary"
-            transition-icon
-            @click="onLogin"
-          >
-            登 录
-          </BtnElButton>
-        </template>
-      </OtherError>
-    </div> -->
   </main>
 </template>
 

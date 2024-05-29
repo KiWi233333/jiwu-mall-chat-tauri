@@ -201,51 +201,54 @@ onMounted(() => {
     :model="form"
     :disabled="isDisabled"
     class="w-full"
+    style="position: relative;"
     @submit.prevent="onSubmit"
   >
-    <!-- 新消息 -->
-    <el-form-item
-      v-show="theRoomUnReadLength"
-      class="w-full cursor-pointer"
-      style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;justify-content: right;"
-      @click="setReadAll"
-    >
-      <el-tag type="warning" effect="light" round class="ml-a">
-        有{{ theRoomUnReadLength }}条新消息
-      </el-tag>
-    </el-form-item>
-    <!-- 图片 -->
-    <el-form-item
-      v-if="imgList.length > 0"
-      class="w-full cursor-pointer"
-      style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;justify-content: center;
+    <div class="top absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
+      <!-- 新消息 -->
+      <el-form-item
+        v-show="theRoomUnReadLength"
+        class="w-full cursor-pointer"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;justify-content: right;"
+        @click="setReadAll"
+      >
+        <el-tag type="warning" effect="light" round class="ml-a">
+          有{{ theRoomUnReadLength }}条新消息
+        </el-tag>
+      </el-form-item>
+      <!-- 图片 -->
+      <el-form-item
+        v-if="imgList.length > 0"
+        class="w-full cursor-pointer"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;
         grid-gap:0.2rem;
         margin-left: auto;"
-    >
-      <CardElImage
-        v-for="(img, i) in imgList" :key="i"
-        preview-teleported
-        loading="lazy"
-        :preview-src-list="[img.id || BaseUrlImg + img.key]"
-        :src="img.id || BaseUrlImg + img.key"
-        class="ml-a h-8rem w-8rem overflow-hidden rounded-6px p-2 border-default card-default"
-        @contextmenu="onContextMenu($event, img.key, i)"
-      />
-    </el-form-item>
-    <!-- 回复 -->
-    <el-form-item
-      v-if="chat.replyMsg?.fromUser"
-      prop="body.replyMsgId"
-      class="w-full"
-      style="padding: 0.4rem;margin:0;margin-bottom:0.2rem;display: flex;"
-    >
-      <div class="w-full flex animate-[300ms_fade-in] items-center rounded-6px bg-[#ffffff9c] p-2 shadow backdrop-blur-10px border-default dark:bg-dark">
-        <el-tag effect="dark" class="mr-2">
-          回复
-        </el-tag><ChatMsgContentCard class="w-4/5 truncate" :data="chat.replyMsg" />
-        <div class="i-solar:close-circle-bold text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" h-2em w-2em @click="chat.setReplyMsg({})" />
-      </div>
-    </el-form-item>
+      >
+        <CardElImage
+          v-for="(img, i) in imgList" :key="i"
+          preview-teleported
+          loading="lazy"
+          :preview-src-list="[img.id || BaseUrlImg + img.key]"
+          :src="img.id || BaseUrlImg + img.key"
+          class="ml-a h-8rem w-8rem overflow-hidden rounded-6px p-2 border-default card-default"
+          @contextmenu="onContextMenu($event, img.key, i)"
+        />
+      </el-form-item>
+      <!-- 回复 -->
+      <el-form-item
+        v-if="chat.replyMsg?.fromUser"
+        prop="body.replyMsgId"
+        class="w-full"
+        style="padding: 0.4rem;margin:0;margin-bottom:0.2rem;display: flex;"
+      >
+        <div class="w-full flex animate-[300ms_fade-in] items-center rounded-6px bg-[#ffffff9c] p-2 shadow backdrop-blur-10px border-default dark:bg-dark">
+          <el-tag effect="dark" class="mr-2">
+            回复
+          </el-tag><ChatMsgContentCard class="w-4/5 truncate" :data="chat.replyMsg" />
+          <div class="i-solar:close-circle-bold text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" h-2em w-2em @click="chat.setReplyMsg({})" />
+        </div>
+      </el-form-item>
+    </div>
     <div class="flex flex-col border-0 border-t-1px px-4 py-2 shadow border-default bg-color">
       <!-- 工具栏 -->
       <div
