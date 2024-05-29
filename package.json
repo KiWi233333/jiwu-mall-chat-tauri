@@ -9,7 +9,7 @@
     "dev:tauri": "tauri dev",
     "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
-    "build": "nuxt build"
+    "build": "nuxi generate"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.43.1",
