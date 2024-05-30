@@ -6,8 +6,8 @@
     "distDir": "../.output/public"
   },
   "package": {
-    "productName": "极物聊天",
-    "version": "1.0.0"
+    "productName": "JiwuChat",
+    "version": "1.0.2"
   },
   "tauri": {
     "allowlist": {

@@ -17,6 +17,10 @@
 
 ### 项目截图
 
+- 聊天桌面应用 Login
+
+![登录](./.doc/login.png)
+
 - 聊天桌面应用 Chat
 
 ![主页](./.doc/chat-el.png)
