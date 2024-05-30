@@ -89,6 +89,7 @@ export const useWs = defineStore(
       webSocketHandler.value.addEventListener("error", (e) => {
         status.value = WsStatusEnum.CLOSE;
         webSocketHandler.value = null;
+        console.log(e);
       });
     }
     function oncolse() {

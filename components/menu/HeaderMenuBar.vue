@@ -14,7 +14,9 @@ const isTop = ref(false);
       <strong hidden sm:block>极物圈</strong>
     </NuxtLink>
     <!-- 拖拽区域 -->
-    <div class="absolute left-0 top-0 z-0 h-full w-full" data-tauri-drag-region />
+    <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>
+      <slot name="drag-content" />
+    </div>
     <div class="flex flex-shrink-0 items-center gap-4">
       <div class="flex items-center gap-4 rounded-2rem px-2 py-1 op-40 border-default v-card group-hover-op-100">
         <!-- 主题 -->
@@ -26,9 +28,9 @@ const isTop = ref(false);
         <i
           circle plain
           class="cursor-pointer btn-danger"
+          title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
           i-solar:logout-3-broken
-          title="退出登录"
           p-2 @click="user.exitLogin()"
         />
       </div>

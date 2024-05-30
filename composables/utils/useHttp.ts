@@ -1,4 +1,4 @@
-import { StatusCodeText } from "~/types/result";
+import { StatusCode, StatusCodeText } from "~/types/result";
 
 type FetchType = typeof $fetch
 type ReqType = Parameters<FetchType>[0]
@@ -30,20 +30,22 @@ export function httpRequest<T = unknown>(
       const data = coinfig.response._data;
       let msg = "";
       const type = "error";
-      const code = data.code as number;
-      if (data.code !== StatusCode.SUCCESS)
-      // @ts-expect-error
+      const code: StatusCode = data.code;
+      if (data.code !== StatusCode.SUCCESS) {
         msg = StatusCodeText[code] || "";
+      }
+      else if (data.code === StatusCode.TOKEN_DEVICE_ERR) {
+        user.clearUserStore();
+        navigateTo("/login", { replace: true });
+      }
       if (msg !== "") {
-        setTimeout(() => {
-          ElMessage.closeAll("error");
-          // 组件
-          ElMessage.error({
-            grouping: true,
-            type,
-            message: data.message.length > 50 ? msg : data.message,
-          });
-        }, 10);
+        ElMessage.closeAll("error");
+        // 组件
+        ElMessage.error({
+          grouping: true,
+          type,
+          message: data.message.length > 50 ? msg : data.message,
+        });
       }
       // 续签
       // @ts-expect-error

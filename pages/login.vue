@@ -16,22 +16,28 @@ definePageMeta({
 <template>
   <div
     v-if="user.showLoginForm || user.showRegisterForm"
-    relative h-100vh w-100vw flex-row-c-c overflow-visible shadow border-default card-default bg-color
+    data-tauri-drag-region
+    class="relative min-h-100vh flex-1 overflow-hidden overflow-hidden shadow border-default card-default bg-color"
+    grid="~ cols-1 md:cols-2"
   >
-    <div data-tauri-drag-region class="fixed left-0 top-0 w-full flex items-center justify-between gap-3 p-4">
-      <div class="left flex-row-c-c gap-3 tracking-0.2em">
-        <CardElImage src="/logo.png" class="h-1.6rem w-1.6rem" />
-        <strong>极物圈 | 登录</strong>
-      </div>
-      <div flex items-center gap-2>
-        <MenuController key="header" :show-max="false" />
-      </div>
+    <div fixed right-4 top-4 flex items-center gap-2>
+      <MenuController key="header" :show-max="false" />
     </div>
-    <div class="select-none">
-      <Transition
-        name="popup"
-        mode="in-out"
-      >
+    <!-- bg -->
+    <div hidden h-full w-full border-0 border-r-1px shadow-md shadow-inset md:block border-default>
+      <ElImage src="/images/login_bg.jpg" fit="cover" data-tauri-drag-region class="h-full animate-[300ms_fade-in] select-none overflow-hidden rounded-r-0 card-default" />
+    </div>
+    <!-- 表单 -->
+    <div data-tauri-drag-region class="flex flex-col select-none pt-20vh">
+      <div v-auto-animate mx-a class="w-3/5">
+        <div key="login-bg" flex items-center gap-2 py-4>
+          <ElImage
+            src="/logo.png" class="h-2em w-2em"
+          />
+          <strong class="font-bold tracking-0.2em op-80">
+            极物聊天 | JiwuChat
+          </strong>
+        </div>
         <!-- 登录 -->
         <FormLoginForm
           v-if="user.showLoginForm"
@@ -42,13 +48,7 @@ definePageMeta({
           v-else-if="user.showRegisterForm"
           key="register-form"
         />
-      </Transition>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.form {
-  --at-apply: "border-default relative mx-a w-420px rounded-6px card-default"
-}
-</style>

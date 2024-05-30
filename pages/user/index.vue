@@ -57,7 +57,7 @@ definePageMeta({
         <div v-if="store?.getToken ">
           <!-- 壁纸 -->
           <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
-          <div class="gird-cols-1 grid px-2rem sm:(grid-cols-[3fr_1fr] px-4rem)">
+          <div class="main">
             <!-- 用户头像 -->
             <div v-if="user" class="avatars relative flex-1 -top-5em md:pr-4">
               <UserInfoLine
@@ -91,4 +91,8 @@ definePageMeta({
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.main {
+  --at-apply: 'grid grid-cols-1 px-2rem sm:(grid-cols-[3fr_1fr] px-4rem)';
+}
+</style>

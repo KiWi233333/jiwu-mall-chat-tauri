@@ -39,10 +39,10 @@ const getType = computed(() => {
       <!-- <i
         v-if="ws.status === WsStatusEnum.OPEN"
         circle plain
-        class="ml-a cursor-pointer btn-danger"
+        class="ml-a cursor-pointer p-2.2 btn-danger"
         transition="all  op-60 group-hover:op-100 300  cubic-bezier(0.61, 0.225, 0.195, 1.3)"
         i-solar:power-bold
-        p-2.2 @click="ws.close()"
+        @click="ws.close()"
       /> -->
       <!-- 查看群成员 -->
       <i

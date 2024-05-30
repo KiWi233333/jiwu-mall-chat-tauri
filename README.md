@@ -59,7 +59,7 @@ pnpm run dev:tauri
 ### 📦 打包
 
 ```sh
-pnpm run build
+pnpm run build:tauri
 ```
 
 ### ❌ pnpm install error

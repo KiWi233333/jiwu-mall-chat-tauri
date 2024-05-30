@@ -273,6 +273,7 @@ function toLoginForm() {
   <!-- 注册 -->
   <el-form
     ref="formRef" v-loading="isLoading" label-position="top"
+    style="border: none;"
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
     <small v-if="isLoading" class="absolute-center-center">{{ loadingText }}</small>
@@ -349,7 +350,6 @@ function toLoginForm() {
 <style scoped lang="scss">
 .form {
   display: block;
-  padding: 2em 3em;
   overflow: hidden;
   animation-delay: 0.1s;
 

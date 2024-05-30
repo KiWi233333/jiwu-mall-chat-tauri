@@ -39,9 +39,12 @@ loadData();
 const chat = useChatStore();
 function onArgeeFriend(applyId: number) {
   ElMessageBox.confirm("是否同意好友申请？", {
+    title: "新好友",
+    type: "info",
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     lockScroll: false,
+    center: true,
     callback: async (action: string) => {
       if (action === "confirm") {
         const res = await argeeFriendApply({ applyId }, user.getToken);

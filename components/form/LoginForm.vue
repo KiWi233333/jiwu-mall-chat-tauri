@@ -231,7 +231,8 @@ async function onLogin(formEl: any | undefined) {
     hide-required-asterisk
     :rules="rules"
     :model="userForm"
-    class="form animate__animated"
+    style="border: none;"
+    class="form"
   >
     <h2
       mb-5
@@ -390,7 +391,7 @@ async function onLogin(formEl: any | undefined) {
         @keyup.enter="onLogin(formRef)"
       />
     </el-form-item>
-    <el-form-item mt-1em>
+    <el-form-item mt-5>
       <el-button
         type="primary"
         class="submit w-full tracking-0.2em"
@@ -407,7 +408,6 @@ async function onLogin(formEl: any | undefined) {
 <style scoped lang="scss">
 .form {
   display: block;
-  padding: 2em 3em;
   overflow: hidden;
   animation-delay: 0.1s;
 
@@ -435,7 +435,7 @@ async function onLogin(formEl: any | undefined) {
 
 // label总体
 :deep(.el-form-item) {
-  margin-bottom: 14px;
+  margin-bottom: 1.25rem;
 }
 
 // 切换登录

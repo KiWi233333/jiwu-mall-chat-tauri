@@ -29,8 +29,7 @@ function onContextMenu(e: MouseEvent) {
 }
 const user = useUserStore();
 const ws = useWs();
-const timer = ref();
-
+const showToast = ref(false);
 
 // 通知消息类型  WsMsgBodyType
 const noticeType = [
@@ -91,10 +90,40 @@ watch(
 <template>
   <main class="h-100vh flex flex-col overflow-hidden border-default v-card">
     <div
-      v-if="user.isLogin && ws.status === WsStatusEnum.OPEN"
       class="relative h-full flex flex-col overflow-hidden"
     >
-      <MenuHeaderMenuBar />
+      <MenuHeaderMenuBar>
+        <template #drag-content>
+          <div
+
+            v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin" class="fixed top-2em rounded-4 text-center border-default card-default-br" animate-zoom-in-down p-2
+          >
+            <div mb-4 py-2>
+              {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : !user.isLogin ? "未登录" : '网络错误' }}
+            </div>
+            <BtnElButton
+              icon-class="i-solar:refresh-outline mr-1"
+              class="hover:shadow-md"
+              type="primary"
+              round
+              style="padding: 0 1em;height: 2em;line-height: 2em;"
+              @click="reload()"
+            >
+              重连
+            </BtnElButton>
+            <BtnElButton
+              icon-class="i-solar:power-bold mr-1"
+              class="hover:shadow-md"
+              type="danger"
+              round
+              style="padding: 0 1em;height: 2em;line-height: 2em;"
+              @click="navigateTo('/login')"
+            >
+              登录
+            </BtnElButton>
+          </div>
+        </template>
+      </MenuHeaderMenuBar>
       <div
         class="main-box relative"
         v-bind="$attrs"
@@ -104,7 +133,7 @@ watch(
         <slot />
       </div>
     </div>
-    <div
+    <!-- <div
       v-else-if="user.isLogin && ws.status !== WsStatusEnum.OPEN"
       v-bind="$attrs"
       class="main-box h-100vh flex-row-c-c overflow-hidden"
@@ -130,7 +159,7 @@ watch(
           </BtnElButton>
         </template>
       </OtherError>
-    </div>
+    </div> -->
   </main>
 </template>
 
