@@ -70,18 +70,16 @@ function scrollBottom(animate = true) {
   if (isScroll.value)
     return;
   isScroll.value = true;
-  timer.value = setTimeout(() => {
-    if (animate) {
-      scrollbarRef.value?.wrapRef?.scrollTo({
-        top: scrollbarRef?.value?.wrapRef?.scrollHeight || 0,
-        behavior: "smooth",
-      });
-    }
-    else {
-      scrollbarRef.value?.setScrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight || 0);
-    }
-    isScroll.value = false;
-  }, 200);
+  if (animate) {
+    scrollbarRef.value?.wrapRef?.scrollTo({
+      top: scrollbarRef?.value?.wrapRef?.scrollHeight || 0,
+      behavior: "smooth",
+    });
+  }
+  else {
+    scrollbarRef.value?.setScrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight || 0);
+  }
+  isScroll.value = false;
 }
 
 // 保存上一个位置
@@ -95,12 +93,10 @@ function scrollTop(size: number) {
 }
 
 // 绑定事件
-nextTick(() => {
-  chat.scrollBottom = scrollBottom;
-  chat.scrollReplyMsg = scrollReplyMsg;
-  chat.saveScrollTop = saveScrollTop;
-  chat.scrollTop = scrollTop;
-});
+chat.scrollBottom = scrollBottom;
+chat.scrollReplyMsg = scrollReplyMsg;
+chat.saveScrollTop = saveScrollTop;
+chat.scrollTop = scrollTop;
 
 onBeforeUnmount(() => {
   timer.value && clearTimeout(timer.value);

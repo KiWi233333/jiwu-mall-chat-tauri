@@ -13,7 +13,7 @@ const pageInfo = ref({
 /**
  * 加载数据
  */
-async function loadData(call?: () => void) {
+async function loadData(call?: (data?: Message[]) => void) {
   if (isLoading.value || pageInfo.value.isLast || !chat.theContact.roomId)
     return;
   isLoading.value = true;
@@ -22,12 +22,11 @@ async function loadData(call?: () => void) {
     if (data.list && data.list.length)
       chat.theContact.msgList.unshift(...data.list);
     const oldSize = chat.scrollTopSize;
-
     nextTick(() => {
       // 更新滚动位置
       chat.saveScrollTop && chat.saveScrollTop();
       if (pageInfo.value.cursor === null) {
-        call && call();
+        call && call(chat.theContact.msgList);
       }
       else {
         // 更新滚动位置
@@ -47,8 +46,7 @@ async function loadData(call?: () => void) {
     pageInfo.value.cursor = null;
   });
 }
-
-
+const isReload = ref(false);
 // 监听房间错误
 watch(() => chat.theContact.roomId, (val) => {
   reload();
@@ -59,7 +57,6 @@ watch(() => chat.theContact.roomId, (val) => {
   immediate: true,
 });
 
-
 // 重新加载
 function reload() {
   chat.theContact.msgList = [];
@@ -69,8 +66,25 @@ function reload() {
     size: 20,
   };
   chat.scrollTopSize = 0;
-  loadData(() => {
-    chat.scrollBottom();
+  isReload.value = true;
+  isLoading.value = true;
+  getChatMessagePage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
+    // 追加数据
+    if (data.list && data.list.length)
+      chat.theContact.msgList.unshift(...data.list);
+    nextTick(() => {
+      if (isReload.value)
+        chat.scrollBottom(false);
+      isReload.value = false;
+      isLoading.value = false;
+    });
+    pageInfo.value.isLast = data.isLast;
+    pageInfo.value.cursor = data.cursor;
+  }).catch(() => {
+    isLoading.value = false;
+    pageInfo.value.isLast = false;
+    pageInfo.value.cursor = null;
+    isReload.value = false;
   });
 }
 /**
@@ -236,10 +250,12 @@ defineExpose({
     relative v-bind="$attrs"
     flex
     flex-col
-    class="msg-list"
+    class="msg-list op-0 transition-opacity"
+    :class="{ 'op-100': !isReload }"
   >
     <ListDisAutoIncre
       :auto-stop="false"
+      :immediate="false"
       :no-more="pageInfo.isLast"
       :loading="isLoading"
       loading-class="load-chaotic-orbit"
@@ -251,7 +267,6 @@ defineExpose({
         :id="`chat-msg-${msg.message.id}`"
         :key="msg.message.id"
         :index="i"
-        class="animate-[0.2s_zoom-in]"
         :data="msg"
       />
     </ListDisAutoIncre>

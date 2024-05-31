@@ -89,7 +89,7 @@ export const useChatStore = defineStore(
     const onReloadContact = (size: number = 10, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) => {
     };
     // 消息列表滚动
-    const scrollBottom = () => {
+    const scrollBottom = (animate = true) => {
     };
     const scrollTopSize = ref(0);
     const scrollReplyMsg = (msgId: number, gapCount: number = 0) => {};

@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   immediate: true,
   loading: false,
   autoStop: true,
-  delay: 400,
+  delay: 500,
   appendLoadingClass: "mx-a text-1.8rem",
   loadingClass: "mx-a my-0.6em h-1.4rem w-1.4rem animate-[spin_2s_infinite_linear] rounded-6px bg-[var(--el-color-primary)]",
 });
@@ -39,13 +39,10 @@ const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
     isIntersecting.value = obj.isIntersecting;
+    clearInterval(timer);
     if (obj.isIntersecting) {
-      clearInterval(timer);
       callBack && callBack();
-      timer = setInterval(callBack, props.delay * 2);
-    }
-    else {
-      clearInterval(timer);
+      timer = setInterval(callBack, props.delay);
     }
   },
 );
@@ -53,7 +50,6 @@ const { stop, isSupported } = useIntersectionObserver(
 function callBack() {
   if (props.noMore && props.autoStop) {
     cancelAnimationFrame(timer);
-    clearInterval(timer);
     stop && stop();
   }
   else {
@@ -64,24 +60,15 @@ function callBack() {
 if (props.immediate)
   emit("load");
 
-
 onUnmounted(() => {
-  cancelAnimationFrame(timer);
   clearInterval(timer);
   stop();
   timer = null;
 });
 
 watch(() => props.noMore, (val) => {
-  if (val && props.autoStop) {
-    cancelAnimationFrame(timer);
+  if (val && props.autoStop)
     stop && stop();
-  }
-});
-
-watch(() => props.loading, (val) => {
-  if (val)
-    requestAnimationFrame(callBack);
 });
 
 const showLoad = computed(() => {
