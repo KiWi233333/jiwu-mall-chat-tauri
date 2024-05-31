@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "JiwuChat",
+    "productName": "极物聊天",
     "version": "1.0.2"
   },
   "tauri": {
