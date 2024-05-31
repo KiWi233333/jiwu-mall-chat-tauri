@@ -49,6 +49,7 @@ export const useWs = defineStore(
        */
       other: [] as object[],
     });
+    const reload = () => { };
 
     // 初始化
     function initDefault(call: (event: Event) => any) {
@@ -186,6 +187,7 @@ export const useWs = defineStore(
       isWindBlur,
       wsMsgList,
       // 方法
+      reload,
       onerror,
       initDefault,
       link,

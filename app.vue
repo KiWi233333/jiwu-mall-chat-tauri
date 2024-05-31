@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
 import { open } from "@tauri-apps/api/shell";
 import type { PayloadType } from "./types/tauri";
+import { WsMsgBodyType } from "./composables/types/WsType";
 import { appKeywords, appName } from "@/constants/index";
 
 // 1、确认是否登录
@@ -128,6 +129,66 @@ onMounted(async () => {
       navigateTo(path);
   });
 });
+
+
+// 聊天
+const ws = useWs();
+// 通知消息类型  WsMsgBodyType
+const noticeType = [
+  WsMsgBodyType.MESSAGE, // 普通消息
+];
+
+// 创建 Web Worker
+let worker: Worker;
+// 初始化
+function reload() {
+  worker?.terminate?.();
+  worker = new Worker("useWsWoker.js");
+  // 初始化 WebSocket 连接
+  ws.initDefault((e) => {
+    // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
+    worker.postMessage({
+      status: ws.status,
+      noticeType,
+    });
+    ws.sendHeart();
+    ws.onMessage((msg) => {
+      // 消息通知
+      // if (ws.isWindBlur && noticeType.includes(msg.type)) {
+      if (noticeType.includes(msg.type)) {
+        const body = msg.data as ChatMessageVO;
+        sendNotification({
+          icon: BaseUrlImg + body.fromUser.avatar,
+          title: body.fromUser.nickName,
+          body: `${body.message.content || "消息通知"}`,
+        });
+      }
+    });
+  });
+
+  // Web Worker 消息处理
+  worker.addEventListener("message", (e) => {
+    console.log(e.data.type, e.data?.data);
+    if (e.data.type === "reload")
+      reload();
+    if (e.data.type === "heart")
+      ws.sendHeart();
+    if (e.data.type === "log")
+      console.log(e.data.data);
+  });
+}
+ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
+// 退出登录时候
+watch(
+  () => user.isLogin,
+  async (val) => {
+    if (val)
+      reload();
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>

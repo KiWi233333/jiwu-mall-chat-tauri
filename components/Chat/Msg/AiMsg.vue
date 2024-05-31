@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/preview.css";
+
 /**
  * 文本消息
  */
@@ -17,6 +20,7 @@ function getTime(time: string) {
     : useDateFormat(time, "HH:mm:ss").value.toString()
   ;
 }
+const colorMode = useColorMode();
 </script>
 
 
@@ -43,10 +47,17 @@ function getTime(time: string) {
           {{ data.message?.content }}
         </p>
       </template>
-      <v-md-preview
+      <MdPreview
         v-else
-        class="msg-popper markdown mt-2 sm:max-w-40rem"
-        :text="data.message?.content"
+        language="zh-CN"
+        :editor-id="data.id"
+        show-code-row-number
+        :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+        preview-theme="smart-blue"
+        code-theme="a11y"
+        :code-foldable="false"
+        class="msg-popper markdown mt-2 text-1em sm:max-w-40rem"
+        :model-value="data.message.content || ''"
       />
     </div>
   </div>
@@ -58,28 +69,13 @@ function getTime(time: string) {
 <style lang="scss" scoped>
 @use './msg.scss';
 .markdown {
-  :deep(.vuepress-markdown-body) {
-    font-size: 0.95em;
-    background: transparent;
-    padding: 0 !important;
-    * {
-      background: transparent ;
-    }
-    a {
-      color: var(--el-color-info);
-    }
-
-    a:active,
-    a:focus,
-    a:valid,
-    a:active {
-      background-color: none;
-    }
-    a:hover{
-      color: var(--el-color-info);
-    }
-    img {
-      --at-apply: "block rounded-2 max-w-10rem max-h-10rem";
+  :deep(.md-editor-preview-wrapper)  {
+    padding: 0;
+    .md-editor-code {
+      --at-apply: 'overflow-hidden card-default border-default hover:shadow transition-all mb-2';
+      code {
+        border-radius: 0 0 8px 8px;
+      }
     }
   }
 }

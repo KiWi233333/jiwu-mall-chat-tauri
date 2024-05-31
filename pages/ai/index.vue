@@ -41,8 +41,6 @@ interface AiChatMsgDTO {
 
 // 是否在返回数据
 const isChat = ref(false);
-
-
 const formRef = ref();
 function onSubmit() {
   if (status.value === WsStatusEnum.OPEN)
@@ -150,8 +148,8 @@ watch(status, (newVal, oldVal) => {
 
 const scollRef = ref();
 // 滚动到底部
-function scrollBottom() {
-  if (scollRef.value?.wrapRef?.scrollTo) {
+function scrollBottom(animate = true) {
+  if (scollRef.value?.wrapRef?.scrollTo && animate) {
     scollRef.value?.wrapRef?.scrollTo({
       top: scollRef?.value?.wrapRef?.scrollHeight + 20 || 0,
       behavior: "smooth",
@@ -161,6 +159,12 @@ function scrollBottom() {
     scollRef.value?.setScrollTop(scollRef?.value?.wrapRef?.scrollHeight + 20 || 0);
   }
 }
+
+onMounted(() => {
+  nextTick(() => {
+    scrollBottom(false);
+  });
+});
 definePageMeta({
   key: route => route.fullPath,
   layout: false,

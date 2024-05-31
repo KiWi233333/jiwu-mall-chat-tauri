@@ -3,7 +3,7 @@ let time = new Date();
 // 监听来自主线程的初始化消息
 self.onmessage = function (e) {
   const { status, noticeType } = e.data;
-  self.postMessage({ type: "log", data: `Web Worker 初始化，ws状态：${status}` });
+  self.postMessage({ type: "log", data: `Web Worker 初始化，ws状态：${status} ${noticeType}` });
 
   timer = setInterval(() => {
     const newTime = new Date();
