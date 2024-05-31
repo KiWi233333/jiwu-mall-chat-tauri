@@ -25,7 +25,7 @@ definePageMeta({
     </div>
     <!-- bg -->
     <div hidden h-full w-full border-0 border-r-1px shadow-md shadow-inset md:block border-default>
-      <ElImage src="/images/login_bg.jpg" fit="cover" data-tauri-drag-region class="h-full animate-[300ms_fade-in] select-none overflow-hidden rounded-r-0 card-default" />
+      <ElImage src="/images/login_bg.jpg" fit="cover" data-tauri-drag-region class="h-full select-none overflow-hidden rounded-r-0 card-default" />
     </div>
     <!-- 表单 -->
     <div data-tauri-drag-region class="flex flex-col select-none pt-20vh">
@@ -35,7 +35,7 @@ definePageMeta({
             src="/logo.png" class="h-2em w-2em"
           />
           <strong class="font-bold tracking-0.2em op-80">
-            极物聊天 | JiwuChat
+            极物聊天 | JIWU
           </strong>
         </div>
         <!-- 登录 -->

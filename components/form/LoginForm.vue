@@ -302,6 +302,7 @@ async function onLogin(formEl: any | undefined) {
         <el-input
           v-model.trim="userForm.email"
           type="email"
+          autocomplete="off"
           prefix-icon="Message"
           size="large"
           placeholder="请输入邮箱"
@@ -353,6 +354,7 @@ async function onLogin(formEl: any | undefined) {
       <el-input
         v-model.trim="userForm.code"
         prefix-icon="ChatDotSquare"
+        autocomplete="off"
         size="large"
         placeholder="请输入验证码"
         @keyup.enter="onLogin(formRef)"
@@ -367,6 +369,7 @@ async function onLogin(formEl: any | undefined) {
     >
       <el-input
         v-model.trim="userForm.username"
+        autocomplete="off"
         prefix-icon="user"
         size="large"
         placeholder="请输入用户名、手机号或邮箱"
@@ -384,6 +387,7 @@ async function onLogin(formEl: any | undefined) {
       <el-input
         v-model.trim="userForm.password"
         prefix-icon="Lock"
+        autocomplete="off"
         size="large"
         placeholder="请输入密码"
         show-password
@@ -394,7 +398,7 @@ async function onLogin(formEl: any | undefined) {
     <el-form-item mt-5>
       <el-button
         type="primary"
-        class="submit w-full tracking-0.2em"
+        class="submit w-full tracking-0.2em shadow"
         style="padding: 20px"
         @keyup.enter="onLogin(formRef)"
         @click="onLogin(formRef)"

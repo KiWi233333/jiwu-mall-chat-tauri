@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
+import { open } from "@tauri-apps/api/shell";
 import type { PayloadType } from "./types/tauri";
 import { appKeywords, appName } from "@/constants/index";
 
@@ -114,6 +115,12 @@ onMounted(async () => {
     setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
   }
 
+  // 监听open_url事件
+  listen<PayloadType>("open_url", (e) => {
+    const url = e.payload.message; // 路径
+    if (url)
+      open(url);
+  });
   // 监听路由事件
   listen<PayloadType>("router", (e) => {
     const path = e.payload.message; // 路径

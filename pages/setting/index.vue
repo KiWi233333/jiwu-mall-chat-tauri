@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { checkUpdate, installUpdate } from "@tauri-apps/api/updater";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -45,6 +46,32 @@ const theme = computed({
   get: () => setting.settingPage.modeToggle.value,
   set: (val: string) => setting.settingPage.modeToggle.value = val,
 });
+
+// 更新
+const isUpdatateLoad = ref(false);
+const haveUpdatate = ref(false);
+async function checkUpdates() {
+  if (isUpdatateLoad.value)
+    return;
+
+  isUpdatateLoad.value = true;
+  const update = await checkUpdate();
+  haveUpdatate.value = update.shouldUpdate;
+  setTimeout(() => {
+    isUpdatateLoad.value = false;
+  }, 1000);
+  if (haveUpdatate.value) {
+    ElMessageBox.confirm("检测到新版本，是否更新？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+      callback: async (action: string) => {
+        if (action === "confirm")
+          await installUpdate();
+      },
+    });
+  }
+}
 </script>
 
 <template>
@@ -72,6 +99,14 @@ const theme = computed({
                 {{ p.name }}
               </el-radio-button>
             </el-radio-group>
+          </div>
+          <!-- 更新 -->
+          <div class="group flex-row-bt-c">
+            关于更新
+            <span flex-row-c-c px-2 btn-default @click="!isUpdatateLoad && checkUpdates()">
+              <i i-solar:refresh-outline mr-1 p-2 :class="isUpdatateLoad ? 'animate-spin inline-block' : 'hidden'" />
+              检查更新
+            </span>
           </div>
         </section>
         <!-- 保存 -->

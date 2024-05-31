@@ -94,12 +94,12 @@ watch(
     >
       <MenuHeaderMenuBar>
         <template #drag-content>
+          <div v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)" data-tauri-drag-region class="mark fixed left-0 top-0 z-999 h-100vh w-100vw card-default-br" />
           <div
-
-            v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin" class="fixed top-2em rounded-4 text-center border-default card-default-br" animate-zoom-in-down p-2
+            v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)" class="fixed top-4em z-1000 rounded-4 text-center border-default card-default-br" animate-zoom-in-down p-2 shadow-lg
           >
             <div mb-4 py-2>
-              {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : !user.isLogin ? "未登录" : '网络错误' }}
+              {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : (!user.isLogin && !user.getToken) ? "未登录" : '网络错误' }}
             </div>
             <BtnElButton
               icon-class="i-solar:refresh-outline mr-1"

@@ -82,8 +82,15 @@ fn main() {
                     )
                     .unwrap();
                 }
-                "to_host" => { // 打开官网链接
-                    
+                "to_host" => { // 打开官网链接 
+                    let window = app.get_window("main").unwrap();
+                    window.emit(
+                        "open_url",
+                        Payload {
+                            message: "https://jiwu.kiwi2333.top".into(), // 官网链接地址，请替换成你的官网地址。
+                        },
+                    )
+                    .unwrap();
                 }
                 "quit" => {
                     std::process::exit(0);

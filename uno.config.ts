@@ -17,7 +17,7 @@ export default defineConfig({
     ["card-default-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
     ["v-btn", "border-0 rounded-4px"],
     ["blur-card", "backdrop-blur-4 bg-[#75757528] rounded-4px"],
-    ["btn-default", "border-0 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)] text-white"],
+    ["btn-default", "border-0 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)] transition-200 text-white"],
     ["btn-primary-bg", " cursor-pointer rounded-4px hover:bg-[var(--el-color-primary)]  hover:text-white"],
     // 颜色
     ["text-color", "text-dark dark:text-white"],
@@ -44,6 +44,9 @@ export default defineConfig({
     [/^el-bg-(\w*)$/, ([_, color]) => ({ "background-color": `var(--el-color-${color})` })],
     // 文字按钮
     [/^btn-(\w*)$/, ([_, color]) => ({
+      "--at-apply": `transition-300 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})] `,
+    })],
+    [/^btn-(\w*)-text$/, ([_, color]) => ({
       "--at-apply": `transition-300 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})] `,
     })],
     // 文字背景按钮

@@ -340,7 +340,7 @@ function toLoginForm() {
       />
     </el-form-item>
     <el-form-item mt-1em>
-      <BtnElButton type="info" class="submit w-full tracking-0.2em" style="padding: 20px" @click="onRegister(formRef)">
+      <BtnElButton type="info" class="submit w-full tracking-0.2em shadow" style="padding: 20px" @click="onRegister(formRef)">
         立即注册
       </BtnElButton>
     </el-form-item>

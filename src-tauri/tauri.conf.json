@@ -3,7 +3,8 @@
     "beforeBuildCommand": "pnpm run build",
     "beforeDevCommand": "pnpm run dev",
     "devPath": "http://localhost:3000",
-    "distDir": "../.output/public"
+    "distDir": "../.output/public",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "JiwuChat",
@@ -12,11 +13,6 @@
   "tauri": {
     "allowlist": {
       "all": false,
-      "http": {
-        "all": false,
-        "request": true,
-        "scope": ["https://jiwu.kiwi2333.top"]
-      },
       "notification": {
         "all": true
       },
@@ -32,6 +28,13 @@
         "unmaximize": true,
         "unminimize": true,
         "startDragging": true
+      },
+      "shell": {
+        "all": false,
+        "execute": false,
+        "open": true,
+        "scope": [],
+        "sidecar": false
       }
     },
     "bundle": {
@@ -76,7 +79,10 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": ["https://jiwu.kiwi2333.top/application/{{target}}/{{current_version}}"],
+      "dialog": true,
+      "pubkey": "YOUR_UPDATER_SIGNATURE_PUBKEY_HERE"
     },
     "windows": [
       {
