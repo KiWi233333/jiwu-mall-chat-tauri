@@ -20,20 +20,20 @@ async function loadData(val: string) {
     return;
   isFrend.value = false;
   isLoading.value = true;
+  // 确认是否为好友
+  await isChatFriend({ uidList: [val] }, store.getToken).then((res) => {
+    const data = res.data.checkedList.find(p => p.uid === val);
+    isFrend.value = data && data.isFriend === isTrue.TRUE;
+  });
   // 获取用户信息
   const res = await getCommUserInfoSe(val, store.getToken);
   if (res.code === StatusCode.SUCCESS)
     user.value = res.data;
-  isLoading.value = false;
-  // 确认是否为好友
-  isChatFriend({ uidList: [val] }, store.getToken).then((res) => {
-    const data = res.data.checkedList.find(p => p.uid === val);
-    isFrend.value = data && data.isFriend === isTrue.TRUE;
-  }).catch(() => {
 
-  });
+  isLoading.value = false;
 }
 const chat = useChatStore();
+const userStore = useUserStore();
 
 // 删除好友
 function deleteFriend(userId: string) {
@@ -89,7 +89,7 @@ async function toSend(uid: string) {
   });
 }
 // @unocss-include
-const load = "i-tabler:loader";
+const load = "<i i-tabler:loader p-4></i>";
 </script>
 
 <template>
@@ -98,7 +98,7 @@ const load = "i-tabler:loader";
     element-loading-text="加载中..." element-loading-background="rgba(0, 0, 0, 0)"
   >
     <div
-      v-show="!isLoading"
+      v-if="!isLoading"
       class="animate-[0.3s_fade-in]"
       v-bind="$attrs" h-full w-full flex flex-1 flex-col items-center gap-1rem pt-6rem bg-color
     >
@@ -142,7 +142,7 @@ const load = "i-tabler:loader";
           发消息&ensp;
         </BtnElButton>
         <BtnElButton
-          v-else
+          v-else-if="userId !== userStore.userInfo.id"
           icon-class="i-solar:user-plus-bold p-2 mr-2"
           class="op-80"
           type="primary"

@@ -128,9 +128,9 @@ async function checkUpdates() {
           <!-- 更新 -->
           <div class="group flex-row-bt-c">
             关于更新
-            <ElButton round class="flex-row-c-c cursor-pointer v-card" @click="!isUpdatateLoad && checkUpdates()">
-              <i i-solar:refresh-outline mr-1 inline-block p-2 op-60 :class="isUpdatateLoad ? 'animate-spin' : ''" />
-              <span v-if="version">{{ version }}</span>
+            <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2.2em" @click="!isUpdatateLoad && checkUpdates()">
+              <i i-solar:refresh-outline mr-1 inline-block p-2 :class="isUpdatateLoad ? 'animate-spin' : ''" />
+              <span v-if="version">检查更新</span>
             </ElButton>
           </div>
         </section>
