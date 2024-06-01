@@ -72,7 +72,7 @@ async function checkUpdates() {
             ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
             installUpdate().then(async (val) => {
               console.log(val);
-              // await relaunch();
+              await relaunch();
             }).catch((error) => {
               console.error(error);
               ElMessage.error("更新失败！请检查网络或稍后再试！");
