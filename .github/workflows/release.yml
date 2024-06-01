@@ -69,26 +69,6 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-            
-            # - name: Set release body
-            #   id: get_release_body
-            #   shell: bash
-            #   run: |
-            #     # 检查操作系统，使用适当的命令读取文件
-            #     if [[ "$RUNNER_OS" == "Windows" ]]; then
-            #       releaseBody=$(Get-Content -Path ./.github/workflows/releaseBody.md -Raw)
-            #     else
-            #       releaseBody=$(cat ./.github/workflows/releaseBody.md)
-            #     fi
-            #     # 使用 GitHub Actions 的 set-output 指令设置输出
-            #     echo "::set-output name=releaseBody::$releaseBody"
-            
-            # - name: Create Release
-            #   uses: tauri-apps/tauri-action@v0.3
-            #   env:
-            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-            #     TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
               with:
                 tagName: ${{ github.ref_name }}
                 releaseName: 'v__VERSION__'
