@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
-import { message } from "@tauri-apps/api/dialog";
 import { relaunch } from "@tauri-apps/api/process";
+import { getVersion } from "@tauri-apps/api/app";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -50,6 +50,7 @@ const theme = computed({
 });
 
 // 更新
+const version = await getVersion();
 const isUpdatateLoad = ref(false);
 const haveUpdatate = ref(false);
 async function checkUpdates() {
@@ -125,10 +126,10 @@ async function checkUpdates() {
           <!-- 更新 -->
           <div class="group flex-row-bt-c">
             关于更新
-            <span flex-row-c-c cursor-pointer px-2 @click="!isUpdatateLoad && checkUpdates()">
-              <i i-solar:refresh-outline mr-1 p-2 :class="isUpdatateLoad ? 'animate-spin inline-block' : 'hidden'" />
-              检查更新
-            </span>
+            <ElButton round class="flex-row-c-c cursor-pointer v-card" @click="!isUpdatateLoad && checkUpdates()">
+              <i i-solar:refresh-outline mr-1 inline-block p-2 op-60 :class="isUpdatateLoad ? 'animate-spin' : ''" />
+              <span v-if="version">{{ version }}</span>
+            </ElButton>
           </div>
         </section>
         <!-- 保存 -->
