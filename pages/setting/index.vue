@@ -54,23 +54,38 @@ async function checkUpdates() {
   if (isUpdatateLoad.value)
     return;
 
+  const unlisten = await onUpdaterEvent(({ error, status }) => {
+  // 这将记录所有更新器事件，包括状态更新和错误。
+    console.log("Updater event", error, status);
+  });
   isUpdatateLoad.value = true;
-  const update = await checkUpdate();
-  haveUpdatate.value = update.shouldUpdate;
-  setTimeout(() => {
-    isUpdatateLoad.value = false;
-  }, 1000);
-  if (haveUpdatate.value) {
-    ElMessageBox.confirm("检测到新版本，是否更新？", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-      callback: async (action: string) => {
-        if (action === "confirm")
-          await installUpdate();
-      },
-    });
+  try {
+    const update = await checkUpdate();
+    haveUpdatate.value = update.shouldUpdate;
+    setTimeout(() => {
+      isUpdatateLoad.value = false;
+    }, 500);
+    if (haveUpdatate.value) {
+      ElMessageBox.confirm("检测到新版本，是否更新？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        callback: async (action: string) => {
+          if (action === "confirm") {
+            await installUpdate();
+            await relaunch();
+          }
+        },
+      });
+    }
   }
+  catch (error) {
+    setTimeout(() => {
+      isUpdatateLoad.value = false;
+    }, 500);
+  }
+  // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
+  unlisten();
 }
 </script>
 
