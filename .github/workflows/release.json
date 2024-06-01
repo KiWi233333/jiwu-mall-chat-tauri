@@ -1,0 +1,19 @@
+{
+  "version": "1.0.4",
+  "notes": "最新发布版",
+  "pub_date": "2024-06-01T14:55:15.870Z",
+  "platforms": {
+    "darwin-x86_64": {
+      "signature": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat.app.tar.gz.sig",
+      "url": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat.app.tar.gz.sig",
+      "url": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat_1.0.4_x64_zh-CN.msi.zip.sig",
+      "url": "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/download/v1.0.4/JiwuChat_1.0.4_x64_zh-CN.msi.zip"
+    }
+  }
+}

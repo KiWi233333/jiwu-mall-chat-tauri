@@ -59,7 +59,7 @@ async function checkUpdates() {
   isUpdatateLoad.value = true;
   try {
     const update = await checkUpdate();
-    console.log("是否有更新", update.shouldUpdate);
+    console.log("是否有更新", update);
     haveUpdatate.value = update.shouldUpdate;
     setTimeout(() => {
       isUpdatateLoad.value = false;
@@ -71,16 +71,18 @@ async function checkUpdates() {
         type: "warning",
         callback: async (action: string) => {
           if (action === "confirm") {
-            await installUpdate();
+            const res = await installUpdate();
+            console.log(res);
+
             await relaunch();
-            // const unlisten = await onUpdaterEvent(({ error, status }) => {
-            //   // 这将记录所有更新器事件，包括状态更新和错误。
-            //   console.log("Updater event", error, status);
-            //   isUpdatateLoad.value = false;
-            //   ElMessage.info("当前已是最新版本！");
-            // });
+            const unlisten = await onUpdaterEvent(({ error, status }) => {
+              // 这将记录所有更新器事件，包括状态更新和错误。
+              console.log("Updater event", error, status);
+              isUpdatateLoad.value = false;
+              ElMessage.info("当前已是最新版本！");
+            });
             // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
-            // await unlisten();
+            await unlisten();
           }
         },
       });
