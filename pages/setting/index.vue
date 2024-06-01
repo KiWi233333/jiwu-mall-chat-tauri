@@ -84,7 +84,7 @@ async function checkUpdates() {
               // 这将记录所有更新器事件，包括状态更新和错误。
               console.log("Updater event", error, status);
               isUpdatateLoad.value = false;
-              ElMessage.info("当前已是最新版本！");
+              // ElMessage.info("当前已是最新版本！");
             }).then((unlisten) => {
             // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
               unlisten();
