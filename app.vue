@@ -189,6 +189,11 @@ watch(
     immediate: true,
   },
 );
+// 禁用F5刷新页面
+window.addEventListener("keydown", (e) => {
+  if (e.key === "F5")
+    e.preventDefault(); // 阻止默认行为，防止页面刷新。
+});
 </script>
 
 <template>

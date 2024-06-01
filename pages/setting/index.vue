@@ -69,11 +69,17 @@ async function checkUpdates() {
         type: "warning",
         callback: async (action: string) => {
           if (action === "confirm") {
-            const res = await installUpdate().catch((error) => {
+            ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
+            installUpdate().then(async (val) => {
+              console.log(val);
+              // await relaunch();
+            }).catch((error) => {
               console.error(error);
               ElMessage.error("更新失败！请检查网络或稍后再试！");
+            }).finally(() => {
+              isUpdatateLoad.value = false;
+              ElLoading.service().close();
             });
-            await relaunch();
             onUpdaterEvent(({ error, status }) => {
               // 这将记录所有更新器事件，包括状态更新和错误。
               console.log("Updater event", error, status);
