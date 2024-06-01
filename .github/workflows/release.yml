@@ -70,7 +70,13 @@ jobs:
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
             
-            - name: Tauri Action
+            - id: get_release_body # 获取 release 说明的步骤
+              name: Get Release Body
+              run: |
+                releaseBody=$(cat ./.github/workflows/releaseBody.md)
+                echo "::set-output name=releaseBody::$releaseBody"
+
+            - name: Create Release
               uses: tauri-apps/tauri-action@v0.3
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,7 +84,7 @@ jobs:
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
               with:
                   tagName: ${{ github.ref_name }} # This only works if your workflow triggers on new tags.
-                  releaseName: 'JiwuChat v__VERSION__' # 自定义 release 名称，__VERSION__ 将自动填写为版本信息
-                  releaseBody: '请参阅下载和安装此版本的资源。'
+                  releaseName: 'JiwuChat v__VERSION__ 版本说明' # 自定义 release 名称，__VERSION__ 将自动填写为版本信息
+                  releaseBody: ${{ steps.get_release_body.outputs.releaseBody }}
                   releaseDraft: true
                   prerelease: false
