@@ -9,7 +9,7 @@
     "dev:tauri": "tauri dev",
     "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
-    "build": "nuxi generate",
+    "build": "nuxi info",
     "build:tauri": "tauri build"
   },
   "devDependencies": {

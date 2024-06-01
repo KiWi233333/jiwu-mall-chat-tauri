@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "极物聊天",
+    "productName": "JiwuChat",
     "version": "1.0.3"
   },
   "tauri": {
@@ -61,9 +61,9 @@
       "shortDescription": "",
       "targets": "all",
       "windows": {
-        "certificateThumbprint": "",
+        "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": "",
+        "timestampUrl": "http://timestamp.comodoca.com",
         "nsis": {
           "license": "./LICENSE/LICENSE.txt",
           "installMode": "both",
@@ -80,7 +80,7 @@
     },
     "updater": {
       "active": true,
-      "endpoints": ["https://jiwu.kiwi2333.top/application/{{target}}/{{current_version}}"],
+      "endpoints": ["https://jiwu.kiwi2333.top/application/jiwuchat/{{target}}/{{current_version}}"],
       "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ0ODFBNzQxM0JGRDg3QTcKUldTbmgvMDdRYWVCUkR6ZVptejZoTEZPNGtMMDhKdGRNQTlCNE5jeENWanhPL1BqMXovMzd2RFEK"
     },
