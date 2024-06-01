@@ -94,6 +94,6 @@ jobs:
                 releaseName: 'v__VERSION__'
                 # 正确引用步骤输出的变量
                 # releaseBody: ${{ steps.get_release_body.outputs.releaseBody }}
-                releaseBody: "请见 https://github.com/JiwuChat/JiwuChat/releases/tag/${{ github.ref_name }}"
+                releaseBody: "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/compare/${{ github.ref_name }}"
                 releaseDraft: false
                 prerelease: false
