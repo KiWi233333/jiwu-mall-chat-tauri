@@ -70,21 +70,28 @@ jobs:
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
             
-            - id: get_release_body # 获取 release 说明的步骤
-              name: Get Release Body
+            - name: Set release body
+              id: get_release_body
+              shell: bash
               run: |
-                releaseBody=$(cat ./.github/workflows/releaseBody.md)
+                # 检查操作系统，使用适当的命令读取文件
+                if [[ "$RUNNER_OS" == "Windows" ]]; then
+                  releaseBody=$(Get-Content -Path ./.github/workflows/releaseBody.md -Raw)
+                else
+                  releaseBody=$(cat ./.github/workflows/releaseBody.md)
+                fi
+                # 使用 GitHub Actions 的 set-output 指令设置输出
                 echo "::set-output name=releaseBody::$releaseBody"
-
             - name: Create Release
               uses: tauri-apps/tauri-action@v0.3
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-                  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+                TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
               with:
-                  tagName: ${{ github.ref_name }} # This only works if your workflow triggers on new tags.
-                  releaseName: 'JiwuChat v__VERSION__ 版本说明' # 自定义 release 名称，__VERSION__ 将自动填写为版本信息
-                  releaseBody: ${{ steps.get_release_body.outputs.releaseBody }}
-                  releaseDraft: true
-                  prerelease: false
+                tagName: ${{ github.ref_name }}
+                releaseName: 'JiwuChat v__VERSION__'
+                # 正确引用步骤输出的变量
+                releaseBody: ${{ steps.get_release_body.outputs.releaseBody }}
+                releaseDraft: true
+                prerelease: false
