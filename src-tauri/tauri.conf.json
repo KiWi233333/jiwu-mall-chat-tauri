@@ -80,7 +80,7 @@
     },
     "updater": {
       "active": true,
-      "endpoints": ["https://github.com/KiWi233333/jiwu-mall-chat-tauri/tree/main/.github/workflows/release.json", "https://release.jiwu.kiwi2333.top/application/jiwuchat"],
+      "endpoints": ["https://release.jiwu.kiwi2333.top/application/jiwuchat"],
       "dialog": false,
       "windows": {
         "installMode": "passive",
