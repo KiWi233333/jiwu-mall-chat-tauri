@@ -10,7 +10,8 @@
     "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
     "build": "nuxi generate",
-    "build:tauri": "tauri build"
+    "build:tauri": "tauri build",
+    "publish": "version patch"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.43.1",
