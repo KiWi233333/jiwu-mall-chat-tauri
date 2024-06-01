@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { checkUpdate, installUpdate } from "@tauri-apps/api/updater";
+import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
+import { message } from "@tauri-apps/api/dialog";
+import { relaunch } from "@tauri-apps/api/process";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -53,14 +55,10 @@ const haveUpdatate = ref(false);
 async function checkUpdates() {
   if (isUpdatateLoad.value)
     return;
-
-  const unlisten = await onUpdaterEvent(({ error, status }) => {
-  // 这将记录所有更新器事件，包括状态更新和错误。
-    console.log("Updater event", error, status);
-  });
   isUpdatateLoad.value = true;
   try {
     const update = await checkUpdate();
+    console.log("是否有更新", update.shouldUpdate);
     haveUpdatate.value = update.shouldUpdate;
     setTimeout(() => {
       isUpdatateLoad.value = false;
@@ -72,11 +70,22 @@ async function checkUpdates() {
         type: "warning",
         callback: async (action: string) => {
           if (action === "confirm") {
+            const unlisten = await onUpdaterEvent(({ error, status }) => {
+              // 这将记录所有更新器事件，包括状态更新和错误。
+              console.log("Updater event", error, status);
+              isUpdatateLoad.value = false;
+              ElMessage.info("当前已是最新版本！");
+            });
             await installUpdate();
             await relaunch();
+            // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
+            await unlisten();
           }
         },
       });
+    }
+    else {
+      ElMessage.info("当前已是最新版本！");
     }
   }
   catch (error) {
@@ -84,8 +93,6 @@ async function checkUpdates() {
       isUpdatateLoad.value = false;
     }, 500);
   }
-  // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
-  unlisten();
 }
 </script>
 
