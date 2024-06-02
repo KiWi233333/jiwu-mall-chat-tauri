@@ -1,6 +1,5 @@
 {
   "build": {
-    "beforeBuildCommand": "pnpm run build",
     "devPath": "http://localhost:3000",
     "distDir": "../.output/public",
     "withGlobalTauri": true

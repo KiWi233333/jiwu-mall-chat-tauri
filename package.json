@@ -9,8 +9,9 @@
     "dev:tauri": "tauri dev",
     "dev:nuxt": "nuxt dev",
     "preview": "nuxt preview",
-    "build": "nuxi generate",
+    "build:nuxt": "nuxi generate",
     "build:tauri": "tauri build",
+    "build:tauri-prod": "nuxi generate && tauri build",
     "release": "npm version patch && git push --tag"
   },
   "devDependencies": {
