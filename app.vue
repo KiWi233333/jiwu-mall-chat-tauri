@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
 import { open } from "@tauri-apps/api/shell";
 import type { PayloadType } from "./types/tauri";
-import { WsMsgBodyType } from "./composables/types/WsType";
+import { WsMsgBodyType, WsStatusEnum } from "./composables/types/WsType";
 import { appKeywords, appName } from "@/constants/index";
 
 // 1、确认是否登录
@@ -131,7 +131,7 @@ onMounted(async () => {
 });
 
 
-// 聊天
+// 聊天模块
 const ws = useWs();
 // 通知消息类型  WsMsgBodyType
 const noticeType = [
@@ -142,6 +142,7 @@ const noticeType = [
 let worker: Worker;
 // 初始化
 function reload() {
+  console.log("初始化聊天会话");
   worker?.terminate?.();
   worker = new Worker("useWsWoker.js");
   // 初始化 WebSocket 连接
@@ -165,10 +166,9 @@ function reload() {
       }
     });
   });
-
   // Web Worker 消息处理
   worker.addEventListener("message", (e) => {
-    console.log(e.data.type, e.data?.data);
+    // console.log(e.data.type, e.data?.data);
     if (e.data.type === "reload")
       reload();
     if (e.data.type === "heart")
@@ -177,18 +177,17 @@ function reload() {
       console.log(e.data.data);
   });
 }
+const chat = useChatStore();
+// 自动重连
+watchDebounced([() => ws.status, () => user.isLogin], (val) => {
+  if (val[0] !== WsStatusEnum.OPEN && val[1])
+    reload();
+  else if (!val[1])
+    ws.webSocketHandler?.close();
+}, { debounce: 500, immediate: true });
+
 ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
-// 退出登录时候
-watch(
-  () => user.isLogin,
-  async (val) => {
-    if (val)
-      reload();
-  },
-  {
-    immediate: true,
-  },
-);
+
 // 禁用F5刷新页面
 window.addEventListener("keydown", (e) => {
   if (e.key === "F5")

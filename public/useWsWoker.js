@@ -3,8 +3,10 @@ let time = new Date();
 // 监听来自主线程的初始化消息
 self.onmessage = function (e) {
   const { status, noticeType } = e.data;
+  // 发送
   self.postMessage({ type: "log", data: `Web Worker 初始化，ws状态：${status} ${noticeType}` });
-
+  clearInterval(timer);
+  // 定时发送心跳消息
   timer = setInterval(() => {
     const newTime = new Date();
     if (status !== 1) {

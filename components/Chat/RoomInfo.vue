@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { WsStatusEnum } from "~/composables/types/WsType";
-
 const chat = useChatStore();
 const setting = useSettingStore();
 // 获取类型

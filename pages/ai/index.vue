@@ -203,7 +203,7 @@ definePageMeta({
           <el-form-item
             prop="content" class="w-full" :rules="[{
               required: true,
-              message: '内容不能为空！',
+              message: '',
               trigger: 'change',
             }]"
           >

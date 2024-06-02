@@ -9,10 +9,10 @@ const isTop = ref(false);
   <menu
     class="nav group sticky left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
   >
-    <NuxtLink to="/" class="left flex-row-c-c gap-3 tracking-0.2em">
+    <div class="left flex-row-c-c gap-3 tracking-0.2em">
       <CardElImage src="./logo.png" class="h-1.6rem w-1.6rem" />
       <strong hidden sm:block>极物圈</strong>
-    </NuxtLink>
+    </div>
     <!-- 拖拽区域 -->
     <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>
       <slot name="drag-content" />

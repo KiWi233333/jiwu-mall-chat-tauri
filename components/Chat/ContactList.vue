@@ -76,31 +76,36 @@ const theContactId = computed({
   get() {
     return contact.theContact.roomId;
   },
-  set(val: number) {
-    const item = chat.contactList.find(p => p.roomId === val);
-    if (!item)
-      return;
-    if (item.type === RoomType.SELFT) {
-      contact.setContact(item);
-    }
-    else { // 重新拉会话详情
-      (async () => {
-        const res = await getChatContactInfo(val, item?.type, user.getToken);
-        if (res && res.code === StatusCode.SUCCESS) {
-          contact.setContact(res?.data);
-          if (item) {
-            item.roomGroup = res?.data?.roomGroup;
-            item.member = res?.data?.member;
-          }
-        }
-        else {
-          contact.setContact(chat.contactList[0] || {});
-        }
-      })();
-    }
-    setting.isOpenContact = false;
+  set(contactId: number) {
+    onChangeRoom(contactId);
   },
 });
+async function onChangeRoom(contactId: number) {
+  const item = chat.contactList.find(p => p.roomId === contactId);
+  if (!item)
+    return;
+  if (item.type === RoomType.SELFT) {
+    contact.setContact(item);
+  }
+  else { // 重新拉会话详情
+    const res = await getChatContactInfo(contactId, item?.type, user.getToken);
+    if (res && res.code === StatusCode.SUCCESS) {
+      contact.setContact(res?.data);
+      if (item) {
+        item.roomGroup = res?.data?.roomGroup;
+        item.member = res?.data?.member;
+      }
+    }
+    else {
+      contact.setContact(chat.contactList[0] || {});
+    }
+  }
+  setting.isOpenContact = false;
+}
+// 默认会话
+if (theContactId.value)
+  onChangeRoom(theContactId.value);
+
 // 刷新
 function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isAll) {
@@ -123,9 +128,11 @@ async function refreshItem(roomId: number) {
   const itemIndex = chat.contactList.findIndex(p => p.roomId === roomId);
   if (itemIndex === -1)
     return;
-  const res = await getChatContactInfo(roomId, RoomType.GROUP, user.getToken);
-  if (res)
-    chat.contactList[itemIndex] = res.data;
+  if (chat.contactList[itemIndex].type === RoomType.GROUP) {
+    const res = await getChatContactInfo(roomId, RoomType.GROUP, user.getToken);
+    if (res)
+      chat.contactList[itemIndex] = res.data;
+  }
 }
 contact.onReloadContact = reload;
 
@@ -294,12 +301,14 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
         >
           <el-radio
             v-for="room in getContactList"
-            :key="room.roomId" style="overflow: hidden;"
+            :key="room.roomId"
             border
+            style="overflow: hidden;"
             :label="room.roomId"
           >
             <div
-              class="group flex gap-2 truncate bg-white p-4 transition-200 transition-shadow sm:w-full dark:bg-dark text-color"
+              :class="{ 'shadow-inset': room.roomId === theContactId }"
+              class="flex gap-2 truncate bg-light p-4 shadow transition-200 transition-shadow sm:w-full dark:bg-dark text-color"
               @contextmenu.stop="onContextMenu($event, room)"
             >
               <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">
@@ -315,7 +324,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
                       'text-[var(--el-color-info)] font-600': room.unreadCount,
                     }"
                   >{{ room.text }}</small>
-                  <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block group-hover:op-70>
+                  <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block>
                     {{ getTime(room.activeTime) }}
                   </span>
                 </div>
@@ -359,8 +368,6 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
     &.is-checked {
       .group {
         background-color: var(--el-color-primary-light-9);
-        transition: all 300ms;
-        font-weight: 600;
       }
       border-color: var(--el-color-primary) !important;
     }

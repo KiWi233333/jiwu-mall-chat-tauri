@@ -1,8 +1,7 @@
 
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { sendNotification } from "@tauri-apps/api/notification";
-import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
+import { WsStatusEnum } from "~/composables/types/WsType";
 
 // @unocss-include
 // 右键菜单
@@ -24,7 +23,6 @@ function onContextMenu(e: MouseEvent) {
       },
     ] as any,
   };
-
   ContextMenu.showContextMenu(opt);
 }
 const user = useUserStore();
@@ -38,7 +36,7 @@ const ws = useWs();
     >
       <MenuHeaderMenuBar>
         <template #drag-content>
-          <div v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)" data-tauri-drag-region class="mark fixed left-0 top-0 z-999 h-100vh w-100vw card-default-br" />
+          <div v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)" data-tauri-drag-region class="fixed left-0 top-0 z-999 h-100vh w-100vw card-default-br" />
           <div
             v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)" class="fixed top-4em z-1000 rounded-4 text-center border-default card-default-br" animate-zoom-in-down p-2 shadow-lg
           >
@@ -71,7 +69,6 @@ const ws = useWs();
       <div
         class="main-box relative"
         v-bind="$attrs"
-        @dblclick="onContextMenu($event)"
       >
         <MenuChatMenu />
         <slot />
