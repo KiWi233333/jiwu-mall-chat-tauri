@@ -5,7 +5,7 @@ import type { Gender, UserStatus } from "~/types";
 /**
  * 获取用户个人信息
  * @param token token
- * @returns UserInfoVO
+ * @returns data UserInfoVO
  */
 export function getUserInfo(token: string, isAdmin: boolean = false) {
   if (isAdmin) {
@@ -61,7 +61,7 @@ export interface UserInfoVO {
  * 用户修改头像
  * @param file 文件
  * @param token
- * @returns
+ * @returns data
  */
 export function updateAvatar(file: any, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
@@ -79,7 +79,7 @@ export function updateAvatar(file: any, token: string): Promise<Result<string>> 
  * 修改密码
  * @param dto 表单信息
  * @param token 用户身份
- * @returns
+ * @returns data
  */
 export function updatePwdByToken(dto: UpdatePwd, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
@@ -100,7 +100,7 @@ interface UpdatePwd {
  * 修改基本信息
  * @param upUserInfo 表单信息
  * @param token 用户身份
- * @returns
+ * @returns data
  */
 export function updateInfoByDTO(upUserInfo: UpdateInfo, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
@@ -129,7 +129,7 @@ export interface UpdatePhone {
  * @param key 手机号|邮箱
  * @param type 0|1 DeviceType
  * @param token
- * @returns
+ * @returns data
  */
 export function getUpdateNewCode(key: string, type: DeviceType, token: string): Promise<Result<string>> {
   return useHttp.get<Result<string>>(
@@ -145,7 +145,7 @@ export function getUpdateNewCode(key: string, type: DeviceType, token: string): 
  * 更换手机号
  * @param dto 手机号、验证码
  * @param token
- * @returns
+ * @returns data
  */
 export function updatePhone(dto: UpdatePhone, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
@@ -162,7 +162,7 @@ export function updatePhone(dto: UpdatePhone, token: string): Promise<Result<str
  * 更换邮箱
  * @param dto 邮箱参数
  * @param token
- * @returns
+ * @returns data
  */
 export function updateEmail(dto: UpdateEmail, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
@@ -182,7 +182,7 @@ export interface UpdateEmail {
 /**
  * 验证-用户名是否存在
  * @param username
- * @returns
+ * @returns data
  */
 export function checkUsernameExists(username: string) {
   return useHttp.get<Result<string>>(

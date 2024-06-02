@@ -2,7 +2,7 @@
   "name": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "description": "jiwu-mall-chat",
-  "version": "1.0.4",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "nuxi info",
