@@ -2,7 +2,7 @@
   "name": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "description": "jiwu-mall-chat",
-  "version": "1.0.5",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "dev": "nuxi info",
@@ -12,7 +12,7 @@
     "build:nuxt": "nuxi generate",
     "build:tauri": "tauri build",
     "build:tauri-prod": "nuxi generate && tauri build",
-    "release": "npm version patch && git push --tag"
+    "release": "npm version patch && git push --tag && git fetch && git push"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.43.1",
