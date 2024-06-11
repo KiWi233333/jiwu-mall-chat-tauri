@@ -26,17 +26,31 @@ export function httpRequest<T = unknown>(
           user.showLoginForm = true;
       }
     },
-    onResponse: (coinfig) => {
-      const data = coinfig.response._data;
+    onResponse: (config) => {
+      const data = config.response._data;
       let msg = "";
       const type = "error";
       const code: StatusCode = data.code;
       if (data.code !== StatusCode.SUCCESS) {
         msg = StatusCodeText[code] || "";
       }
-      else if (data.code === StatusCode.TOKEN_DEVICE_ERR) {
+      else if (data.code === StatusCode.TOKEN_ERR || data.code === StatusCode.TOKEN_EXPIRED_ERR || data.code === StatusCode.TOKEN_DEVICE_ERR) {
+        // 登录失效，清除用户信息，跳转登录页
         user.clearUserStore();
         navigateTo("/login", { replace: true });
+        ElMessage.closeAll();
+        return;
+      }
+      else if (data.code === StatusCode.STATUS_OFF_ERR) {
+        // 用户被禁用
+        ElMessage.error("账号被禁用，请联系管理员！");
+        return;
+      }
+      // 续签
+      // @ts-expect-error
+      if (config.response.headers?.Authorization) {
+        // @ts-expect-error
+        user.token = config.response.headers?.Authorization;
       }
       if (msg !== "") {
         ElMessage.closeAll("error");
@@ -46,12 +60,6 @@ export function httpRequest<T = unknown>(
           type,
           message: data.message.length > 50 ? msg : data.message,
         });
-      }
-      // 续签
-      // @ts-expect-error
-      if (coinfig.response.headers?.Authorization) {
-        // @ts-expect-error
-        user.token = coinfig.response.headers?.Authorization;
       }
     },
     // 请求错误
