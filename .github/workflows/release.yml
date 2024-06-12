@@ -19,7 +19,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
  
             - name: Install dependencies (ubuntu only)
               if: matrix.platform == 'ubuntu-20.04'
@@ -43,7 +43,7 @@ jobs:
  
             # 使用 pnpm 作为包管理器
             - name: Install pnpm
-              uses: pnpm/action-setup@v2
+              uses: pnpm/action-setup@v4
               id: pnpm-install
               with:
                   version: 8
@@ -55,7 +55,7 @@ jobs:
               run: |
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
  
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               name: Setup pnpm cache
               with:
                   path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
@@ -84,7 +84,7 @@ jobs:
             #     echo "::set-output name=releaseBody::$releaseBody"
             
             - name: Create Release
-              uses: tauri-apps/tauri-action@v0.3
+              uses: tauri-apps/tauri-action@v0.5.6
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -93,7 +93,7 @@ jobs:
                 tagName: ${{ github.ref_name }}
                 releaseName: 'v__VERSION__'
                 # 正确引用步骤输出的变量
-                # releaseBody: ${{ steps.get_release_body.outputs.releaseBody }}
+                # releaseBody: $#{{ steps.get_release_body.outputs.releaseBody }}
                 releaseBody: "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md"
                 releaseDraft: false
                 prerelease: false
