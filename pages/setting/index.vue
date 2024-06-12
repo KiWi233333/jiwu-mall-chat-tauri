@@ -63,10 +63,10 @@ async function checkUpdates() {
     haveUpdatate.value = update.shouldUpdate;
     isUpdatateLoad.value = false;
     if (haveUpdatate.value) {
-      ElMessageBox.confirm("检测到新版本，是否更新？", "提示", {
+      ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.manifest?.version}`, {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
+        center: true,
         callback: async (action: string) => {
           if (action === "confirm") {
             ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
