@@ -79,7 +79,7 @@ definePageMeta({
                 class="p-4 border-default card-default"
               />
               <!-- 签到 -->
-              <UserInfoSigninCard class="sm:w-360px" />
+              <UserInfoSigninCard class="sm:w-360px border-default card-default" />
             </div>
           </div>
         </div>

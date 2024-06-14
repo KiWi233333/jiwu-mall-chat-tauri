@@ -59,6 +59,8 @@ watch(() => chat.theContact.roomId, (val) => {
 
 // 重新加载
 function reload() {
+  if (isReload.value || isLoading.value)
+    return;
   chat.theContact.msgList = [];
   pageInfo.value = {
     cursor: null as null | string,
@@ -84,7 +86,10 @@ function reload() {
     isLoading.value = false;
     pageInfo.value.isLast = false;
     pageInfo.value.cursor = null;
-    isReload.value = false;
+  }).finally(() => {
+    nextTick(() => {
+      isReload.value = false;
+    });
   });
 }
 /**

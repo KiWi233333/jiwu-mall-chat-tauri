@@ -18,7 +18,7 @@ function getProps(p: OrderGoodsSkuVO): string {
       fit="cover"
       class="h-4rem w-4rem overflow-hidden rounded-6px border-default"
       :src="
-        `${BaseUrlImg + orderItem.goodsSku.image}?imageView2/0/w/100/h/100/format/webp/interlace/1/q/50`
+        `${BaseUrlImg + orderItem.goodsSku.image}`
       "
     />
     <div class="flex flex-col justify-around px-4">

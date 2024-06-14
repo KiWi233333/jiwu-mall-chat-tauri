@@ -115,7 +115,6 @@ onBeforeUnmount(() => {
     >
       <ChatMessageList
         v-if="chat.theContact.roomId" ref="ChatMessageListRef" class="pt-2rem"
-        @scroll-bottom="scrollBottom"
       />
       <div v-else class="h-full w-full flex items-center justify-center">
         开启聊天吧

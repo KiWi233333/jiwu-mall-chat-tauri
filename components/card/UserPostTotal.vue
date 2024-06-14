@@ -51,7 +51,7 @@ loadData();
 
 <template>
   <div class="flex flex-col gap-3 rounded-4px v-card">
-    <NuxtLink
+    <div
       :to="{
         path: `/user/info`,
         query: {
@@ -63,15 +63,15 @@ loadData();
         loading="lazy"
         transition-300
         hover:transform-scale-110
-        class="mx-a h-5rem w-5rem rounded-1/2 border-default"
-        :src="`${BaseUrlImg + user?.avatar}?imageView2/0/format/webp/interlace/1/q/70`"
+        class="mx-a h-5rem w-5rem rounded-1/2"
+        :src="BaseUrlImg + user?.avatar"
         :alt="user?.nickname"
         fit="cover"
       />
-      <h4 text-center>
+      <h4 mt-4 text-center>
         {{ user?.nickname }}
       </h4>
-    </NuxtLink>
+    </div>
     <div :class="gridClass">
       <!-- 卡片 -->
       <div
