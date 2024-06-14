@@ -64,9 +64,6 @@ definePageMeta({
                 :data="user"
                 :is-edit="isSelf"
               />
-              <div class="m-2">
-                <UserInfoTabs :user-id="userId" />
-              </div>
             </div>
             <!-- 右侧 -->
             <div flex flex-col gap-6>

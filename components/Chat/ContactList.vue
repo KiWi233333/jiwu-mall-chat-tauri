@@ -56,6 +56,7 @@ async function loadData(dto?: ChatContactPageDTO) {
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
   isLoading.value = false;
+  return data.list;
 }
 onBeforeMount(() => {
   // 初始化
@@ -102,18 +103,22 @@ async function onChangeRoom(contactId: number) {
   }
   setting.isOpenContact = false;
 }
-// 默认会话
-if (theContactId.value)
+if (theContactId.value) // 初始化当前会话
   onChangeRoom(theContactId.value);
 
 // 刷新
-function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
+async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isAll) {
     chat.contactList = [];
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
-    loadData(dto || props.dto);
+    const list = await loadData(dto || props.dto);
+    if (!chat.theContact.roomId && list?.length) {
+      if (!theContactId.value)
+        theContactId.value = list[0].roomId;
+    }
+    onChangeRoom(theContactId.value);
   }
   else {
     if (roomId)

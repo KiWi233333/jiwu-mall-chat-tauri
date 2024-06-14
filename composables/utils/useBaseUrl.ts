@@ -6,9 +6,10 @@ const isDev = false;
 const BASE_URL = isDev ? "http://localhost:9090/" : "https://api.jiwu.kiwi2333.top/";
 export const BaseUrl = BASE_URL;
 // 图片
-export const BaseUrlImg = `${BaseUrl}res/`;
-export const BaseUrlVideo = `${BaseUrl}res/`;
-export const BaseUrlFile = `${BaseUrl}res/`;
+export const BASE_OSS_PATH = "https://quang.kiwi2333.top/";
+export const BaseUrlImg = BASE_OSS_PATH;
+export const BaseUrlVideo = BASE_OSS_PATH;
+export const BaseUrlFile = BASE_OSS_PATH;
 export const AuthKey = "Authorization";
 
 // websocket

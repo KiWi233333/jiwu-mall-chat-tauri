@@ -19,22 +19,20 @@ export function httpRequest<T = unknown>(
     // 请求拦截器
     onRequest: (config) => {
       // 需要登录操作
-      // @ts-expect-error
-      if (config.options.headers?.Authorization !== undefined) {
-        // @ts-expect-error
-        if (config.options.headers?.Authorization === "")
-          user.showLoginForm = true;
-      }
+      // if (config.options.headers?.Authorization !== undefined) {
+      //   // @ts-expect-error
+      //   if (config.options.headers?.Authorization === "")
+      //     user.showLoginForm = true;
+      // }
     },
     onResponse: (config) => {
       const data = config.response._data;
       let msg = "";
       const type = "error";
       const code: StatusCode = data.code;
-      if (data.code !== StatusCode.SUCCESS) {
+      if (data.code !== StatusCode.SUCCESS)
         msg = StatusCodeText[code] || "";
-      }
-      else if (data.code === StatusCode.TOKEN_ERR || data.code === StatusCode.TOKEN_EXPIRED_ERR || data.code === StatusCode.TOKEN_DEVICE_ERR) {
+      if (data.code === StatusCode.TOKEN_ERR || data.code === StatusCode.TOKEN_EXPIRED_ERR || data.code === StatusCode.TOKEN_DEVICE_ERR) {
         // 登录失效，清除用户信息，跳转登录页
         user.clearUserStore();
         navigateTo("/login", { replace: true });

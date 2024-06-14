@@ -58,8 +58,8 @@ const getAtText = computed(() => {
         {{ getAtText }}
       </small>
       <!-- 回复 -->
-      <small v-if="body?.reply" class="truncate px-2 text-0.75em op-80 btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
-        回复: {{ `${body.reply.nickName}:${body.reply?.body || ''}` }}
+      <small v-if="body?.reply" class="max-w-50vw truncate px-2 text-0.75em op-80 btn-primary sm:max-w-30em border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
+        回复：{{ `${body.reply.nickName}:${body.reply?.body || ''}` }}
       </small>
     </div>
   </div>

@@ -3,7 +3,6 @@ const props = defineProps<{
   roomId?: string
 }>();
 const chat = useChatStore();
-
 const ChatMessageListRef = ref();
 const scrollbarRef = ref();
 
