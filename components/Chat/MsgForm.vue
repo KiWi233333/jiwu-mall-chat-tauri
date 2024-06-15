@@ -65,7 +65,7 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
 const formRef = ref();
 // 发送消息
 function onSubmit() {
-  form.value.content?.trim().replace(/\n$/g, "");
+  form.value.content = form.value.content?.trim().replace(/\n$/g, "");
   if (!form.value.content?.trim()) {
     ElMessage.warning("不能发送空白消息！");
     return;
@@ -336,7 +336,7 @@ onMounted(() => {
             :class="{
               focused: form.content,
             }"
-            @keyup.prevent.enter="onSubmit()"
+            @keydown.enter.prevent="onSubmit()"
           />
         </el-form-item>
         <BtnElButton
