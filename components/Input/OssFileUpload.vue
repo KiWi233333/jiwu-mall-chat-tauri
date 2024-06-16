@@ -269,10 +269,16 @@ const getPreImage = computed(() => {
   else
     return [];
 });
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
-  <div v-auto-animate class="input-list relative flex cursor-pointer select-none">
+  <div ref="autoAnimateRef" class="input-list relative flex cursor-pointer select-none">
     <div
       key="inputs"
       flex-row-c-c

@@ -4,6 +4,12 @@ function exitForm() {
   user.showLoginForm = false;
   user.showRegisterForm = false;
 }
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
@@ -11,7 +17,7 @@ function exitForm() {
     <transition name="fade">
       <div
         v-if="user.showLoginForm || user.showRegisterForm"
-        v-auto-animate
+        ref="autoAnimateRef"
         tag="div"
         name="popup"
         class="forms"

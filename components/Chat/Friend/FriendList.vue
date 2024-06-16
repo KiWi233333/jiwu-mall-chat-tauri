@@ -38,10 +38,16 @@ function reloadData() {
   list.value = [];
   loadData();
 }
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
-  <div v-auto-animate w-full flex flex-col>
+  <div ref="autoAnimateRef" w-full flex flex-col>
     <ListAutoIncre
       :immediate="true"
       :auto-stop="true"

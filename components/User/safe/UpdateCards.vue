@@ -41,18 +41,18 @@ const form = ref({
 
 <template>
   <div class="card flex flex-col">
-    <strong
+    <small
       my-4 block opacity-70
     >
       <i
         i-solar:shield-check-broken mr-2 p-2.5
       />
       修改信息
-    </strong>
+    </small>
     <!-- 用户信息 -->
     <div
       v-loading="isLoading"
-      class="group flex flex-col overflow-hidden rounded-14px p-5 text-1em shadow-sm border-default v-card"
+      class="group flex flex-col p-4"
       flex flex-1 flex-col
     >
       <div class="flex items-center">
@@ -88,8 +88,6 @@ const form = ref({
       </div>
       <!-- 手机号 -->
       <div
-
-
         ml-1 mt-6 flex-row-bt-c
       >
         <small>

@@ -74,7 +74,7 @@ function senMsg(msg: string, id: string) {
     message: {
       id: Math.random() * 1000,
       roomId: 0,
-      sendTime: new Date().toDateString(),
+      sendTime: new Date().getTime(),
       content: msg,
       type: MessageType.TEXT,
       body: {
@@ -126,7 +126,7 @@ function senMsg(msg: string, id: string) {
         message: {
           id: data.header.sid,
           roomId: 0,
-          sendTime: new Date().toDateString(),
+          sendTime: new Date().getTime(),
           content: text.value,
           type: MessageType.AI_CHAT,
           body: {
@@ -163,6 +163,12 @@ function scrollBottom() {
     scollRef.value?.setScrollTop(scollRef?.value?.wrapRef?.scrollHeight + 20 || 0);
   }
 }
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
@@ -195,7 +201,7 @@ function scrollBottom() {
           </p>
           <!-- 内容 -->
           <el-scrollbar ref="scollRef" view-class="p-2 md:p-4 h-50vh md:h-400px" class="bg-light card-default dark:bg-dark-9">
-            <div v-auto-animate relative flex flex-col>
+            <div ref="autoAnimateRef" relative flex flex-col>
               <!-- 消息适配器 -->
               <ChatMsgMain
                 v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"

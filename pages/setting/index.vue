@@ -32,6 +32,12 @@ watchDebounced(
     }
   },
 );
+function isColseChange(val: any) {
+  if (val)
+    document.documentElement.classList.add("stop-transition-all");
+  else
+    document.documentElement.classList.remove("stop-transition-all");
+}
 
 useSeoMeta({
   title: "设置",
@@ -80,6 +86,21 @@ onMounted(async () => {
               </el-radio-button>
             </el-radio-group>
           </div>
+          <!-- 关闭动画 -->
+          <div class="group flex-row-bt-c">
+            流畅模式
+            <el-tooltip :content="setting.settingPage.isColseAllTransition ? '开启动画' : '关闭动画'" placement="bottom">
+              <el-switch
+                v-model="setting.settingPage.isColseAllTransition"
+                class="mb-2"
+                active-text="开启"
+                inactive-text="关闭"
+                inline-prompt
+                size="large"
+                @change="isColseChange"
+              />
+            </el-tooltip>
+          </div>
           <!-- 更新 -->
           <div class="group flex-row-bt-c">
             关于更新
@@ -93,13 +114,9 @@ onMounted(async () => {
             </ElTooltip>
           </div>
         </section>
-        <!-- 保存 -->
         <div class="btns mt-a flex items-center">
           <BtnElButton class="ml-a shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true" round @click="user.exitLogin()">
             退出登录
-          </BtnElButton>
-          <BtnElButton class="ml-a shadow" icon-class="i-solar:diskette-bold" type="info" :transition-icon="true" round @click="onSave">
-            保存
           </BtnElButton>
         </div>
       </main>

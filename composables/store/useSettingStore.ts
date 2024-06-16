@@ -20,6 +20,42 @@ export const useSettingStore = defineStore(
       ignoreVersion: [] as string[],
     });
 
+    // 用户页折叠
+    const isUserFold = ref(true);
+    const isUserCollapse = ref(true);
+    // 主页页折叠
+    const isFold = ref(true);
+    const isCollapse = ref(true);
+    // ---------------------设置-----------------
+    const settingPage = ref({
+      // 字体
+      fontFamily: {
+        value: "Alimama",
+        list: [
+          { name: "阿里妈妈方圆体", value: "Alimama" },
+          { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
+          { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
+          { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
+          { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
+        ],
+      },
+      modeToggle: {
+        value: "auto",
+        list: [
+          { name: "自动", value: "auto" },
+          { name: "日间", value: "light" },
+          { name: "夜间", value: "dark" },
+        ],
+      },
+      isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
+    });
+    const isChatFold = ref(false);
+    const isThemeChangeLoad = ref(false);
+    // --------------------- 聊天设置 -----------------
+    const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
+    const isOpenContact = ref(true);// 是否打开会话列表
+    const showChatMenu = ref(true);
+
     /**
      * 检查更新
      * @returns 检查师傅更新
@@ -85,42 +121,6 @@ export const useSettingStore = defineStore(
         appUploader.value.isUpdatateLoad = false;
       }
     }
-    // 用户页折叠
-    const isUserFold = ref(true);
-    const isUserCollapse = ref(true);
-    // 主页页折叠
-    const isFold = ref(true);
-    const isCollapse = ref(true);
-    // ---------------------设置-----------------
-    const settingPage = ref({
-      // 字体
-      fontFamily: {
-        value: "Alimama",
-        list: [
-          { name: "阿里妈妈方圆体", value: "Alimama" },
-          { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
-          { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
-          { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
-          { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
-        ],
-      },
-      modeToggle: {
-        value: "auto",
-        list: [
-          { name: "自动", value: "auto" },
-          { name: "日间", value: "light" },
-          { name: "夜间", value: "dark" },
-        ],
-      },
-      isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
-    });
-    const isChatFold = ref(false);
-    const isThemeChangeLoad = ref(false);
-    // --------------------- 聊天设置 -----------------
-    const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
-    const isOpenContact = ref(true);// 是否打开会话列表
-    const showChatMenu = ref(true);
-
     return {
       isChatFold,
       // state

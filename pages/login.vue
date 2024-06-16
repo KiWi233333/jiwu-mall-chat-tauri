@@ -11,6 +11,12 @@ definePageMeta({
   key: route => route.fullPath,
   layout: false,
 });
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
@@ -29,7 +35,7 @@ definePageMeta({
     </div>
     <!-- 表单 -->
     <div data-tauri-drag-region class="flex flex-col select-none pt-20vh">
-      <div v-auto-animate mx-a class="w-3/5">
+      <div ref="autoAnimateRef" mx-a class="w-3/5">
         <div key="login-bg" flex items-center gap-2 py-4>
           <ElImage
             src="/logo.png" class="h-2em w-2em"

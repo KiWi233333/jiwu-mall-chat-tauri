@@ -7,7 +7,7 @@ const { data } = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col border-2px rounded-8px p-4 leading-1.5em border-default-dashed v-card">
+  <div class="flex flex-col border-1px p-4 leading-1.5em transition-all border-default-dashed card-default">
     <small class="mb-1 flex-row-bt-c font-600">
       {{ data.country && data.country !== "0" ? data.country : "未知" }}
       {{ data.province && data.province !== "0" ? data.province : "未知" }}

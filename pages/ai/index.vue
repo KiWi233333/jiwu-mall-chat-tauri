@@ -204,6 +204,12 @@ onMounted(() => {
     scrollBottom(false);
   });
 });
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 definePageMeta({
   key: route => route.fullPath,
   layout: false,
@@ -221,7 +227,7 @@ definePageMeta({
         </p>
         <!-- 内容 -->
         <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="bg-light card-default dark:bg-dark-9">
-          <div v-auto-animate relative flex flex-col>
+          <div ref="autoAnimateRef" relative flex flex-col>
             <!-- 消息适配器 -->
             <ChatMsgMain
               v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"

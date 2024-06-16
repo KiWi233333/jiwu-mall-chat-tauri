@@ -4,6 +4,12 @@ import { useStorage } from "@vueuse/core";
 const emit = defineEmits<{
   (e: "submit", data: ChatUserSeInfoVO): void
 }>();
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 // 搜索相关
 const searchKeyWords = ref<string>("");
 const isShowResult = ref<boolean>(false);
@@ -184,7 +190,7 @@ const timer = ref<any>();
           :no-more="noMore"
           @load="onLoadMore"
         >
-          <div v-auto-animate pt-4>
+          <div ref="autoAnimateRef" pt-4>
             <!-- 用户卡片 -->
             <div
               v-for="p in searchPageList"

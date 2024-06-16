@@ -2,6 +2,14 @@
 import type { DeviceIpInfo } from "@/composables/api/user/safe";
 import { getLoginDeviceList, toUserOffline } from "@/composables/api/user/safe";
 
+const [autoAnimateRef, enable] = useAutoAnimate({
+  duration: 300,
+  easing: "cubic-bezier(0.61, 0.225, 0.195, 1.3)",
+});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 const user = useUserStore();
 const isLoading = ref<boolean>(false);
 
@@ -73,51 +81,45 @@ function exitLogin(ua?: string) {
 
 <template>
   <div class="group flex flex-col">
-    <strong
-
-      my-4 block opacity-70
-    >
-      <i class="i-solar:devices-outline mr-2 p-2.5" />
+    <small my-4 block opacity-70>
       登录设备
+      <i class="i-solar:devices-outline ml-2 p-2.5" />
       <i
         opacity-100
         transition-300 group-hover:opacity-100 md:opacity-0 class="i-solar:refresh-outline float-right cursor-pointer bg-[var(--el-color-info)] px-3 transition-300 hover:rotate-180"
         @click="reload"
       />
-    </strong>
+    </small>
     <div
       v-loading="isLoading"
-      class="group flex-1 select-none overflow-hidden rounded-14px p-4 shadow-sm border-default v-card"
+      rounde-4 h-62vh overflow-y-auto
+      element-loading-background="initial"
+      class="group"
     >
-      <el-scrollbar height="400px">
-        <!-- 列表 -->
-        <div
-          v-auto-animate="{
-            duration: 300,
-            easing: 'cubic-bezier(0.61, 0.225, 0.195, 1.3)',
-          }"
-          class="relative grid grid-cols-1 grid-gap-3 md:grid-cols-3"
+      <!-- 列表 -->
+      <div
+        ref="autoAnimateRef"
+        class="relative grid grid-cols-1 grid-gap-3 md:grid-cols-3"
+      >
+        <UserSafeDeviceCard
+          v-for="p in deviceList"
+          :key="p.id"
+          class="cursor-pointer active:scale-97 hover:(border-[var(--el-color-info)] border-solid shadow)"
+          :data="p"
         >
-          <UserSafeDeviceCard
-            v-for="p in deviceList"
-            :key="p.id"
-            class="cursor-pointer active:scale-97 hover:border-[var(--el-color-info)]"
-            :data="p"
+          <div />
+          <el-button
+            v-if="!p.isLocal"
+            size="small"
+            type="danger"
+            style="padding: 0 8px"
+            plain
+            @click="exitLogin(p.userAgentString)"
           >
-            <div />
-            <el-button
-              v-if="!p.isLocal"
-              size="small"
-              type="danger"
-              style="padding: 0 8px"
-              plain
-              @click="exitLogin(p.userAgentString)"
-            >
-              下线
-            </el-button>
-          </UserSafeDeviceCard>
-        </div>
-      </el-scrollbar>
+            下线
+          </el-button>
+        </UserSafeDeviceCard>
+      </div>
     </div>
   </div>
 </template>

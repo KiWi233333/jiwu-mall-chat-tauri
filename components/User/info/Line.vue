@@ -136,6 +136,12 @@ onMounted(() => {
     userCopy.gender = user?.gender;
   });
 });
+
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 </script>
 
 <template>
@@ -179,7 +185,7 @@ onMounted(() => {
       </el-upload>
     </div>
     <div class="text inline-flex flex-col items-start px-2">
-      <div v-auto-animate tag="div" class="my-2">
+      <div ref="autoAnimateRef" tag="div" class="my-2">
         <!-- 原 -->
         <h2
           v-show="!isEditNickname"

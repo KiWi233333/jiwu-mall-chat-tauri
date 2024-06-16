@@ -10,6 +10,11 @@ const pageInfo = ref({
 });
 const list = ref<ChatUserFriendApplyVO[]>([]);
 
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 // 加载数据
 async function loadData() {
   if (isLoading.value || pageInfo.value.isLast)
@@ -65,7 +70,7 @@ function onArgeeFriend(applyId: number) {
 </script>
 
 <template>
-  <div v-auto-animate w-full flex flex-col>
+  <div ref="autoAnimateRef" w-full flex flex-col>
     <ListAutoIncre
       :immediate="true"
       :auto-stop="true"

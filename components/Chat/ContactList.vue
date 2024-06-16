@@ -6,6 +6,11 @@ import { WSMemberStatusEnum } from "~/composables/types/WsType";
 const props = defineProps<{
   dto?: ChatContactPageDTO
 }>();
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
 const chat = useChatStore();
@@ -297,7 +302,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
     </div>
     <!-- 会话列表 -->
     <el-radio-group v-model="theContactId" class="contact-list w-full">
-      <div v-auto-animate w-full flex flex-col>
+      <div ref="autoAnimateRef" w-full flex flex-col>
         <ListAutoIncre
           :immediate="true"
           :auto-stop="false"

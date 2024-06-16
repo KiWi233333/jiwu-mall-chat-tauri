@@ -78,8 +78,10 @@ onMounted(() => {
     app.classList.remove("stop-transition");
   ElMessage.closeAll("error");
   const font = setting.settingPage.fontFamily.value || null;
+  // 设置字体
   if (font)
     document.documentElement.style.setProperty("--font-family", font);
+  // 流畅模式
   if (setting.settingPage.isColseAllTransition)
     document.documentElement.classList.add("stop-transition-all");
   else

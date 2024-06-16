@@ -9,6 +9,11 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void
 }>();
 
+const [autoAnimateRef, enable] = useAutoAnimate({});
+onMounted(() => {
+  const setting = useSettingStore();
+  enable(!setting.settingPage.isColseAllTransition);
+});
 
 // 会话store
 const user = useUserStore();
@@ -136,7 +141,7 @@ defineExpose({
       :model="form"
       class="relative max-h-400px flex"
     >
-      <div v-auto-animate>
+      <div ref="autoAnimateRef">
         <div v-show="!showImg" key="left" class="w-90vw flex md:w-800px">
           <!-- 未选列表 -->
           <el-form-item
