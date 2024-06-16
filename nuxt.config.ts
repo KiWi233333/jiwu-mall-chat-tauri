@@ -11,7 +11,7 @@ console.log(`mode:${process.env.NODE_ENV}，api_url:${BASE_URL}，SSR:${false}`)
 export default defineNuxtConfig({
   ssr: false,
   build: {
-    transpile: ["echarts", "vue-echarts", "popperjs/core", "@popperjs/core", "resize-detector"],
+    transpile: ["@popperjs/core", "resize-detector"],
   },
   // spa情况下loading状态
   // spaLoadingTemplate: "./app/spa-loading-template.html",

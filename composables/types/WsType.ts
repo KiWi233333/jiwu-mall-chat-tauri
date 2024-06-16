@@ -1,6 +1,5 @@
 import type { Result } from "postcss";
 import type { ChatMessageVO } from "../api/chat/message";
-import type { ChatOfflineType, isTrue } from "#imports";
 
 /**
  * ws 请求 消息类型 1用户认证、2心跳检测
