@@ -1,5 +1,7 @@
+import { relaunch } from "@tauri-apps/api/process";
+import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
+import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import type { IndexMenuType } from "~/components/menu";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -10,26 +12,85 @@ export const useSettingStore = defineStore(
       isNotification: false,
       isNotificationSound: true,
     });
+    const appUploader = ref({
+      isUpdatateLoad: false,
+      isUpload: false,
+      version: "",
+      newVersion: "",
+      ignoreVersion: [] as string[],
+    });
+
+    /**
+     * 检查更新
+     * @returns 检查师傅更新
+     */
+    async function checkUpdates(check = false) {
+      appUploader.value.isUpdatateLoad = true;
+      try {
+        const update = await checkUpdate();
+        appUploader.value.isUpload = !!update.shouldUpdate;
+        appUploader.value.isUpdatateLoad = false;
+        if (!update.manifest?.version)
+          return;
+        if (appUploader.value.isUpload) {
+          // 忽略
+          if (check && appUploader.value.ignoreVersion.includes(update.manifest?.version))
+            return false;
+
+          ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.manifest?.version}`, {
+            confirmButtonText: "确定",
+            cancelButtonText: "忽略此版本",
+            center: true,
+            callback: async (action: Action) => {
+              if (action === "confirm") {
+                ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
+                installUpdate().then(async (val) => {
+                  console.log(val);
+                  await relaunch();
+                }).catch((error) => {
+                  console.error(error);
+                  ElMessage.error("更新失败！请检查网络或稍后再试！");
+                }).finally(() => {
+                  appUploader.value.isUpdatateLoad = false;
+                  ElLoading.service().close();
+                });
+                onUpdaterEvent(({ error, status }) => {
+                  console.log("Updater event", error, status);
+                  appUploader.value.isUpdatateLoad = false;
+                }).then((unlisten) => {
+                // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
+                  unlisten();
+                }).catch((error) => {
+                  console.error(error);
+                  appUploader.value.isUpdatateLoad = false;
+                  ElMessage.error("更新失败！请检查网络或稍后再试！");
+                }).finally(() => {
+                  appUploader.value.isUpdatateLoad = false;
+                });
+              }
+              else if (action === "cancel") {
+                if (update?.manifest?.version) {
+                  if (!appUploader.value.ignoreVersion.includes(update.manifest?.version))
+                    appUploader.value.ignoreVersion.push(update?.manifest?.version);
+                }
+              }
+            },
+          });
+        }
+        else {
+          ElMessage.info("当前已是最新版本！");
+        }
+      }
+      catch (error) {
+        appUploader.value.isUpdatateLoad = false;
+      }
+    }
     // 用户页折叠
     const isUserFold = ref(true);
     const isUserCollapse = ref(true);
     // 主页页折叠
     const isFold = ref(true);
     const isCollapse = ref(true);
-    const menuList = ref<IndexMenuType[]>([
-      { url: "/", icon: "i-solar:home-2-bold", title: "首页", children: [] },
-      { url: "/community/post/list", icon: "i-solar:ufo-3-bold-duotone", title: "极物圈", children: [] },
-      {
-        url: "/category",
-        icon: "i-solar:widget-5-bold-duotone",
-        title: "圈子",
-        disabled: true,
-        children: [],
-      },
-      { url: "/chat", icon: "i-solar:chat-round-bold-duotone", title: "聊天", children: [] },
-      { url: "/setting", icon: "i-solar:settings-linear", title: "设置", children: [] },
-    ]);
-
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -64,7 +125,6 @@ export const useSettingStore = defineStore(
       isChatFold,
       // state
       isCollapse,
-      menuList,
       isOpenContact,
       isOpenGroupMember,
       isFold,
@@ -73,8 +133,10 @@ export const useSettingStore = defineStore(
       sysPermission,
       settingPage,
       isThemeChangeLoad,
+      appUploader,
       showChatMenu,
       // actions
+      checkUpdates,
       // getter
     };
   },

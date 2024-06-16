@@ -165,7 +165,7 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
               1,
             );
           }
-          inputOssFileUploadRef?.value.resetInput();
+          inputOssFileUploadRef?.value.resetInput?.();
         },
       },
     ],

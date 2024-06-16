@@ -102,18 +102,18 @@ const load = "<i i-tabler:loader p-4></i>";
         :src="BaseUrlImg + user.avatar" fit="cover"
         class="h-3.8rem w-3.8rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default v-card"
       />
-      <div class="text-0.8rem leading-1.5em">
+      <div class="text-2.8">
         <strong text-1.4rem>{{ user.nickname }}</strong>
-        <p op-60>
+        <p mt-2 op-50>
           ID：{{ userId }}
-          {{ user.gender || "" }}
         </p>
-        <p op-60>
-          邮箱：{{ user.email || "未填写" }}
-        </p>
+        <!-- <p mt-1 op-50>
+          <span mr-2>邮箱：{{ user.email || "未填写" }} </span>
+          <span>性别：{{ user.gender || "" }} </span>
+        </p> -->
       </div>
     </div>
-    <ElDivider style="margin: 2rem auto;width: 30%;" />
+    <ElDivider style="margin: 1em auto;width: 60%;max-width: 12em" />
     <div v-show="!isLoading">
       <BtnElButton
         v-if="isFrend"

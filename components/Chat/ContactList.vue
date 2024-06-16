@@ -81,15 +81,15 @@ const theContactId = computed({
     onChangeRoom(contactId);
   },
 });
-async function onChangeRoom(contactId: number) {
-  const item = chat.contactList.find(p => p.roomId === contactId);
+async function onChangeRoom(newRoomId: number) {
+  const item = chat.contactList.find(p => p.roomId === newRoomId);
   if (!item)
     return;
   if (item.type === RoomType.SELFT) {
     contact.setContact(item);
   }
   else { // 重新拉会话详情
-    const res = await getChatContactInfo(contactId, item?.type, user.getToken);
+    const res = await getChatContactInfo(newRoomId, item?.type, user.getToken);
     if (res && res.code === StatusCode.SUCCESS) {
       contact.setContact(res?.data);
       if (item) {

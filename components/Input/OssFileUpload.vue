@@ -12,8 +12,9 @@ const props = withDefaults(
     disable: false,
     modelValue: () => [] as OssFile[],
     accept: "image/*",
+    acceptDesc: () => ["image/jpeg", "image/png", "image/bmp", "image/webp", "image/jpg", "image/tiff", "image/tif", "image/ico", "image/x-icon"],
     uploadType: OssFileType.IMAGE,
-    uploadQuality: 0.6,
+    uploadQuality: 0.4,
     preview: true,
   },
 );
@@ -37,6 +38,7 @@ interface Props {
    * @default 'image/*'
    */
   accept?: string
+  acceptDesc?: string[]
   uploadType?: OssFileType
   size?: number
   draggable?: boolean
@@ -78,6 +80,8 @@ async function hangdleChange(e: Event) {
     return;
   // 单文件
   if (props.limit === 1) {
+    if (fileList.value.length)
+      fileList.value.splice(0);
     await onUpload(
       {
         // id: URL.createObjectURL(t.files[0]),
@@ -143,17 +147,24 @@ async function onUpload(file: OssFile) {
     return;
 
   // ------------添加到队列-----------
-  fileList.value.push(file);
-
-  // 上传中
-  if (props.uploadType === OssFileType.IMAGE) {
+  // 上传中 只能压缩图片
+  if (props.uploadType === OssFileType.IMAGE && props.acceptDesc.includes(file.file.type)) {
     qiniu.compressImage(file?.file, options).then((res) => {
       // 2）上传 监视器
       qiniuUpload(res.dist as File, file?.key || "", data.data.uploadToken, file);
+    }).catch((e) => {
+      console.warn(e);
+      file.status = "warning";
+      error.value = "图片压缩失败，请稍后再试！";
+      emit("errorMsg", error.value);
+    }).finally(() => {
+      if (!error.value)
+        fileList.value.push(file);
     });
   }
   else {
     qiniuUpload(file.file, file?.key || "", data.data.uploadToken, file);
+    fileList.value.push(file);
   }
 }
 // 封装上传处理
@@ -214,14 +225,15 @@ async function removeItem(t: OssFile) {
       1,
     );
   }
+  resetInput();
   emit("update:modelValue", fileList.value);
   emit("submit", "", pathList.value, fileList.value);
   return flag;
 }
 
 function resetInput() {
-  // if (inputRef.value && fileList.value.length)
-  //   inputRef.value.value = "";
+  if (inputRef?.value)
+    inputRef.value.value = "";
 }
 
 /**
@@ -242,7 +254,6 @@ defineExpose({
   pathList,
   removeItem,
   resetInput,
-
 });
 
 // 初始化文件列表
@@ -283,7 +294,7 @@ const getPreImage = computed(() => {
       <ElIconPlus class="h-1/3 w-1/3 absolute-center" />
     </div>
     <!-- 图片预览 -->
-    <template v-if="uploadType === OssFileType.IMAGE">
+    <template v-if="uploadType === OssFileType.IMAGE && preview">
       <div
         v-for="(p, index) in fileList"
         :key="p.id"
@@ -295,7 +306,7 @@ const getPreImage = computed(() => {
           :alt="p.id"
           fit="cover"
           :src="p.id"
-          :preview-src-list="getPreImage"
+          :preview-src-list="preview ? getPreImage : []"
           preview-teleported
           :initial-index="index"
           class="relative h-full w-full select-none object-cover"
@@ -344,7 +355,7 @@ const getPreImage = computed(() => {
       </div>
     </template>
     <!-- 视频 -->
-    <template v-if="uploadType === OssFileType.VIDEO">
+    <template v-if="uploadType === OssFileType.VIDEO && preview">
       <div
         v-for="p in modelValue"
         :key="p.id"

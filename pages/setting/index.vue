@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
-import { relaunch } from "@tauri-apps/api/process";
 import { getVersion } from "@tauri-apps/api/app";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
@@ -50,65 +48,10 @@ const theme = computed({
 });
 
 // 更新
-const version = await getVersion();
-const isUpdatateLoad = ref(false);
-const haveUpdatate = ref(false);
-async function checkUpdates() {
-  if (isUpdatateLoad.value)
-    return;
-  isUpdatateLoad.value = true;
-  try {
-    const update = await checkUpdate();
-    console.log("是否有更新", update);
-    haveUpdatate.value = update.shouldUpdate;
-    isUpdatateLoad.value = false;
-    if (haveUpdatate.value) {
-      ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.manifest?.version}`, {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        center: true,
-        callback: async (action: string) => {
-          if (action === "confirm") {
-            ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
-            installUpdate().then(async (val) => {
-              console.log(val);
-              await relaunch();
-            }).catch((error) => {
-              console.error(error);
-              ElMessage.error("更新失败！请检查网络或稍后再试！");
-            }).finally(() => {
-              isUpdatateLoad.value = false;
-              ElLoading.service().close();
-            });
-            onUpdaterEvent(({ error, status }) => {
-              // 这将记录所有更新器事件，包括状态更新和错误。
-              console.log("Updater event", error, status);
-              isUpdatateLoad.value = false;
-              // ElMessage.info("当前已是最新版本！");
-            }).then((unlisten) => {
-            // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
-              unlisten();
-            }).catch((error) => {
-              console.error(error);
-              isUpdatateLoad.value = false;
-              ElMessage.error("更新失败！请检查网络或稍后再试！");
-            }).finally(() => {
-              isUpdatateLoad.value = false;
-            });
-          }
-        },
-      });
-    }
-    else {
-      ElMessage.info("当前已是最新版本！");
-    }
-  }
-  catch (error) {
-    setTimeout(() => {
-      isUpdatateLoad.value = false;
-    }, 500);
-  }
-}
+onMounted(async () => {
+  const v = await getVersion();
+  setting.appUploader.version = v;
+});
 </script>
 
 <template>
@@ -140,11 +83,13 @@ async function checkUpdates() {
           <!-- 更新 -->
           <div class="group flex-row-bt-c">
             关于更新
-            <ElTooltip :content="version">
-              <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2.2em" @click="!isUpdatateLoad && checkUpdates()">
-                <i i-solar:refresh-outline mr-1 inline-block p-2 :class="isUpdatateLoad ? 'animate-spin' : ''" />
-                <span v-if="version">检查更新</span>
-              </ElButton>
+            <ElTooltip :content="setting.appUploader.version">
+              <el-badge :hidden="!setting.appUploader.isUpload" is-dot :value="+setting.appUploader.isUpload">
+                <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2.2em" @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()">
+                  <i i-solar:refresh-outline mr-1 inline-block p-2 :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''" />
+                  <span>检查更新</span>
+                </ElButton>
+              </el-badge>
             </ElTooltip>
           </div>
         </section>

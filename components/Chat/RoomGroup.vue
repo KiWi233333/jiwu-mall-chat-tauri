@@ -186,7 +186,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
 }
 
 /**
- * 切花管理员角色
+ * 切换管理员角色
  * @param dto 参数
  * @param type 转化类型
  */

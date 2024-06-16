@@ -147,7 +147,7 @@ onMounted(() => {
       <!-- 上传 -->
       <el-upload
         ref="avatatRef"
-        :disabled="isEdit"
+        :disabled="!isEdit"
         class="avatar-uploader"
         drag
         :action="`${BaseUrl}/user/info/avatar`"

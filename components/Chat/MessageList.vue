@@ -7,20 +7,21 @@ const user = useUserStore();
 const ws = useWs();
 const pageInfo = ref({
   cursor: null as null | string,
-  isLast: false,
+  isLast: true,
   size: 20,
 });
+const isReload = ref(false);
 /**
  * 加载数据
  */
 async function loadData(call?: (data?: Message[]) => void) {
   const roomId = chat.theContact.roomId;
-  if (isLoading.value || pageInfo.value.isLast || !roomId)
+  if (isLoading.value || isReload.value || pageInfo.value.isLast || !roomId)
     return;
   isLoading.value = true;
+  isReload.value = false;
   getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
-    // 不是当前房间
-    if (chat.theContact.roomId !== roomId)
+    if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
     if (data.list && data.list.length)
@@ -30,6 +31,7 @@ async function loadData(call?: (data?: Message[]) => void) {
       // 更新滚动位置
       chat.saveScrollTop && chat.saveScrollTop();
       if (pageInfo.value.cursor === null) {
+        chat.scrollBottom(false);
         call && call(chat.theContact.msgList);
       }
       else {
@@ -40,48 +42,6 @@ async function loadData(call?: (data?: Message[]) => void) {
         if (msgRangeSize > 0)
           chat.scrollTop(msgRangeSize);
       }
-      pageInfo.value.isLast = data.isLast;
-      pageInfo.value.cursor = data.cursor;
-      isLoading.value = false;
-    });
-  }).catch(() => {
-    isLoading.value = false;
-    pageInfo.value.isLast = false;
-    pageInfo.value.cursor = null;
-  });
-}
-const isReload = ref(false);
-// 监听房间
-watch(() => chat.theContact.roomId, (val) => {
-  reload(val);
-  // 消息阅读上报
-  if (val)
-    chat.setReadList(val);
-}, {
-  immediate: true,
-});
-
-// 重新加载
-function reload(roomId: number) {
-  chat.theContact.msgList = [];
-  pageInfo.value = {
-    cursor: null as null | string,
-    isLast: false,
-    size: 20,
-  };
-  chat.scrollTopSize = 0;
-  isReload.value = true;
-  if (chat.theContact.roomId !== roomId)
-    return;
-
-  getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
-    // 追加数据
-    if (data.list && data.list.length)
-      chat.theContact.msgList.unshift(...data.list);
-    nextTick(() => {
-      if (isReload.value)
-        chat.scrollBottom(false);
-      isReload.value = false;
       isLoading.value = false;
     });
     pageInfo.value.isLast = data.isLast;
@@ -90,17 +50,55 @@ function reload(roomId: number) {
     isLoading.value = false;
     pageInfo.value.isLast = false;
     pageInfo.value.cursor = null;
-  }).finally(() => {
-    if (isReload.value)
-      isReload.value = false;
   });
 }
+// 重新加载
+function reload(roomId: number) {
+  pageInfo.value = {
+    cursor: null as null | string,
+    isLast: false,
+    size: 20,
+  };
+  chat.theContact.msgList.splice(0);
+  chat.scrollTopSize = 0;
+  isReload.value = true;
+  isLoading.value = true;
+  getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
+    if (roomId !== chat.theContact.roomId)
+      return;
+    // 追加数据
+    if (!data.list?.length)
+      return;
+    chat.theContact.msgList = data.list;
+    pageInfo.value.isLast = data.isLast;
+    pageInfo.value.cursor = data.cursor;
+    nextTick(() => {
+      // 更新滚动位置
+      chat.saveScrollTop && chat.saveScrollTop();
+      chat.scrollBottom(false);
+      isLoading.value = false;
+      isReload.value = false;
+    });
+  });
+}
+// 监听房间
+watch(() => chat.theContact.roomId, (val) => {
+  if (val) {
+    reload(val);
+    // 消息阅读上报
+    chat.setReadList(val);
+  }
+}, {
+  immediate: true,
+});
+
 /**
  * 新消息
  */
 watch(() => ws.wsMsgList.newMsg.length, () => {
   // 1、新消息
-  resolveNewMsg(ws.wsMsgList.newMsg);
+  if (ws.wsMsgList.newMsg)
+    resolveNewMsg(ws.wsMsgList.newMsg);
 }, {
   immediate: true,
   deep: true,

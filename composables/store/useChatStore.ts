@@ -34,26 +34,24 @@ export const useChatStore = defineStore(
       member: undefined,
     });
     // 改变会话
-    function setContact(vo?: ChatContactVO, list: ChatMessageVO[] = [], unReadList: ChatMessageVO[] = []) {
-      if (vo)
+    function setContact(vo?: ChatContactVO) {
+      if (vo?.roomId)
         vo.unreadCount = 0;
-      theContact.value = vo || {
-        activeTime: 0,
-        avatar: "",
-        roomId: 1,
-        hotFlag: 1,
-        name: "",
-        text: "",
-        type: 1,
-        unreadCount: 0,
+      theContact.value = {
+        ...(vo || {
+          activeTime: 0,
+          avatar: "",
+          roomId: 1,
+          hotFlag: 1,
+          name: "",
+          text: "",
+          type: 1,
+          unreadCount: 0,
+        }),
         // 消息列表
-        msgList: [],
-        unreadMsgList: [],
+        msgList: theContact.value.msgList || [],
+        unreadMsgList: theContact.value.unreadMsgList || [],
       };
-      if (list)
-        theContact.value.msgList = list;
-      if (unReadList)
-        theContact.value.unreadMsgList = unReadList;
     }
     /******************************* 群聊成员 *********************************/
     const onOfflineList = ref<ChatMemberVO[]>([]);
@@ -76,7 +74,6 @@ export const useChatStore = defineStore(
           if (lastMsg)
             ctx.text = lastMsg;
         }
-
         // 消费消息
         const ws = useWs();
         ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== roomId);

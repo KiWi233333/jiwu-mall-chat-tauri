@@ -2,6 +2,8 @@
 import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
 import { open } from "@tauri-apps/api/shell";
+import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
+import { relaunch } from "@tauri-apps/api/process";
 import type { PayloadType } from "./types/tauri";
 import { WsMsgBodyType, WsStatusEnum } from "./composables/types/WsType";
 import { appKeywords, appName } from "@/constants/index";
@@ -10,21 +12,7 @@ import { appKeywords, appName } from "@/constants/index";
 const user = useUserStore();
 const setting = useSettingStore();
 // https://nuxt.com.cn/docs/guide/directory-structure/app
-// 准备完成关闭加载
-onMounted(() => {
-  const app = document.body;
-  if (app)
-    app.classList.remove("stop-transition");
-  ElMessage.closeAll("error");
-  const font = setting.settingPage.fontFamily.value || null;
-  if (font)
-    document.documentElement.style.setProperty("--font-family", font);
-  // 是否关闭动画
-  if (setting.settingPage.isColseAllTransition)
-    document.documentElement.classList.add("stop-transition-all");
-  else
-    document.documentElement.classList.remove("stop-transition-all");
-});
+
 useHead({
   title: `${appName} - 开启你的极物之旅 ✨`,
   meta: [
@@ -60,17 +48,6 @@ function keyToggleTheme(e: KeyboardEvent) {
 setting.isThemeChangeLoad = true;
 setting.isThemeChangeLoad = true;
 
-onMounted(() => {
-  // 覆盖
-  window.addEventListener("keydown", keyToggleTheme);
-  if (setting.settingPage.modeToggle.value === "auto") {
-    const nowDate = new Date();
-    useModeToggle(nowDate.getHours() < 18 && nowDate.getHours() > 6 ? "light" : "dark");
-  }
-  setTimeout(() => {
-    setting.isThemeChangeLoad = false;
-  }, 1000);
-});
 // 同步修改系统 主题
 watch(() => setting.settingPage.modeToggle.value, (val) => {
   const nowDate = new Date();
@@ -80,18 +57,49 @@ watch(() => setting.settingPage.modeToggle.value, (val) => {
   immediate: false,
 });
 
-
-onUnmounted(() => {
-  window.removeEventListener("keydown", keyToggleTheme);
-});
-onMounted(() => {
-  window.addEventListener("contextmenu", (e) => {
-    e.preventDefault();// 阻止默认行为，防止右键菜单弹出
-  });
+onMounted(async () => {
+  // 获取通知权限
+  let permissionGranted = await isPermissionGranted();
+  if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === "granted";
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
+  else {
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
 });
 
 const timer = ref<any>(null);
-onMounted(async () => {
+onMounted(() => {
+  // 准备完成关闭加载bg
+  const app = document.body;
+  if (app)
+    app.classList.remove("stop-transition");
+  ElMessage.closeAll("error");
+  const font = setting.settingPage.fontFamily.value || null;
+  if (font)
+    document.documentElement.style.setProperty("--font-family", font);
+  if (setting.settingPage.isColseAllTransition)
+    document.documentElement.classList.add("stop-transition-all");
+  else
+    document.documentElement.classList.remove("stop-transition-all");
+
+  // 主题切换
+  window.addEventListener("keydown", keyToggleTheme);
+  if (setting.settingPage.modeToggle.value === "auto") {
+    const nowDate = new Date();
+    useModeToggle(nowDate.getHours() < 18 && nowDate.getHours() > 6 ? "light" : "dark");
+  }
+  setTimeout(() => {
+    setting.isThemeChangeLoad = false;
+  }, 1000);
+
+  // 阻止默认行为，防止右键菜单弹出
+  window.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+  // 优化动画性能
   window.addEventListener("resize", () => {
     if (timer.value)
       clearTimeout(timer.value);// 清除之前的定时器，避免重复触发
@@ -105,17 +113,19 @@ onMounted(async () => {
     }, 600);
   });
 
-  // 获取通知权限
-  let permissionGranted = await isPermissionGranted();
-  if (!permissionGranted) {
-    const permission = await requestPermission();
-    permissionGranted = permission === "granted";
-    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
-  }
-  else {
-    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
-  }
+  // 禁用F5刷新页面
+  // window.addEventListener("keydown", (e) => {
+  //   if (e.key === "F5")
+  //     e.preventDefault(); // 阻止默认行为，防止页面刷新。
+  // });
 
+  // Tauri事件
+  // 获取版本更新
+  setting.appUploader.isUpdatateLoad = false;
+  setting.appUploader.isUpload = false;
+  setting.appUploader.version = "";
+  setting.appUploader.newVersion = "";
+  setting.checkUpdates(true);
   // 监听open_url事件
   listen<PayloadType>("open_url", (e) => {
     const url = e.payload.message; // 路径
@@ -129,7 +139,9 @@ onMounted(async () => {
       navigateTo(path);
   });
 });
-
+onUnmounted(() => {
+  window.removeEventListener("keydown", keyToggleTheme);
+});
 
 // 聊天模块
 const ws = useWs();
@@ -143,7 +155,6 @@ const noticeType = [
 let worker: Worker;
 // 初始化
 function reload() {
-  console.log("初始化聊天会话");
   worker?.terminate?.();
   worker = new Worker("useWsWoker.js");
   // 初始化 WebSocket 连接
@@ -157,8 +168,6 @@ function reload() {
     ws.onMessage((msg) => {
       // 消息通知
       const body = msg.data as ChatMessageVO;
-      console.log( body.fromUser.userId !== user.userInfo.id);
-      
       if (noticeType.includes(msg.type) && body.fromUser.userId !== user.userInfo.id) {
         sendNotification({
           icon: BaseUrlImg + body.fromUser.avatar,
@@ -170,7 +179,6 @@ function reload() {
   });
   // Web Worker 消息处理
   worker.addEventListener("message", (e) => {
-    // console.log(e.data.type, e.data?.data);
     if (e.data.type === "reload")
       reload();
     if (e.data.type === "heart")
@@ -189,12 +197,6 @@ watchDebounced([() => ws.status, () => user.isLogin], (val) => {
 }, { debounce: 500, immediate: true });
 
 ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
-
-// 禁用F5刷新页面
-// window.addEventListener("keydown", (e) => {
-//   if (e.key === "F5")
-//     e.preventDefault(); // 阻止默认行为，防止页面刷新。
-// });
 </script>
 
 <template>

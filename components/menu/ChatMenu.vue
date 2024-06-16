@@ -8,7 +8,7 @@ defineEmits<{
 const route = useRoute();
 const user = useUserStore();
 const ws = useWs();
-
+const setting = useSettingStore();
 
 const applyUnRead = ref(0);
 /**
@@ -57,14 +57,16 @@ const menuList = [
     path: "/setting",
     icon: "i-solar:settings-linear",
     activeIcon: "i-solar:settings-bold-duotone",
+    class: "absolute bottom-2 diabled-bg",
+    tipValue: computed(() => +setting.appUploader.isUpload),
+    isDot: true,
   },
 ];
-const setting = useSettingStore();
 </script>
 
 <template>
   <div
-    class="menu relative z-998 h-auto max-w-1/2 bg-light bg-opacity-80 transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
+    class="menu relative z-998 bg-light bg-opacity-80 transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
   >
     <el-menu class="sm:w-12rem" :router="true" :default-active="route.path" :collapse="setting.isUserFold">
       <!-- 顶部 -->
@@ -75,7 +77,7 @@ const setting = useSettingStore();
         />
         <!-- 会话 -->
         <span
-          block sm:hidden class="mx-a transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
+          block sm:hidden class="mx-a my-2 transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
           @click="setting.isOpenContact = !setting.isOpenContact"
         >
           <i class="i-solar:chat-square-bold-duotone" cursor-pointer p-3 />
@@ -83,29 +85,19 @@ const setting = useSettingStore();
       </div>
       <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
       <!-- 个人信息 -->
-      <el-menu-item v-for="p in menuList" :key="p.path" :index="p.path">
-        <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :max="99">
-          <i class="icon" :class="route.path === p.path ? p.activeIcon : p.icon" />
-        </el-badge>
-        <span class="title overflow-hidden px-6 font-500 tracking-0.2em">{{ p.title }}</span>
-      </el-menu-item>
+      <div flex flex-1 flex-col overflow-y-auto>
+        <el-menu-item v-for="p in menuList" :key="p.path" :index="p.path" :class="p.class">
+          <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">
+            <i class="icon" :class="route.path === p.path ? p.activeIcon : p.icon" />
+          </el-badge>
+        </el-menu-item>
+      </div>
     </el-menu>
     <div
       v-if="setting.isChatFold"
       class="absolute left-0 top-0 block h-100vh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden" style="background-color: #2222223a;
     " @click="setting.isChatFold = false"
     />
-    <!-- 折叠 -->
-    <!-- <span
-      class="absolute bottom-4 z-999 flex-row-c-c rounded-r-2 op-80 shadow-md transition-all -right-6 sm:h-2.6rem border-default hover:(op-100)"
-      :class="setting.showChatMenu ? ' pl-1px h-3rem w-1.6rem el-bg-primary text-white' : 'pl-1px  h-3rem w-1.6rem el-bg-primary text-white'"
-      @click="setting.showChatMenu = !setting.showChatMenu"
-    >
-      <i
-        :class="setting.showChatMenu ? 'rotate-0 ' : 'rotate-180'"
-        class="i-solar:alt-arrow-right-line-duotone block p-0.6em transition-all"
-      />
-    </span> -->
   </div>
 </template>
 
@@ -128,7 +120,7 @@ const setting = useSettingStore();
       text-overflow: clip;
       height: 3em;
       border-radius: 8px;
-      margin: 10px;
+      margin: 6px 10px;
       transition: $transition-delay;
       border: 1px dashed transparent;
 
@@ -153,7 +145,13 @@ const setting = useSettingStore();
         border: 1px dashed;
       }
     }
-
+    .absolute.el-menu-item {
+      position: absolute;
+    }
+    .diabled-bg.el-menu-item {
+      background-color: transparent !important;
+      border-color: transparent !important;
+    }
     .el-menu-item-group {
       .el-menu-item {
         background-color: #8181811a;

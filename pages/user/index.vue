@@ -5,27 +5,26 @@ const user = ref<Partial<UserInfoVO>>();
 const isLoading = ref(false);
 const store = useUserStore();
 const route = useRoute();
-const isSelf = ref(true);
+const isSelf = ref(false);
 
-const userId = route.query?.id ? route.query?.id.toString() : "";
+const ohterUserId = route.query?.id ? route.query?.id.toString() : "";
 isLoading.value = true;
-if (userId && userId !== store?.userInfo?.id) {
+if (ohterUserId && ohterUserId !== store?.userInfo?.id) {
   isSelf.value = false;
   // 获取用户信息
-  const res = await getCommUserInfoSe(userId, store.getToken);
+  const res = await getCommUserInfoSe(ohterUserId, store.getToken);
   if (res.code === StatusCode.SUCCESS) {
     user.value = {
-      id: userId,
+      id: ohterUserId,
       ...res.data,
     } as UserInfoVO;
   }
-  else {
-    user.value = store.userInfo;
-    isSelf.value = true;
-  }
   isLoading.value = false;
 }
-else { user.value = store.userInfo; }
+else {
+  isSelf.value = true;
+  user.value = store.userInfo;
+}
 
 useHead({
   title: () => `${isSelf.value ? "个人信息" : user?.value?.nickname} - 个人中心 - ${appName}`,

@@ -4,7 +4,7 @@ const props = defineProps<{
 }>();
 const chat = useChatStore();
 const ChatMessageListRef = ref();
-const scrollbarRef = ref(); 
+const scrollbarRef = ref();
 const timer = ref<any>(0);
 /**
  * 滚动到指定消息
@@ -95,7 +95,7 @@ function onSendMsg(msg: ChatMessageVO) {
   // ChatMessageListRef.value?.appendMsg(msg);
   nextTick(() => {
     setTimeout(() => {
-      scrollBottom(false)
+      scrollBottom(false);
     }, 100);
   }); // 发送消息后自动滚动到底部
 };

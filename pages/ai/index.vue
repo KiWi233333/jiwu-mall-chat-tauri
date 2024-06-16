@@ -1,6 +1,23 @@
 <script setup lang="ts">
 import { WsStatusEnum } from "~/composables/types/WsType";
 
+const INIT_MSG = {
+  fromUser: {
+    userId: "1739333818150862850",
+    avatar: "image/2023-12-27/1653240351484801026/fab3eab2-e721-4e82-a98f-0bdbdb6e0068",
+    gender: Gender.DEFAULT,
+    nickName: "极物AI客服",
+  },
+  message: {
+    id: 1,
+    roomId: 0,
+    sendTime: new Date().getTime(),
+    content: "你好！欢迎光临极物圈，有什么可以帮您的吗？",
+    type: MessageType.AI_CHAT,
+    body: {
+    },
+  },
+};
 const user = useUserStore();
 const form = ref({
   role: "user",
@@ -34,50 +51,40 @@ const dto = ref({
     },
   },
 });
-interface AiChatMsgDTO {
-  role: "user" | "admin" | "ai"
-  content: string
-}
 
+const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
 // 是否在返回数据
 const isChat = ref(false);
 const formRef = ref();
 function onSubmit() {
-  if (status.value === WsStatusEnum.OPEN)
+  if (status.value === WsStatusEnum.OPEN || !form.value.content || form.value.content.length < 1 || isChat.value)
     return;
 
   formRef.value?.validate((action: boolean) => {
     if (!action)
       return;
     isChat.value = true;
-    senMsg(form.value.content, user.userInfo.id);
-    scrollBottom();
+    sendMsg(form.value.content, user.userInfo.id);
     form.value.content = "";
+    nextTick(() => {
+      scrollBottom();
+    });
   });
 }
-const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
-function senMsg(msg: string, id: string) {
+
+function onStop() {
+  if (status.value === WsStatusEnum.OPEN)
+    return;
+  body.value.ws?.close();
+  scrollBottom();
+  isChat.value = false;
+  scrollBottom();
+  status.value = WsStatusEnum.SAFE_CLOSE;
+}
+
+function sendMsg(msg: string, id: string) {
   if (body.value.ws && body.value.ws.OPEN === 1)
     return;
-
-  msgList.value.push({
-    fromUser: {
-      userId: user.userInfo.id,
-      avatar: user.userInfo.avatar,
-      gender: user.userInfo.gender,
-      nickName: user.userInfo.nickname,
-    },
-    message: {
-      id: Math.random() * 1000,
-      roomId: 0,
-      sendTime: new Date().toDateString(),
-      content: msg,
-      type: MessageType.TEXT,
-      body: {
-      },
-    },
-  });
-
   body.value.ws = new WebSocket("wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1");
   status.value = WsStatusEnum.OPEN;
   body.value.ws.onopen = (e) => {
@@ -85,6 +92,9 @@ function senMsg(msg: string, id: string) {
     dto.value.header.uid = id;
     body.value.ws?.send(JSON.stringify(dto.value));
     status.value = WsStatusEnum.OPEN;
+    nextTick(() => {
+      scrollBottom();
+    });
   };
   body.value.ws.onclose = () => {
     status.value = WsStatusEnum.SAFE_CLOSE;
@@ -95,10 +105,14 @@ function senMsg(msg: string, id: string) {
   body.value.ws.onerror = () => {
     status.value = WsStatusEnum.CLOSE;
     body.value.ws = null;
-    scrollBottom();
+
+    nextTick(() => {
+      scrollBottom();
+    });
   };
   body.value.ws.onmessage = (e) => {
     const data = JSON.parse(e.data);
+    status.value = WsStatusEnum.OPEN;
     if (data) {
       status.value = data.header.code as WsStatusEnum;
       const text = data?.payload?.choices?.text || [];
@@ -122,29 +136,36 @@ function senMsg(msg: string, id: string) {
         message: {
           id: data.header.sid,
           roomId: 0,
-          sendTime: new Date().toDateString(),
+          sendTime: new Date().getTime(),
           content: text.value,
           type: MessageType.AI_CHAT,
           body: {
           },
         },
       });
-      ;
     }
-    status.value = WsStatusEnum.CLOSE;
-    scrollBottom();
+    nextTick(() => {
+      scrollBottom();
+    });
   };
+  msgList.value.push({
+    fromUser: {
+      userId: user.userInfo.id,
+      avatar: user.userInfo.avatar,
+      gender: user.userInfo.gender,
+      nickName: user.userInfo.nickname,
+    },
+    message: {
+      id: Math.random() * 1000,
+      roomId: 0,
+      sendTime: new Date().getTime(),
+      content: msg,
+      type: MessageType.TEXT,
+      body: {
+      },
+    },
+  });
 }
-
-watch(status, (newVal, oldVal) => {
-  if (newVal === WsStatusEnum.OPEN) {
-    isChat.value = newVal === WsStatusEnum.OPEN;
-  }
-  else {
-    isChat.value = false;
-    body.value.ws = null;
-  }
-});
 
 const scollRef = ref();
 // 滚动到底部
@@ -160,7 +181,25 @@ function scrollBottom(animate = true) {
   }
 }
 
+function handleNewChat() {
+  if (isChat.value)
+    return ElMessage.warning("正在聊天中，请先结束当前对话！");
+
+  // 开启新对话
+  isChat.value = true;
+  body.value.ws = null;
+  status.value = WsStatusEnum.CLOSE;
+  msgList.value = [INIT_MSG];
+  nextTick(() => {
+    scrollBottom(false);
+    isChat.value = false;
+  });
+}
+
 onMounted(() => {
+  if (msgList.value.length === 0)
+    msgList.value.push(INIT_MSG);
+
   nextTick(() => {
     scrollBottom(false);
   });
@@ -187,19 +226,24 @@ definePageMeta({
             <ChatMsgMain
               v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
               :data="msg"
+              :last-msg="i > 0 ? msgList[i - 1] : {}"
             />
           </div>
         </el-scrollbar>
         <el-form
-          ref="formRef" v-auth :model="form" :disabled="!user?.isLogin || isChat"
-          class="sticky bottom-0 left-0 mt-2 flex items-center gap-3 p-2 bg-color sm:p-4" @submit.prevent="onSubmit"
+          ref="formRef" v-auth :model="form"
+          class="mt-2 flex items-center gap-3 p-2 bg-color sm:p-4"
+          @submit.prevent="onSubmit"
         >
-          <NuxtLink to="/user/info">
-            <CardElImage
-              :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-              class="h-2.4rem w-2.4rem rounded-1/2 border-default"
-            />
-          </NuxtLink>
+          <div>
+            <el-tooltip content="新对话" placement="top">
+              <CardElImage
+                :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
+                class="h-2.4rem w-2.4rem rounded-1/2 border-default"
+                @click="handleNewChat"
+              />
+            </el-tooltip>
+          </div>
           <el-form-item
             prop="content" class="w-full" :rules="[{
               required: true,
@@ -209,17 +253,18 @@ definePageMeta({
           >
             <el-input
               v-model.lazy="form.content"
-              :disabled="!user.isLogin || isChat" placeholder="快开始对话吧 ✨"
+              :disabled="isChat" placeholder="快开始对话吧 ✨"
               class="content border-0 border-b-1px pt-4 border-default"
             />
           </el-form-item>
           <BtnElButton
-            class="group ml-a" icon-class="i-solar:map-arrow-right-bold-duotone block mr-1" round
-            :disabled="!user.isLogin || isChat"
-            transition-icon
-            type="info" @click=" onSubmit "
+            class="group ml-a"
+            :class="isChat ? 'animate-pulse' : ''"
+            :icon-class="` block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`" round
+            :type="isChat ? 'danger' : 'info'"
+            @click="isChat ? onStop() : onSubmit()"
           >
-            发送&nbsp;
+            {{ isChat ? "结束" : "发送" }}&nbsp;
           </BtnElButton>
         </el-form>
       </section>

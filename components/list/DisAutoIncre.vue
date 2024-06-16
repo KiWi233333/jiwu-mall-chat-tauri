@@ -26,26 +26,16 @@ enum LoadingClassEnum {
 
 // 停止加载
 const loadMoreRef = ref();
-// 首次执行
-onMounted(() => {
-  if (props.immediate)
-    emit("load");
-});
 const isIntersecting = ref(false);
 // 定时器
 let timer: any = null;
+
 // 刷新
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
     isIntersecting.value = obj.isIntersecting;
-    clearInterval(timer);
-    if (obj.isIntersecting) {
-      callBack && callBack();
-      timer = setInterval(callBack, props.delay);
-    }
-  },
-);
+  });
 
 function callBack() {
   if (props.noMore && props.autoStop) {
@@ -57,24 +47,37 @@ function callBack() {
   }
 }
 
-if (props.immediate)
-  emit("load");
-
-onUnmounted(() => {
-  clearInterval(timer);
-  stop();
-  timer = null;
+watch(isIntersecting, (val) => {
+  if (val) {
+    callBack && callBack();
+    timer = setInterval(callBack, props.delay);
+  }
+  else {
+    clearInterval(timer);
+  }
+}, {
+  immediate: props.immediate,
 });
+if (props.immediate) {
+  clearInterval(timer);
+  callBack && callBack();
+  timer = setInterval(callBack, props.delay);
+}
+
+const showLoad = computed(() => {
+  return !props.noMore;
+});
+
 
 watch(() => props.noMore, (val) => {
   if (val && props.autoStop)
     stop && stop();
 });
-
-const showLoad = computed(() => {
-  return props.loading || !props.noMore;
+onUnmounted(() => {
+  clearInterval(timer);
+  stop();
+  timer = null;
 });
-
 defineExpose({
   stop,
   loadMoreRef,
