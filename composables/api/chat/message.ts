@@ -64,7 +64,7 @@ export interface ChatUserInfo {
 export interface Message<T extends object = object> {
   id: number
   roomId: number
-  sendTime: string
+  sendTime: number
   /**
    * 文本内容
    */

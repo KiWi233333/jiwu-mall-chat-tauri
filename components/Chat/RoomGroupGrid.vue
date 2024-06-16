@@ -261,6 +261,7 @@ function onAdd() {
 // 退出群聊
 function exitGroup() {
   ElMessageBox.confirm(isTheGroupOwner.value ? "是否解散该群聊？" : "是否退出该群聊？", {
+    title: "提示",
     center: true,
     confirmButtonText: isTheGroupOwner.value ? "解散" : "退出",
     cancelButtonText: "取消",

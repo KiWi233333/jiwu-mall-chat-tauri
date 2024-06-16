@@ -49,7 +49,7 @@ const { stop, isSupported } = useIntersectionObserver(
 
 function callBack() {
   if (props.noMore && props.autoStop) {
-    cancelAnimationFrame(timer);
+    clearInterval(timer);
     stop && stop();
   }
   else {

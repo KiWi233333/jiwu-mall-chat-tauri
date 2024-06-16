@@ -136,6 +136,7 @@ const ws = useWs();
 // 通知消息类型  WsMsgBodyType
 const noticeType = [
   WsMsgBodyType.MESSAGE, // 普通消息
+  WsMsgBodyType.APPLY, // 好友消息
 ];
 
 // 创建 Web Worker
@@ -155,9 +156,10 @@ function reload() {
     ws.sendHeart();
     ws.onMessage((msg) => {
       // 消息通知
-      // if (ws.isWindBlur && noticeType.includes(msg.type)) {
-      if (noticeType.includes(msg.type)) {
-        const body = msg.data as ChatMessageVO;
+      const body = msg.data as ChatMessageVO;
+      console.log( body.fromUser.userId !== user.userInfo.id);
+      
+      if (noticeType.includes(msg.type) && body.fromUser.userId !== user.userInfo.id) {
         sendNotification({
           icon: BaseUrlImg + body.fromUser.avatar,
           title: body.fromUser.nickName,
@@ -189,10 +191,10 @@ watchDebounced([() => ws.status, () => user.isLogin], (val) => {
 ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
 
 // 禁用F5刷新页面
-window.addEventListener("keydown", (e) => {
-  if (e.key === "F5")
-    e.preventDefault(); // 阻止默认行为，防止页面刷新。
-});
+// window.addEventListener("keydown", (e) => {
+//   if (e.key === "F5")
+//     e.preventDefault(); // 阻止默认行为，防止页面刷新。
+// });
 </script>
 
 <template>

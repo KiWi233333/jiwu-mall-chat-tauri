@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
   loading: false,
   ssr: true,
   autoStop: true,
-  delay: 500,
+  delay: 400,
   loadingClass: "mx-a my-0.6em h-1.4rem w-1.4rem animate-[spin_2s_infinite_linear] rounded-6px bg-[var(--el-color-primary)]",
   appendLoadingClass: "",
 });
@@ -29,9 +29,7 @@ onMounted(() => {
 });
 // 定时器
 let timer: any = null;
-const showLoad = computed(() => {
-  return props.loading || !props.noMore;
-});
+const showLoad = computed(() => props.loading);
 // 刷新
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
@@ -51,8 +49,8 @@ watch(isSee, (val) => {
 
 function callBack() {
   if (showLoad.value && isSee.value) {
-    timer = setTimeout(callBack, props.delay * 2);
     emit("load");
+    timer = setTimeout(callBack, props.delay);
   }
   else if (props.noMore && props.autoStop) {
     stop && stop();

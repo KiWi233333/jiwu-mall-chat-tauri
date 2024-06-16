@@ -14,10 +14,14 @@ const pageInfo = ref({
  * 加载数据
  */
 async function loadData(call?: (data?: Message[]) => void) {
-  if (isLoading.value || pageInfo.value.isLast || !chat.theContact.roomId)
+  const roomId = chat.theContact.roomId;
+  if (isLoading.value || pageInfo.value.isLast || !roomId)
     return;
   isLoading.value = true;
-  getChatMessagePage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
+  getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
+    // 不是当前房间
+    if (chat.theContact.roomId !== roomId)
+      return;
     // 追加数据
     if (data.list && data.list.length)
       chat.theContact.msgList.unshift(...data.list);
@@ -47,9 +51,9 @@ async function loadData(call?: (data?: Message[]) => void) {
   });
 }
 const isReload = ref(false);
-// 监听房间错误
+// 监听房间
 watch(() => chat.theContact.roomId, (val) => {
-  reload();
+  reload(val);
   // 消息阅读上报
   if (val)
     chat.setReadList(val);
@@ -58,9 +62,7 @@ watch(() => chat.theContact.roomId, (val) => {
 });
 
 // 重新加载
-function reload() {
-  if (isReload.value || isLoading.value)
-    return;
+function reload(roomId: number) {
   chat.theContact.msgList = [];
   pageInfo.value = {
     cursor: null as null | string,
@@ -69,8 +71,10 @@ function reload() {
   };
   chat.scrollTopSize = 0;
   isReload.value = true;
-  isLoading.value = true;
-  getChatMessagePage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
+  if (chat.theContact.roomId !== roomId)
+    return;
+
+  getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
     // 追加数据
     if (data.list && data.list.length)
       chat.theContact.msgList.unshift(...data.list);
@@ -87,9 +91,8 @@ function reload() {
     pageInfo.value.isLast = false;
     pageInfo.value.cursor = null;
   }).finally(() => {
-    nextTick(() => {
+    if (isReload.value)
       isReload.value = false;
-    });
   });
 }
 /**
@@ -252,11 +255,12 @@ defineExpose({
 
 <template>
   <div
-    relative v-bind="$attrs"
+    relative
+    v-bind="$attrs"
     flex
     flex-col
-    class="msg-list op-0 transition-opacity"
-    :class="{ 'op-100': !isReload }"
+    class="msg-list op-0 transition-opacity transition-duration-100"
+    :class="{ 'op-100 ': !isReload }"
   >
     <ListDisAutoIncre
       :auto-stop="false"
@@ -273,6 +277,7 @@ defineExpose({
         :key="msg.message.id"
         :index="i"
         :data="msg"
+        :last-msg="i > 0 ? chat.theContact.msgList[i - 1] : {}"
       />
     </ListDisAutoIncre>
   </div>
@@ -287,6 +292,11 @@ defineExpose({
     word-break: break-all;
     white-space: pre-wrap;
     line-height: 1.4em;
+  }
+}
+.isReload {
+  .animate {
+    animation: none !important;
   }
 }
 </style>

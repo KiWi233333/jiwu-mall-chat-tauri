@@ -179,9 +179,11 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         onClick: () => {
           ElMessageBox.confirm("是否退出该群聊？", {
             confirmButtonText: "退出",
-            center: true,
             cancelButtonText: "取消",
+            center: true,
+            title: "提醒",
             lockScroll: false,
+            type: "warning",
             callback: async (action: string) => {
               if (action === "confirm") {
                 const res = await exitRoomGroup(item.roomId, user.getToken);

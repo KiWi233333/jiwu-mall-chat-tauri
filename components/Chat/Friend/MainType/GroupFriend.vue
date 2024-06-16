@@ -32,6 +32,8 @@ function exitRoom(roomId: number) {
   ElMessageBox.confirm("是否退出该群聊？", {
     confirmButtonText: "退出",
     cancelButtonText: "取消",
+    center: true,
+    title: "提醒",
     lockScroll: false,
     type: "warning",
     callback: async (action: string) => {

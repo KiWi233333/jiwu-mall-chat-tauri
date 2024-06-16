@@ -9,28 +9,30 @@ const data = toRef(props.data);
 interface UserType {
   id: string
 }
-const isLoading = ref(false);
+const isLoading = ref(true);
 const isFrend = ref<boolean | undefined>(false);
 const user = ref<Partial<CommUserVO>>({});
 const store = useUserStore();
 
 // 加载用户数据
 async function loadData(val: string) {
-  if (isLoading.value)
-    return;
   isFrend.value = false;
   isLoading.value = true;
-  // 确认是否为好友
-  await isChatFriend({ uidList: [val] }, store.getToken).then((res) => {
-    const data = res.data.checkedList.find(p => p.uid === val);
-    isFrend.value = data && data.isFriend === isTrue.TRUE;
-  });
-  // 获取用户信息
-  const res = await getCommUserInfoSe(val, store.getToken);
-  if (res.code === StatusCode.SUCCESS)
-    user.value = res.data;
-
-  isLoading.value = false;
+  try {
+    // 确认是否为好友
+    await isChatFriend({ uidList: [val] }, store.getToken).then((res) => {
+      const data = res.data.checkedList.find(p => p.uid === val);
+      isFrend.value = data && data.isFriend === isTrue.TRUE;
+    });
+    // 获取用户信息
+    const res = await getCommUserInfoSe(val, store.getToken);
+    if (res.code === StatusCode.SUCCESS)
+      user.value = res.data;
+    isLoading.value = false;
+  }
+  catch (e) {
+    isLoading.value = false;
+  }
 }
 const chat = useChatStore();
 const userStore = useUserStore();
@@ -63,14 +65,8 @@ const userId = computed(() => {
   return data.value.data.id;
 });
 
-watch(userId, (val) => {
-  if (val)
-    loadData(val);
-}, {
-  immediate: true,
-  deep: true,
-});
-
+// 执行最后一次
+watchDebounced(userId, val => loadData(val), { immediate: true, debounce: 200 });
 
 // 去发消息
 async function toSend(uid: string) {
@@ -95,65 +91,64 @@ const load = "<i i-tabler:loader p-4></i>";
 <template>
   <div
     v-loading="isLoading"
-    element-loading-text="加载中..." element-loading-background="rgba(0, 0, 0, 0)"
+    element-loading-background="initial"
+    :class="{ 'op-100': !isLoading }"
+    v-bind="$attrs" h-full w-full flex flex-1 flex-col items-center gap-1rem pt-6rem op-0 transition-120 bg-color
   >
     <div
-      v-if="!isLoading"
-      class="animate-[0.3s_fade-in]"
-      v-bind="$attrs" h-full w-full flex flex-1 flex-col items-center gap-1rem pt-6rem bg-color
+      flex gap-4
     >
-      <div
-        flex gap-4
-      >
-        <CardElImage
-          :src="BaseUrlImg + user.avatar" fit="cover"
-          class="h-3.8rem w-3.8rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default v-card"
-        />
-        <div class="text-0.8rem leading-1.5em">
-          <strong text-1.4rem>{{ user.nickname }}</strong>
-          <p op-60>
-            ID：{{ userId }}
-            {{ user.gender || "" }}
-          </p>
-          <p op-60>
-            邮箱：{{ user.email || "未填写" }}
-          </p>
-        </div>
+      <CardElImage
+        :src="BaseUrlImg + user.avatar" fit="cover"
+        class="h-3.8rem w-3.8rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default v-card"
+      />
+      <div class="text-0.8rem leading-1.5em">
+        <strong text-1.4rem>{{ user.nickname }}</strong>
+        <p op-60>
+          ID：{{ userId }}
+          {{ user.gender || "" }}
+        </p>
+        <p op-60>
+          邮箱：{{ user.email || "未填写" }}
+        </p>
       </div>
-      <ElDivider style="margin: 2rem auto;width: 30%;" />
-      <div>
-        <BtnElButton
-          v-if="isFrend"
-          icon-class="i-solar:trash-bin-trash-bold-duotone p-2 mr-2"
-          class="op-80"
-          type="danger"
-          plain
-          @click="deleteFriend(userId)"
-        >
-          删除好友&ensp;
-        </BtnElButton>
-        <BtnElButton
-          v-if="isFrend"
-          icon-class="i-solar:chat-line-line-duotone p-2 mr-2"
-          class="border-default"
-          type="info"
-          @click="toSend(userId)"
-        >
-          发消息&ensp;
-        </BtnElButton>
-        <BtnElButton
-          v-else-if="userId !== userStore.userInfo.id"
-          icon-class="i-solar:user-plus-bold p-2 mr-2"
-          class="op-80"
-          type="primary"
-          @click="isShowApply = true"
-        >
-          添加好友&ensp;
-        </BtnElButton>
-      </div>
-      <!-- 好友申请 -->
-      <ChatFriendApplyDialog v-model:show="isShowApply" :user-id="userId" @submit="chat.setTheFriendOpt(FriendOptType.Empty, {})" />
     </div>
+    <ElDivider style="margin: 2rem auto;width: 30%;" />
+    <div v-show="!isLoading">
+      <BtnElButton
+        v-if="isFrend"
+        key="delete"
+        icon-class="i-solar:trash-bin-trash-bold-duotone p-2 mr-2"
+        class="op-80"
+        type="danger"
+        plain
+        @click="deleteFriend(userId)"
+      >
+        删除好友&ensp;
+      </BtnElButton>
+      <BtnElButton
+        v-if="isFrend"
+        key="send"
+        icon-class="i-solar:chat-line-line-duotone p-2 mr-2"
+        class="border-default"
+        type="info"
+        @click="toSend(userId)"
+      >
+        发消息&ensp;
+      </BtnElButton>
+      <BtnElButton
+        v-else-if="userId !== userStore.userInfo.id"
+        key="add"
+        icon-class="i-solar:user-plus-bold p-2 mr-2"
+        class="op-80"
+        type="primary"
+        @click="isShowApply = true"
+      >
+        添加好友&ensp;
+      </BtnElButton>
+    </div>
+    <!-- 好友申请 -->
+    <ChatFriendApplyDialog v-model:show="isShowApply" :user-id="userId" @submit="chat.setTheFriendOpt(FriendOptType.Empty, {})" />
   </div>
 </template>
 

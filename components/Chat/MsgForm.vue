@@ -63,8 +63,12 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
 
 // 是否在返回数据
 const formRef = ref();
+const isSend = ref(false);
 // 发送消息
 function onSubmit() {
+  if (isSend.value)
+    return;
+
   form.value.content = form.value.content?.trim().replace(/\n$/g, "");
   if (!form.value.content?.trim()) {
     ElMessage.warning("不能发送空白消息！");
@@ -73,18 +77,18 @@ function onSubmit() {
   formRef.value?.validate(async (action: boolean) => {
     if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
       ElMessage.error("消息内容不能超过500字！");
-
     if (!action)
       return;
+    isSend.value = true;
     const res = await addChatMessage({
       ...form.value,
       roomId: chat.theContact.roomId,
     }, user.getToken);
+    isSend.value = false;
     if (res.code === StatusCode.SUCCESS)
       emit("submit", res.data);
     else if (res.message === "您和对方已不是好友！")
       return;
-
     form.value.content = "";
     reloadForm();
   });
@@ -269,7 +273,7 @@ onMounted(() => {
             :max="20"
             :max-collapse-tags="1"
             clearable
-            filterable
+            ilterable
             collapse-tags multiple default-first-option :reserve-keyword="true"
             placeholder="@其他人"
             @change="(val) => form.body.atUidList = val"

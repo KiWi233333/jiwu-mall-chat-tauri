@@ -38,10 +38,10 @@ function reload() {
     isLast: false,
     size: 15,
   };
-  if (!isLoading.value) {
-    isLoading.value = false;
-    loadData();
-  }
+  if (isLoading.value)
+    return;
+  isLoading.value = false;
+  loadData();
 }
 // 添加好友
 const theUser = ref<ChatMemberVO>();
@@ -305,7 +305,6 @@ function exitGroup() {
         :immediate="true"
         :auto-stop="true"
         :no-more="pageInfo.isLast"
-        loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-2"
         :loading="isLoading"
         @load="loadData"
       >

@@ -4,6 +4,7 @@
  */
 const props = defineProps<{
   data: ChatMessageVO<TextBodyMsgVO>
+  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 
@@ -12,12 +13,12 @@ const chat = useChatStore();
 const user = useUserStore();
 const nowDate = Date.now();
 
-function getTime(time: string) {
-  return (nowDate - +time) > 24 * 3600
-    ? useDateFormat(time, "YYYY-MM-DD HH:mm:ss").value.toString()
-    : useDateFormat(time, "HH:mm:ss").value.toString()
-  ;
-}
+// const getTimeText = (nowDate - +data.value.message.sendTime) > 24 * 3600
+//   ? useDateFormat(data.value.message.sendTime, "YYYY年MM月DD日 HH:mm:ss").value.toString()
+//   : `今天${useDateFormat(data.value.message.sendTime, "HH:mm:ss").value.toString()}`;
+const getTimeText = (nowDate - +data.value.message.sendTime) > 3600 * 24
+  ? useDateFormat(data.value.message.sendTime, "YYYY年MM月DD日 HH:mm:ss").value.toString()
+  : useDateFormat(data.value.message.sendTime, "HH:mm:ss").value.toString();
 
 
 // 具体
@@ -30,9 +31,14 @@ const getAtText = computed(() => {
   else
     return "";
 });
+
+const showTime = props.lastMsg?.message?.sendTime && (data.value.message.sendTime - props.lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 </script>
 
 <template>
+  <p v-if="showTime" w-full py-2 text-center text-0.8em op-80>
+    {{ getTimeText }}
+  </p>
   <div
     v-bind="$attrs"
     :label="data.roomId"
@@ -63,9 +69,6 @@ const getAtText = computed(() => {
       </small>
     </div>
   </div>
-  <p v-if="index % 8 === 0" w-full py-2 text-center text-0.8em op-80>
-    {{ getTime(data.message.sendTime) }}
-  </p>
 </template>
 
 <style lang="scss" scoped>

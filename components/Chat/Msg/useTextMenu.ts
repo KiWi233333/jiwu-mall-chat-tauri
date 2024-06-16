@@ -20,7 +20,7 @@ export function onContextMenu(e: MouseEvent, item: ChatMessageVO, callList: MsgM
     opt.items = [{
       label: "撤回",
       disabled: !isSelf,
-      onClick: async (): any => {
+      onClick: async () => {
         // ElMessageBox.confirm("是否确认撤回消息？", "撤回提示", {
         //   lockScroll: false,
         //   confirmButtonText: "确 认",
@@ -32,7 +32,6 @@ export function onContextMenu(e: MouseEvent, item: ChatMessageVO, callList: MsgM
         // });
         const res = await refundChatMessage(item.message.roomId, item.message.id, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
-          ElMessage.success("撤回成功！");
           callList?.refundMsgCall && callList?.refundMsgCall();
         }
       },

@@ -115,10 +115,9 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
 async function refundMsg(roomId: number, msgId: number) {
   const res = await refundChatMessage(roomId, msgId, user.getToken);
   if (res.code === StatusCode.SUCCESS) {
-    ElMessage.success("撤回成功！");
     if (props.data.message.id === msgId) {
       props.data.message.type = MessageType.RECALL;
-      props.data.message.content = `${chat.theContact.type === RoomType.GROUP ? `"${props.data.fromUser.nickName}"` : "\"对方\""}撤回了一条消息`;
+      props.data.message.content = `${props.data.fromUser.nickName}撤回了一条消息`;
       props.data.message.body = undefined;
     }
   }
