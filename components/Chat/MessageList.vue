@@ -159,11 +159,14 @@ function resolveNewMsg(list: ChatMessageVO[]) {
 function resolveRevokeMsg(list: WSMsgRecall[]) {
   for (let i = 0; i < list.length; i++) {
     const p = list[i];
+    // 本房间修改状态
+    const msg = findMsg(p.msgId);
+    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.contactList.length; k++) {
       const r = chat.contactList[k];
       if (r.roomId === p.roomId) {
-        r.text = "撤回了一条消息";
+        r.text = msgContent;
         break;
       }
     }
@@ -174,11 +177,9 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
       // 消费消息
       ws.wsMsgList.recallMsg.splice(i, 1);
     }
-    // 本房间修改状态
-    const msg = findMsg(p.msgId);
     if (msg) {
       msg.message.type = MessageType.RECALL;
-      msg.message.content = `${chat.theContact.type === RoomType.GROUP ? `"${msg.fromUser.nickName}"` : "\"对方\""}撤回了一条消息`;
+      msg.message.content = msgContent;
       msg.message.body = undefined;
       ws.wsMsgList.recallMsg = ws.wsMsgList.recallMsg.filter(k => k.msgId !== p.msgId);
     }
@@ -192,11 +193,14 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
 function resolveDeleteMsg(list: WSMsgDelete[]) {
   for (let i = 0; i < list.length; i++) {
     const p = list[i];
+    // 本房间修改状态
+    const msg = findMsg(p.msgId);
+    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}删除了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.contactList.length; k++) {
       const r = chat.contactList[k];
       if (r.roomId === p.roomId) {
-        r.text = "删除了一条消息";
+        r.text = msgContent;
         break;
       }
     }
@@ -207,11 +211,9 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
       // 消费消息
       ws.wsMsgList.deleteMsg.splice(i, 1);
     }
-    // 本房间修改状态
-    const msg = findMsg(p.msgId);
     if (msg) {
       msg.message.type = MessageType.DELETE;
-      msg.message.content = `${chat.theContact.type === RoomType.GROUP ? `"${msg.fromUser.nickName}"` : "\"对方\""}删除了一条消息`;
+      msg.message.content = msgContent;
       msg.message.body = undefined;
       ws.wsMsgList.deleteMsg = ws.wsMsgList.deleteMsg.filter(k => k.msgId !== p.msgId);
     }

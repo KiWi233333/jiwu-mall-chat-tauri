@@ -12,14 +12,6 @@ const props = defineProps<{
 
 const { data } = toRefs(props);
 const user = useUserStore();
-const nowDate = Date.now();
-
-function getTime(time: string) {
-  return (nowDate - +time) > 24 * 3600
-    ? useDateFormat(time, "YYYY-MM-DD HH:mm:ss").value.toString()
-    : useDateFormat(time, "HH:mm:ss").value.toString()
-  ;
-}
 const colorMode = useColorMode();
 </script>
 
@@ -61,9 +53,6 @@ const colorMode = useColorMode();
       />
     </div>
   </div>
-  <p v-if="index % 8 === 0" w-full py-2 text-center text-0.8em op-80>
-    {{ getTime(data.message.sendTime) }}
-  </p>
 </template>
 
 <style lang="scss" scoped>

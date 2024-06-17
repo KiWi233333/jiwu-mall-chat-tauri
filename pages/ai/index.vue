@@ -54,7 +54,7 @@ const dto = ref({
 
 const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
 // 是否在返回数据
-const isChat = ref(false);
+const isChat = computed(() => status.value === WsStatusEnum.OPEN)
 const formRef = ref();
 function onSubmit() {
   if (status.value === WsStatusEnum.OPEN || !form.value.content || form.value.content.length < 1 || isChat.value)
@@ -63,7 +63,6 @@ function onSubmit() {
   formRef.value?.validate((action: boolean) => {
     if (!action)
       return;
-    isChat.value = true;
     sendMsg(form.value.content, user.userInfo.id);
     form.value.content = "";
     nextTick(() => {
@@ -77,7 +76,6 @@ function onStop() {
     return;
   body.value.ws?.close();
   scrollBottom();
-  isChat.value = false;
   scrollBottom();
   status.value = WsStatusEnum.SAFE_CLOSE;
 }
@@ -114,7 +112,7 @@ function sendMsg(msg: string, id: string) {
     const data = JSON.parse(e.data);
     status.value = WsStatusEnum.OPEN;
     if (data) {
-      status.value = data.header.code as WsStatusEnum;
+      status.value = data.payload.status as WsStatusEnum;
       const text = data?.payload?.choices?.text || [];
       text.value = "";
       text.forEach((p: any) => {
@@ -186,13 +184,11 @@ function handleNewChat() {
     return ElMessage.warning("正在聊天中，请先结束当前对话！");
 
   // 开启新对话
-  isChat.value = true;
   body.value.ws = null;
   status.value = WsStatusEnum.CLOSE;
   msgList.value = [INIT_MSG];
   nextTick(() => {
     scrollBottom(false);
-    isChat.value = false;
   });
 }
 
@@ -232,7 +228,7 @@ definePageMeta({
             <ChatMsgMain
               v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
               :data="msg"
-              :last-msg="i > 0 ? msgList[i - 1] : {}"
+              :last-msg="i > 0 ? msgList[i - 1] : undefined"
             />
           </div>
         </el-scrollbar>

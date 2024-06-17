@@ -3,7 +3,6 @@
 	"extends": "./.nuxt/tsconfig.json",
 	"compilerOptions": {
 		"types": [
-		  "@nuxtjs/i18n",
 		]
 	  }
 }

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { RoomType } from "@/composables/api/chat/contact";
 import { MessageType } from "@/composables/api/chat/message";
 import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgImg, ChatMsgRecall, ChatMsgSystem, ChatMsgText } from "#components";
 
@@ -8,8 +7,9 @@ import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgImg, ChatMsgRecall, ChatMsgSystem, 
 /**
  * 消息适配器
  */
-const props = defineProps<{
+const { data, lastMsg, index } = defineProps<{
   data: ChatMessageVO
+  lastMsg?: ChatMessageVO
   index: number
 }>();
 const map: MsgComType = {
@@ -28,12 +28,12 @@ const chat = useChatStore();
 const user = useUserStore();
 
 // 权限
-const getTheRoleType = computed(() => {
-  return chat.theContact?.member?.role;
-});
-const isTheGroupOwner = computed(() => {
-  return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER;
-});
+// const getTheRoleType = computed(() => {
+//   return chat.theContact?.member?.role;
+// });
+// const isTheGroupOwner = computed(() => {
+//   return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER;
+// });
 // 是否有权限（踢出群聊、）
 const isTheGroupPermission = computed(() => {
   return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN;
@@ -42,13 +42,13 @@ const isTheGroupPermission = computed(() => {
 
 // 右键菜单
 const colorMode = useColorMode();
+const route = useRoute();
 function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
   e.preventDefault();
-  if (item.message.type === MessageType.AI_CHAT)
+  const isAiChat = route.path.includes("ai");
+  if (item.message.type === MessageType.AI_CHAT || isAiChat)
     return;
-
   const isSelf = user.userInfo.id === item.fromUser.userId;
-
   const opt = {
     x: e.x,
     y: e.y,
@@ -115,14 +115,13 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
 async function refundMsg(roomId: number, msgId: number) {
   const res = await refundChatMessage(roomId, msgId, user.getToken);
   if (res.code === StatusCode.SUCCESS) {
-    if (props.data.message.id === msgId) {
-      props.data.message.type = MessageType.RECALL;
-      props.data.message.content = `${props.data.fromUser.nickName}撤回了一条消息`;
-      props.data.message.body = undefined;
+    if (data.message.id === msgId) {
+      data.message.type = MessageType.RECALL;
+      data.message.content = `${data.fromUser.nickName}撤回了一条消息`;
+      data.message.body = undefined;
     }
   }
 }
-
 
 // 删除消息
 function deleteMsg(roomId: number, msgId: number) {
@@ -138,20 +137,40 @@ function deleteMsg(roomId: number, msgId: number) {
       const res = await deleteChatMessage(roomId, msgId, user.getToken);
       if (res.code === StatusCode.SUCCESS) {
         ElMessage.success("删除成功！");
-        if (props.data.message.id === msgId) {
-          props.data.message.type = MessageType.RECALL;
-          props.data.message.content = "删除了一条消息";
-          props.data.message.body = undefined;
+        if (data.message.id === msgId) {
+          data.message.type = MessageType.RECALL;
+          data.message.content = "删除了一条消息";
+          data.message.body = undefined;
         }
       }
     },
   });
 }
+
+
+function formatDate(date: Date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  // const seconds = date.getSeconds().toString().padStart(2, '0');
+  const isSameDay = date.toDateString() === new Date().toDateString();
+  if (isSameDay)
+    return `${hours}:${minutes}`;
+  else
+    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+}
+const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 </script>
 
 <template>
+  <p v-if="showTime" w-full py-2 text-center text-0.8em op-60>
+    {{ formatDate(new Date(data.message.sendTime)) }}
+  </p>
   <component
     :is="map[data.message?.type || MessageType.TEXT]"
+    :last-msg="lastMsg"
     :index="index"
     :data="data" v-bind="$attrs"
     @contextmenu="onContextMenu($event, data)"

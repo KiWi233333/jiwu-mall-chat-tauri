@@ -4,8 +4,10 @@ import { isPermissionGranted, requestPermission, sendNotification } from "@tauri
 import { open } from "@tauri-apps/api/shell";
 import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
 import { relaunch } from "@tauri-apps/api/process";
+import { appWindow } from "@tauri-apps/api/window";
 import type { PayloadType } from "./types/tauri";
 import { WsMsgBodyType, WsStatusEnum } from "./composables/types/WsType";
+import type { ChatMessageVO } from "./composables/api/chat/message";
 import { appKeywords, appName } from "@/constants/index";
 
 // 1、确认是否登录
@@ -152,6 +154,7 @@ const noticeType = [
   WsMsgBodyType.MESSAGE, // 普通消息
   WsMsgBodyType.APPLY, // 好友消息
 ];
+const chat = useChatStore();
 
 // 创建 Web Worker
 let worker: Worker;
@@ -167,15 +170,22 @@ function reload() {
       noticeType,
     });
     ws.sendHeart();
-    ws.onMessage((msg) => {
+    ws.onMessage(async (msg) => {
       // 消息通知
-      const body = msg.data as ChatMessageVO;
-      if (noticeType.includes(msg.type) && body.fromUser.userId !== user.userInfo.id) {
-        sendNotification({
-          icon: BaseUrlImg + body.fromUser.avatar,
-          title: body.fromUser.nickName,
-          body: `${body.message.content || "消息通知"}`,
-        });
+      if (noticeType.includes(msg.type)) {
+        const body = msg.data as ChatMessageVO;
+        const isFocused = await appWindow.isFocused();
+        if (isFocused) {
+          if (chat.theContact.roomId === body.message.roomId)
+            chat.setReadList(chat.theContact.roomId);
+        }
+        else {
+          sendNotification({
+            icon: BaseUrlImg + body.fromUser.avatar,
+            title: body.fromUser.nickName,
+            body: `${body.message.content || "消息通知"}`,
+          });
+        }
       }
     });
   });
@@ -189,7 +199,6 @@ function reload() {
       console.log(e.data.data);
   });
 }
-const chat = useChatStore();
 // 自动重连
 watchDebounced([() => ws.status, () => user.isLogin], (val) => {
   if (val[0] !== WsStatusEnum.OPEN && val[1])

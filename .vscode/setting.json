@@ -1,5 +1,5 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "eslint"
+    "source.fixAll.eslint": "vscode-eslint"
   }
 }

@@ -11,16 +11,6 @@ const props = defineProps<{
 const { data } = toRefs(props);
 const chat = useChatStore();
 const user = useUserStore();
-const nowDate = Date.now();
-
-// const getTimeText = (nowDate - +data.value.message.sendTime) > 24 * 3600
-//   ? useDateFormat(data.value.message.sendTime, "YYYY年MM月DD日 HH:mm:ss").value.toString()
-//   : `今天${useDateFormat(data.value.message.sendTime, "HH:mm:ss").value.toString()}`;
-const getTimeText = (nowDate - +data.value.message.sendTime) > 3600 * 24
-  ? useDateFormat(data.value.message.sendTime, "YYYY年MM月DD日 HH:mm:ss").value.toString()
-  : useDateFormat(data.value.message.sendTime, "HH:mm:ss").value.toString();
-
-
 // 具体
 const body: Partial<TextBodyMsgVO> | undefined = props.data.message?.body || {};
 
@@ -31,14 +21,9 @@ const getAtText = computed(() => {
   else
     return "";
 });
-
-const showTime = props.lastMsg?.message?.sendTime && (data.value.message.sendTime - props.lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 </script>
 
 <template>
-  <p v-if="showTime" w-full py-2 text-center text-0.8em op-80>
-    {{ getTimeText }}
-  </p>
   <div
     v-bind="$attrs"
     :label="data.roomId"
