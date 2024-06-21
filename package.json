@@ -41,6 +41,8 @@
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-prettier": "5.0.1",
     "eslint-plugin-vue": "9.17.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
     "nuxt": "3.11.2",
     "pinia": "2.1.7",
     "postcss": "8.4.38",
@@ -60,5 +62,17 @@
     "element-china-area-data": "6.1.0",
     "md-editor-v3": "^4.16.7",
     "qiniu-js": "3.4.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,vue,js}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
   }
 }
