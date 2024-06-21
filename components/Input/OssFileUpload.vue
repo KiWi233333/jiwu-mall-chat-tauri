@@ -16,6 +16,7 @@ const props = withDefaults(
     uploadType: OssFileType.IMAGE,
     uploadQuality: 0.4,
     preview: true,
+    isAsync: true,
   },
 );
 // emit
@@ -252,6 +253,7 @@ defineExpose({
   inputRef,
   fileList,
   pathList,
+  onUpload,
   removeItem,
   resetInput,
 });

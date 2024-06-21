@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import type { ChatRoomRoleEnum } from "~/composables/api/chat/room";
-import { ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
 
 
 const emit = defineEmits<{
@@ -91,6 +89,26 @@ function onSubmit() {
       return;
     form.value.content = "";
     reloadForm();
+  });
+}
+
+async function onPaste(e: ClipboardEvent) {
+  // 判断粘贴上传图片
+  if (!e.clipboardData?.items?.length)
+    return;
+  // 拿到粘贴板上的 image file 对象
+  const file = Array.from(e.clipboardData.items)
+    .find(v => v.type.includes("image"))
+    ?.getAsFile();
+
+  if (!file || !inputOssFileUploadRef.value)
+    return;
+  const url = await inputOssFileUploadRef.value?.onUpload({
+    id: URL.createObjectURL(file),
+    key: undefined,
+    status: "",
+    percent: 0,
+    file,
   });
 }
 
@@ -340,7 +358,8 @@ onMounted(() => {
             :class="{
               focused: form.content,
             }"
-            @keydown.enter.prevent="onSubmit()"
+            @paste="onPaste"
+            @keydown.enter.prevent="onSubmit"
           />
         </el-form-item>
         <BtnElButton

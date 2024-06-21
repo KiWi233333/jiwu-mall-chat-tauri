@@ -82,6 +82,12 @@ export default defineNuxtConfig({
 
   // vite
   vite: {
+    server: {
+      hmr: {
+        clientPort: 24672,
+        port: 24672,
+      },
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -111,13 +117,7 @@ export default defineNuxtConfig({
   },
   alias: {
     // 配置@使用静态资源
-    assets: "/<rootDir>/assets",
   },
-
-  nitro: {
-    preset: "node-server",
-  },
-
   // 3、elementPlus
   elementPlus: {
     icon: "ElIcon",
