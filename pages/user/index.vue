@@ -44,47 +44,37 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    <NuxtLayout
-      name="chat"
-      :menu="['back']"
-    >
-      <ClientOnly>
-        <template #fallback>
-          <OtherPreLoading class="w-full" icon="" />
-        </template>
-        <div v-if="store?.getToken ">
-          <!-- 壁纸 -->
-          <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
-          <div class="main">
-            <!-- 用户头像 -->
-            <div v-if="user" class="avatars relative flex-1 -top-5em md:pr-4">
-              <UserInfoLine
-                :data="user"
-                :is-edit="isSelf"
-              />
-            </div>
-            <!-- 右侧 -->
-            <div flex flex-col gap-6>
-              <!-- 帖子 -->
-              <CardUserPostTotal
-                v-if="user?.id"
-                :dto="{
-                  userId: user?.id,
-                }"
-                :user="user"
-                grid-class="grid grid-cols-4 gap-4"
-                card-class="truncate word-nowrap text-0.85rem"
-                class="p-4 border-default card-default"
-              />
-              <!-- 签到 -->
-              <UserInfoSigninCard class="sm:w-360px border-default card-default" />
-            </div>
-          </div>
+  <NuxtLayout name="chat">
+    <div w-full flex flex-col>
+      <!-- 壁纸 -->
+      <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
+      <div class="main">
+        <!-- 用户头像 -->
+        <div v-if="user" class="avatars relative flex-1 -top-5em md:pr-4">
+          <UserInfoLine
+            :data="user"
+            :is-edit="isSelf"
+          />
         </div>
-      </ClientOnly>
-    </NuxtLayout>
-  </div>
+        <!-- 右侧 -->
+        <div flex flex-col gap-6>
+          <!-- 帖子 -->
+          <CardUserPostTotal
+            v-if="user?.id"
+            :dto="{
+              userId: user?.id,
+            }"
+            :user="user"
+            grid-class="grid grid-cols-4 gap-4"
+            card-class="truncate word-nowrap text-0.85rem"
+            class="p-4 border-default card-default"
+          />
+          <!-- 签到 -->
+          <UserInfoSigninCard class="border-default card-default" />
+        </div>
+      </div>
+    </div>
+  </NuxtLayout>
 </template>
 
 <style scoped lang="scss">
