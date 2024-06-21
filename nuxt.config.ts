@@ -9,6 +9,9 @@ const isSSR = process.env.NODE_ENV === "development" ? true : process.env.NUXT_P
 // 打印
 console.log(`mode:${process.env.NODE_ENV}，api_url:${BASE_URL}，SSR:${false}`);
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4,
+  },
   ssr: false,
   build: {
     transpile: ["@popperjs/core", "resize-detector"],
