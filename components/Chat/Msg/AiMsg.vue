@@ -60,8 +60,15 @@ const colorMode = useColorMode();
 .markdown {
   :deep(.md-editor-preview-wrapper)  {
     padding: 0;
+    line-height: 1.6em;
     .md-editor-code {
-      --at-apply: 'overflow-hidden card-default border-default hover:shadow transition-all mb-2';
+      .md-editor-code-block {
+         line-height: 1.6em;
+        & ~ span[rn-wrapper] >span {
+         line-height: 1.6em;
+        }
+      }
+      --at-apply: 'overflow-hidden leading-2em card-default border-default hover:shadow transition-all mb-2';
       code {
         border-radius: 0 0 8px 8px;
       }

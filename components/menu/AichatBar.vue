@@ -85,7 +85,8 @@ function senMsg(msg: string, id: string) {
   body.value.ws = new WebSocket("wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1");
   status.value = WsStatusEnum.OPEN;
   body.value.ws.onopen = (e) => {
-    dto.value.payload.message.text[0].content = msg;
+    if (dto.value.payload.message.text[0])
+      dto.value.payload.message.text[0].content = msg;
     dto.value.header.uid = id;
     body.value.ws?.send(JSON.stringify(dto.value));
     status.value = WsStatusEnum.OPEN;
@@ -111,7 +112,7 @@ function senMsg(msg: string, id: string) {
         if (p && p.role === "assistant")
           text.value += p.content;
       });
-      const theMsg = msgList.value.find(p => p.message.id === data?.header?.sid);
+      const theMsg = msgList.value.find((p: any) => p.message.id === data?.header?.sid);
       if (theMsg) {
         theMsg.message.content += text.value;
         return;
