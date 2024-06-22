@@ -48,6 +48,7 @@ export const useSettingStore = defineStore(
         ],
       },
       isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
+      isEscMin: true, // esc
     });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);

@@ -52,17 +52,18 @@ function exitLogin(ua?: string) {
   ElMessageBox.confirm("是否确认下线用户?", "确认选择", {
     cancelButtonText: "取消",
     lockScroll: false,
+    center: true,
     confirmButtonText: "确认下线",
     confirmButtonClass: "el-button--danger",
   })
-    .then(async (action) => {
+    .then(async (action: string) => {
       if (action === "confirm") {
         const arr = ua ? [ua] : (deviceList.value?.map(p => p.userAgentString) as string[]);
         const { code, message } = await toUserOffline(arr, user.getToken);
         if (code === StatusCode.SUCCESS) {
           if (deviceList.value) {
             for (let i = 0; i < deviceList.value.length; i++) {
-              if (deviceList.value[i].userAgentString === ua) {
+              if (deviceList?.value?.[i]?.userAgentString === ua) {
                 deviceList.value.splice(i, 1);
                 break;
               }

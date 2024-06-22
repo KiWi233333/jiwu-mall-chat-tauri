@@ -159,6 +159,11 @@ const menuList = [
       background-color: transparent !important;
       border-color: transparent !important;
     }
+    .diabled-bg.el-menu-item.is-active.is-active {
+      .icon {
+        color: var(--el-color-primary) !important;
+      }
+    }
     .el-menu-item-group {
       .el-menu-item {
         background-color: #8181811a;

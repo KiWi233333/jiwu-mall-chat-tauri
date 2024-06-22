@@ -92,14 +92,23 @@ onMounted(async () => {
             <el-tooltip :content="setting.settingPage.isColseAllTransition ? '开启动画' : '关闭动画'" placement="bottom">
               <el-switch
                 v-model="setting.settingPage.isColseAllTransition"
-                class="mb-2"
                 active-text="开启"
                 inactive-text="关闭"
                 inline-prompt
-                size="large"
                 @change="isColseChange"
               />
             </el-tooltip>
+          </div>
+          <!-- Esc -->
+          <div class="group flex-row-bt-c">
+            ESC关闭
+            <el-switch
+              v-model="setting.settingPage.isEscMin"
+              active-text="开启"
+              inactive-text="关闭"
+              inline-prompt
+              @change="(val) => setting.settingPage.isEscMin = !!val"
+            />
           </div>
           <!-- 更新 -->
           <div class="group flex-row-bt-c">

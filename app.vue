@@ -125,11 +125,12 @@ onMounted(() => {
     }, 600);
   });
 
-  // 禁用F5刷新页面
-  // window.addEventListener("keydown", (e) => {
+  window.addEventListener("keydown", (e) => {
   //   if (e.key === "F5")
   //     e.preventDefault(); // 阻止默认行为，防止页面刷新。
-  // });
+    if (e.key === "Escape" && setting.settingPage.isEscMin)
+      appWindow.minimize(); // 最小化窗口，而不是关闭窗口。
+  });
 
   // Tauri事件
   // 获取版本更新
