@@ -66,6 +66,8 @@ html,
 body {
   font-family: Alimama, Helvetica, sans-serif;
   background-color: transparent;
+  // 移动端点击有蓝色底
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media screen and (width <= 768px) {

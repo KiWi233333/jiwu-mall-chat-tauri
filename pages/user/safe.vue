@@ -68,12 +68,10 @@ onMounted(async () => {
           账户与安全
           <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
         </h3>
-        <ElDivider style="margin: 1.5em 0 1.5em 0;" class="opacity-60" />
         <el-tabs
           model-value="security"
-          type="border-card"
           tab-position="top"
-          class="flex-1 overflow-hidden rounded-2 bg-transparent"
+          class="mt-4 flex-1 overflow-hidden rounded-2 bg-transparent"
         >
           <el-tab-pane name="security" style="max-height: 100%;height: 100%;" label="账号" lazy>
             <UserSafeUpdateCards />

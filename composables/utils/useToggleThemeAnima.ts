@@ -56,7 +56,7 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
         clipPath: colorMode.value === "dark" ? clipPath : [...clipPath].reverse(),
       },
       {
-        duration: 560,
+        duration: 720,
         easing: "ease-in-out",
         pseudoElement: colorMode.value === "dark" ? "::view-transition-new(root)" : "::view-transition-old(root)",
       },

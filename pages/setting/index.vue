@@ -73,15 +73,15 @@ onMounted(async () => {
           <!-- 字体 -->
           <div class="group flex-row-bt-c">
             字体设置
-            <el-select v-model="setting.settingPage.fontFamily.value" :teleported="false" :disabled="isLoading" class="inputs w-12rem" placeholder="请选择主题字体">
+            <el-select v-model="setting.settingPage.fontFamily.value" style="width: 176px;" :teleported="false" :disabled="isLoading" class="inputs w-12rem" placeholder="请选择主题字体">
               <el-option v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :label="item.name" :value="item.value" />
             </el-select>
           </div>
           <!-- 黑暗 -->
           <div class="group flex-row-bt-c">
             深色模式
-            <el-radio-group v-model="theme" class="inputs w-12rem" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
-              <el-radio-button v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading" class="flex-1" :label="p.value">
+            <el-radio-group v-model="theme" class="inputs" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
+              <el-radio-button v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading" class="flex-1" :value="p.value">
                 {{ p.name }}
               </el-radio-button>
             </el-radio-group>
@@ -126,9 +126,9 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .inputs {
-  --at-apply: 'transition-200 select-none opacity-80 group-hover:opacity-100';
+  --at-apply: 'transition-200  select-none opacity-80 group-hover:opacity-100';
+  --el-border-radius-base: 2em !important;
 }
-
 :deep(.el-radio-group.inputs) {
   border: 1px solid #7c7c7c33;
   border-radius: 1rem;

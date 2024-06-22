@@ -43,8 +43,8 @@ const menuList = [
   {
     title: "AI客服",
     path: "/ai",
-    icon: "i-solar:ghost-line-duotone",
-    activeIcon: "i-solar:ghost-bold-duotone",
+    icon: "i-solar:ghost-outline",
+    activeIcon: "i-solar:ghost-bold",
   },
   {
     title: "个人",

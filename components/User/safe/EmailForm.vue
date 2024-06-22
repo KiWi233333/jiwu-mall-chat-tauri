@@ -32,7 +32,6 @@ const rules = reactive({
 
 /**
  * 修改邮箱
- * @param type
  */
 async function onUpdatePhone(formEl: FormInstance | undefined) {
   if (!formEl || isLoading.value)
@@ -45,7 +44,7 @@ async function onUpdatePhone(formEl: FormInstance | undefined) {
         confirmButtonText: "确认修改",
         cancelButtonText: "取消",
         lockScroll: false,
-      }).then((action) => {
+      }).then((action: string) => {
         if (action === "confirm")
           toUpdate();
       });
@@ -71,7 +70,7 @@ async function toUpdate() {
   }
 }
 // 获取验证码
-let timer: NodeJS.Timer | undefined;
+let timer: NodeJS.Timer;
 async function getEmailCode() {
   if (emailCodeStorage.value > 0)
     return;
@@ -90,8 +89,8 @@ async function getEmailCode() {
     ElMessage.success("发送验证码成功！");
     timer = setInterval(() => {
       emailCodeStorage.value--;
-      clearInterval(timer);
-      timer = undefined;
+      if (timer)
+        clearInterval(timer);
     }, 1000);
   }
 }

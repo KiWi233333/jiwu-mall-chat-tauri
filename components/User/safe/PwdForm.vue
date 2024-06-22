@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormInstance } from "vant";
+import type { FormInstance } from "element-plus/es/components/form";
 
 const emits = defineEmits(["close"]);
 
@@ -51,7 +51,6 @@ const userFormRefs = ref();
 async function onUpdatePwd(formEl: FormInstance | undefined) {
   if (!formEl || isLoading.value)
     return;
-  // @ts-expect-error
   await formEl.validate(async (valid) => {
     if (valid) {
       isLoading.value = true;
@@ -100,9 +99,9 @@ async function toUpdate() {
     :model="userForm"
     class="form"
   >
-    <h2 mb-5 mt-4 text-center tracking-0.2em>
+    <h3 mb-5 mt-4 text-center tracking-0.2em>
       密码修改
-    </h2>
+    </h3>
     <el-form-item type="password" label="旧密码" prop="password" class="animated">
       <el-input
         v-model.trim="userForm.password"
@@ -133,7 +132,7 @@ async function toUpdate() {
       <el-button
         type="danger"
         class="submit w-full"
-        style="padding: 20px"
+        style="padding: 1em 0"
         @keyup.enter="onUpdatePwd(userFormRefs)"
         @click="onUpdatePwd(userFormRefs)"
       >
@@ -157,7 +156,7 @@ async function toUpdate() {
 	animation-delay: 0.1s;
 
 	:deep(.el-input__wrapper) {
-		padding: 0.3em 1em;
+		padding: 0 1em;
 	}
 
 	// 报错信息
@@ -171,7 +170,7 @@ async function toUpdate() {
 }
 
 :deep(.el-button) {
-	padding: 0.3em 1em;
+	padding: 0 1em;
 }
 
 .dark .form {
@@ -184,7 +183,7 @@ async function toUpdate() {
 
 // label总体
 :deep(.el-form-item) {
-	margin-bottom: 14px;
+	margin-bottom: 0;
 }
 
 // 切换登录
@@ -227,7 +226,7 @@ async function toUpdate() {
 
 		* {
 			color: #fff;
-			font-weight: 700;
+			font-weight: 600;
 			letter-spacing: 0.3em;
 		}
 	}

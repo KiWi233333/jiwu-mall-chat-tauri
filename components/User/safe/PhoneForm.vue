@@ -45,7 +45,7 @@ async function onUpdatePhone(formEl: FormInstance | undefined) {
         confirmButtonText: "确认修改",
         lockScroll: false,
         cancelButtonText: "取消",
-      }).then((action) => {
+      }).then((action: string) => {
         if (action === "confirm")
           toUpdate();
       });
@@ -144,7 +144,7 @@ async function getPhoneCode() {
       />
     </el-form-item>
 
-    <el-form-item mt-1em>
+    <el-form-item>
       <el-button
         type="primary"
         size="large"
@@ -186,7 +186,7 @@ async function getPhoneCode() {
 }
 
 :deep(.el-button) {
-	padding: 0.3em 1em;
+	padding: 0 1em;
 }
 
 .dark .form {
@@ -232,7 +232,7 @@ async function getPhoneCode() {
 }
 
 .submit {
-	font-size: 1.2em;
+	font-size: 1.1em;
 	transition: 0.3s;
 	cursor: pointer;
 
@@ -242,7 +242,7 @@ async function getPhoneCode() {
 
 		* {
 			color: #fff;
-			font-weight: 700;
+			font-weight: 600;
 			letter-spacing: 0.3em;
 		}
 	}
