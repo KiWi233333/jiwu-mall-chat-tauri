@@ -38,13 +38,21 @@ function keyToggleTheme(e: KeyboardEvent) {
   if (setting.isThemeChangeLoad)
     return;
   if (e?.altKey && e?.key && e?.key === "k") {
+    // 获取
+    const dom = document.querySelector("#toggle-theme-btn");
     // 计算屏幕中心坐标
-    const centerX = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 2;
-    const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) / 2;
-    useModeToggle(colorMode.preference === "dark" ? "light" : "dark", {
-      clientX: +centerX,
-      clientY: +centerY,
-    } as MouseEvent);
+    const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
+    const xy = dom?.getBoundingClientRect();
+    useModeToggle(colorMode.preference === "dark" ? "light" : "dark", (dom && xy
+      ? {
+        // 按钮 x y 坐标、
+          clientX: xy.x + 10,
+          clientY: xy.y + 10,
+        }
+      : {
+          clientX: 40,
+          clientY: +centerY - 40,
+        }) as MouseEvent);
   }
 }
 setting.isThemeChangeLoad = true;
@@ -200,7 +208,7 @@ function reload() {
   });
 }
 // 自动重连
-watchDebounced([() => ws.status, () => user.isLogin], (val) => {
+watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
   if (val[0] !== WsStatusEnum.OPEN && val[1])
     reload();
   else if (!val[1])

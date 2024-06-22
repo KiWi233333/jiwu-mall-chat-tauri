@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useStorage } from "@vueuse/core";
-
 const emit = defineEmits<{
   (e: "submit", data: ChatUserSeInfoVO): void
 }>();
@@ -27,7 +25,7 @@ const page = ref<number>(0);
 const size = ref<number>(10);
 const noMore = computed(() => searchPage.value.total > 0 && searchPageList.length >= searchPage.value.total);
 // 搜索历史 本地存储
-const searchHistoryList = useStorage<string[]>("jiwu_chat_friend_user", []);
+const searchHistoryList = useStorageAsync<string[]>("jiwu_chat_friend_user", []);
 /**
  * 搜索好友
  */
@@ -141,6 +139,7 @@ const timer = ref<any>();
       <BtnElButton
         type="primary"
         class="w-5rem shadow"
+        size="small"
         style=" position: relative;transition: 0.2s"
         :loading="isLoading"
         icon-class="i-solar:magnifer-outline mr-2"
@@ -195,13 +194,13 @@ const timer = ref<any>();
             <div
               v-for="p in searchPageList"
               :key="p.id"
-              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate truncate rounded-2rem p-2 transition-300 transition-all active:scale-96 border-default hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9) v-card"
+              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 border-default hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9) card-default"
               @click="emit('submit', p)"
             >
               <div class="relative flex-row-c-c">
                 <CardElImage
                   :src="BaseUrlImg + p.avatar" fit="cover"
-                  class="h-2em w-2em flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+                  class="h-2em w-2em flex-shrink-0 overflow-auto object-cover border-default card-default"
                 />
                 <span class="g-avatar" />
               </div>

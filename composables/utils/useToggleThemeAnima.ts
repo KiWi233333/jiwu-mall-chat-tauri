@@ -24,8 +24,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
     return;
   }
   if (!event && window) {
-    // setting.isThemeChangeLoad = false;
-    // colorMode.preference = mode;
     // 计算屏幕中心坐标
     const centerX = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 2;
     const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) / 2;

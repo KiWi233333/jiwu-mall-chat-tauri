@@ -57,7 +57,7 @@ definePageMeta({
           />
         </div>
         <!-- 右侧 -->
-        <div flex flex-col gap-6>
+        <div class="flex flex-col gap-6 -mt-6">
           <!-- 帖子 -->
           <CardUserPostTotal
             v-if="user?.id"
@@ -67,10 +67,10 @@ definePageMeta({
             :user="user"
             grid-class="grid grid-cols-4 gap-4"
             card-class="truncate word-nowrap text-0.85rem"
-            class="p-4 border-default card-default"
+            class="p-4 card-default-br"
           />
           <!-- 签到 -->
-          <UserInfoSigninCard class="border-default card-default" />
+          <UserInfoSigninCard class="" />
         </div>
       </div>
     </div>
@@ -79,6 +79,6 @@ definePageMeta({
 
 <style scoped lang="scss">
 .main {
-  --at-apply: 'grid grid-cols-1 px-2rem sm:(grid-cols-[3fr_1fr] px-4rem)';
+  --at-apply: 'grid grid-cols-1 px-2rem sm:(grid-cols-[2fr_1fr] px-4rem)';
 }
 </style>

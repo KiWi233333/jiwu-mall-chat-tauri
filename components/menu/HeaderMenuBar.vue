@@ -21,6 +21,7 @@ const isTop = ref(false);
       <div class="flex items-center gap-4 rounded-2rem px-2 py-1 op-40 border-default v-card group-hover-op-100">
         <!-- 主题 -->
         <BtnTheme
+          id="toggle-theme-btn"
           class="btn-primary"
           title="切换主题"
         />

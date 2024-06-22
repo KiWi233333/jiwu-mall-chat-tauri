@@ -103,7 +103,7 @@ async function onChangeRoom(newRoomId: number) {
       }
     }
     else {
-      contact.setContact(chat.contactList[0] || {});
+      contact.setContact(chat.contactList[0] || {} as ChatContactVO);
     }
   }
   setting.isOpenContact = false;
@@ -120,8 +120,8 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
     pageInfo.value.size = size;
     const list = await loadData(dto || props.dto);
     if (!chat.theContact.roomId && list?.length) {
-      if (!theContactId.value)
-        theContactId.value = list[0].roomId;
+      if (!theContactId.value && list?.[0]?.roomId)
+        theContactId.value = list?.[0]?.roomId;
     }
     onChangeRoom(theContactId.value);
   }
@@ -138,7 +138,7 @@ async function refreshItem(roomId: number) {
   const itemIndex = chat.contactList.findIndex(p => p.roomId === roomId);
   if (itemIndex === -1)
     return;
-  if (chat.contactList[itemIndex].type === RoomType.GROUP) {
+  if (chat.contactList[itemIndex]?.type === RoomType.GROUP) {
     const res = await getChatContactInfo(roomId, RoomType.GROUP, user.getToken);
     if (res)
       chat.contactList[itemIndex] = res.data;
@@ -226,7 +226,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 const ws = useWs();
 
 // 成员变动消息
-watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
+watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   if (!len)
     return;
 
@@ -251,7 +251,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
         for (let i = 0; i < chat.onOfflineList.length; i++) {
           const u = chat.onOfflineList[i];
           // 下线删除用户
-          if (u.userId === p.uid) {
+          if (u && u.userId === p.uid) {
             chat.onOfflineList.splice(i, 1);
             break;
           }
@@ -261,7 +261,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
         for (let i = 0; i < chat.contactList.length; i++) {
           const u = chat.contactList[i];
           // 下线删除用户
-          if (u.roomId === p.roomId) {
+          if (u && u.roomId === p.roomId) {
             chat.contactList.splice(i, 1);// 删除会话
             break;
           }
@@ -316,7 +316,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len) => {
             :key="room.roomId"
             border
             style="overflow: hidden;"
-            :label="room.roomId"
+            :value="room.roomId"
           >
             <div
               :class="{ 'shadow-inset': room.roomId === theContactId }"

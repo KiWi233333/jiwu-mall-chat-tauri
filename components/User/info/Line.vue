@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { UploadProps } from "element-plus";
+import type { UploadFile, UploadFiles, UploadProps } from "element-plus/es/components/upload";
 import { type UpdateInfo, updateInfoByDTO } from "@/composables/api/user/info";
 import { compareObjects } from "@/composables/utils";
 
@@ -26,7 +26,7 @@ const isLoading = ref<boolean>(false);
  * 上传之前验证类型
  */
 const imageTypeList = ref<string[]>(["image/png", "image/jpg", "image/jpeg", "image/svg"]);
-const beforeUpload: UploadProps["beforeUpload"] = (rawFile) => {
+const beforeUpload: UploadProps["beforeUpload"] = (rawFile: File) => {
   isLoading.value = true;
   if (!imageTypeList.value.includes(rawFile.type)) {
     isLoading.value = false;
@@ -45,7 +45,7 @@ const beforeUpload: UploadProps["beforeUpload"] = (rawFile) => {
 /**
  * 更新头像
  */
-const updateSucess: UploadProps["onSuccess"] = async (data, file) => {
+const updateSucess: UploadProps["onSuccess"] = async (data: Result<string>, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   isLoading.value = false; // check success
   avatatRef.value?.clearFiles();
   if (data.code === StatusCode.SUCCESS) {
@@ -347,6 +347,11 @@ onMounted(() => {
 :deep(.el-input) {
   .el-input__wrapper {
     background-color: transparent;
+  }
+}
+:deep(.el-select) {
+  .el-select__wrapper {
+    box-shadow: none;
   }
 }
 </style>

@@ -105,8 +105,8 @@ onMounted(async () => {
           <div class="group flex-row-bt-c">
             关于更新
             <ElTooltip :content="setting.appUploader.version">
-              <el-badge :hidden="!setting.appUploader.isUpload" is-dot :value="+setting.appUploader.isUpload">
-                <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2.2em" @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()">
+              <el-badge :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot :value="+setting.appUploader.isUpload">
+                <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2em;padding: 0 1em;" @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()">
                   <i i-solar:refresh-outline mr-1 inline-block p-2 :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''" />
                   <span>检查更新</span>
                 </ElButton>

@@ -66,7 +66,7 @@ const userId = computed(() => {
 });
 
 // 执行最后一次
-watchDebounced(userId, val => loadData(val), { immediate: true, debounce: 200 });
+watchDebounced(userId, (val: string) => loadData(val), { immediate: true, debounce: 200 });
 
 // 去发消息
 async function toSend(uid: string) {
@@ -107,10 +107,6 @@ const load = "<i i-tabler:loader p-4></i>";
         <p mt-2 op-50>
           ID：{{ userId }}
         </p>
-        <!-- <p mt-1 op-50>
-          <span mr-2>邮箱：{{ user.email || "未填写" }} </span>
-          <span>性别：{{ user.gender || "" }} </span>
-        </p> -->
       </div>
     </div>
     <ElDivider style="margin: 1em auto;width: 60%;max-width: 12em" />

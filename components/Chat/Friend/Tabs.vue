@@ -6,7 +6,10 @@ function onNewView() {
   // 消费消息
   ws.wsMsgList.applyMsg.splice(0);
 }
-const activeNames = ref("2");
+const route = useRoute();
+const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
+  arr: ["2"],
+});
 </script>
 
 <template>
@@ -36,16 +39,18 @@ const activeNames = ref("2");
         </div>
       </div>
     </slot>
-    <!-- 群聊 -->
-    <el-collapse v-model="activeNames">
-      <el-collapse-item name="1" title="群聊">
-        <ChatFriendGroupList />
-      </el-collapse-item>
-      <!-- 好友 -->
-      <el-collapse-item name="2" title="好友">
-        <ChatFriendList />
-      </el-collapse-item>
-    </el-collapse>
+    <ElScrollbar height="calc(100% - 10rem)" wrap-class="pb-10">
+      <!-- 群聊 -->
+      <el-collapse v-model="activeNames.arr">
+        <el-collapse-item name="1" title="群聊">
+          <ChatFriendGroupList />
+        </el-collapse-item>
+        <!-- 好友 -->
+        <el-collapse-item name="2" title="好友">
+          <ChatFriendList />
+        </el-collapse-item>
+      </el-collapse>
+    </ElScrollbar>
   </div>
 </template>
 
