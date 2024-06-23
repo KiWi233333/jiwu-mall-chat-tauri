@@ -22,7 +22,7 @@ const colorMode = useColorMode();
     :label="data.roomId"
     class="msg"
     :class="{
-      self: data?.fromUser?.userId === user?.userInfo.id,
+      self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
     }"
   >
     <!-- 头像 -->

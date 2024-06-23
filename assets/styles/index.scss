@@ -227,3 +227,14 @@
 .el-loading-mask.is-fullscreen {
   border-radius: 6px;
 }
+
+.el-image-viewer__wrapper {
+  .el-image-viewer__close {
+    --at-apply: "!card-default-br";
+  }
+  .el-image-viewer__actions {
+    height: 2.4em !important;
+    --at-apply: "!card-default-br";
+  }
+  
+}

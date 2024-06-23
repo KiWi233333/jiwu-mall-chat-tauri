@@ -94,9 +94,10 @@ export const useUserStore = defineStore(
         userInfo.value = res.data as UserInfoVO;
         isLogin.value = true;
         token.value = t;
-        navigateTo("/");
       }
-      else { onUserExit(t); }
+      else {
+        onUserExit(t);
+      }
     };
 
     // 退出登录

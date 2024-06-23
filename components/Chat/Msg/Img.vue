@@ -20,7 +20,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
     :label="data.roomId"
     class="msg"
     :class="{
-      self: data?.fromUser?.userId === user?.userInfo.id,
+      self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
     }"
   >
     <CardElImage :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="h-2.4rem w-2.4rem rounded-1/2 object-cover border-default" />

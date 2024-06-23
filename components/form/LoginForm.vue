@@ -200,6 +200,7 @@ async function onLogin(formEl: any | undefined) {
           showRegisterForm: false,
         });
         await store.onUserLogin(res.data, autoLogin.value);
+        navigateTo("/", { replace: true });
         return;
       }
       // 登录失败

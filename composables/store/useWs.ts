@@ -140,9 +140,14 @@ export const useWs = defineStore(
 
 
     // 关闭
-    function close() {
+    function close(isConfirm = true) {
       if (!webSocketHandler.value)
         return;
+      if (!isConfirm) {
+        webSocketHandler.value.close();
+        status.value = WsStatusEnum.SAFE_CLOSE;
+        return;
+      }
       ElMessageBox.confirm("是否断开会话？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

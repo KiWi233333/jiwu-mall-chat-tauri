@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
+import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
@@ -213,29 +214,27 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
   });
 }
 
-watchDebounced(() => chat.theContact.roomId, (val) => {
+watchDebounced(() => chat.theContact.roomId, (val: string) => {
   if (val && chat.theContact.type === RoomType.GROUP)
     reload();
 });
 /**
  * 上下线消息
  */
-watchThrottled(() => ws.wsMsgList.onlineNotice, (list) => {
+watchThrottled(() => ws.wsMsgList.onlineNotice, (list: WSOnlineOfflineNotify[] = []) => {
   // 上下线消息
-  if (list.length) {
-    for (const p of list) {
-      if (!p.changeList)
-        return;
-      for (const item of chat.onOfflineList) {
-        for (const k of p.changeList) {
-          if (k.userId === item.userId) {
-            item.activeStatus = k.activeStatus;
-            break;
-          }
+  list.forEach((p) => {
+    if (!p.changeList)
+      return;
+    for (const item of chat.onOfflineList) {
+      for (const k of p.changeList) {
+        if (k.userId === item.userId) {
+          item.activeStatus = k.activeStatus;
+          break;
         }
       }
     }
-  }
+  });
 }, {
   deep: true,
   immediate: true,

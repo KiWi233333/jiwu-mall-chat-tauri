@@ -46,12 +46,12 @@ const menuList = [
     icon: "i-solar:ghost-outline",
     activeIcon: "i-solar:ghost-bold",
   },
-  {
-    title: "个人",
-    path: "/user",
-    icon: "i-solar:user-outline hover:animate-pulse",
-    activeIcon: "i-solar:user-bold-duotone hover:animate-pulse",
-  },
+  // {
+  //   title: "个人",
+  //   path: "/user",
+  //   icon: "i-solar:user-outline hover:animate-pulse",
+  //   activeIcon: "i-solar:user-bold-duotone hover:animate-pulse",
+  // },
   {
     title: "账号",
     path: "/user/safe",
@@ -78,10 +78,12 @@ const menuList = [
     <el-menu class="sm:w-12rem" :router="true" :default-active="route.path" :collapse="setting.isUserFold">
       <!-- 顶部 -->
       <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 transition-300 transition-300 hover:bg-transparent">
-        <CardElImage
-          :src="BaseUrlImg + user?.userInfo?.avatar"
-          class="relative z-100 mx-a h-8 w-8 sm:mr-a border-default card-default" alt="头像"
-        />
+        <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a border-default card-default">
+          <CardElImage
+            :src="BaseUrlImg + user?.userInfo?.avatar"
+            class="relative z-100 mx-a h-8 w-8 sm:mr-a border-default card-default" alt="头像"
+          />
+        </NuxtLink>
         <!-- 会话 -->
         <span
           block sm:hidden class="mx-a my-2 transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
