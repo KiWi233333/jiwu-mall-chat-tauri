@@ -278,7 +278,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 <template>
   <div relative>
     <div
-      class="mb-4 py-2 v-card"
+      class="p-4 v-card"
       flex-row-c-c
     >
       <ElInput
@@ -314,32 +314,29 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
           <el-radio
             v-for="room in getContactList"
             :key="room.roomId"
-            class="rounded-6px op-70 transition-opacity border-default hover:op-100"
-            style="overflow: hidden;"
+            style="border-radius: 0;"
             :value="room.roomId"
           >
             <div
               :class="{ 'shadow-inset': room.roomId === theContactId }"
-              class="flex gap-2 truncate bg-light p-4 shadow transition-200 transition-shadow sm:w-full dark:bg-dark text-color"
+              class="flex gap-2 truncate p-4 transition-200 transition-shadow sm:w-full text-color"
               @contextmenu.stop="onContextMenu($event, room)"
             >
               <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">
-                <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.6rem w-2.6rem object-cover border-default card-default" />
+                <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.6rem w-2.6rem object-cover card-default" />
               </el-badge>
               <div class="flex flex-1 flex-col justify-between truncate">
-                <p truncate>
-                  {{ room.name }}
-                </p>
-                <div class="flex">
-                  <small
-                    overflow-hidden truncate op-70 :class="{
-                      'text-[var(--el-color-info)] font-600': room.unreadCount,
-                    }"
-                  >{{ room.text }}</small>
+                <div flex truncate>
+                  <p truncate>
+                    {{ room.name }}
+                  </p>
                   <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block>
                     {{ getTime(room.activeTime) }}
                   </span>
                 </div>
+                <small
+                  overflow-hidden truncate op-70 :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                >{{ room.text }}</small>
               </div>
             </div>
           </el-radio>
@@ -374,14 +371,14 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
     height: fit-content;
     display: block;
     padding: 0;
-    border-color: transparent;
+    border: none;
     transition: 200ms border;
     margin-bottom: 1rem;
     &.is-checked {
       .group {
         background-color: var(--el-color-primary-light-9);
       }
-      border-color: var(--el-color-primary) !important;
+      background-color: #7c7c7c1a;
     }
     .el-radio__input {
       display: none;

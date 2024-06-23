@@ -172,7 +172,7 @@ onMounted(() => {
             v-if="avatarUrl"
             alt="Design By Kiwi23333"
             :src="BaseUrlImg + avatarUrl"
-            class="avatar-mark h-6em w-6em overflow-hidden object-cover p-0 transition-300 group-hover:filter-blur-4"
+            class="avatar-mark h-6em w-6em overflow-hidden overflow-hidden rounded-1/2 object-cover p-0 transition-300 group-hover:filter-blur-4"
           >
           <ElIconPlus
             v-else
@@ -312,6 +312,7 @@ onMounted(() => {
   width: 6em;
   height: 6em;
   border-radius: 50%;
+  overflow: hidden;
 
   :deep(.el-upload) {
     overflow: hidden;

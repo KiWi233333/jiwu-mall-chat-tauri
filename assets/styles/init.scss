@@ -29,6 +29,13 @@ li {
 span {
   line-height: 100%;
 }
+// 页面
+html,
+body {
+  font-family: Alimama, Helvetica, sans-serif;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
 // 字体
 @font-face {
   font-display: swap;
@@ -61,14 +68,6 @@ span {
   src: url("https://jiwu.kiwi2333.top/font/ZiWanGeTe.ttf") format("truetype");
 }
 
-// 页面
-html,
-body {
-  font-family: Alimama, Helvetica, sans-serif;
-  background-color: transparent;
-  // 移动端点击有蓝色底
-  -webkit-tap-highlight-color: transparent;
-}
 
 @media screen and (width <= 768px) {
   html {

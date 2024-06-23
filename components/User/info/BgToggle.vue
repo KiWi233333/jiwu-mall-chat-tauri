@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useLocalStorage } from "@vueuse/core";
-
 const bgList = ref<string[]>([
   "/image/user-bg/kiwi-bg-1.jpg",
   "/image/user-bg/kiwi-bg-2.jpg",
