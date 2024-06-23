@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useInit, useUmounted } from "./app/index";
+import { useInit, useUmounted } from "@/init/index";
 import { appKeywords, appName } from "@/constants/index";
 
 // https://nuxt.com.cn/docs/guide/directory-structure/app

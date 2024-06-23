@@ -67,6 +67,10 @@ export const useSettingStore = defineStore(
         const update = await checkUpdate();
         appUploader.value.isUpload = !!update.shouldUpdate;
         appUploader.value.isUpdatateLoad = false;
+        if (!update.shouldUpdate) {
+          ElMessage.success("当前版本已是最新版本！");
+          return false;
+        }
         if (!update.manifest?.version)
           return;
         if (appUploader.value.isUpload) {

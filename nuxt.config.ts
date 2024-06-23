@@ -33,6 +33,8 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
   ],
+  srcDir: "",
+  rootDir: "",
   app: {
     head: {
       title: `${appName} - 开启你的购物社区之旅 ✨`,
@@ -50,7 +52,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-
   // https://blog.csdn.net/weixin_42553583/article/details/131372309
   experimental: {
     // https://nuxt.com.cn/docs/guide/going-further/experimental-features#inlinerouterules
@@ -78,20 +79,27 @@ export default defineNuxtConfig({
   },
   // css
   css: [
-    "~/assets/styles/init.scss",
-    "~/assets/styles/index.scss",
-    "~/assets/styles/animate.scss",
+    "@/assets/styles/init.scss",
+    "@/assets/styles/index.scss",
+    "@/assets/styles/animate.scss",
   ],
-
+  // alias: {
+  //   "~": "/<srcDir>",
+  //   "@": "/<srcDir>",
+  //   "~~": "/<rootDir>",
+  //   "@@": "/<rootDir>",
+  //   "assets": "/<srcDir>/assets",
+  //   "public": "/<srcDir>/public",
+  // },
   // vite
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `
-          @use "@/assets/styles/element/index.scss" as element;  
-          @use "@/assets/styles/element/dark.scss" as dark;  
-          @use "@/assets/styles/var.scss" as *;   
+          @use "@/assets/styles/element/index.scss" as element;
+          @use "@/assets/styles/element/dark.scss" as dark;
+          @use "@/assets/styles/var.scss" as *;
           `,
         },
       },
@@ -111,9 +119,6 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: "",
-  },
-  alias: {
-    // 配置@使用静态资源
   },
   // 3、elementPlus
   elementPlus: {
