@@ -73,3 +73,4 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   });
 }
 
+export const DEFAULT_THEME_TOGGLE_ID = "toggle-theme-btn";

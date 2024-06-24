@@ -80,7 +80,7 @@ onMounted(async () => {
           <!-- 黑暗 -->
           <div class="group h-8 flex-row-bt-c">
             深色模式
-            <el-radio-group v-model="theme" class="inputs" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
+            <el-radio-group :id="DEFAULT_THEME_TOGGLE_ID" v-model="theme" class="inputs" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
               <el-radio-button v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading" class="flex-1" :value="p.value">
                 {{ p.name }}
               </el-radio-button>

@@ -39,7 +39,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
         </div>
       </div>
     </slot>
-    <ElScrollbar height="calc(100% - 10rem)" wrap-class="pb-10">
+    <ElScrollbar height="calc(100% - 10rem)" wrap-class="pb-10" class="scrollbar">
       <!-- 群聊 -->
       <el-collapse v-model="activeNames.arr">
         <el-collapse-item name="1" title="群聊">
@@ -63,5 +63,11 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 }
 .item {
   --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) mt-2 rounded-6px transition-300"
+}
+:deep(.el-scrollbar) {
+  .el-scrollbar__bar.is-vertical {
+    width: 4px;
+    opacity: 0.5;
+  }
 }
 </style>
