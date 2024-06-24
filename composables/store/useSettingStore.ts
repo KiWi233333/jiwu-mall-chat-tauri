@@ -67,13 +67,7 @@ export const useSettingStore = defineStore(
         const update = await checkUpdate();
         appUploader.value.isUpload = !!update.shouldUpdate;
         appUploader.value.isUpdatateLoad = false;
-        if (!update.shouldUpdate) {
-          ElMessage.success("当前版本已是最新版本！");
-          return false;
-        }
-        if (!update.manifest?.version)
-          return;
-        if (appUploader.value.isUpload) {
+        if (appUploader.value.isUpload && update.manifest?.version) {
           // 忽略
           if (check && appUploader.value.ignoreVersion.includes(update.manifest?.version))
             return false;
@@ -119,7 +113,10 @@ export const useSettingStore = defineStore(
           });
         }
         else {
-          ElMessage.info("当前已是最新版本！");
+          const route = useRoute();
+          console.log(route.path);
+          if (route.path.includes("/setting"))
+            ElMessage.info("当前版本已是最新版本！");
         }
       }
       catch (error) {

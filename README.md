@@ -1,3 +1,4 @@
+<div align=center>
 <h1 align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
 <img src="./public/logo.png" width = "60" height = "60" alt="图片名称" align=center />
 &
@@ -5,9 +6,13 @@
  </h1>
  <h2 align=center style="font-size: 22px;">极物聊天 Tauri APP</h2>
 
+语言 : 简体中文 | [English](./README.en.md)
+
+</div>
+
 ### 介绍
 
-极物圈是一个综合性平台，集商城和社交功能于一体。在这个平台上，用户可以轻松购买虚拟商品，并且可以发布个人帖子，与他人互动，进行评论等。该平台注重用户体验，为用户提供了一个在你圈子交流、好物推荐、分享和购物的多功能环境。
+极物聊天 Tauri APP 是一个基于Nuxt3 + Tauri + element-plus 基本框架的聊天桌面应用。它提供了一个美观的用户界面，并集成了聊天和社交功能。同时，它还支持AI购物聊天和全局夜间模式。用户可以通过该应用进行实时聊天、分享动态和AI客服问答。
 
 ### 技术
 
@@ -23,23 +28,30 @@
 
 - 聊天桌面应用 Chat
 
-![主页](./.doc/chat-el.png)
+![主页](./.doc/chat.png)
 
 - 全局夜间模式 Light / Dark
 
-![暗黑](./.doc/chat-el2.png)
+![暗黑](./.doc/chat1.png)
 
 - 聊天社交
 
-![暗黑](./.doc/chat-el3.png)
+![暗黑](./.doc/chat2.png)
 
 - AI购物聊天
 
-![暗黑](./.doc/chat-el4.png)
+![暗黑](./.doc/chat3.png)
+
+- 账号与安全
+
+![账号与安全](./.doc/chat4.png)
+
+![账号与安全](./.doc/chat5.png)
 
 - 响应式
 
-<img src="./.doc/chat-el5.png" width = "300" alt="响应式" align=center />
+<img src="./.doc/chat7.png" width = "200" alt="响应式" align=center />
+<img src="./.doc/chat8.png" width = "200" alt="响应式" align=center />
 
 ## ⏳ 起步 | Project Setup
 
@@ -91,3 +103,19 @@ pnpm config set registry https://registry.npm.taobao.org
 ```sh
 pnpm config set registry https://registry.npmjs.org
 ```
+
+### 🔧 涉及技术栈 | Tech Stack
+
+| 类别         | 技术/组件          | 版本号       |
+| ------------- | ------------------ | ------------ |
+| 框架         | Nuxt3              | 3.12.2       |
+|              | Tauri              | 1.5.6        |
+| UI 组件库     | Element Plus       | 2.7.6        |
+| 状态管理     | Pinia              | 2.1.7        |
+| 工具库       | Vueuse             | 10.11.0      |
+| 构建与开发工具 | Nuxi               | lts        |
+|              | Vite               | lts         |
+| 代码质量     | ESLint             | 8.56.0       |
+|              | Prettier           | 3.3.2        |
+| 类型检查     | TypeScript         | 5.3.2        |
+| 样式处理     | Sass               | 1.77.6       |

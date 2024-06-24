@@ -4,7 +4,6 @@ import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
 const isLoading = ref(false);
-const user = useUserStore();
 const setting = useSettingStore();
 // 字体监听
 watchDebounced(
@@ -43,14 +42,6 @@ useSeoMeta({
   title: "设置",
   description: "设置 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
-});
-function onSave() {
-  ElNotification.success("保存成功！");
-}
-
-const theme = computed({
-  get: () => setting.settingPage.modeToggle.value,
-  set: (val: string) => setting.settingPage.modeToggle.value = val,
 });
 
 // 更新

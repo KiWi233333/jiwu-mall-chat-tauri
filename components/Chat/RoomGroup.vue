@@ -213,7 +213,6 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
     },
   });
 }
-
 watchDebounced(() => chat.theContact.roomId, (val: string) => {
   if (val && chat.theContact.type === RoomType.GROUP)
     reload();
