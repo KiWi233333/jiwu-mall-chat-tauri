@@ -1,6 +1,8 @@
 
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/api/shell";
+import { isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
+import { appWindow } from "@tauri-apps/api/window";
 import type { PayloadType } from "../types/tauri";
 
 /**
@@ -19,6 +21,18 @@ export async function userTauriInit() {
     if (path)
       navigateTo(path);
   });
+
+  // 2、获取通知权限
+  const setting = useSettingStore();
+  let permissionGranted = await isPermissionGranted();
+  if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === "granted";
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
+  else {
+    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
+  }
 }
 
 /**

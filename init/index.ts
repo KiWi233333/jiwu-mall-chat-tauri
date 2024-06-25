@@ -1,5 +1,5 @@
 
-import { useSettingInit, useSettingUnmounted } from "./setting";
+import { useHotkeyInit, useSettingInit, useSettingUnmounted } from "./setting";
 import { useAuthInit, userTauriInit } from "./init";
 import { useWSUnmounted, useWsInit } from "./ws";
 
@@ -13,6 +13,8 @@ export async function useInit() {
   userTauriInit();
   // 会话
   useWsInit();
+  // 初始化快捷键
+  useHotkeyInit();
 }
 export async function useUmounted() {
   useSettingUnmounted();

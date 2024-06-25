@@ -36,6 +36,14 @@ body {
   border-radius: 6px;
   -webkit-tap-highlight-color: transparent;
 }
+::selection {
+  background-color: #5324ff;
+  color: #f0f0f0;
+}
+.dark ::selection {
+  background-color: #5324ff;
+  color: #f0f0f0;
+}
 // 字体
 @font-face {
   font-display: swap;

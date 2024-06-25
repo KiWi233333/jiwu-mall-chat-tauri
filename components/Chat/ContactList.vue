@@ -335,7 +335,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
           >
             <div
               :class="{ 'shadow-inset': room.roomId === theContactId }"
-              class="flex gap-2 truncate p-4 pr-6 transition-200 transition-shadow sm:w-full text-color"
+              class="flex gap-4 truncate p-4 px-5 transition-200 transition-shadow sm:w-full text-color"
               @contextmenu.stop="onContextMenu($event, room)"
             >
               <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">

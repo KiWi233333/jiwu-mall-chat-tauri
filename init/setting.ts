@@ -1,6 +1,4 @@
-import { isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
 import { appWindow } from "@tauri-apps/api/window";
-
 
 export async function useSettingInit() {
   const timer = ref<any>(null);
@@ -64,28 +62,6 @@ export async function useSettingInit() {
         app.classList.remove("stop-transition");
     }, 600);
   });
-
-  // 7、阻止默认行为，防止右键菜单弹出
-  window.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-  });
-  window.addEventListener("keydown", (e) => {
-    //   if (e.key === "F5")
-    //     e.preventDefault();
-    if (e.key === "Escape" && setting.settingPage.isEscMin)
-      appWindow.minimize();
-  });
-
-  // 8、获取通知权限
-  let permissionGranted = await isPermissionGranted();
-  if (!permissionGranted) {
-    const permission = await requestPermission();
-    permissionGranted = permission === "granted";
-    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
-  }
-  else {
-    setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
-  }
 }
 
 function keyToggleTheme(e: KeyboardEvent) {
@@ -109,9 +85,32 @@ function keyToggleTheme(e: KeyboardEvent) {
   }
 }
 
-
+/**
+ * 卸载设置
+ */
 export function useSettingUnmounted() {
   window.removeEventListener("resize", () => {});
   window.removeEventListener("contextmenu", () => {});
   window.removeEventListener("keydown", () => {});
+}
+
+
+/**
+ * 初始化快捷键
+ */
+export async function useHotkeyInit() {
+  const setting = useSettingStore();
+  // 阻止默认行为，防止右键菜单弹出
+  window.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+  // 快捷键阻止
+  window.addEventListener("keydown", (e) => {
+    // 关闭打印 搜索快捷键
+    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (e.key === "a" && e.ctrlKey))
+      e.preventDefault();
+    // esc 最小化窗口
+    if (e.key === "Escape" && setting.settingPage.isEscMin)
+      appWindow.minimize();
+  });
 }
