@@ -37,7 +37,7 @@ export const useWs = defineStore(
        */
       applyMsg: [] as WSFriendApply[],
       /**
-       * 群成员变动消息
+       * 群成员变动消息 WsMsgBodyType.MEMBER_CHANGE
        */
       memberMsg: [] as WSMemberChange[],
       /**

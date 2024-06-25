@@ -229,22 +229,38 @@ const ws = useWs();
 watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   if (!len)
     return;
-
   // 成员变动消息
   if (ws.wsMsgList.memberMsg.length) {
     for (const p of ws.wsMsgList.memberMsg) {
       // 新加入
       if (p.changeType === WSMemberStatusEnum.JOIN) {
-        const res = await getChatContactInfo(p.roomId, RoomType.GROUP, user.getToken);
-        if (res) {
-          const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
-          if (index > -1) { // 更新
-            chat.contactList[index] = res.data;
+        // 更新会话
+        getChatContactInfo(p.roomId, RoomType.GROUP, user.getToken)?.then((res) => {
+          if (res) {
+            const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
+            if (index !== -1) { // 更新
+              chat.contactList[index] = res.data;
+            }
+            else { // 添加
+              res.data.unreadCount = 1;
+              chat.contactList.unshift(res.data);
+            }
           }
-          else { // 添加
-            res.data.unreadCount = 1;
-            chat.contactList.unshift(res.data);
-          }
+        });
+        if (chat.roomGroupPageInfo.isLast && chat.onOfflineList.findIndex(ctx => ctx.userId === p.uid) === -1) {
+          // 更新用户列表
+          getCommUserInfoSe(p.uid, user.getToken).then((res) => {
+            if (res.code === StatusCode.SUCCESS) {
+              chat.onOfflineList.push({
+                userId: p.uid,
+                avatar: res.data.avatar,
+                nickName: res.data.nickname,
+                activeStatus: 0,
+                lastOptTime: res.data.lastLoginTime,
+                roleType: ChatRoomRoleEnum.MEMBER,
+              });
+            }
+          });
         }
       }
       else if (p.changeType === WSMemberStatusEnum.LEAVE) {
@@ -278,7 +294,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 <template>
   <div relative>
     <div
-      class="p-4 v-card"
+      class="p-4"
       flex-row-c-c
     >
       <ElInput
@@ -319,7 +335,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
           >
             <div
               :class="{ 'shadow-inset': room.roomId === theContactId }"
-              class="flex gap-2 truncate p-4 transition-200 transition-shadow sm:w-full text-color"
+              class="flex gap-2 truncate p-4 pr-6 transition-200 transition-shadow sm:w-full text-color"
               @contextmenu.stop="onContextMenu($event, room)"
             >
               <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">

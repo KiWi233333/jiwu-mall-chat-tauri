@@ -89,8 +89,8 @@ export interface ChatMemberVO {
    * userId
    */
   userId: string
-  avatar: string
-  nickName: string
+  avatar?: string
+  nickName?: string
   /**
    * 在线状态 1在线 0离线
    */

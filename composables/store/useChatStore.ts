@@ -55,6 +55,11 @@ export const useChatStore = defineStore(
     }
     /******************************* 群聊成员 *********************************/
     const onOfflineList = ref<ChatMemberVO[]>([]);
+    const roomGroupPageInfo = ref({
+      cursor: null as null | string,
+      isLast: false,
+      size: 15,
+    });
     function setGroupMember(list: ChatMemberVO[]) {
       onOfflineList.value = list;
     }
@@ -155,6 +160,7 @@ export const useChatStore = defineStore(
       delUserId,
       isAddNewFriend,
       isOpenContact,
+      roomGroupPageInfo,
       onOfflineList,
       // 方法
       setContact,

@@ -52,7 +52,7 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0) {
     timer.value = setTimeout(() => {
       el.classList.remove("reply-shaing");
       timer.value = null;
-    }, 3000);
+    }, 1800);
   });
 }
 

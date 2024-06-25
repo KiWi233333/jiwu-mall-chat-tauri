@@ -8,23 +8,19 @@ const chat = useChatStore();
 const setting = useSettingStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
-const pageInfo = ref({
-  cursor: null as null | string,
-  isLast: false,
-  size: 15,
-});
+
 chat.onOfflineList.splice(0);
 
 /**
  * 加载数据
  */
 async function loadData() {
-  if (isLoading.value || pageInfo.value.isLast || props.data.type !== RoomType.GROUP)
+  if (isLoading.value || chat.roomGroupPageInfo.isLast || props.data.type !== RoomType.GROUP)
     return;
   isLoading.value = true;
-  const { data } = await getRoomGroupUserPage(props.data.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
-  pageInfo.value.isLast = data.isLast;
-  pageInfo.value.cursor = data.cursor;
+  const { data } = await getRoomGroupUserPage(props.data.roomId, chat.roomGroupPageInfo.size, chat.roomGroupPageInfo.cursor, user.getToken);
+  chat.roomGroupPageInfo.isLast = data.isLast;
+  chat.roomGroupPageInfo.cursor = data.cursor;
   if (data.list)
     chat.onOfflineList.push(...data.list);
   isLoading.value = false;
@@ -32,11 +28,8 @@ async function loadData() {
 
 function reload() {
   chat.onOfflineList = [];
-  pageInfo.value = {
-    cursor: null,
-    isLast: false,
-    size: 15,
-  };
+  chat.roomGroupPageInfo.cursor = null;
+  chat.roomGroupPageInfo.isLast = false;
   if (!isLoading.value) {
     isLoading.value = false;
     loadData();
@@ -300,7 +293,7 @@ function exitGroup() {
       <ListAutoIncre
         :immediate="true"
         :auto-stop="true"
-        :no-more="!isLoading && pageInfo.isLast"
+        :no-more="!isLoading && chat.roomGroupPageInfo.isLast"
         loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-2"
         :loading="isLoading"
         @load="loadData"
