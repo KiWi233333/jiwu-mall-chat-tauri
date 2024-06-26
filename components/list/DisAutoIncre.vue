@@ -7,12 +7,14 @@ const props = withDefaults(defineProps<{
   loadingClass?: LoadingClassEnum | string
   appendLoadingClass?: string
   autoStop?: boolean
+  thresholdHeight?: number
 }>(), {
   noMore: false,
   immediate: true,
   loading: false,
   autoStop: true,
   delay: 500,
+  thresholdHeight: 300,
   appendLoadingClass: "mx-a text-1.8rem",
   loadingClass: "mx-a my-0.6em h-1.4rem w-1.4rem animate-[spin_2s_infinite_linear] rounded-6px bg-[var(--el-color-primary)]",
 });
@@ -34,7 +36,9 @@ let timer: any = null;
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
-    isIntersecting.value = obj.isIntersecting;
+    isIntersecting.value = !!obj?.isIntersecting;
+  }, {
+    threshold: 0,
   });
 
 function callBack() {
@@ -87,25 +91,32 @@ defineExpose({
 <template>
   <!-- 加载 -->
   <div
-    v-if="showLoad"
-    ref="loadMoreRef"
-    key="loadMoreRef"
-    class="min-h-1em"
+    v-if="showLoad" relative
   >
-    <slot name="load">
-      <div
-        key="load"
-        :class="`${loadingClass} ${appendLoadingClass}`"
-      />
-    </slot>
+    <div
+      ref="loadMoreRef"
+      key="loadMoreRef" absolute top-0 w-full py-2
+      :style="{ height: `${thresholdHeight}px` }"
+    >
+      <slot name="load">
+        <div
+          key="load"
+          :class="`${loadingClass} ${appendLoadingClass}`"
+        />
+      </slot>
+    </div>
   </div>
   <!-- 完成 -->
   <div v-else class="animate-fade-in">
     <slot name="done">
-      <div v-if="!noMore && !loading " key="done" h-2 w-full text-center text-bluegray @click="!isSupported && $emit('load')">
+      <div v-if="!noMore && !loading " key="done" mim-h-4 w-full text-center text-bluegray @click="!isSupported && $emit('load')">
         <!-- 暂无更多 -->
       </div>
     </slot>
   </div>
+  <!-- 调试 -->
+  <!-- <div fixed bottom-400px>
+    {{ isIntersecting }}
+  </div> -->
   <slot name="default" />
 </template>
