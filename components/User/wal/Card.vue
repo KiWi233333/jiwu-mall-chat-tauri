@@ -68,6 +68,6 @@ async function reLoadUserWallet() {
   left: 0;
   z-index: -1;
   filter: blur(30px);
-  background-image: linear-gradient(to right, #5983ff, #ff5aa2 50%, #ff8f67 50%);
+  // background-image: linear-gradient(to right, #5983ff, #ff5aa2 50%, #ff8f67 50%);
 }
 </style>
