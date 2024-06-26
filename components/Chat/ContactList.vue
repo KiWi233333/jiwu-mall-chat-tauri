@@ -90,10 +90,10 @@ async function onChangeRoom(newRoomId: number) {
   const item = chat.contactList.find(p => p.roomId === newRoomId);
   if (!item)
     return;
-  if (item.type === RoomType.SELFT) {
+  if (item.type === RoomType.SELFT)
     contact.setContact(item);
-  }
-  else { // 重新拉会话详情
+  // else { // 重新拉会话详情
+  try {
     const res = await getChatContactInfo(newRoomId, item?.type, user.getToken);
     if (res && res.code === StatusCode.SUCCESS) {
       contact.setContact(res?.data);
@@ -106,6 +106,10 @@ async function onChangeRoom(newRoomId: number) {
       contact.setContact(chat.contactList[0] || {} as ChatContactVO);
     }
   }
+  catch (error) {
+    console.log(error);
+  }
+  // }
   setting.isOpenContact = false;
 }
 if (theContactId.value) // 初始化当前会话

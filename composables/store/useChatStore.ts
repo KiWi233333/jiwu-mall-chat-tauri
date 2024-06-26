@@ -26,6 +26,7 @@ export const useChatStore = defineStore(
       name: "",
       text: "",
       type: 1,
+      selfExit: 1,
       unreadCount: 0,
       // 消息列表
       msgList: [],

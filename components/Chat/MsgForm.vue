@@ -191,7 +191,9 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
   ContextMenu.showContextMenu(opt);
 }
 
-const isDisabled = computed(() => !user?.isLogin);
+
+const isDisabled = computed(() => !user?.isLogin && chat.theContact.selfExist === 0);
+const isSelfExist = computed(() => chat.theContact.selfExist === 1);
 
 // @用户
 const atSelectRef = ref();
@@ -209,6 +211,11 @@ const theRoomUnReadLength = computed(() => {
   return chat.theContact.unReadLength;
 });
 
+const SelfExistTextMap = {
+  [RoomType.SELFT]: "已经不是好友",
+  [RoomType.GROUP]: "已经不是群成员",
+  [RoomType.AICHAT]: "已经被AI拉黑",
+};
 
 // 挂载
 onMounted(() => {
@@ -316,6 +323,7 @@ onMounted(() => {
             :multiple="false"
             :preview="false"
             :limit="1"
+            :disable="isDisabled"
             class="i-solar:album-line-duotone h-1.5rem w-1.5rem cursor-pointer"
             :upload-type="OssFileType.IMAGE"
             input-class="op-0 h-1.5rem w-1.5rem cursor-pointer "
@@ -373,6 +381,15 @@ onMounted(() => {
           发送&nbsp;
         </BtnElButton>
       </div>
+    </div>
+    <div
+      v-show="!isSelfExist"
+      class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-1 shadow backdrop-blur-4px border-default"
+    >
+      <span op-80>
+        <i i-solar:adhesive-plaster-bold-duotone mr-3 p-3 />
+        {{ SelfExistTextMap[chat.theContact.type] }}
+      </span>
     </div>
   </el-form>
 </template>

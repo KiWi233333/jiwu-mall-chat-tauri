@@ -68,6 +68,8 @@ export interface ChatContactVO {
    * 未读数
    */
   unreadCount: number
+
+  selfExit?: number
   [property: string]: any
 
 }
@@ -85,15 +87,21 @@ export enum RoomType {
   AICHAT = 3,
 }
 
+export const RoomTypeTextMap = {
+  [RoomType.GROUP]: "群聊",
+  [RoomType.SELFT]: "单聊",
+  [RoomType.AICHAT]: "AI聊",
+};
+
 
 /**
  * 会话详情
- * @param id 房间号|好友id
+ * @param id 房间号
  * @param roomType RoomType
  * @param token token
  * @returns 分页
  */
-export function getChatContactInfo(id: number | string, roomType: RoomType = RoomType.GROUP, token: string) {
+export function getChatContactInfo(id: number, roomType: RoomType = RoomType.GROUP, token: string) {
   if (roomType === RoomType.GROUP) {
     return useHttp.get<Result<ChatContactDetailVO>>(
       `/chat/contact/${id}`,

@@ -64,8 +64,8 @@ importers:
         specifier: 12.1.0
         version: 12.1.0(eslint@8.56.0)(typescript@5.3.2)
       '@pinia-plugin-persistedstate/nuxt':
-        specifier: 1.2.0
-        version: 1.2.0(@pinia/nuxt@0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(magicast@0.3.4)(pinia@2.1.7(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(rollup@4.18.0)
+        specifier: 1.2.1
+        version: 1.2.1(@pinia/nuxt@0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(magicast@0.3.4)(pinia@2.1.7(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(rollup@4.18.0)
       '@pinia/nuxt':
         specifier: 0.5.1
         version: 0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2))
@@ -1241,8 +1241,8 @@ packages:
     resolution: {integrity: sha512-HNjmfLQEVRZmHRET336f20H/8kOozUGwk7yajvsonjNxbj2wBTK1WsQuHkD5yYh9RxFGL2EyDHryOihOwUoKDA==}
     engines: {node: '>= 10.0.0'}
 
-  '@pinia-plugin-persistedstate/nuxt@1.2.0':
-    resolution: {integrity: sha512-2rtgx5viGSMQMCoFYZMHguA2FhFKCUvw0PwETfqQegsWeBHlqk1/D0G/9xqep8Hq+c1BuFx+jNLJzoLXtYfivg==}
+  '@pinia-plugin-persistedstate/nuxt@1.2.1':
+    resolution: {integrity: sha512-q8s+4aQW/AjBMyeqLL48/qzBR5lcgnvvf1525ovNuKf6Wl9CsoLjPKh/5X8vNoKGwSow4gP7lVmdYPQRypgjgg==}
     peerDependencies:
       '@pinia/nuxt': ^0.5.0
 
@@ -7431,7 +7431,7 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.4.1
       '@parcel/watcher-win32-x64': 2.4.1
 
-  '@pinia-plugin-persistedstate/nuxt@1.2.0(@pinia/nuxt@0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(magicast@0.3.4)(pinia@2.1.7(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(rollup@4.18.0)':
+  '@pinia-plugin-persistedstate/nuxt@1.2.1(@pinia/nuxt@0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(magicast@0.3.4)(pinia@2.1.7(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2)))(rollup@4.18.0)':
     dependencies:
       '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.18.0)
       '@pinia/nuxt': 0.5.1(magicast@0.3.4)(rollup@4.18.0)(typescript@5.3.2)(vue@3.4.29(typescript@5.3.2))
