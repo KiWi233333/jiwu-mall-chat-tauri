@@ -208,6 +208,8 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
 watchDebounced(() => props.data.roomId, (val) => {
   if (val && props.data.type === RoomType.GROUP)
     reload();
+}, {
+  immediate: true,
 });
 /**
  * 上下线消息

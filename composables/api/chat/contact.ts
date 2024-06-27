@@ -96,15 +96,15 @@ export const RoomTypeTextMap = {
 
 /**
  * 会话详情
- * @param id 房间号
+ * @param roomId 房间号
  * @param roomType RoomType
  * @param token token
  * @returns 分页
  */
-export function getChatContactInfo(id: number, roomType: RoomType = RoomType.GROUP, token: string) {
+export function getChatContactInfo(roomId: number, roomType: RoomType = RoomType.GROUP, token: string) {
   if (roomType === RoomType.GROUP) {
     return useHttp.get<Result<ChatContactDetailVO>>(
-      `/chat/contact/${id}`,
+      `/chat/contact/${roomId}`,
       { },
       {
         headers: {
@@ -115,7 +115,7 @@ export function getChatContactInfo(id: number, roomType: RoomType = RoomType.GRO
   }
   else if (roomType === RoomType.SELFT) {
     return useHttp.get<Result<ChatContactDetailVO>>(
-      `/chat/contact/self/${id}`,
+      `/chat/contact/self/room/${roomId}`,
       { },
       {
         headers: {
@@ -124,6 +124,25 @@ export function getChatContactInfo(id: number, roomType: RoomType = RoomType.GRO
       },
     );
   }
+}
+
+
+/**
+ * 获取会话详情（用户id）
+ * @param friendId 好友id
+ * @param token token
+ * @returns Result<ChatContactDetailVO>
+ */
+export function getSelfContactInfoByFriendUid(friendId: string, token: string) {
+  return useHttp.get<Result<ChatContactDetailVO>>(
+      `/chat/contact/self/${friendId}`,
+      { },
+      {
+        headers: {
+          Authorization: token,
+        },
+      },
+  );
 }
 
 

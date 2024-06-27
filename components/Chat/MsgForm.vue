@@ -192,8 +192,8 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
 }
 
 
-const isDisabled = computed(() => !user?.isLogin && chat.theContact.selfExist === 0);
-const isSelfExist = computed(() => chat.theContact.selfExist === 1);
+const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
+const isNoExist = computed(() => chat.theContact.selfExist === 0);
 
 // @用户
 const atSelectRef = ref();
@@ -383,11 +383,11 @@ onMounted(() => {
       </div>
     </div>
     <div
-      v-show="!isSelfExist"
-      class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-1 shadow backdrop-blur-4px border-default"
+      v-show="isNoExist"
+      class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-2px shadow backdrop-blur-4px border-default"
     >
       <span op-80>
-        <i i-solar:adhesive-plaster-bold-duotone mr-3 p-3 />
+        <i i-solar:adhesive-plaster-bold-duotone mr-3 p-2.4 />
         {{ SelfExistTextMap[chat.theContact.type] }}
       </span>
     </div>

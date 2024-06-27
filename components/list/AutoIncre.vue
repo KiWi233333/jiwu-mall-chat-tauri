@@ -34,7 +34,7 @@ const showLoad = computed(() => props.loading);
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
-    isSee.value = obj.isIntersecting;
+    isSee.value = !!obj?.isIntersecting;
     callBack();
   },
 );

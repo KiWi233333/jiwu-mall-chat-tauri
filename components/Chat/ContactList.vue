@@ -6,10 +6,10 @@ import { WSMemberStatusEnum } from "~/composables/types/WsType";
 const props = defineProps<{
   dto?: ChatContactPageDTO
 }>();
-const [autoAnimateRef, enable] = useAutoAnimate({});
+const [autoAnimateRef, enable] = useAutoAnimate();
 onMounted(() => {
   const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(false);
 });
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
@@ -118,6 +118,7 @@ if (theContactId.value) // 初始化当前会话
 // 刷新
 async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isAll) {
+    enable(false);// 首次不开启动画
     chat.contactList = [];
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
@@ -127,9 +128,10 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
       if (!theContactId.value && list?.[0]?.roomId)
         theContactId.value = list?.[0]?.roomId;
     }
-    onChangeRoom(theContactId.value);
+    await onChangeRoom(theContactId.value);
+    enable(!setting.settingPage.isColseAllTransition);
   }
-  else {
+  else { // 刷新某一房间
     if (roomId)
       refreshItem(roomId);
   }

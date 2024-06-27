@@ -72,7 +72,12 @@ function keyToggleTheme(e: KeyboardEvent) {
     const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
     const xy = dom?.getBoundingClientRect();
     const colorMode = useColorMode();
-    useModeToggle(colorMode.preference === "dark" ? "light" : "dark", (dom && xy
+    const mode = colorMode.preference === "dark" ? "light" : "dark";
+    const setting = useSettingStore();
+    // 持久化
+    setting.settingPage.modeToggle.value = mode;
+
+    useModeToggle(mode, (dom && xy
       ? {
           // 按钮 x y 坐标、
           clientX: xy.x + 10,
@@ -107,7 +112,7 @@ export async function useHotkeyInit() {
   // 快捷键阻止
   window.addEventListener("keydown", (e) => {
     // 关闭打印 搜索快捷键
-    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (e.key === "a" && e.ctrlKey))
+    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey))
       e.preventDefault();
     // esc 最小化窗口
     if (e.key === "Escape" && setting.settingPage.isEscMin)

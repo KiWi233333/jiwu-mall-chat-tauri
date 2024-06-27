@@ -72,7 +72,7 @@ watchDebounced(userId, (val: string) => loadData(val), { immediate: true, deboun
 async function toSend(uid: string) {
   if (!isFrend.value)
     return;
-  const res = await getChatContactInfo(uid, RoomType.SELFT, store.getToken);
+  const res = await getSelfContactInfoByFriendUid(uid, store.getToken);
   if (!res)
     return;
   if (res && res.code !== StatusCode.SUCCESS)
