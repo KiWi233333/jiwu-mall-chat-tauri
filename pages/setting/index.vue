@@ -73,15 +73,27 @@ onMounted(async () => {
           <!-- 字体 -->
           <div class="group h-8 flex-row-bt-c">
             字体设置
-            <el-select v-model="setting.settingPage.fontFamily.value" style="width: 15rem;" :teleported="false" :disabled="isLoading" class="inputs w-12rem" placeholder="请选择主题字体">
-              <el-option v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :label="item.name" :value="item.value" />
+            <el-select
+              v-model="setting.settingPage.fontFamily.value" style="width: 13rem;" :teleported="false"
+              :disabled="isLoading" class="inputs" placeholder="请选择主题字体"
+            >
+              <el-option
+                v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :label="item.name"
+                :value="item.value"
+              />
             </el-select>
           </div>
           <!-- 黑暗 -->
           <div class="group h-8 flex-row-bt-c">
             深色模式
-            <el-radio-group :id="DEFAULT_THEME_TOGGLE_ID" v-model="theme" class="inputs" :disabled="isLoading" @click="(e:MouseEvent) => theEvent = e">
-              <el-radio-button v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading" class="flex-1" :value="p.value">
+            <el-radio-group
+              :id="DEFAULT_THEME_TOGGLE_ID" v-model="theme" class="inputs" :disabled="isLoading"
+              @click="(e: MouseEvent) => theEvent = e"
+            >
+              <el-radio-button
+                v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading"
+                class="flex-1" :value="p.value"
+              >
                 {{ p.name }}
               </el-radio-button>
             </el-radio-group>
@@ -89,14 +101,13 @@ onMounted(async () => {
           <!-- 关闭动画 -->
           <div class="group h-8 flex-row-bt-c">
             流畅模式
-            <el-tooltip :content="!setting.settingPage.isColseAllTransition ? '开启动画' : '关闭动画'" placement="left" popper-style="padding: 0 0.5em;">
+            <el-tooltip
+              :content="!setting.settingPage.isColseAllTransition ? '开启动画' : '关闭动画'" placement="left"
+              popper-style="padding: 0 0.5em;"
+            >
               <el-switch
-                v-model="setting.settingPage.isColseAllTransition"
-                size="large"
-                active-text="开启"
-                inactive-text="关闭"
-                inline-prompt
-                @change="isColseChange"
+                v-model="setting.settingPage.isColseAllTransition" size="large" active-text="开启"
+                inactive-text="关闭" inline-prompt @change="isColseChange"
               />
             </el-tooltip>
           </div>
@@ -104,21 +115,27 @@ onMounted(async () => {
           <div class="group h-8 flex-row-bt-c">
             ESC关闭
             <el-switch
-              v-model="setting.settingPage.isEscMin"
-              size="large"
-              active-text="开启"
-              inactive-text="关闭"
-              inline-prompt
-              @change="(val) => setting.settingPage.isEscMin = !!val"
+              v-model="setting.settingPage.isEscMin" size="large" active-text="开启" inactive-text="关闭"
+              inline-prompt @change="(val) => setting.settingPage.isEscMin = !!val"
             />
           </div>
           <!-- 更新 -->
           <div class="group h-8 flex-row-bt-c">
             关于更新
             <ElTooltip :offset="10" popper-style="padding: 0 0.5em;" :content="`版本：${setting.appUploader.version}`">
-              <el-badge :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot :value="+setting.appUploader.isUpload">
-                <ElButton round class="flex-row-c-c cursor-pointer transition-all" type="info" plain style="height: 2em;padding: 0 0.8em;" @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()">
-                  <i i-solar:refresh-outline mr-1 inline-block p-2 :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''" />
+              <el-badge
+                :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot
+                :value="+setting.appUploader.isUpload"
+              >
+                <ElButton
+                  round class="flex-row-c-c cursor-pointer transition-all" type="info" plain
+                  style="height: 2em;padding: 0 0.8em;"
+                  @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()"
+                >
+                  <i
+                    i-solar:refresh-outline mr-1 inline-block p-2
+                    :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''"
+                  />
                   <span>检查更新</span>
                 </ElButton>
               </el-badge>
@@ -126,7 +143,10 @@ onMounted(async () => {
           </div>
         </section>
         <div class="btns mt-a flex items-center">
-          <BtnElButton class="ml-a shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true" round @click="user.exitLogin()">
+          <BtnElButton
+            class="ml-a shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
+            round @click="user.exitLogin()"
+          >
             退出登录
           </BtnElButton>
         </div>
@@ -140,17 +160,20 @@ onMounted(async () => {
   --at-apply: 'transition-200  select-none opacity-80 group-hover:opacity-100';
   --el-border-radius-base: 2em !important;
 }
+
 :deep(.el-radio-group.inputs) {
   border: 1px solid #7c7c7c33;
   border-radius: 1rem;
-  width: 15rem;
+  width: 13rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+
   .el-radio-button__inner {
     border: none;
     border-radius: 1rem;
     width: 100%;
   }
+
   .el-radio-button__inner {
     padding: 0.5em 0;
   }

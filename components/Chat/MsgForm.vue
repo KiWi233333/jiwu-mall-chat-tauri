@@ -110,6 +110,7 @@ async function onPaste(e: ClipboardEvent) {
     percent: 0,
     file,
   });
+  form.value.msgType = MessageType.IMG; // 图片
 }
 
 // 房间号变化
@@ -175,7 +176,6 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
               index,
               1,
             );
-            ElMessage.success("删除成功");
           }
           else if (res.code === StatusCode.DELETE_ERR) {
             imgList.value.splice(
@@ -334,7 +334,6 @@ onMounted(() => {
             @submit="onSubmitImg"
           />
         </el-form-item>
-
         <!-- 滚动底部 -->
         <div
           class="ml-a w-fit flex-row-c-c px-2 transition-200 btn-primary"

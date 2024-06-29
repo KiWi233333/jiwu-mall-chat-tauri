@@ -60,7 +60,7 @@ function getNewPathList(list: OssFile[]) {
   if (list) {
     for (let i = 0; i < list.length; i++) {
       const p = list[i];
-      if (p.key)
+      if (p && p.key)
         pathList.push(p.key);
     }
   }
@@ -86,7 +86,7 @@ async function hangdleChange(e: Event) {
     await onUpload(
       {
         // id: URL.createObjectURL(t.files[0]),
-        id: URL.createObjectURL(t.files[0]),
+        id: URL.createObjectURL(t.files[0] as Blob | MediaSource),
         key: undefined,
         status: "",
         percent: 0,

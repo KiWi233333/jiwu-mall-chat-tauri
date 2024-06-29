@@ -139,7 +139,6 @@ const timer = ref<any>();
       <BtnElButton
         type="primary"
         class="w-5rem shadow"
-        size="small"
         style=" position: relative;transition: 0.2s"
         :loading="isLoading"
         icon-class="i-solar:magnifer-outline mr-2"
@@ -235,13 +234,10 @@ const timer = ref<any>();
     padding: 0 2rem;
     margin-right: 0;
     letter-spacing: 0.2em;
-    --at-apply: "h-2.2rem sm:h-1.8rem";
   }
   :deep(.el-input__wrapper) {
     transition: $transition-delay;
-
     letter-spacing: 0.2em;
-    --at-apply: "h-2.2rem sm:h-1.8rem";
     &.is-focus {
       backdrop-filter: blur(20px);
     }

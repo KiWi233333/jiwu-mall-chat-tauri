@@ -126,6 +126,9 @@ watch(() => ws.wsMsgList.deleteMsg.length, () => {
 function resolveNewMsg(list: ChatMessageVO[]) {
   for (let i = 0; i < list.length; i++) {
     const p = list[i];
+    if (!p)
+      return;
+
     // 1）更新会话列表
     upContact(p.message.roomId,
       {
@@ -159,13 +162,15 @@ function resolveNewMsg(list: ChatMessageVO[]) {
 function resolveRevokeMsg(list: WSMsgRecall[]) {
   for (let i = 0; i < list.length; i++) {
     const p = list[i];
+    if (!p)
+      return;
     // 本房间修改状态
     const msg = findMsg(p.msgId);
     const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.contactList.length; k++) {
       const r = chat.contactList[k];
-      if (r.roomId === p.roomId) {
+      if (r && r.roomId === p.roomId) {
         r.text = msgContent;
         break;
       }
@@ -193,13 +198,16 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
 function resolveDeleteMsg(list: WSMsgDelete[]) {
   for (let i = 0; i < list.length; i++) {
     const p = list[i];
+    if (!p)
+      return;
+
     // 本房间修改状态
     const msg = findMsg(p.msgId);
     const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}删除了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.contactList.length; k++) {
       const r = chat.contactList[k];
-      if (r.roomId === p.roomId) {
+      if (r && p && r.roomId === p.roomId) {
         r.text = msgContent;
         break;
       }
@@ -224,7 +232,7 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
 function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
   for (let i = 0; i < chat.contactList.length; i++) {
     const p = chat.contactList[i];
-    if (p.roomId === roomId) {
+    if (p && p.roomId === roomId) {
       p.text = data.text || p.text;
       p.unreadCount = data.unreadCount || p.unreadCount;
       p.activeTime = data.activeTime || p.activeTime;
