@@ -94,7 +94,7 @@ async function onChangeRoom(newRoomId: number) {
     contact.setContact(item);
   // else { // 重新拉会话详情
   try {
-    const res = await getChatContactInfo(newRoomId, item?.type, user.getToken);
+    const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
     if (res && res.code === StatusCode.SUCCESS) {
       contact.setContact(res?.data);
       if (item) {
@@ -145,7 +145,7 @@ async function refreshItem(roomId: number) {
   if (itemIndex === -1)
     return;
   if (chat.contactList[itemIndex]?.type === RoomType.GROUP) {
-    const res = await getChatContactInfo(roomId, RoomType.GROUP, user.getToken);
+    const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
     if (res)
       chat.contactList[itemIndex] = res.data;
   }
@@ -241,7 +241,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       // 新加入
       if (p.changeType === WSMemberStatusEnum.JOIN) {
         // 更新会话
-        getChatContactInfo(p.roomId, RoomType.GROUP, user.getToken)?.then((res) => {
+        getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
           if (res) {
             const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
             if (index !== -1) { // 更新
@@ -364,7 +364,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
           </el-radio>
           <template #done>
             <small
-              class="block w-full text-center text-0.8rem opacity-60"
+              class="block w-full truncate text-center text-0.8rem opacity-60"
             >
               暂无更多
             </small>

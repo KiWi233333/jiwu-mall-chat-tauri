@@ -414,6 +414,7 @@ onMounted(() => {
     opacity: 0;
   }
   :deep(.el-textarea__inner) {
+    resize:none;
     box-shadow: none !important;
     background-color: transparent;
     caret-color: var(--el-color-primary);

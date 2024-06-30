@@ -107,9 +107,9 @@ async function getEmailCode() {
     class="form"
     @submit.prevent="() => {}"
   >
-    <h2 mb-6 mt-4 text-center tracking-0.2em>
+    <h3 mb-4 mt-2 text-center tracking-0.2em>
       {{ user.userInfo.isEmailVerified ? "更换" : "绑定" }}邮箱
-    </h2>
+    </h3>
     <el-form-item type="newEmail" label="" prop="newEmail" class="animated">
       <el-input
         v-model.trim="form.newEmail"

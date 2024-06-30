@@ -88,7 +88,7 @@ async function getPhoneCode() {
   if (code === StatusCode.SUCCESS) {
     phoneCodeStorage.value = 60;
     ElMessage.success("发送成功，请查看手机短信！");
-    timer = setInterval(() => {
+    timer = setTimeout(() => {
       phoneCodeStorage.value--;
       clearInterval(timer);
       timer = undefined;
@@ -108,9 +108,9 @@ async function getPhoneCode() {
     class="form"
     @submit.prevent="() => {}"
   >
-    <h2 mb-6 mt-4 text-center tracking-0.2em>
+    <h3 mb-4 mt-2 text-center tracking-0.2em>
       {{ user.userInfo.isPhoneVerified ? "更换" : "绑定" }}手机号
-    </h2>
+    </h3>
     <el-form-item label="" prop="newPhone" class="animated">
       <el-input
         v-model.trim="form.newPhone"

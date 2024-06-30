@@ -50,6 +50,10 @@ export const useSettingStore = defineStore(
       isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: true, // esc
     });
+    const contactBtnPosition = ref({
+      x: 0,
+      y: 0,
+    });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
     // --------------------- 聊天设置 -----------------
@@ -114,7 +118,6 @@ export const useSettingStore = defineStore(
         }
         else {
           const route = useRoute();
-          console.log(route.path);
           if (route.path.includes("/setting"))
             ElMessage.info("当前版本已是最新版本！");
         }
@@ -137,6 +140,7 @@ export const useSettingStore = defineStore(
       isThemeChangeLoad,
       appUploader,
       showChatMenu,
+      contactBtnPosition,
       // actions
       checkUpdates,
       // getter

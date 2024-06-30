@@ -231,6 +231,7 @@ const timer = ref<any>();
 <style scoped lang="scss">
 .v-input {
   :deep(.el-button) {
+    font-size: 0.8rem;
     padding: 0 2rem;
     margin-right: 0;
     letter-spacing: 0.2em;

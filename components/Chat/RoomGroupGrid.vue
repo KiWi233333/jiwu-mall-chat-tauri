@@ -96,7 +96,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
               return ElMessage.error(res.msg || "申请失败，请稍后再试！");
             const user = res.data.checkedList.find(p => p.uid === item.userId);
             if (user && user.isFriend)
-              return ElMessage.error("申请失败，和对方已是好友！");
+              return ElMessage.warning("申请失败，和对方已是好友！");
             // 开启申请
             theUser.value = item;
             isShowApply.value = true;
@@ -211,6 +211,7 @@ watchDebounced(() => props.data.roomId, (val) => {
 }, {
   immediate: true,
 });
+
 /**
  * 上下线消息
  */
@@ -289,7 +290,7 @@ function exitGroup() {
     </div>
     <el-scrollbar
       height="45vh"
-      view-class="max-w-full mx-a  tracking-0.1em flex flex-col gap-2"
+      view-class="max-w-full mx-a tracking-0.1em flex flex-col gap-2"
       wrap-class="w-full mx-a"
     >
       <ListAutoIncre
@@ -300,7 +301,7 @@ function exitGroup() {
         :loading="isLoading"
         @load="loadData"
       >
-        <div class="grid grid-cols-4 mx-a sm:(grid-cols-6 w-2/3 gap-4)">
+        <div class="grid grid-cols-4 mx-a lg:(grid-cols-8 w-2/3 gap-4) sm:(grid-cols-6 w-2/3 gap-4)">
           <div
             v-for="p in merberList"
             :key="p.userId"
@@ -311,7 +312,7 @@ function exitGroup() {
               id: p.userId,
             })"
           >
-            <div relative h-3.8em w-3.8em>
+            <div relative h-3.2em w-3.2em>
               <CardElImage
                 :src="BaseUrlImg + p.avatar" fit="cover"
                 class="h-full w-full border-default v-card"

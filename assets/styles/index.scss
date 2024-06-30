@@ -5,6 +5,9 @@
   right: 50%;
   transform: translate(-50%, -50%);
 }
+:root {
+  --el-box-shadow:rgba(0, 0, 0, 0.2) 2px 6px 26px 0px,rgba(0, 0, 0, 0.2) -2px -6px 26px 0px !important;
+}
 
 /**  ------------------------------element-plus---------------------------------------  **/
 // 背景颜色
@@ -77,23 +80,16 @@
   // background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
 }
 
-// 盒子卡片
-.v-card {
-  transition: all $transition-delay;
-  background-color: #ffffffd7;
-  border-radius: 4px;
-  backdrop-filter: saturate(180%) blur(12px);
-}
-
-.dark .v-card {
-  backdrop-filter: saturate(180%) blur(12px);
-  background-color: #292929be;
-  // background-image: radial-gradient(ellipse 80% 50% at 50% -22%, rgb(33 33 107 / 10%), transparent);
-}
-
 // element-plus
 // 消息确认框
 .el-message-box {
+  .el-message-box__header {
+    padding: 0 !important;
+  }
+  .el-message-box__headerbtn {
+    top: 10px;
+    right: 10px;
+  }
   .el-message-box__btns {
     display: flex;
     justify-content: space-around;
@@ -114,7 +110,7 @@
   }
 
   .el-message-box__content {
-    margin: 0.4em 1em;
+    margin: 1em 1em 0.4em 1em;
   }
 
   .el-message-box__title {
@@ -229,6 +225,8 @@
 }
 
 .el-image-viewer__wrapper {
+  border-radius: 6px;
+  overflow: hidden;
   .el-image-viewer__close {
     --at-apply: "!card-default-br";
   }

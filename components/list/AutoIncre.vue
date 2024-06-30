@@ -42,7 +42,7 @@ const { stop, isSupported } = useIntersectionObserver(
 // 监听
 watch(isSee, (val) => {
   if (!val)
-    return;
+    return clearTimeout(timer);
   callBack();
 });
 

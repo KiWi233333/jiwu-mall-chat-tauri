@@ -8,7 +8,6 @@ const props = defineProps<{
 }>();
 
 const { data } = toRefs(props);
-const chat = useChatStore();
 const user = useUserStore();
 // 具体
 const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
@@ -33,7 +32,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
       <!-- 内容 -->
       <CardElImage
         v-if="body?.url" :src="BaseUrlImg + body?.url"
-        class="img h-8rem w-8rem shadow-sm border-default card-default bg-color"
+        class="img h-9rem max-w-16rem shadow-sm border-default card-default bg-color"
         preview-teleported
         :alt="body?.url"
         :preview-src-list="[BaseUrlImg + body?.url]"

@@ -3,19 +3,106 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
 import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
+const [autoAnimateListRef, enableListAnima] = useAutoAnimate();
+enableListAnima(false);
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
 const chat = useChatStore();
 const setting = useSettingStore();
 const isLoading = ref<boolean>(false);
+const memberScrollbarRef = ref();
 const user = useUserStore();
+const isGrid = useLocalStorage(`chat_room_group_member_show_type_${user.userInfo.id}`, false);
 const pageInfo = ref({
   cursor: null as null | string,
   isLast: false,
   size: 15,
 });
 chat.onOfflineList.splice(0);
+// 编辑群聊
+const theContactClone = ref<Partial<ChatContactDetailVO>>();
+const editFormFieldRaw = ref("");
+const nameInputRef = ref();
+const noticeInputRef = ref();
+const editFormField = computed<string>({
+  get() {
+    return editFormFieldRaw.value;
+  },
+  set(val) {
+    editFormFieldRaw.value = val;
+    nextTick(() => {
+      if (val === "notice" && noticeInputRef.value)
+        noticeInputRef?.value?.focus();
+      else if (val === "name" && nameInputRef.value)
+        nameInputRef?.value?.focus();
+    });
+  },
+});
 
+const isLord = computed(() => chat.theContact.member?.role === ChatRoomRoleEnum.OWNER);
+const TextMap = {
+  name: "群名称",
+  notice: "群公告",
+};
+watch(() => chat.theContact, (val) => {
+  const data = JSON.parse(JSON.stringify(val)) as ChatContactDetailVO;
+  if (data.roomGroup && !data.roomGroup?.detail)
+    data.roomGroup.detail = {};
+  theContactClone.value = data;
+}, { deep: true, immediate: true });
+
+async function submitUpdateRoom(field: "name" | "notice", val: string | undefined | null = "") {
+  if (field === "name" && val && val.trim().length <= 0)
+    return ElMessage.warning("请输入内容！");
+  const data = field === "notice"
+    ? {
+        detail: {
+          [field]: val?.trim(),
+        },
+      }
+    : {
+        [field]: val?.trim(),
+      } as UpdateRoomGroupDTO;
+
+  ElMessageBox.confirm(`是否确认修改${TextMap[field]}？`, {
+    // title: TextMap[field] || "提示",
+    center: true,
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    confirmButtonClass: "el-button-primary",
+    lockScroll: false,
+    callback: async (action: string) => {
+      if (action === "confirm") {
+        const res = await updateGroupRoomInfo(chat.theContact.roomId, data, user.getToken);
+        if (res.code === StatusCode.SUCCESS && res.data === 1) {
+          // 更新会话
+          if (field === "name") {
+            const item = chat.contactList.find(item => item.roomId === chat.theContact.roomId);
+            if (item)
+              item.name = val?.trim() as string;
+            chat.theContact.name = val?.trim() as string;
+          }
+          else if (field === "notice") {
+            if (!chat.theContact?.roomGroup)
+              chat.theContact.roomGroup = { detail: {} } as ChatRoomGroup;
+            if (!chat.theContact?.roomGroup?.detail)
+              chat.theContact.roomGroup.detail = {};
+            chat.theContact.roomGroup.detail.notice = val?.trim() as string;
+          }
+
+          editFormField.value = "";
+        }
+      }
+      else {
+        const data = JSON.parse(JSON.stringify(chat.theContact)) as ChatContactDetailVO;
+        if (data.roomGroup && !data.roomGroup?.detail)
+          data.roomGroup.detail = {};
+        theContactClone.value = data;
+        editFormField.value = "";
+      }
+    },
+  });
+}
 /**
  * 加载数据
  */
@@ -42,6 +129,8 @@ function reload() {
   if (isLoading.value)
     return;
   isLoading.value = false;
+  // 动画
+  enableListAnima(setting.settingPage.isColseAllTransition);
   loadData();
 }
 // 添加好友
@@ -105,7 +194,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
               return ElMessage.error(res.msg || "申请失败，请稍后再试！");
             const user = res.data.checkedList.find(p => p.uid === item.userId);
             if (user && user.isFriend)
-              return ElMessage.error("申请失败，和对方已是好友！");
+              return ElMessage.warning("申请失败，和对方已是好友！");
             // 开启申请
             theUser.value = item;
             isShowApply.value = true;
@@ -270,8 +359,8 @@ function exitGroup() {
         const res = await exitRoomGroup(chat.theContact.roomId, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("操作成功！");
-          chat.setContact();
           chat.contactList = chat.contactList.filter((e: ChatContactVO) => e.roomId !== chat.theContact.roomId);
+          chat.setContact();
         }
       }
     },
@@ -282,24 +371,21 @@ function exitGroup() {
 <template>
   <div
     v-if="chat.theContact.type === RoomType.GROUP && setting.isOpenGroupMember"
+    v-auto-animate
     v-bind="$attrs"
     class="group flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/5 flex-col p-4)"
   >
-    <div flex-row-bt-c flex-col gap-4 truncate pb-1rem pt-2 sm:flex-row>
-      <i class="sm:(h-1.8em w-1.8em)" />
-      <span>
-        群成员
-      </span>
-      <div class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0">
-        <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-1.6em w-1.6em) border-default" i-carbon:add-large @click="onAdd" />
+    <!-- 添加 -->
+    <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
+      <div hidden sm:flex class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
+        <i class="block rounded-2rem op-80 btn-info sm:(h-5 w-5) border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-3 h-3' : 'i-solar:widget-bold-duotone w-2 h-2'" />
+      </div>
+      <span my-2>群成员</span>
+      <div class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0" @click="onAdd">
+        <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-5 w-5) border-default" i-carbon:add-large />
       </div>
     </div>
-    <el-scrollbar
-      height="100%"
-      class="mx-a h-70vh max-w-full w-fit w-full rounded-4rem md:(w-full) sm:rounded-1rem"
-      view-class="max-w-full mx-a  tracking-0.1em flex flex-col gap-2"
-      wrap-class="w-full mx-a"
-    >
+    <div ref="memberScrollbarRef" flex flex-col overflow-y-auto rounded-2rem sm:rounded-2>
       <ListAutoIncre
         :immediate="true"
         :auto-stop="true"
@@ -307,46 +393,116 @@ function exitGroup() {
         :loading="isLoading"
         @load="loadData"
       >
-        <div
-          v-for="p in merberList" :key="p.userId"
-          :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-          class="user-card flex-shrink-0"
-          @contextmenu="onContextMenu($event, p)"
-          @click="onContextMenu($event, p)"
-        >
-          <div class="relative flex-row-c-c">
-            <CardElImage
-              :src="BaseUrlImg + p.avatar" fit="cover"
-              class="h-2.2em w-2.2em flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
-            />
-            <span class="g-avatar" />
-          </div>
-          <small hidden truncate md:inline-block>{{ p.nickName || "未填写" }}</small>
-          <div class="tags ml-a block hidden pl-1 sm:block">
-            <el-tag v-if="p.userId === user.userInfo.id" class="mr-1" style="font-size: 0.6em;" size="small" type="warning">
-              我
-            </el-tag>
-            <el-tag v-if="p.roleType !== null && p.roleType !== ChatRoomRoleEnum.MEMBER" class="mr-1" style="font-size: 0.6em;" size="small" effect="dark" type="info">
-              {{ chatRoomRoleEnumMap[p.roleType || ChatRoomRoleEnum.MEMBER] }}
-            </el-tag>
+        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-3>
+          <div
+            v-for="p in merberList" :key="p.userId"
+            :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
+            class="user-card flex-shrink-0"
+            @contextmenu="onContextMenu($event, p)"
+            @click="onContextMenu($event, p)"
+          >
+            <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
+              <CardElImage
+                :src="BaseUrlImg + p.avatar" fit="cover"
+                class="h-8 w-8 flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+              />
+              <span class="g-avatar" />
+            </div>
+            <small v-if="!isGrid" hidden truncate md:inline-block>{{ p.nickName || "未填写" }}</small>
+            <div v-if="!isGrid" class="tags ml-a block hidden pl-1 sm:block">
+              <el-tag v-if="p.userId === user.userInfo.id" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" type="warning">
+                我
+              </el-tag>
+              <el-tag v-if="p.roleType !== null && p.roleType !== ChatRoomRoleEnum.MEMBER" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" effect="dark" type="info">
+                {{ chatRoomRoleEnumMap[p.roleType || ChatRoomRoleEnum.MEMBER] }}
+              </el-tag>
+            </div>
           </div>
         </div>
-        <template #done>
-          <p mx-a hidden truncate text-center text-0.8em op-60 sm:block>
-            暂无更多
-          </p>
-        </template>
+        <template #done />
       </ListAutoIncre>
-    </el-scrollbar>
+      <small
+        class="shadow-bt" sticky bottom-0 left-0 block w-full pb-2 text-center op-60 bg-color @click="() => {
+          memberScrollbarRef.scrollTo({ left: 0, top: memberScrollbarRef?.scrollHeight || 0, behavior: 'smooth' })
+        }"
+      >
+        <i i-solar:alt-arrow-down-outline p-2 btn-info />
+      </small>
+    </div>
+    <div mt-2 hidden w-full border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
+      <!-- <div mt-3>
+        群头像
+      </div> -->
+      <div mt-3 class="label-item">
+        群聊名称
+        <i v-show="isLord && editFormField !== 'name'" i-solar:pen-2-bold ml-2 p-2 op-0 transition-opacity @click="editFormField = 'name'" />
+        <div
+          class="dark:op-70" @click="() => {
+            if (isLord && editFormField !== 'name') {
+              editFormField = 'name'
+            }
+          }"
+        >
+          <el-input
+            v-if="theContactClone"
+            ref="nameInputRef"
+            v-model.lazy="theContactClone.name"
+            :disabled="!isLord || editFormField !== 'name'"
+            type="text"
+            :maxlength="30"
+            style="width: fit-content;"
+            placeholder="未填写"
+            @focus="editFormField = 'name'"
+            @blur.stop="submitUpdateRoom('name', theContactClone.name)"
+          />
+        </div>
+      </div>
+      <div class="label-item">
+        <div mt-3>
+          群公告
+          <i v-show="isLord && editFormField !== 'notice'" i-solar:pen-2-bold ml-2 p-2 op-0 transition-opacity @click="editFormField = 'notice'" />
+        </div>
+        <el-input
+          v-if="theContactClone?.roomGroup?.detail"
+          ref="noticeInputRef"
+          v-model="theContactClone.roomGroup.detail.notice"
+          :disabled="!isLord || editFormField !== 'notice'"
+          autofocus
+          class="mt-2 dark:op-70"
+          :rows="5"
+          show-word-limit
+          :maxlength="200"
+          :dropzone="false"
+          type="textarea"
+          style="resize:none;width: 100%;"
+          placeholder="未填写"
+          @click.self="() => {
+            if (isLord && editFormField !== 'notice') {
+              editFormField = 'notice'
+            }
+            else if (editFormField !== 'notice'){
+              ElMessageBox({
+                title: '群公告',
+                confirmButtonText: '确定',
+                message: chat.theContact?.roomGroup?.detail?.notice || '未填写',
+                showCancelButton: false,
+                callback() {
+                },
+              })
+            }
+          }"
+          @focus="editFormField = 'notice'"
+          @blur="submitUpdateRoom('notice', theContactClone?.roomGroup?.detail?.notice)"
+        />
+      </div>
+    </div>
     <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" round type="danger" plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
     </btn-el-button>
-
     <!-- 邀请进群 -->
     <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showAddDialog" />
-
     <!-- 好友申请 -->
     <LazyChatFriendApplyDialog v-model:show="isShowApply" :user-id="theUser?.userId" />
   </div>
@@ -365,8 +521,15 @@ function exitGroup() {
   z-index: 1;
 }
 .user-card {
-  --at-apply:'h-fit p-1.5 relative w-fit flex items-center gap-1 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full active:scale-96 border-default hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)'
+  --at-apply:'h-fit flex-row-c-c p-1.5 relative gap-1 sm:gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full active:scale-96  hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)';
 }
+
+.is-grid {
+  .user-card {
+    width: fit-content;
+  }
+}
+
 .live {
   position: relative;
   opacity: 60;
@@ -381,5 +544,46 @@ function exitGroup() {
 }
 :deep(.el-scrollbar__thumb) {
   display: none;
+}
+.label-item {
+  :deep(.el-input) {
+    .el-input__wrapper {
+      background: transparent;
+      box-shadow: none;
+      color: inherit !important;
+      padding: 0;
+    }
+    .el-input__inner {
+      color: inherit !important;
+      caret-color: var(--el-color-info);
+      cursor: pointer;
+    }
+  }
+  &:hover i {
+    opacity: 1;
+    cursor: pointer
+  }
+}
+:deep(.el-textarea) {
+  .el-textarea__inner {
+    color: inherit !important;
+    caret-color: var(--el-color-info);
+    box-shadow: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    resize:none;
+  }
+  &.is-disabled {
+    box-shadow: none;
+    resize:none;
+  }
+}
+.shadow-bt {
+  // 渐变色
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+}
+.dark .shadow-bt {
+  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, rgba(34, 34, 34, 1) 100%);
 }
 </style>

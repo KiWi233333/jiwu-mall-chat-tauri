@@ -57,7 +57,7 @@ definePageMeta({
           />
         </div>
         <!-- 右侧 -->
-        <div class="flex flex-col gap-6 -mt-6">
+        <div class="hidden flex-col gap-6 -mt-6 sm:flex">
           <!-- 帖子 -->
           <CardUserPostTotal
             v-if="user?.id"

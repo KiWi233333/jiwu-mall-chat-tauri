@@ -50,7 +50,7 @@ loadData();
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 rounded-4px v-card">
+  <div class="flex flex-col gap-3 rounded-4px card-default">
     <div
       :to="{
         path: `/user/info`,

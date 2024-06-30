@@ -223,7 +223,7 @@ const menuList = ref([
                 <NuxtLink
                   v-for="p in menuList"
                   :key="p.path"
-                  class="group v-card"
+                  class="group card-default"
                   :to="p.path"
                 >
                   <p
@@ -379,7 +379,7 @@ const menuList = ref([
   margin: 0.2em;
 }
 
-.v-card {
+.card-default {
   display: flex;
   flex-direction: column;
   align-items: center;

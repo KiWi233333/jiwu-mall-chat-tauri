@@ -93,7 +93,7 @@
         "title": "极物聊天",
         "width": 1290,
         "center": true,
-        "minWidth": 442,
+        "minWidth": 375,
         "minHeight": 788,
         "decorations": false,
         "hiddenTitle": true,

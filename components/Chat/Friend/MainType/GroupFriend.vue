@@ -60,7 +60,7 @@ watch(roomId, val => loadData(val), { immediate: true });
 async function toSend(roomId: number) {
   if (!isOnGroup.value)
     return;
-  const res = await getChatContactInfo(roomId, RoomType.GROUP, store.getToken);
+  const res = await getChatContactInfo(roomId, store.getToken, RoomType.GROUP);
   if (!res)
     return;
   if (res && res.code !== StatusCode.SUCCESS)

@@ -75,37 +75,11 @@ const ws = useWs();
         class="main-box relative"
         v-bind="$attrs"
       >
-        <MenuChatMenu />
+        <MenuChatMenu class="hidden sm:block" />
         <slot />
       </div>
     </div>
-    <!-- <div
-      v-else-if="user.isLogin && ws.status !== WsStatusEnum.OPEN"
-      v-bind="$attrs"
-      class="main-box h-100vh flex-row-c-c overflow-hidden"
-    >
-      <OtherError :msg="ws.status === WsStatusEnum.CLOSE ? '服务连接失败，请重试' : '服务断开连接，请重连'" icon="i-solar:eye-line-duotone w-8rem h-8rem animate-[0.2s_fade-in_3]">
-        <template #footer>
-          <BtnElButton
-            v-auth
-            icon-class="i-solar:refresh-outline mr-2"
-            class="hover:shadow-md"
-            type="primary"
-            @click="reload()"
-          >
-            重新连接
-          </BtnElButton>
-          <BtnElButton
-            icon-class="i-solar:home-2-bold mr-2"
-            class="hover:shadow-md"
-            plain
-            @click="navigateTo('/login')"
-          >
-            重新登录
-          </BtnElButton>
-        </template>
-      </OtherError>
-    </div> -->
+    <LazyMenuBottomMenu class="!block !sm:hidden" />
   </main>
 </template>
 

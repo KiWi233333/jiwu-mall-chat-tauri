@@ -41,6 +41,7 @@ const userStore = useUserStore();
 function deleteFriend(userId: string) {
   ElMessageBox.confirm("是否删除该好友？", {
     confirmButtonText: "删除",
+    center: true,
     cancelButtonText: "取消",
     lockScroll: false,
     type: "warning",

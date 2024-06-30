@@ -21,30 +21,6 @@ export function getRoomGroupInfo(id = 10, token: string) {
 
 
 /**
- * 返回数据
- *
- * ChatRoomInfoVO
- */
-export interface ChatRoomInfoVO {
-  /**
-   * 群头像
-   */
-  avatar?: null | string
-  /**
-   * 群名称
-   */
-  groupName?: null | string
-  /**
-   * 在线人数
-   */
-  onlineNum?: number | null
-  /**
-   * 房间id
-   */
-  roomId?: number | null
-}
-
-/**
  * 获取成员列表（游标）
  * @param roomId 房间号
  * @param pageSize 大小
@@ -67,67 +43,6 @@ export function getRoomGroupUserPage(roomId: number | null = null, pageSize = 10
     },
   );
 }
-
-
-export interface ChatATMemberVO {
-
-  /**
-   * userId
-   */
-  userId: string
-  avatar: string
-  nickName: string
-}
-
-/**
- * Description: 群成员列表的成员信息
- *
- * ChatMemberVO
- */
-export interface ChatMemberVO {
-  /**
-   * userId
-   */
-  userId: string
-  avatar?: string
-  nickName?: string
-  /**
-   * 在线状态 1在线 0离线
-   */
-  activeStatus: ChatOfflineType
-  /**
-   * 最后一次上下线时间
-   */
-  lastOptTime?: null | string
-  /**
-   * 角色ID
-   */
-  roleType?: ChatRoomRoleEnum | null
-}
-export enum ChatOfflineType {
-  ONLINE = 1,
-  OFFLINE = 0,
-}
-export enum ChatRoomRoleEnum {
-  /**
-   * 群主
-   */
-  OWNER = 1,
-  /**
-   * 管理员
-   */
-  ADMIN = 2,
-  /**
-   * 普通成员
-   */
-  MEMBER = 3,
-}
-
-export const ChatRoomRoleEnumMap = {
-  [ChatRoomRoleEnum.OWNER]: "群主",
-  [ChatRoomRoleEnum.ADMIN]: "管理员",
-  [ChatRoomRoleEnum.MEMBER]: "成员",
-};
 
 
 /**
@@ -164,19 +79,6 @@ export function addNewGroupRoom(dto: NewGroupRoomDTO, token: string) {
     },
   );
 }
-/**
- * InsertRoomGroupDTO
- */
-export interface NewGroupRoomDTO {
-  /**
-   * 邀请的uid
-   */
-  uidList: string[]
-}
-
-export interface InsertRoomGroupVO {
-  id: number // 房间号
-}
 
 
 /**
@@ -195,15 +97,6 @@ export function addGroupMember(dto: AddGroupMemberDTO, token: string) {
       },
     },
   );
-}
-export interface AddGroupMemberDTO {
-
-  roomId: number // 房间号
-  /**
-   * 邀请的uid
-   */
-  uidList: string[]
-
 }
 
 /**
@@ -265,22 +158,6 @@ export function addChatRoomAdmin(dto: ChatRoomAdminAddDTO, token: string) {
 
 
 /**
- * ChatRoomAdminAddDTO
- */
-export interface ChatRoomAdminAddDTO {
-  /**
-   * 房间id
-   */
-  roomId: number
-  /**
-   * 用户id
-   */
-  userId: string
-  [property: string]: any
-}
-
-
-/**
  * 撤销群聊管理员
  * @param dto 参数
  * @param token 身份
@@ -300,3 +177,176 @@ export function delChatRoomAdmin(dto: ChatRoomAdminAddDTO, token: string) {
     },
   );
 }
+
+
+/**
+ * 更新群聊信息（名称、公告、头像）
+ * @param roomId 房间号
+ * @param dto 参数
+ * @param token 身份
+ * @returns 影响
+ */
+export function updateGroupRoomInfo(roomId: number, dto: UpdateRoomGroupDTO, token: string) {
+  return useHttp.put<Result<number>>(
+    `/chat/room/group/${roomId}`,
+    dto,
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+
+/**
+ * 返回数据
+ *
+ * ChatRoomInfoVO
+ */
+export interface ChatRoomInfoVO {
+  /**
+   * 群头像
+   */
+  avatar?: null | string
+  /**
+   * 群名称
+   */
+  groupName?: null | string
+  /**
+   * 在线人数
+   */
+  onlineNum?: number | null
+  /**
+   * 房间id
+   */
+  roomId?: number | null
+}
+
+export interface ChatATMemberVO {
+
+  /**
+   * userId
+   */
+  userId: string
+  avatar: string
+  nickName: string
+}
+
+/**
+ * Description: 群成员列表的成员信息
+ *
+ * ChatMemberVO
+ */
+export interface ChatMemberVO {
+  /**
+   * userId
+   */
+  userId: string
+  avatar?: string
+  nickName?: string
+  /**
+   * 在线状态 1在线 0离线
+   */
+  activeStatus: ChatOfflineType
+  /**
+   * 最后一次上下线时间
+   */
+  lastOptTime?: null | string
+  /**
+   * 角色ID
+   */
+  roleType?: ChatRoomRoleEnum | null
+}
+export enum ChatOfflineType {
+  ONLINE = 1,
+  OFFLINE = 0,
+}
+export enum ChatRoomRoleEnum {
+  /**
+   * 群主
+   */
+  OWNER = 1,
+  /**
+   * 管理员
+   */
+  ADMIN = 2,
+  /**
+   * 普通成员
+   */
+  MEMBER = 3,
+}
+/**
+ * InsertRoomGroupDTO
+ */
+export interface NewGroupRoomDTO {
+  /**
+   * 邀请的uid
+   */
+  uidList: string[]
+}
+
+export interface InsertRoomGroupVO {
+  id: number // 房间号
+}
+
+export interface AddGroupMemberDTO {
+
+  roomId: number // 房间号
+  /**
+   * 邀请的uid
+   */
+  uidList: string[]
+}
+
+/**
+ * ChatRoomAdminAddDTO
+ */
+export interface ChatRoomAdminAddDTO {
+  /**
+   * 房间id
+   */
+  roomId: number
+  /**
+   * 用户id
+   */
+  userId: string
+  [property: string]: any
+}
+
+
+/**
+ * UpdateRoomGroupDTO
+ */
+export interface UpdateRoomGroupDTO {
+  /**
+   * 群头像
+   */
+  avatar?: null | string
+  /**
+   * 群详情
+   */
+  detail?: UpdateRoomGroupExtJsonDTO
+  /**
+   * 群名称
+   */
+  name?: null | string
+}
+
+/**
+ * 群详情
+ *
+ * UpdateRoomGroupExtJsonDTO
+ */
+export interface UpdateRoomGroupExtJsonDTO {
+  /**
+   * 群聊公告
+   */
+  notice?: null | string
+}
+
+export const ChatRoomRoleEnumMap = {
+  [ChatRoomRoleEnum.OWNER]: "群主",
+  [ChatRoomRoleEnum.ADMIN]: "管理员",
+  [ChatRoomRoleEnum.MEMBER]: "成员",
+};

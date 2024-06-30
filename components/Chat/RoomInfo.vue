@@ -37,7 +37,7 @@ const getType = computed(() => {
         v-if="chat.theContact.type === RoomType.GROUP"
         class="ml-a flex-row-c-c grid-gap-2 btn-primary"
         transition="all  op-60 group-hover:op-100 300  cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-        i-solar:users-group-two-rounded-bold-duotone
+        i-solar:menu-dots-bold
         p-2.2 @click="setting.isOpenGroupMember = !setting.isOpenGroupMember"
       />
     </div>

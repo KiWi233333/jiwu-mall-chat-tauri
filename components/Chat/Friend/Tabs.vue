@@ -17,7 +17,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
     class="border-0 border-r-1px transition-200 transition-width border-default"
     v-bind="$attrs"
   >
-    <slot name="top">
+    <slot name="top ">
       <div class="card-item mb-4 border-0 border-b-1px pb-4 border-default">
         <div class="hover:bg-transparent">
           <ChatFriendApplySearch
@@ -66,8 +66,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 }
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {
-    width: 4px;
-    opacity: 0.5;
+    display: none;
   }
 }
 </style>

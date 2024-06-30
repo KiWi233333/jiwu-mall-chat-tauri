@@ -96,7 +96,7 @@ watch(() => chat.theContact.roomId, (val) => {
  * 新消息
  */
 watch(() => ws.wsMsgList.newMsg.length, () => {
-  // 1、新消息
+  // 1、新消息 type=1
   if (ws.wsMsgList.newMsg)
     resolveNewMsg(ws.wsMsgList.newMsg);
 }, {
@@ -230,6 +230,7 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
 
 // 更新会话
 function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
+  let isExist = false;
   for (let i = 0; i < chat.contactList.length; i++) {
     const p = chat.contactList[i];
     if (p && p.roomId === roomId) {
@@ -238,7 +239,18 @@ function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = fals
       p.activeTime = data.activeTime || p.activeTime;
       p.avatar = data.avatar || p.avatar;
       callBack && callBack(p);
+      isExist = true;
+      break;
     }
+  }
+  if (!isExist) {
+    // 重新拉取会话
+    getChatContactInfo(roomId, user.getToken)?.then((res) => {
+      if (res.code === StatusCode.SUCCESS) {
+        chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
+        callBack && callBack(res.data as ChatContactVO);
+      }
+    }).catch(() => {});
   }
 }
 

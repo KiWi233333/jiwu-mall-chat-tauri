@@ -99,7 +99,7 @@ async function toUpdate() {
     :model="userForm"
     class="form"
   >
-    <h3 mb-5 mt-4 text-center tracking-0.2em>
+    <h3 mb-4 mt-2 text-center tracking-0.2em>
       密码修改
     </h3>
     <el-form-item type="password" label="旧密码" prop="password" class="animated">

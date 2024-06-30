@@ -97,11 +97,11 @@ export const RoomTypeTextMap = {
 /**
  * 会话详情
  * @param roomId 房间号
- * @param roomType RoomType
  * @param token token
+ * @param roomType RoomType
  * @returns 分页
  */
-export function getChatContactInfo(roomId: number, roomType: RoomType = RoomType.GROUP, token: string) {
+export function getChatContactInfo(roomId: number, token: string, roomType: RoomType = RoomType.GROUP) {
   if (roomType === RoomType.GROUP) {
     return useHttp.get<Result<ChatContactDetailVO>>(
       `/chat/contact/${roomId}`,
@@ -125,7 +125,6 @@ export function getChatContactInfo(roomId: number, roomType: RoomType = RoomType
     );
   }
 }
-
 
 /**
  * 获取会话详情（用户id）
@@ -195,7 +194,7 @@ export interface ChatGroupMember {
  *
  * ChatRoomGroup
  */
-export interface ChatRoomGroup {
+export interface ChatRoomGroup<T = RoomGroupExtJson> {
   /**
    * 群头像
    */
@@ -213,6 +212,10 @@ export interface ChatRoomGroup {
    */
   extJson?: string
   /**
+   * 额外信息
+   */
+  detail?: T
+  /**
    * id
    */
   id: number
@@ -228,4 +231,18 @@ export interface ChatRoomGroup {
    * 修改时间
    */
   updateTime?: string
+}
+
+
+/**
+ * 额外信息（根据不同类型房间有不同存储的东西）
+ *
+ * RoomGroupExtJson
+ */
+export interface RoomGroupExtJson {
+  /**
+   * 群聊公告
+   */
+  notice?: null | string
+  [property: string]: any
 }
