@@ -395,7 +395,8 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
     padding: 0;
     border: none;
     transition: 200ms border;
-    margin-bottom: 1rem;
+    margin: 0;
+    margin-bottom: 0.5rem;
     &.is-checked {
       .group {
         background-color: var(--el-color-primary-light-9);
