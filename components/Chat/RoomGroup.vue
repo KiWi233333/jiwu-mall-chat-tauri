@@ -3,8 +3,8 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
 import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
-const [autoAnimateListRef, enableListAnima] = useAutoAnimate();
-enableListAnima(false);
+const [autoAnimateListRef, enable] = useAutoAnimate();
+enable(false);
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
 const chat = useChatStore();
@@ -119,7 +119,7 @@ async function loadData() {
   isLoading.value = false;
 }
 
-function reload() {
+async function reload() {
   chat.onOfflineList = [];
   pageInfo.value = {
     cursor: null,
@@ -130,8 +130,10 @@ function reload() {
     return;
   isLoading.value = false;
   // 动画
-  enableListAnima(setting.settingPage.isColseAllTransition);
-  loadData();
+  await loadData();
+  nextTick(() => {
+    enable(setting.settingPage.isColseAllTransition);
+  });
 }
 // 添加好友
 const theUser = ref<ChatMemberVO>();
@@ -385,7 +387,7 @@ function exitGroup() {
         <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-5 w-5) border-default" i-carbon:add-large />
       </div>
     </div>
-    <div ref="memberScrollbarRef" flex flex-col overflow-y-auto rounded-2rem sm:rounded-2>
+    <div ref="memberScrollbarRef" class="scroll-bar flex flex-col overflow-y-auto rounded-2rem sm:rounded-2">
       <ListAutoIncre
         :immediate="true"
         :auto-stop="true"
