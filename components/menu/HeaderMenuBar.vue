@@ -22,7 +22,7 @@ const isTop = ref(false);
         <!-- 主题 -->
         <BtnTheme
           id="toggle-theme-btn"
-          class="btn-primary"
+          class="relativ z-1 btn-primary"
           title="切换主题"
         />
         <!-- 退出登录 -->

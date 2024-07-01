@@ -172,7 +172,8 @@ const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?
     :is="map[data.message?.type || MessageType.TEXT]"
     :last-msg="lastMsg"
     :index="index"
-    :data="data" v-bind="$attrs"
+    :data="data"
+    v-bind="$attrs"
     @contextmenu="onContextMenu($event, data)"
   />
 </template>

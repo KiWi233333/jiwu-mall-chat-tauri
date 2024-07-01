@@ -386,7 +386,7 @@ function exitGroup() {
         <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-5 w-5) border-default" i-carbon:add-large />
       </div>
     </div>
-    <el-scrollbar ref="memberScrollbarRef" style="height: auto;" :height="isGrid ? '40vh' : '100%'">
+    <el-scrollbar ref="memberScrollbarRef" style="height: auto;">
       <ListAutoIncre
         :immediate="true"
         :auto-stop="true"
@@ -394,7 +394,7 @@ function exitGroup() {
         :loading="isLoading"
         @load="loadData"
       >
-        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-3>
+        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-2>
           <div
             v-for="p in merberList" :key="p.userId"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
@@ -430,7 +430,7 @@ function exitGroup() {
         <i i-solar:alt-arrow-down-outline p-2 btn-info />
       </small>
     </el-scrollbar>
-    <div flex-1 mt-2 hidden w-full border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
+    <div mt-2 hidden w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
       <!-- <div mt-3>
         群头像
       </div> -->
@@ -526,7 +526,6 @@ function exitGroup() {
 }
 
 .is-grid {
-  display: flex;
     // grid-template-columns: repeat(auto-fit, minmax(3em, 1fr)); // 设置网格布局，并设置列数为自动适应，每个列的宽度为1fr（占据可用空间）
   .user-card {
     --at-apply:'sm:mx-0 mx-a';

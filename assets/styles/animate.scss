@@ -800,6 +800,16 @@ html.stop-transition-all {
     transform: none;
   }
 }
+@keyframes latter-slice-bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    transform: none;
+  }
+}
 /* 渐进动画 */
 @keyframes latter-slice-left {
   0% {

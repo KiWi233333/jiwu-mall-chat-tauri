@@ -77,6 +77,7 @@ function onSubmit() {
       ElMessage.error("消息内容不能超过500字！");
     if (!action)
       return;
+
     isSend.value = true;
     const res = await addChatMessage({
       ...form.value,
@@ -205,6 +206,9 @@ async function loadUser() {
   if (data.value && data.value.code === StatusCode.SUCCESS)
     userList.value = data.value?.data || [];
 }
+watch(() => chat.atUserList, (val) => {
+  form.value.body.atUidList = val || [];
+}, { deep: true, immediate: true });
 
 // 未读数
 const theRoomUnReadLength = computed(() => {
@@ -297,11 +301,11 @@ onMounted(() => {
             :disabled="form.msgType !== MessageType.TEXT"
             :max="20"
             :max-collapse-tags="1"
-            clearable
+            :clearable="false"
             ilterable
             collapse-tags multiple default-first-option :reserve-keyword="true"
             placeholder="@其他人"
-            @change="(val) => form.body.atUidList = val"
+            @change="(val) => chat.atUserList = val"
           >
             <el-option
               v-for="p in userList"

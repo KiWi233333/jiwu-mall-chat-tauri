@@ -298,7 +298,6 @@ defineExpose({
         :key="msg.message.id"
         :index="i"
         :data="msg"
-        data-fade
         :last-msg="i > 0 ? chat.theContact.msgList[i - 1] : {}"
       />
     </ListDisAutoIncre>
