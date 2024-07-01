@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { WsStatusEnum } from "~/composables/types/WsType";
+import { XUN_FEI_WSS_URL } from "~/composables/utils/useBaseUrl";
 
 const INIT_MSG = {
   fromUser: {
@@ -54,7 +55,7 @@ const dto = ref({
 
 const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
 // 是否在返回数据
-const isChat = computed(() => status.value === WsStatusEnum.OPEN)
+const isChat = computed(() => status.value === WsStatusEnum.OPEN);
 const formRef = ref();
 function onSubmit() {
   if (status.value === WsStatusEnum.OPEN || !form.value.content || form.value.content.length < 1 || isChat.value)
@@ -83,13 +84,13 @@ function onStop() {
 function sendMsg(msg: string, id: string) {
   if (body.value.ws && body.value.ws.OPEN === 1)
     return;
-  body.value.ws = new WebSocket("wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1");
-  status.value = WsStatusEnum.OPEN;
+  body.value.ws = new WebSocket(XUN_FEI_WSS_URL);
   body.value.ws.onopen = (e) => {
-    dto.value.payload.message.text[0].content = msg;
+    status.value = WsStatusEnum.OPEN;
+    if (dto?.value?.payload?.message?.text?.[0])
+      dto.value.payload.message.text[0].content = msg;
     dto.value.header.uid = id;
     body.value.ws?.send(JSON.stringify(dto.value));
-    status.value = WsStatusEnum.OPEN;
     nextTick(() => {
       scrollBottom();
     });
@@ -184,6 +185,7 @@ function handleNewChat() {
     return ElMessage.warning("正在聊天中，请先结束当前对话！");
 
   // 开启新对话
+  body.value.ws?.close();
   body.value.ws = null;
   status.value = WsStatusEnum.CLOSE;
   msgList.value = [INIT_MSG];

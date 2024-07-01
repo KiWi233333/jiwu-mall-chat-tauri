@@ -16,3 +16,5 @@ export const AuthKey = "Authorization";
 export const BaseWSUrl = isDev
   ? "ws://localhost:9091/"
   : "wss://api.jiwu.kiwi2333.top/websocket";
+
+export const XUN_FEI_WSS_URL = "wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1";
