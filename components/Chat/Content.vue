@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const props = defineProps<{
+defineProps<{
   roomId?: string
 }>();
 const chat = useChatStore();
@@ -20,7 +20,9 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0) {
   // || !ChatMessageListRef.value?.findMsg(msgId)
   if (!el) {
     timer.value = setTimeout(() => {
-      scrollbarRef?.value?.setScrollTop(0);
+      if (!chat.isChatScroll)
+        scrollbarRef?.value?.setScrollTop(0);
+
       scrollReplyMsg(msgId, gapCount);
       if (el) {
         timer.value && clearTimeout(timer.value);
@@ -35,10 +37,10 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0) {
   }
   // 找到对应消息
   nextTick(() => {
-    if (!el)
+    if (chat.isChatScroll || !el)
       return;
     clearTimeout(timer.value);
-    if (scrollbarRef.value?.wrapRef?.scrollTo) {
+    if (!chat.isChatScroll) {
       scrollbarRef.value?.wrapRef?.scrollTo({
         top: (el?.offsetTop || 0) + offset,
         behavior: "smooth",
@@ -52,16 +54,15 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0) {
     timer.value = setTimeout(() => {
       el.classList.remove("reply-shaing");
       timer.value = null;
-    }, 1800);
+    }, 1500);
   });
 }
 
-const isScroll = ref(false);
 // 滚动到底部
 function scrollBottom(animate = true) {
-  if (isScroll.value)
+  if (chat.isChatScroll)
     return;
-  isScroll.value = true;
+  chat.isChatScroll = true;
   if (animate) {
     scrollbarRef.value?.wrapRef?.scrollTo({
       top: scrollbarRef?.value?.wrapRef?.scrollHeight || 0,
@@ -71,17 +72,19 @@ function scrollBottom(animate = true) {
   else {
     scrollbarRef.value?.setScrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight || 0);
   }
-  isScroll.value = false;
+  chat.isChatScroll = false;
 }
 
 // 保存上一个位置
 function saveScrollTop() {
   chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight;
 }
-function scrollTop(size: number) {
-  scrollbarRef.value?.scrollTo({
+async function scrollTop(size: number) {
+  chat.isChatScroll = true;
+  await scrollbarRef.value?.scrollTo({
     top: size || 0,
   });
+  chat.isChatScroll = false;
 }
 
 // 绑定事件

@@ -100,7 +100,7 @@ function exitLogin(ua?: string) {
       <!-- 列表 -->
       <div
         ref="autoAnimateRef"
-        class="relative grid grid-cols-1 grid-gap-3 md:grid-cols-3"
+        class="relative grid grid-cols-1 gap-2 lg:grid-cols-3 sm:grid-cols-2"
       >
         <UserSafeDeviceCard
           v-for="p in deviceList"

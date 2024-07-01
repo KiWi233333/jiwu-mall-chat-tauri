@@ -31,12 +31,6 @@ watchDebounced(
     }
   },
 );
-function isColseChange(val: any) {
-  if (val)
-    document.documentElement.classList.add("stop-transition-all");
-  else
-    document.documentElement.classList.remove("stop-transition-all");
-}
 
 useSeoMeta({
   title: "设置",
@@ -62,7 +56,7 @@ onMounted(async () => {
         <el-tabs
           model-value="security"
           tab-position="top"
-          class="mt-4 flex-1 overflow-hidden rounded-2 bg-transparent"
+          class="mt-6 flex-1 overflow-hidden rounded-2 bg-transparent"
         >
           <el-tab-pane name="security" style="max-height: 100%;height: 100%;" label="账号" lazy>
             <UserSafeUpdateCards />

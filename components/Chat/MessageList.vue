@@ -16,6 +16,7 @@ const isReload = ref(false);
  */
 async function loadData(call?: (data?: Message[]) => void) {
   const roomId = chat.theContact.roomId;
+
   if (isLoading.value || isReload.value || pageInfo.value.isLast || !roomId)
     return;
   isLoading.value = true;
@@ -297,6 +298,7 @@ defineExpose({
         :key="msg.message.id"
         :index="i"
         :data="msg"
+        data-fade
         :last-msg="i > 0 ? chat.theContact.msgList[i - 1] : {}"
       />
     </ListDisAutoIncre>

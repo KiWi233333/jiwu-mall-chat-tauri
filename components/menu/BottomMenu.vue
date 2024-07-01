@@ -108,9 +108,9 @@ const activeMenu = computed({
       />
     </span>
     <div
-      class="relative z-998 grid grid-cols-6 gap-2 border-0 border-t-1px p-2 pt-4 shadow-md border-default"
+      class="relative z-998 grid grid-cols-6 border-0 border-t-1px px-4 py-4 shadow-md border-default"
     >
-      <div v-for="p in menuList" :key="p.path" :index="p.path" class="flex-row-c-c flex-col cursor-pointer gap-2 rounded-2 px-0 py-4 transition-all" :class="{ active: activeMenu === p.path }" @click="activeMenu = p.path">
+      <div v-for="p in menuList" :key="p.path" :index="p.path" class="flex-row-c-c flex-col cursor-pointer gap-2 rounded-2 px-0 py-3 transition-all" :class="{ active: activeMenu === p.path }" @click="activeMenu = p.path">
         <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">
           <i class="p-3" :class="route.path === p.path ? p.activeIcon : p.icon" />
           <span mt-2 block text-center text-3>{{ p.title }}</span>
@@ -122,6 +122,6 @@ const activeMenu = computed({
 
 <style lang="scss" scoped>
 .active {
-  --at-apply: "bg-[var(--el-color-primary)]  text-white shadow";
+  --at-apply: "bg-[var(--el-color-primary)]  text-white shadow-inset shadow-lg";
 }
 </style>

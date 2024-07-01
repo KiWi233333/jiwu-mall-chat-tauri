@@ -18,6 +18,7 @@ export const useChatStore = defineStore(
     /******************************* 会话 *********************************/
     const isOpenContact = ref(true);
     const contactList = ref<ChatContactVO[]>([]);
+    const isChatScroll = ref<boolean>(false);
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
       avatar: "",
@@ -163,6 +164,7 @@ export const useChatStore = defineStore(
       isOpenContact,
       roomGroupPageInfo,
       onOfflineList,
+      isChatScroll,
       // 方法
       setContact,
       setReadList,

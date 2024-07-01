@@ -373,9 +373,8 @@ function exitGroup() {
 <template>
   <div
     v-if="chat.theContact.type === RoomType.GROUP && setting.isOpenGroupMember"
-    v-auto-animate
     v-bind="$attrs"
-    class="group flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/5 flex-col p-4)"
+    class="group w-1/6 flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/5 flex-col p-4)"
   >
     <!-- 添加 -->
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
@@ -387,7 +386,7 @@ function exitGroup() {
         <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-5 w-5) border-default" i-carbon:add-large />
       </div>
     </div>
-    <div ref="memberScrollbarRef" class="scroll-bar flex flex-col overflow-y-auto rounded-2rem sm:rounded-2">
+    <el-scrollbar ref="memberScrollbarRef" style="height: auto;" :height="isGrid ? '40vh' : '100%'">
       <ListAutoIncre
         :immediate="true"
         :auto-stop="true"
@@ -406,7 +405,7 @@ function exitGroup() {
             <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
               <CardElImage
                 :src="BaseUrlImg + p.avatar" fit="cover"
-                class="h-8 w-8 flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+                class="h-10 w-10 flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
               />
               <span class="g-avatar" />
             </div>
@@ -424,14 +423,14 @@ function exitGroup() {
         <template #done />
       </ListAutoIncre>
       <small
-        class="shadow-bt" sticky bottom-0 left-0 block w-full pb-2 text-center op-60 bg-color @click="() => {
-          memberScrollbarRef.scrollTo({ left: 0, top: memberScrollbarRef?.scrollHeight || 0, behavior: 'smooth' })
+        class="shadow-bt" sticky bottom-0 left-0 block w-full pb-2 text-center @click="() => {
+          memberScrollbarRef.scrollTo({ left: 0, top: memberScrollbarRef?.wrapRef?.scrollHeight || 0, behavior: 'smooth' })
         }"
       >
         <i i-solar:alt-arrow-down-outline p-2 btn-info />
       </small>
-    </div>
-    <div mt-2 hidden w-full border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
+    </el-scrollbar>
+    <div flex-1 mt-2 hidden w-full border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
       <!-- <div mt-3>
         群头像
       </div> -->
@@ -523,11 +522,14 @@ function exitGroup() {
   z-index: 1;
 }
 .user-card {
-  --at-apply:'h-fit flex-row-c-c p-1.5 relative gap-1 sm:gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full active:scale-96  hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)';
+  --at-apply:'h-fit flex-row-c-c p-1.6 relative gap-1 sm:gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)';
 }
 
 .is-grid {
+  display: flex;
+    // grid-template-columns: repeat(auto-fit, minmax(3em, 1fr)); // 设置网格布局，并设置列数为自动适应，每个列的宽度为1fr（占据可用空间）
   .user-card {
+    --at-apply:'sm:mx-0 mx-a';
     width: fit-content;
   }
 }

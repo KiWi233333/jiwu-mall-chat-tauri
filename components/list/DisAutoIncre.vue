@@ -95,7 +95,7 @@ defineExpose({
   >
     <div
       ref="loadMoreRef"
-      key="loadMoreRef" absolute top-0 w-full py-2
+      key="loadMoreRef" absolute top-0 w-full py-4
       :style="{ height: `${thresholdHeight}px` }"
     >
       <slot name="load">

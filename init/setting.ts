@@ -60,7 +60,7 @@ export async function useSettingInit() {
       const app = document.documentElement;
       if (app)
         app.classList.remove("stop-transition");
-    }, 600);
+    }, 1000);
   });
 }
 

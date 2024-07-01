@@ -1,12 +1,20 @@
 // @unocss-include
 .msg {
-  --at-apply: "max-w-full w-fit flex gap-2 pl-2 pr-4rem py-3";
+  --at-apply: "w-full flex gap-2 pl-2 pr-4rem py-3";
+  transition: background-color 0.2s;
 
+  // 头像
   .avatar {
     --at-apply: "h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default";
   }
   .nickname {
-    --at-apply: "flex flex-row gap-2";
+    vertical-align: bottom;
+  }
+  &:hover {
+    .sendTime {
+      transition: opacity 0.2s;
+      opacity: 0.6;
+    }
   }
   .msg-popper {
     --at-apply: "transform-origin-ct transition-300 transition-transform w-fit p-2 px-4 leading-1.2em  card-default";
@@ -18,11 +26,15 @@
 }
 
 .reply-shaing {
-  --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-5)] animate-pulse animate-duration-1200 transition-opacity";
+  --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-7)] op-100 transition-120";
 }
 
 .body {
   --at-apply: "flex flex-col gap-2";
+}
+.flex-res {
+  display: flex;
+  gap: 0.5rem;
 }
 .self {
   &.msg {
@@ -33,8 +45,12 @@
   }
   padding-left: 4em;
   margin-left: auto;
+  .flex-res {
+    flex-direction: row-reverse;
+  }
   .nickname {
     margin-left: auto;
+    vertical-align: bottom;
   }
   .flex,
   .flex-ml-a {

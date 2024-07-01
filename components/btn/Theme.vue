@@ -11,7 +11,7 @@ async function toggleFn(e: MouseEvent) {
 
 <template>
   <div
-    class="flex-row-c-c"
+    class="flex-row-c-c cursor-pointer"
     @click="toggleFn"
   >
     <img
