@@ -8,7 +8,10 @@ const props = withDefaults(
   {
     limit: 1,
     multiple: false,
+    showEdit: true,
+    showDelete: true,
     required: false,
+    isAnimate: true,
     disable: false,
     modelValue: () => [] as OssFile[],
     accept: "image/*",
@@ -29,6 +32,8 @@ const emit = defineEmits<{
 interface Props {
   limit?: number
   multiple?: boolean
+  showEdit?: boolean
+  showDelete?: boolean
   required?: boolean
   modelValue?: OssFile[]
   preview?: boolean
@@ -272,10 +277,11 @@ const getPreImage = computed(() => {
     return [];
 });
 
-const [autoAnimateRef, enable] = useAutoAnimate({});
+const [autoAnimateRef, enable] = useAutoAnimate({
+});
 onMounted(() => {
   const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(props.isAnimate && !setting.settingPage.isColseAllTransition);
 });
 </script>
 
@@ -334,21 +340,15 @@ onMounted(() => {
           />
           <!-- 编辑 -->
           <div
-            v-else
-            class="pre-group-hover absolute h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-12px transition-300"
+            v-else-if="showEdit"
+            class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 v-card"
           >
             <slot name="pre-btns">
-              <!-- 预览
-              <i
-                v-if="props.preview"
-                class="pre-btn hover:bg-[var(--el-color-info)]"
-                i-tabler:zoom-in
-              /> -->
-              <!-- 删除 -->
-              <i
-                class="pre-btn hover:bg-[var(--el-color-danger)]"
+              <div
+                v-if="showDelete"
+                class="h-full max-h-2rem max-w-2rem w-1/5 cursor-pointer hover:bg-[var(--el-color-danger)]"
                 i-solar:trash-bin-trash-bold-duotone
-                @click.stop="removeItem(p)"
+                @click="removeItem(p)"
               />
               <!-- 取消上传 -->
               <div
@@ -395,11 +395,12 @@ onMounted(() => {
           />
           <!-- 编辑 -->
           <div
-            v-else
+            v-else-if="showEdit"
             class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 v-card"
           >
             <slot name="pre-btns">
               <div
+                v-if="showDelete"
                 class="h-full max-h-2rem max-w-2rem w-1/5 cursor-pointer hover:bg-[var(--el-color-danger)]"
                 i-solar:trash-bin-trash-bold-duotone
                 @click="removeItem(p)"
@@ -409,9 +410,12 @@ onMounted(() => {
         </div>
       </div>
     </template>
-    <slot />
+    <div key="slot">
+      <slot />
+    </div>
     <div
       v-show="error"
+      key="error"
       :class="errorClass "
       class="m-1 block w-full overflow-hidden truncate text-[var(--el-color-danger)] leading-1em opacity-80"
     >

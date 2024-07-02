@@ -230,7 +230,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 }
 
 const ws = useWs();
-
+const isUpload = ref(false);
 // 成员变动消息
 watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   if (!len)
@@ -241,6 +241,8 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       // 新加入
       if (p.changeType === WSMemberStatusEnum.JOIN) {
         // 更新会话
+        if (isUpload.value)
+          return;
         getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
           if (res) {
             const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
@@ -252,6 +254,8 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
               chat.contactList.unshift(res.data);
             }
           }
+        }).finally(() => {
+          isUpload.value = false;
         });
         if (chat.roomGroupPageInfo.isLast && chat.onOfflineList.findIndex(ctx => ctx.userId === p.uid) === -1) {
           // 更新用户列表

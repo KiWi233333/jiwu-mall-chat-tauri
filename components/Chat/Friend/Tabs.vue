@@ -40,8 +40,8 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
       </div>
     </slot>
     <ElScrollbar height="calc(100% - 10rem)" wrap-class="pb-10" class="scrollbar">
-      <!-- 群聊 -->
       <el-collapse v-model="activeNames.arr">
+        <!-- 群聊 -->
         <el-collapse-item name="1" title="群聊">
           <ChatFriendGroupList />
         </el-collapse-item>

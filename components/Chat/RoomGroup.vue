@@ -4,7 +4,7 @@ import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from 
 import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
 const [autoAnimateListRef, enable] = useAutoAnimate();
-enable(false);
+
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
 const chat = useChatStore();
@@ -38,11 +38,15 @@ const editFormField = computed<string>({
     });
   },
 });
+onMounted(() => {
+  enable(false || !setting.settingPage.isColseAllTransition);
+});
 
 const isLord = computed(() => chat.theContact.member?.role === ChatRoomRoleEnum.OWNER);
 const TextMap = {
   name: "群名称",
   notice: "群公告",
+  avatar: "群头像",
 };
 watch(() => chat.theContact, (val) => {
   const data = JSON.parse(JSON.stringify(val)) as ChatContactDetailVO;
@@ -51,7 +55,42 @@ watch(() => chat.theContact, (val) => {
   theContactClone.value = data;
 }, { deep: true, immediate: true });
 
-async function submitUpdateRoom(field: "name" | "notice", val: string | undefined | null = "") {
+// 群头像
+const inputOssFileUploadRef = ref();
+const imgList = ref<OssFile[]>([]);
+function onSubmitImages(url: string) {
+  if (url)
+    submitUpdateRoom("avatar", url);
+}
+async function toggleImage() {
+  if (!isLord.value) {
+    ElMessage.warning("暂无权限！");
+    return;
+  }
+  if (imgList.value.length > 0) {
+    imgList.value = [];
+    return;
+  }
+  await inputOssFileUploadRef.value?.resetInput();
+}
+watch(() => chat.theContact.avatar, (val) => {
+  if (val) {
+    imgList.value = [{
+      id: BaseUrlImg + val,
+      key: val,
+      file: {} as File,
+      percent: 100,
+      status: "success",
+    }];
+  }
+  else { imgList.value = []; }
+}, { deep: true, immediate: true });
+/**
+ * 修改群聊详情
+ * @param field 修改字段
+ * @param val 修改的值
+ */
+async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string | undefined | null = "") {
   if (field === "name" && val && val.trim().length <= 0)
     return ElMessage.warning("请输入内容！");
   const data = field === "notice"
@@ -63,7 +102,6 @@ async function submitUpdateRoom(field: "name" | "notice", val: string | undefine
     : {
         [field]: val?.trim(),
       } as UpdateRoomGroupDTO;
-
   ElMessageBox.confirm(`是否确认修改${TextMap[field]}？`, {
     // title: TextMap[field] || "提示",
     center: true,
@@ -76,11 +114,16 @@ async function submitUpdateRoom(field: "name" | "notice", val: string | undefine
         const res = await updateGroupRoomInfo(chat.theContact.roomId, data, user.getToken);
         if (res.code === StatusCode.SUCCESS && res.data === 1) {
           // 更新会话
+          const item = chat.contactList.find(item => item.roomId === chat.theContact.roomId);
           if (field === "name") {
-            const item = chat.contactList.find(item => item.roomId === chat.theContact.roomId);
             if (item)
               item.name = val?.trim() as string;
             chat.theContact.name = val?.trim() as string;
+          }
+          else if (field === "avatar") {
+            if (item)
+              item.avatar = val?.trim() as string;
+            chat.theContact.avatar = val?.trim() as string;
           }
           else if (field === "notice") {
             if (!chat.theContact?.roomGroup)
@@ -89,7 +132,6 @@ async function submitUpdateRoom(field: "name" | "notice", val: string | undefine
               chat.theContact.roomGroup.detail = {};
             chat.theContact.roomGroup.detail.notice = val?.trim() as string;
           }
-
           editFormField.value = "";
         }
       }
@@ -423,7 +465,7 @@ function exitGroup() {
         <template #done />
       </ListAutoIncre>
       <small
-        class="shadow-bt" sticky bottom-0 left-0 block w-full pb-2 text-center @click="() => {
+        class="shadow-bt sticky bottom-0 left-0 block w-full cursor-pointer pb-2 text-center" @click="() => {
           memberScrollbarRef.scrollTo({ left: 0, top: memberScrollbarRef?.wrapRef?.scrollHeight || 0, behavior: 'smooth' })
         }"
       >
@@ -431,9 +473,25 @@ function exitGroup() {
       </small>
     </el-scrollbar>
     <div mt-2 hidden w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
-      <!-- <div mt-3>
+      <div relative mt-3>
         群头像
-      </div> -->
+        <InputOssFileUpload
+          ref="inputOssFileUploadRef"
+          :is-animate="false"
+          :show-edit="false"
+          :disable="!isLord"
+          :multiple="false"
+          :limit="1"
+          input-class="w-3rem h-3rem flex-shrink-0 card-default"
+          :upload-quality="0.3"
+          :model-value="imgList"
+          @click="toggleImage"
+          @error-msg="(msg:string) => {
+            ElMessage.error(msg)
+          }"
+          @submit="onSubmitImages"
+        />
+      </div>
       <div mt-3 class="label-item">
         群聊名称
         <i v-show="isLord && editFormField !== 'name'" i-solar:pen-2-bold ml-2 p-2 op-0 transition-opacity @click="editFormField = 'name'" />
@@ -497,7 +555,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" round type="danger" plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" round type="danger" plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
