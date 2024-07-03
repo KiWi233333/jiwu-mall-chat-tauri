@@ -70,19 +70,20 @@ jobs:
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
             
-            # - name: Set release body
-            #   id: get_release_body
-            #   shell: bash
-            #   run: |
-            #     # 检查操作系统，使用适当的命令读取文件
-            #     if [[ "$RUNNER_OS" == "Windows" ]]; then
-            #       releaseBody=$(Get-Content -Path ./.github/workflows/releaseBody.md -Raw)
-            #     else
-            #       releaseBody=$(cat ./.github/workflows/releaseBody.md)
-            #     fi
-            #     # 使用 GitHub Actions 的 set-output 指令设置输出
-            #     echo "::set-output name=releaseBody::$releaseBody"
-            
+            - name: Read Release Body Content
+              id: read_release_body
+              uses: actions/github-script@v7
+              with:
+                script: |
+                  const fs = require('fs').promises;
+                  const path = `${process.env.GITHUB_WORKSPACE}/.github/workflows/${{github.ref_name}}.md`;
+                  try {
+                    const content = await fs.readFile(path, 'utf8');
+                    core.exportVariable('RELEASE_BODY_CONTENT', content);
+                  } catch (error) {
+                    core.setFailed(`Failed to read file: ${error}`);
+                  }
+
             - name: Create Release
               uses: tauri-apps/tauri-action@v0.5.6
               env:
@@ -94,6 +95,7 @@ jobs:
                 releaseName: 'v__VERSION__'
                 # 正确引用步骤输出的变量
                 # releaseBody: $#{{ steps.get_release_body.outputs.releaseBody }}
-                releaseBody: "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md"
+                # releaseBody: "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md"
+                releaseBody: ${{ env.RELEASE_BODY_CONTENT }}
                 releaseDraft: false
                 prerelease: false
