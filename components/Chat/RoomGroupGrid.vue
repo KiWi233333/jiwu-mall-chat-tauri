@@ -301,7 +301,7 @@ function exitGroup() {
         :loading="isLoading"
         @load="loadData"
       >
-        <div class="grid grid-cols-4 mx-a lg:(grid-cols-8 w-2/3 gap-4) sm:(grid-cols-6 w-2/3 gap-4)">
+        <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 w-2/3 gap-4) sm:(grid-cols-5 w-2/3 gap-4)">
           <div
             v-for="p in merberList"
             :key="p.userId"
