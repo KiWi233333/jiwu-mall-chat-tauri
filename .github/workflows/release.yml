@@ -68,21 +68,21 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-            
-            - name: Read Release Body Content
-              id: read_release_body_content
-              run: |
-                FILE_PATH=".github/releasemd/${{ github.ref_name }}.md"
+            # mac适用
+            # - name: Read Release Body Content
+            #   id: read_release_body_content
+            #   run: |
+            #     FILE_PATH=".github/releasemd/${{ github.ref_name }}.md"
         
-                if [[ "$RUNNER_OS" == "Windows" ]]; then
-                  # Windows下使用cmd的type命令读取文件
-                  RELEASE_BODY=$(cmd //c type "$env:FILE_PATH")
-                else
-                  # 对于Linux和macOS，使用cat命令
-                  RELEASE_BODY=$(cat "$FILE_PATH")
-                fi
+            #     if [[ "$RUNNER_OS" == "Windows" ]]; then
+            #       # Windows下使用cmd的type命令读取文件
+            #       RELEASE_BODY=$(cmd //c type "$env:FILE_PATH")
+            #     else
+            #       # 对于Linux和macOS，使用cat命令
+            #       RELEASE_BODY=$(cat "$FILE_PATH")
+            #     fi
                 
-                echo "::set-output name=release_body::$RELEASE_BODY"
+            #     echo "::set-output name=release_body::$RELEASE_BODY"
         
 
             - name: Create Release
@@ -94,7 +94,7 @@ jobs:
               with:
                 tagName: ${{ github.ref_name }}
                 releaseName: 'v__VERSION__'
-                releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-                # releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
+                # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
+                releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
                 releaseDraft: false
                 prerelease: false
