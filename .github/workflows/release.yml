@@ -77,11 +77,11 @@ jobs:
                 script: |
                   const fs = require('fs').promises;
                   try {
-                    const path = `.github/workflows/${{github.ref_name}}.md`;
+                    const path = `${process.env.GITHUB_WORKSPACE}/.github/releasemd/${{github.ref_name}}.md`;
                     const content = await fs.readFile(path, 'utf8');
                     core.exportVariable('RELEASE_BODY_CONTENT', content);
                   } catch (error) {
-                    core.setFailed(`Failed to read file: ${error}`);
+                    core.exportVariable('RELEASE_BODY_CONTENT', "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md");
                   }
 
             - name: Create Release
