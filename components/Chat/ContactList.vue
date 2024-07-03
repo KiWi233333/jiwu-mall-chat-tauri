@@ -259,6 +259,9 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
         });
         if (chat.roomGroupPageInfo.isLast && chat.onOfflineList.findIndex(ctx => ctx.userId === p.uid) === -1) {
           // 更新用户列表
+          if (!p.uid)
+            return;
+
           getCommUserInfoSe(p.uid, user.getToken).then((res) => {
             if (res.code === StatusCode.SUCCESS) {
               chat.onOfflineList.push({

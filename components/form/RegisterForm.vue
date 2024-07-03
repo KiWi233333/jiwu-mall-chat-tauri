@@ -1,8 +1,7 @@
 <!-- eslint-disable prefer-promise-reject-errors -->
 <script lang="ts" setup>
-import type { FormRules } from "element-plus";
-import type { FormInstance } from "vant";
-import { DeviceType, getRegisterCode, toLoginByPwd, toRegister } from "~/composables/api/user";
+import type { FormInstance, FormRules } from "element-plus";
+import { DeviceType, getRegisterCode, toLoginByPwd } from "~/composables/api/user";
 import { checkUsernameExists } from "~/composables/api/user/info";
 import type { Result } from "~/types/result";
 import { RegisterType } from "~/types/user/index.js";
@@ -20,6 +19,7 @@ const formUser = reactive({
   email: "", // 邮箱 1
   code: "", // 验证码
   password: "", // 密码
+  secondPassword: "", // 密码
 });
 const rules = reactive<FormRules>({
   username: [
@@ -45,6 +45,31 @@ const rules = reactive<FormRules>({
       pattern: /^\w{6,20}$/,
       message: "密码字母数字下划线组成",
       trigger: "change",
+    },
+    {
+      validator(rule: any, value: string, callback: any) {
+        if (registerType.value === RegisterType.PASSWORD && value !== formUser.password?.trim())
+          callback(new Error("两次密码不一致"));
+        else
+          callback();
+      },
+    },
+  ],
+  secondPassword: [
+    { required: true, message: "密码不能为空！", trigger: "blur" },
+    { min: 6, max: 20, message: "密码长度为6-20字符！", trigger: "change" },
+    {
+      pattern: /^\w{6,20}$/,
+      message: "密码字母数字下划线组成",
+      trigger: "change",
+    },
+    {
+      validator(rule: any, value: string, callback: any) {
+        if (value !== formUser.password?.trim())
+          callback(new Error("两次密码不一致"));
+        else
+          callback();
+      },
     },
   ],
   code: [
@@ -118,7 +143,7 @@ async function getRegCode(type: RegisterType) {
 
       isLoading.value = true;
       data = await getRegisterCode(formUser.phone, DeviceType.PHONE);
-      if (data.code === 20000) {
+      if (data.code === StatusCode.SUCCESS) {
         // 开启定时器
         formUser.code = data.data;
         useInterval(phoneTimer, phoneCodeStorage, 60, -1);
@@ -168,9 +193,9 @@ const store = useUserStore();
 async function onRegister(formEl: FormInstance) {
   if (!formEl)
     return;
-  // @ts-expect-error
   await formEl.validate((valid) => {
     isLoading.value = true;
+
     if (valid)
       onRegisterHandle();
     else
@@ -178,31 +203,45 @@ async function onRegister(formEl: FormInstance) {
   });
 }
 async function onRegisterHandle() {
-  let data: Result<string> = { code: 20001, message: "注册失败，请稍后重试！", data: "" };
-  switch (registerType.value) {
-    case RegisterType.PHONE:
-      data = await toRegister({
-        username: formUser.username,
-        phone: formUser.phone,
-        password: formUser.password,
-        code: formUser.code,
-        type: registerType.value,
-      });
-      break;
-    case RegisterType.EMAIL:
-      data = await toRegister({
-        username: formUser.username,
-        password: formUser.password,
-        code: formUser.code,
-        email: formUser.email,
-        type: registerType.value,
-      });
-      break;
+  let res: Result<string> = { code: 20001, message: "注册失败，请稍后重试！", data: "" };
+  try {
+    switch (registerType.value) {
+      case RegisterType.PHONE:
+        res = await toRegisterV2({
+          username: formUser.username,
+          phone: formUser.phone,
+          // password: formUser.password,
+          code: formUser.code,
+          type: registerType.value,
+        });
+        break;
+      case RegisterType.EMAIL:
+        res = await toRegisterV2({
+          username: formUser.username,
+          // password: formUser.password,
+          code: formUser.code,
+          email: formUser.email,
+          type: registerType.value,
+        });
+        break;
+      case RegisterType.PASSWORD:
+        res = await toRegisterV2({
+          username: formUser.username,
+          password: formUser.password,
+          secondPassword: formUser.secondPassword,
+          type: RegisterType.PASSWORD,
+        });
+        break;
+    }
+  }
+  catch (error) {
+    isLoading.value = false;
   }
 
-  if (data.code === StatusCode.SUCCESS) {
+  if (res.code === StatusCode.SUCCESS) {
     // 注册成功
-    if (data.data !== "") {
+    if (res.data !== "") {
+      const token = res.data;
       ElMessage.success({
         message: "恭喜，注册成功 🎉",
         duration: 3000,
@@ -213,39 +252,57 @@ async function onRegisterHandle() {
         isLoading.value = true;
         loadingText.value = `${count}s后自动登录...`;
         if (count <= 0) {
-          (async () => {
-            const data = await toLoginByPwd(formUser.username, formUser.password);
-            // 自动登录成功
-            store.$patch({
-              token: data.data,
-              showLoginForm: false,
-              showRegisterForm: false,
-              isLogin: true,
-            });
-            ElMessage.success({
-              message: "登录成功！",
-            });
-            store.onUserLogin(data.data);
-            isLoading.value = false;
-            // 清除
-            clearInterval(timers);
-          })();
+          toLogin(token);
+          // 清除
+          clearInterval(timers);
         }
         count--;
       }, 1000);
     }
   }
   else {
+    ElMessage.closeAll("error");
     ElMessage.error({
-      message: data.message || "抱歉，注册出了点问题！",
+      message: res.message || "抱歉，注册出了点问题！",
       duration: 4000,
     });
+    isLoading.value = false;
     // store
     store.$patch({
       token: "",
       isLogin: false,
     });
   }
+}
+
+async function toLogin(token?: string) {
+  if (token) {
+    store.$patch({
+      token,
+      showLoginForm: false,
+      showRegisterForm: false,
+      isLogin: true,
+    });
+    // 登录
+    store.onUserLogin(token, true);
+    ElMessage.success({
+      message: "登录成功！",
+    });
+    return;
+  }
+  const data = await toLoginByPwd(formUser.username, formUser.password);
+  // 自动登录成功
+  store.$patch({
+    token: data.data,
+    showLoginForm: false,
+    showRegisterForm: false,
+    isLogin: true,
+  });
+  ElMessage.success({
+    message: "登录成功！",
+  });
+  store.onUserLogin(data.data);
+  isLoading.value = false;
 }
 
 /**
@@ -272,11 +329,13 @@ function toLoginForm() {
 <template>
   <!-- 注册 -->
   <el-form
-    ref="formRef" v-loading="isLoading" label-position="top"
+    ref="formRef"
+    :disabled="isLoading"
+    label-position="top"
     style="border: none;"
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
-    <small v-if="isLoading" class="absolute-center-center">{{ loadingText }}</small>
+    <small v-if="isLoading" class="z-999 absolute-center-center">{{ loadingText }}</small>
     <h2 mb-5 mt-4 tracking-0.2em>
       开启你的专属圈子✨
     </h2>
@@ -299,6 +358,12 @@ function toLoginForm() {
         @click="registerType = RegisterType.EMAIL"
       >
         邮箱注册
+      </el-button>
+      <el-button
+        flex-1 :class="{ active: registerType === RegisterType.PASSWORD }" tracking-0.1em
+        @click="registerType = RegisterType.PASSWORD"
+      >
+        密码注册
       </el-button>
     </div>
     <!-- 验证码注册(客户端 ) -->
@@ -327,15 +392,26 @@ function toLoginForm() {
       </el-input>
     </el-form-item>
     <!-- 验证码 -->
-    <el-form-item prop="code" class="animated">
+    <el-form-item v-if="registerType === RegisterType.PHONE || registerType === RegisterType.EMAIL" prop="code" class="animated">
       <el-input v-model.trim="formUser.code" prefix-icon="ChatDotSquare" size="large" placeholder="请输入验证码" />
     </el-form-item>
     <!-- 密 码 -->
     <el-form-item
+      v-if="registerType === RegisterType.PASSWORD"
       type="password" show-password label="" prop="password" class="animated"
     >
       <el-input
         v-model.trim="formUser.password" prefix-icon="Lock" size="large" placeholder="请输入密码（6-20位）" show-password
+        type="password"
+      />
+    </el-form-item>
+    <!-- 确认密码 -->
+    <el-form-item
+      v-if="registerType === RegisterType.PASSWORD"
+      type="password" show-password label="" prop="secondPassword" class="animated"
+    >
+      <el-input
+        v-model.trim="formUser.secondPassword" prefix-icon="Lock" size="large" placeholder="再一次输入密码" show-password
         type="password"
       />
     </el-form-item>
@@ -362,7 +438,7 @@ function toLoginForm() {
     padding: 0.2em;
 
     .el-form-item__error {
-      padding-top: 0.2em;
+      padding-top: 0;
     }
   }
 }

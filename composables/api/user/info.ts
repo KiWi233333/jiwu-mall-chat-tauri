@@ -15,11 +15,13 @@ export function getUserInfo(token: string, isAdmin: boolean = false) {
       },
     });
   }
-  return useHttp.get<Result<UserInfoVO>>("/user/info", {}, {
-    headers: {
-      Authorization: token,
-    },
-  });
+  else {
+    return useHttp.get<Result<UserInfoVO>>("/user/info", {}, {
+      headers: {
+        Authorization: token,
+      },
+    });
+  }
 }
 export function getUserInfoSSR(token: string, header: Readonly<Record<string, string>>) {
   return useFetch<Result<UserInfoVO>>("/user/info", {
@@ -54,6 +56,7 @@ export interface UserInfoVO {
   lastLoginIp?: string
   status?: UserStatus
   isEmailVerified?: isTrue
+  isPasswordVerified?: isTrue
   isPhoneVerified?: isTrue
 }
 
@@ -73,6 +76,28 @@ export function updateAvatar(file: any, token: string): Promise<Result<string>> 
       },
       body: file,
     });
+}
+
+/**
+ * 修改密码(验证码)
+ * @param type 验证码类型
+ * @param dto 表单信息
+ * @param token 用户身份
+ * @returns data
+ */
+export function updatePwdByCode(type: DeviceType, dto: UpdateSecondPwdDTO, token: string): Promise<Result<string>> {
+  return useHttp.put<Result<string>>(
+    `/user/info/pwd/${type}`,
+    { ...dto },
+    {
+      headers: {
+        Authorization: token,
+      },
+    });
+}
+export interface UpdateSecondPwdDTO {
+  code: string
+  newPassword: string
 }
 
 /**
@@ -123,6 +148,25 @@ export interface UpdatePhone {
   newPhone: string
   code: string
 }
+
+/**
+ * 获取验证当前手机号|邮箱验证码
+ * @param key 手机号|邮箱
+ * @param type 0|1 DeviceType
+ * @param token
+ * @returns data
+ */
+export function getCheckCode(key: string, type: DeviceType, token: string): Promise<Result<string>> {
+  return useHttp.get<Result<string>>(
+    `/user/info/check/code/${key}`,
+    { type },
+    {
+      headers: {
+        Authorization: token,
+      },
+    });
+}
+
 
 /**
  * 获取更换手机号|邮箱验证码

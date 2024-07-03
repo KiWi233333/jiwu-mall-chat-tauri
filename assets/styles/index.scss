@@ -6,7 +6,7 @@
   transform: translate(-50%, -50%);
 }
 :root {
-  --el-box-shadow:rgba(0, 0, 0, 0.2) 2px 6px 26px 0px,rgba(0, 0, 0, 0.2) -2px -6px 26px 0px !important;
+  --el-box-shadow: rgba(0, 0, 0, 0.2) 2px 6px 26px 0px, rgba(0, 0, 0, 0.2) -2px -6px 26px 0px !important;
 }
 
 /**  ------------------------------element-plus---------------------------------------  **/
@@ -190,7 +190,6 @@
 /**  ------------------------------right-menu---------------------------------------  **/
 .mx-context-menu-items .mx-item-row {
   margin: 6px 0;
-  
 }
 .mx-context-menu {
   .mx-icon-placeholder {
@@ -199,7 +198,6 @@
       transition: all 0.2s;
     }
   }
-  
 }
 //   //在这里覆盖默认css变量的值
 //   --mx-menu-backgroud: var(--el-color-primary);
@@ -221,6 +219,15 @@
 //   //这里篇幅有限，完整的每个部件的样式请在 ContextMenu.scss 中查看
 // }
 .el-loading-mask.is-fullscreen {
+  border-radius: 6px;
+}
+.dark {
+  .el-loading-mask {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+  }
+}
+.el-loading-mask {
   border-radius: 6px;
 }
 

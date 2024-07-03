@@ -258,11 +258,12 @@ async function onLogin(formEl: any | undefined) {
         class="transition-all btn-info"
         @click="loginType = loginType === LoginType.ADMIN ? LoginType.PHONE : LoginType.ADMIN"
       >
-        {{ loginType === LoginType.ADMIN ? "管理员" : "用户" }}
+        {{ loginType !== LoginType.ADMIN ? "管理员" : "用户" }}
       </span>
     </p>
     <!-- 切换登录 -->
     <div
+      v-show="loginType !== LoginType.ADMIN"
       class="toggle-login"
       my-1em
     >

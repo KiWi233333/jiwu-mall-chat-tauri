@@ -25,6 +25,9 @@ async function loadData(val: string) {
       isFrend.value = data && data.isFriend === isTrue.TRUE;
     });
     // 获取用户信息
+    // 更新用户列表
+    if (!val)
+      return user.value = {};
     const res = await getCommUserInfoSe(val, store.getToken);
     if (res.code === StatusCode.SUCCESS)
       user.value = res.data;

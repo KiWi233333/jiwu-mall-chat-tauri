@@ -62,18 +62,27 @@ export function getRegisterCode(key: string, type: DeviceType): Promise<Result<s
 /**
  * 注册
  * @param dto
- * @returns
  */
 export function toRegister(dto: RegisterUser): Promise<Result<string>> {
   return useHttp.post<Result<string>>("/user/register", dto);
 }
+
+
+/**
+ * 注册（免密码）
+ * @param dto
+ */
+export function toRegisterV2(dto: RegisterUser): Promise<Result<string>> {
+  return useHttp.post<Result<string>>("/user/register/v2", dto);
+}
 export interface RegisterUser {
   username: string
-  password: string
-  code: string
+  type: number | DeviceType
+  password?: string
+  secondPassword?: string
+  code?: string
   phone?: string
   email?: string
-  type: number | DeviceType
 }
 
 /**

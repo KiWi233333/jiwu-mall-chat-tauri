@@ -9,4 +9,5 @@ export enum LoginType {
 export enum RegisterType {
   PHONE,
   EMAIL,
+  PASSWORD,
 }

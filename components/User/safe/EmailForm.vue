@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormInstance } from "vant";
+import type { FormInstance } from "element-plus";
 import { getUpdateNewCode } from "~/composables/api/user/info";
 
 const emits = defineEmits(["close"]);

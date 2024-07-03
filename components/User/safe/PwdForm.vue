@@ -6,47 +6,86 @@ const emits = defineEmits(["close"]);
 const user = useUserStore();
 const isLoading = ref<boolean>(false);
 
+const codeStorage = ref<number>(0);
+const chooseType = ref(0);
+
 // 表单
 const userForm = reactive({
-  password: "", // 旧密码
+  code: "", // 旧密码
+  password: "",
   newPassword: "", // 密码
 });
-const rules = reactive({
-  password: [
-    { required: true, message: "旧密码不能为空！", trigger: "blur" },
-    { min: 6, max: 20, message: "旧密码长度6-20字符！", trigger: "blur" },
-    {
-      pattern: /^\w{6,20}$/,
-      message: "密码由字母数字下划线组成",
-      trigger: "change",
-    },
-  ],
-  newPassword: [
-    { required: true, message: "新密码不能为空！", trigger: "blur" },
-    { required: true, message: "新密码不能为空！", trigger: "blur" },
-    {
-      pattern: /^\w{6,20}$/,
-      message: "密码字母数字下划线组成",
-      trigger: "change",
-    },
-    { min: 6, max: 20, message: "新密码长度6-20字符！", trigger: "blur" },
-    {
-      validator: () => userForm.password !== userForm.newPassword,
-      message: "新旧密码相同！",
-      trigger: "change",
-    },
-    {
-      validator: () => userForm.password !== userForm.newPassword,
-      message: "新旧密码相同！",
-      trigger: "blur",
-    },
-  ],
-});
+const isSecondCheck = computed(() => user.userInfo.isEmailVerified || user.userInfo.isPhoneVerified);
+const rules = reactive(isSecondCheck.value
+  ? {
+      code: [
+        { required: true, message: "请输入验证码", trigger: "blur" },
+        { min: 6, max: 6, message: "验证码长度错误", trigger: "blur" },
+      ],
+      newPassword: [
+        { required: true, message: "新密码不能为空！", trigger: "blur" },
+        {
+          pattern: /^\w{6,20}$/,
+          message: "密码字母数字下划线组成",
+          trigger: "change",
+        },
+        { min: 6, max: 20, message: "新密码长度6-20字符！", trigger: "blur" },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "change",
+        },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "blur",
+        },
+      ],
+    }
+  : {
+      password: [
+        { required: true, message: "新密码不能为空！", trigger: "blur" },
+        {
+          pattern: /^\w{6,20}$/,
+          message: "密码字母数字下划线组成",
+          trigger: "change",
+        },
+        { min: 6, max: 20, message: "新密码长度6-20字符！", trigger: "blur" },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "change",
+        },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "blur",
+        },
+      ],
+      newPassword: [
+        { required: true, message: "新密码不能为空！", trigger: "blur" },
+        {
+          pattern: /^\w{6,20}$/,
+          message: "密码字母数字下划线组成",
+          trigger: "change",
+        },
+        { min: 6, max: 20, message: "新密码长度6-20字符！", trigger: "blur" },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "change",
+        },
+        {
+          validator: () => userForm.password !== userForm.newPassword,
+          message: "新旧密码相同！",
+          trigger: "blur",
+        },
+      ],
+    });
 const userFormRefs = ref();
 
 /**
  * 修改密码
- * @param type
  */
 async function onUpdatePwd(formEl: FormInstance | undefined) {
   if (!formEl || isLoading.value)
@@ -73,8 +112,9 @@ async function onUpdatePwd(formEl: FormInstance | undefined) {
 }
 
 async function toUpdate() {
-  const res = await updatePwdByToken(
-    { oldPassword: userForm.password, newPassword: userForm.newPassword },
+  const res = await updatePwdByCode(
+    chooseType.value,
+    { code: userForm.code, newPassword: userForm.newPassword },
     user.getToken,
   );
   if (res.code === StatusCode.SUCCESS) {
@@ -87,12 +127,39 @@ async function toUpdate() {
   }
   return true;
 }
+
+// 二步验证
+async function getCheckCodeReq(type?: DeviceType) {
+  if (type === undefined)
+    return;
+
+  const key = type === DeviceType.EMAIL ? user.userInfo.email : user.userInfo.phone;
+  if (codeStorage.value > 0)
+    return;
+
+  if (key) {
+    const res = await getCheckCode(key, type, user.getToken);
+    if (res.code === StatusCode.SUCCESS) {
+      ElMessage({
+        message: "发送成功，请查收！",
+        type: "success",
+        duration: 2000,
+      });
+      codeStorage.value = 60;
+      const timer = setInterval(() => {
+        codeStorage.value--;
+        if (codeStorage.value === 0)
+          clearInterval(timer);
+      }, 1000);
+    }
+  }
+}
 </script>
 
 <template>
   <el-form
     ref="userFormRefs"
-    v-loading="isLoading"
+    :disabled="isLoading"
     label-position="top"
     hide-required-asterisk
     :rules="rules"
@@ -102,7 +169,42 @@ async function toUpdate() {
     <h3 mb-4 mt-2 text-center tracking-0.2em>
       密码修改
     </h3>
-    <el-form-item type="password" label="旧密码" prop="password" class="animated">
+    <el-form-item v-if="isSecondCheck" type="password" :label="`旧${chooseType === DeviceType.PHONE ? '手机号' : '邮箱'}`" prop="password" class="animated">
+      <el-input
+        :value="chooseType === DeviceType.PHONE ? user.userInfo.phone : user.userInfo.email"
+        disabled
+        prefix-icon="User"
+        size="large"
+        :placeholder="`请输入${chooseType === DeviceType.PHONE ? '手机号' : '邮箱'}`"
+        required
+        :type="chooseType === DeviceType.PHONE ? 'phone' : 'email'"
+        @keyup.enter="onUpdatePwd(userFormRefs)"
+      >
+        <template #append>
+          <el-button type="primary" :disabled="codeStorage > 0" @click="getCheckCodeReq(chooseType === DeviceType.PHONE ? DeviceType.PHONE : user.userInfo.isEmailVerified ? DeviceType.EMAIL : undefined)">
+            {{ codeStorage > 0 ? `${codeStorage}s后重新发送` : "获取验证码" }}
+          </el-button>
+        </template>
+      </el-input>
+    </el-form-item>
+
+    <el-form-item
+      v-if="isSecondCheck"
+      type="text" label="验证码" prop="code" class="animated"
+    >
+      <el-input
+        v-model.trim="userForm.code"
+        prefix-icon="Unlock"
+        :maxlength="6"
+        :minlength="6"
+        size="large"
+        placeholder="请输入验证码"
+        required
+        type="text"
+        @keyup.enter="onUpdatePwd(userFormRefs)"
+      />
+    </el-form-item>
+    <el-form-item v-else type="password" label="旧密码" prop="password" class="animated">
       <el-input
         v-model.trim="userForm.password"
         prefix-icon="Unlock"
@@ -131,7 +233,7 @@ async function toUpdate() {
     <el-form-item mt-1em>
       <el-button
         type="danger"
-        class="submit w-full"
+        class="submit mb-4 w-full"
         style="padding: 1em 0"
         @keyup.enter="onUpdatePwd(userFormRefs)"
         @click="onUpdatePwd(userFormRefs)"
