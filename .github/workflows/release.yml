@@ -76,8 +76,8 @@ jobs:
               with:
                 script: |
                   const fs = require('fs').promises;
-                  const path = `${process.env.GITHUB_WORKSPACE}/.github/workflows/${{github.ref_name}}.md`;
                   try {
+                    const path = `.github/workflows/${{github.ref_name}}.md`;
                     const content = await fs.readFile(path, 'utf8');
                     core.exportVariable('RELEASE_BODY_CONTENT', content);
                   } catch (error) {
