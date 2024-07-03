@@ -70,19 +70,19 @@ jobs:
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
             
-            - name: Read Release Body Content
-              id: read_release_body
-              uses: actions/github-script@v7
-              with:
-                script: |
-                  const fs = require('fs').promises;
-                  try {
-                    const path = `${process.env.GITHUB_WORKSPACE}/.github/releasemd/${{github.ref_name}}.md`;
-                    const content = await fs.readFile(path, 'utf8');
-                    core.exportVariable('RELEASE_BODY_CONTENT', content);
-                  } catch (error) {
-                    core.exportVariable('RELEASE_BODY_CONTENT', "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md");
-                  }
+            # - name: Read Release Body Content
+            #   id: read_release_body
+            #   uses: actions/github-script@v7
+            #   with:
+            #     script: |
+            #       const fs = require('fs').promises;
+            #       try {
+            #         const path = `${process.env.GITHUB_WORKSPACE}/.github/releasemd/${{github.ref_name}}.md`;
+            #         const content = await fs.readFile(path, 'utf8');
+            #         core.exportVariable('RELEASE_BODY_CONTENT', content);
+            #       } catch (error) {
+            #         core.exportVariable('RELEASE_BODY_CONTENT', "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md");
+            #       }
 
             - name: Create Release
               uses: tauri-apps/tauri-action@v0.5.6
@@ -94,8 +94,7 @@ jobs:
                 tagName: ${{ github.ref_name }}
                 releaseName: 'v__VERSION__'
                 # 正确引用步骤输出的变量
-                # releaseBody: $#{{ steps.get_release_body.outputs.releaseBody }}
-                # releaseBody: "**Full Changelog**: https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md"
-                releaseBody: ${{ env.RELEASE_BODY_CONTENT }}
+                # releaseBody: ${{ env.RELEASE_BODY_CONTENT }}
+                releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
                 releaseDraft: false
                 prerelease: false
