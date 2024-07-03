@@ -15,7 +15,7 @@ jobs:
             fail-fast: false
             matrix:
                 # 选择编译平台
-                platform: [windows-latest, ubuntu-latest, macos-latest]
+                platform: [windows-latest, macos-latest]
         runs-on: ${{ matrix.platform }}
         steps:
             - name: Checkout repository
