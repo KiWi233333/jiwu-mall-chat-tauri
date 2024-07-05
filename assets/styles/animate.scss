@@ -255,16 +255,19 @@ html.stop-transition-all {
   z-index: -1;
 }
 
+
 // group动画
 .group-list-move,
 .group-list-enter-active,
 .group-list-leave-active {
-  transition: all 0.4s $animate-cubic-bount;
+  transition:  0.3s $animate-cubic-bount;
+  transition-property: opacity, transform;
 }
 
 .group-list-enter-from,
 .group-list-leave-to {
   opacity: 0;
+  transform: scale(0.9);
 }
 
 .group-list-leave-active {

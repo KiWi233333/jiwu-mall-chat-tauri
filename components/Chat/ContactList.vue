@@ -92,7 +92,6 @@ async function onChangeRoom(newRoomId: number) {
     return;
   if (item.type === RoomType.SELFT)
     contact.setContact(item);
-  // else { // 重新拉会话详情
   try {
     const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
     if (res && res.code === StatusCode.SUCCESS) {
@@ -109,7 +108,6 @@ async function onChangeRoom(newRoomId: number) {
   catch (error) {
     console.log(error);
   }
-  // }
   setting.isOpenContact = false;
 }
 if (theContactId.value) // 初始化当前会话

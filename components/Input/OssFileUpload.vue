@@ -48,6 +48,7 @@ interface Props {
   uploadType?: OssFileType
   size?: number
   draggable?: boolean
+  preClass?: string
   errorClass?: string
   inputClass?: string
 }
@@ -251,6 +252,8 @@ const preImageClass = computed(() => {
     arr.push("absolute top-0 z-1");
   if (props.inputClass)
     arr.push(props?.inputClass);
+  if (props.preClass)
+    arr.push(props?.preClass);
   return arr;
 });
 

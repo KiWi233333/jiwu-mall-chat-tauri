@@ -484,6 +484,7 @@ function exitGroup() {
           :multiple="false"
           :limit="1"
           input-class="w-3rem h-3rem flex-shrink-0 card-default"
+          :class="!isLord ? 'cursor-no-drop' : 'cursor-pointer'"
           :upload-quality="0.3"
           :model-value="imgList"
           @click="toggleImage"
