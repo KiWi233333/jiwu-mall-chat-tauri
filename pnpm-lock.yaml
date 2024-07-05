@@ -21,8 +21,8 @@ importers:
         specifier: 6.1.0
         version: 6.1.0
       md-editor-v3:
-        specifier: 4.17.1
-        version: 4.17.1(@codemirror/view@6.28.3)(@lezer/common@1.2.1)(vue@3.4.31(typescript@5.3.2))
+        specifier: 4.17.3
+        version: 4.17.3(@codemirror/view@6.28.3)(@lezer/common@1.2.1)(vue@3.4.31(typescript@5.3.2))
       qiniu-js:
         specifier: 3.4.2
         version: 3.4.2
@@ -46,8 +46,8 @@ importers:
         specifier: 1.1.9
         version: 1.1.9
       '@iconify-json/tabler':
-        specifier: 1.1.115
-        version: 1.1.115
+        specifier: 1.1.116
+        version: 1.1.116
       '@iconify/vue':
         specifier: 4.1.2
         version: 4.1.2(vue@3.4.31(typescript@5.3.2))
@@ -80,7 +80,7 @@ importers:
         version: 0.61.0(eslint@8.56.0)(typescript@5.3.2)
       '@unocss/nuxt':
         specifier: 0.61.0
-        version: 0.61.0(magicast@0.3.4)(postcss@8.4.38)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))(webpack@5.92.1)
+        version: 0.61.0(magicast@0.3.4)(postcss@8.4.39)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))(webpack@5.92.1)
       '@vueuse/nuxt':
         specifier: 10.11.0
         version: 10.11.0(magicast@0.3.4)(nuxt@3.12.3(@opentelemetry/api@1.9.0)(@parcel/watcher@2.4.1)(@types/node@20.14.9)(encoding@0.1.13)(eslint@8.56.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.0)(sass@1.77.6)(terser@5.31.1)(typescript@5.3.2)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))(vue-tsc@2.0.21(typescript@5.3.2)))(rollup@4.18.0)(vue@3.4.31(typescript@5.3.2))
@@ -118,14 +118,14 @@ importers:
         specifier: 2.1.7
         version: 2.1.7(typescript@5.3.2)(vue@3.4.31(typescript@5.3.2))
       postcss:
-        specifier: 8.4.38
-        version: 8.4.38
+        specifier: 8.4.39
+        version: 8.4.39
       postcss-html:
         specifier: 1.7.0
         version: 1.7.0
       postcss-scss:
         specifier: 4.0.9
-        version: 4.0.9(postcss@8.4.38)
+        version: 4.0.9(postcss@8.4.39)
       prettier:
         specifier: 3.3.2
         version: 3.3.2
@@ -959,8 +959,8 @@ packages:
   '@iconify-json/solar@1.1.9':
     resolution: {integrity: sha512-BcWzZqA02BiQduYizqU/J4v4RNs0MkjZUGpMbejpozH8YQSt3+S/LfV6zfVRonx/2DhXTVSqiLa1abDRAZtojQ==}
 
-  '@iconify-json/tabler@1.1.115':
-    resolution: {integrity: sha512-nyD8OmtQhBl6FLptfVJe04fjoLIUT3sxe4sEChrXhVDuYQlb1DUPEQQkbwjAIzP4w9JcNYwdUpVbIWn60AjECw==}
+  '@iconify-json/tabler@1.1.116':
+    resolution: {integrity: sha512-p+dJ+3L/M2o10REG2lh179Blu5+AA51TFkwuUwY7F+vQsF5Z8DIjyNck3yoBBiCxWqhDhsLzC+p9YO7dWqISmw==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -4006,8 +4006,8 @@ packages:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  md-editor-v3@4.17.1:
-    resolution: {integrity: sha512-B300GmRJ/6R8cTM3MyfOGm4yv3cLEQIHZmtOeaNeF9aScsVpluxk4Hd48e7yych0XfgtgViYbWlrXxUyEVt5Xw==}
+  md-editor-v3@4.17.3:
+    resolution: {integrity: sha512-XepLAC46Ui6vlr9iW//ujNdzKF+/jyI6eLk9qmg3CDs89hpaXSylQdKy+wQoP+CgY5nxf82H50cYlqDl0a1pSA==}
     peerDependencies:
       vue: ^3.2.47
 
@@ -6629,7 +6629,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/tabler@1.1.115':
+  '@iconify-json/tabler@1.1.116':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7910,7 +7910,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 2.0.4
 
-  '@unocss/nuxt@0.61.0(magicast@0.3.4)(postcss@8.4.38)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))(webpack@5.92.1)':
+  '@unocss/nuxt@0.61.0(magicast@0.3.4)(postcss@8.4.39)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))(webpack@5.92.1)':
     dependencies:
       '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.0)
       '@unocss/config': 0.61.0
@@ -7925,7 +7925,7 @@ snapshots:
       '@unocss/reset': 0.61.0
       '@unocss/vite': 0.61.0(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))
       '@unocss/webpack': 0.61.0(rollup@4.18.0)(webpack@5.92.1)
-      unocss: 0.61.0(@unocss/webpack@0.61.0(rollup@4.18.0)(webpack@5.92.1))(postcss@8.4.38)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))
+      unocss: 0.61.0(@unocss/webpack@0.61.0(rollup@4.18.0)(webpack@5.92.1))(postcss@8.4.39)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))
     transitivePeerDependencies:
       - magicast
       - postcss
@@ -7934,7 +7934,7 @@ snapshots:
       - vite
       - webpack
 
-  '@unocss/postcss@0.61.0(postcss@8.4.38)':
+  '@unocss/postcss@0.61.0(postcss@8.4.39)':
     dependencies:
       '@unocss/config': 0.61.0
       '@unocss/core': 0.61.0
@@ -7942,7 +7942,7 @@ snapshots:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.10
-      postcss: 8.4.38
+      postcss: 8.4.39
 
   '@unocss/preset-attributify@0.61.0':
     dependencies:
@@ -10468,7 +10468,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  md-editor-v3@4.17.1(@codemirror/view@6.28.3)(@lezer/common@1.2.1)(vue@3.4.31(typescript@5.3.2)):
+  md-editor-v3@4.17.3(@codemirror/view@6.28.3)(@lezer/common@1.2.1)(vue@3.4.31(typescript@5.3.2)):
     dependencies:
       '@codemirror/lang-markdown': 6.2.5
       '@codemirror/language-data': 6.5.1(@codemirror/view@6.28.3)
@@ -11216,9 +11216,9 @@ snapshots:
     dependencies:
       postcss: 8.4.38
 
-  postcss-scss@4.0.9(postcss@8.4.38):
+  postcss-scss@4.0.9(postcss@8.4.39):
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.39
 
   postcss-selector-parser@6.1.0:
     dependencies:
@@ -12004,13 +12004,13 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss@0.61.0(@unocss/webpack@0.61.0(rollup@4.18.0)(webpack@5.92.1))(postcss@8.4.38)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1)):
+  unocss@0.61.0(@unocss/webpack@0.61.0(rollup@4.18.0)(webpack@5.92.1))(postcss@8.4.39)(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1)):
     dependencies:
       '@unocss/astro': 0.61.0(rollup@4.18.0)(vite@5.3.3(@types/node@20.14.9)(sass@1.77.6)(terser@5.31.1))
       '@unocss/cli': 0.61.0(rollup@4.18.0)
       '@unocss/core': 0.61.0
       '@unocss/extractor-arbitrary-variants': 0.61.0
-      '@unocss/postcss': 0.61.0(postcss@8.4.38)
+      '@unocss/postcss': 0.61.0(postcss@8.4.39)
       '@unocss/preset-attributify': 0.61.0
       '@unocss/preset-icons': 0.61.0
       '@unocss/preset-mini': 0.61.0

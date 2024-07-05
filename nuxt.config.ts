@@ -3,7 +3,7 @@
 // import { prismjsPlugin } from "vite-plugin-prismjs";
 import { appDescription, appName } from "./constants/index";
 
-const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.VITE_PUBLIC_API_BASE_URL;
 const isSSR = process.env.NODE_ENV === "development" ? true : process.env.NUXT_PUBLIC_SPA === "true";
 
 // 打印
@@ -12,14 +12,19 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+
   ssr: false,
+
   build: {
     transpile: ["@popperjs/core", "resize-detector"],
   },
+
   // spa情况下loading状态
   // spaLoadingTemplate: "./app/spa-loading-template.html",
   pageTransition: { name: "page", mode: "out-in" },
+
   layoutTransition: { name: "layout", mode: "out-in" },
+
   // 模块
   modules: [
     // 工具
@@ -33,8 +38,10 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
   ],
+
   srcDir: "",
   rootDir: "",
+
   app: {
     head: {
       title: `${appName} - 开启你的购物社区之旅 ✨`,
@@ -52,6 +59,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   // https://blog.csdn.net/weixin_42553583/article/details/131372309
   experimental: {
     // https://nuxt.com.cn/docs/guide/going-further/experimental-features#inlinerouterules
@@ -65,6 +73,7 @@ export default defineNuxtConfig({
     viewTransition: true, // 支持View Transition API Chorme111 https://blog.csdn.net/weixin_42553583/article/details/130474259
     crossOriginPrefetch: true, // 使用 Speculation Rules API 启用跨源预取。
   },
+
   // 自动导入
   imports: {
     dirs: [
@@ -77,12 +86,14 @@ export default defineNuxtConfig({
       "types/**",
     ],
   },
+
   // css
   css: [
     "@/assets/styles/init.scss",
     "@/assets/styles/index.scss",
     "@/assets/styles/animate.scss",
   ],
+
   // alias: {
   //   "~": "/<srcDir>",
   //   "@": "/<srcDir>",
@@ -117,22 +128,28 @@ export default defineNuxtConfig({
       },
     },
   },
+
   colorMode: {
     classSuffix: "",
   },
+
   // 3、elementPlus
   elementPlus: {
     icon: "ElIcon",
     importStyle: "scss",
     themes: ["dark"],
   },
+
   // 4、swiper
   swiper: {
   },
+
   // pwa
   // pwa,
   // nuxt开发者工具
   devtools: {
     enabled: false,
   },
+
+  compatibilityDate: "2024-07-05",
 });

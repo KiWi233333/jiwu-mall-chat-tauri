@@ -1,7 +1,6 @@
 const isDev = import.meta.env.DEV;
 // const isDev = false;
 
-
 // http请求
 const BASE_URL = isDev ? "http://localhost:9090/" : "https://api.jiwu.kiwi2333.top/";
 export const BaseUrl = BASE_URL;
@@ -18,3 +17,4 @@ export const BaseWSUrl = isDev
   : "wss://api.jiwu.kiwi2333.top/websocket";
 
 export const XUN_FEI_WSS_URL = "wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1";
+
