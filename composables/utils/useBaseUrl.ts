@@ -1,12 +1,20 @@
+// const isDev = !import.meta.env.DEV;
+const isDev = false;
+
 // http请求
-export const BASE_URL = import.meta.env.VITE_ENV;
+const BASE_URL = isDev ? "http://localhost:9090/" : "https://api.jiwu.kiwi2333.top/";
 export const BaseUrl = BASE_URL;
 // 图片
-export const BASE_OSS_PATH = import.meta.env.VITE_PUBLIC_BASE_OSS_PATH;
+export const BASE_OSS_PATH = "https://quang.kiwi2333.top/";
 export const BaseUrlImg = BASE_OSS_PATH;
 export const BaseUrlVideo = BASE_OSS_PATH;
 export const BaseUrlFile = BASE_OSS_PATH;
 export const AuthKey = "Authorization";
-export const BaseWSUrl = import.meta.env.VITE_PUBLIC_BASE_WS_URL;
-// xunfei
-export const XUN_FEI_WSS_URL = import.meta.env.VITE_PUBLIC_XUN_FEI_WSS_URL;
+
+// websocket
+export const BaseWSUrl = isDev
+  ? "ws://localhost:9091/"
+  : "wss://api.jiwu.kiwi2333.top/websocket";
+
+export const XUN_FEI_WSS_URL = "wss://spark-openapi.cn-huabei-1.xf-yun.com/v1/assistants/u8h3bh6wxkq8_v1";
+
