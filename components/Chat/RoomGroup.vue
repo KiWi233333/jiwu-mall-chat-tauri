@@ -162,6 +162,7 @@ async function loadData() {
 }
 
 async function reload() {
+  enable(false);
   chat.onOfflineList = [];
   pageInfo.value = {
     cursor: null,
@@ -436,7 +437,7 @@ function exitGroup() {
         :loading="isLoading"
         @load="loadData"
       >
-        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-2>
+        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-2 md:gap-0>
           <div
             v-for="p in merberList" :key="p.userId"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
@@ -447,7 +448,7 @@ function exitGroup() {
             <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
               <CardElImage
                 :src="BaseUrlImg + p.avatar" fit="cover"
-                class="h-10 w-10 flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+                class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
               />
               <span class="g-avatar" />
             </div>

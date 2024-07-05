@@ -101,16 +101,16 @@ const activeMenu = computed({
       class="fixed bottom-30 left-2 z-999 h-3rem w-3rem flex-row-c-c rounded-1/2 shadow-lg el-bg-primary hover:shadow-[var(--el-color-primary)]"
     >
       <i
-        class="i-solar:chat-square-bold-duotone p-3 !color-white"
+        class="i-solar:chat-square-bold-duotone p-3 color-white"
         @click="() => {
           setting.isOpenContact = !setting.isOpenContact
         }"
       />
     </span>
     <div
-      class="relative z-998 grid grid-cols-6 border-0 border-t-1px px-4 py-4 shadow-md border-default"
+      class="relative z-998 grid grid-cols-6 border-0 border-t-1px px-4 py-4 shadow-md border-default bg-color"
     >
-      <div v-for="p in menuList" :key="p.path" :index="p.path" class="flex-row-c-c flex-col cursor-pointer gap-2 rounded-2 px-0 py-3 transition-all bg-color" :class="{ active: activeMenu === p.path }" @click="activeMenu = p.path">
+      <div v-for="p in menuList" :key="p.path" :index="p.path" class="flex-row-c-c flex-col cursor-pointer gap-2 rounded-2 px-0 py-3 transition-all" :class="{ active: activeMenu === p.path }" @click="activeMenu = p.path">
         <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">
           <i class="p-3" :class="route.path === p.path ? p.activeIcon : p.icon" />
           <span mt-2 block text-center text-3>{{ p.title }}</span>

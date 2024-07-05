@@ -62,6 +62,9 @@ function reload(roomId: number) {
   };
   chat.theContact.msgList.splice(0);
   chat.scrollTopSize = 0;
+  if (isLoading.value || isReload.value)
+    return;
+
   isReload.value = true;
   isLoading.value = true;
   getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
@@ -76,9 +79,11 @@ function reload(roomId: number) {
     nextTick(() => {
       // 更新滚动位置
       chat.saveScrollTop && chat.saveScrollTop();
-      chat.scrollBottom(false);
       isLoading.value = false;
-      isReload.value = false;
+      setTimeout(() => {
+        isReload.value = false;
+        chat.scrollBottom(false);
+      }, 50);
     });
   });
 }

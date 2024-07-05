@@ -25,21 +25,21 @@ onMounted(() => {
     class="relative min-h-100vh flex-1 overflow-hidden overflow-hidden shadow border-default card-default bg-color"
     grid="~ cols-1 md:cols-2"
   >
-    <div fixed right-4 top-4 flex items-center gap-2>
+    <div data-tauri-drag-region fixed right-4 top-4 flex items-center gap-2>
       <MenuController key="header" :show-max="false" />
     </div>
     <!-- bg -->
-    <div data-tauri-drag-region hidden h-full w-full border-0 border-r-1px shadow-md shadow-inset md:block border-default>
+    <div hidden h-full w-full select-none border-0 border-r-1px shadow-md shadow-inset md:block border-default>
       <ElImage src="/images/login_bg.jpg" fit="cover" class="h-full select-none overflow-hidden rounded-r-0 card-default" />
     </div>
     <!-- 表单 -->
-    <div class="flex flex-col select-none pt-20vh">
-      <div data-tauri-drag-region mx-a class="w-3/4 text-center sm:(w-3/5 text-left)">
+    <div class="flex flex-col select-none pt-20vh" data-tauri-drag-region>
+      <div mx-a class="w-3/4 text-center sm:(w-3/5 text-left)">
         <div key="login-bg" class="fixed left-4 top-0 flex items-center gap-2 py-4 sm:(relative left-a top-a)">
           <ElImage
             src="/logo.png" class="h-2em w-2em"
           />
-          <strong data-tauri-drag-region class="font-bold tracking-0.2em op-80">
+          <strong class="font-bold tracking-0.2em op-80">
             极物聊天
           </strong>
         </div>
@@ -48,13 +48,11 @@ onMounted(() => {
           <FormLoginForm
             v-if="user.showLoginForm"
             key="login-form"
-            data-tauri-drag-region
           />
           <!-- 注册 -->
           <FormRegisterForm
             v-else-if="user.showRegisterForm"
             key="register-form"
-            data-tauri-drag-region
           />
         </div>
       </div>

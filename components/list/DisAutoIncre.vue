@@ -25,7 +25,7 @@ enum LoadingClassEnum {
   "load-chaotic-orbit",
   "load-db-rule",
 }
-
+const isLoaing = ref(false);
 // 停止加载
 const loadMoreRef = ref();
 const isIntersecting = ref(false);
@@ -50,7 +50,6 @@ function callBack() {
     emit("load");
   }
 }
-
 watch(isIntersecting, (val) => {
   if (val) {
     callBack && callBack();
@@ -68,11 +67,13 @@ if (props.immediate) {
   timer = setInterval(callBack, props.delay);
 }
 
+// 展示加载
 const showLoad = computed(() => {
-  return !props.noMore;
+  return !props.noMore && !props.loading;
 });
 
 
+// 是否没有更多
 watch(() => props.noMore, (val) => {
   if (val && props.autoStop)
     stop && stop();
@@ -91,7 +92,7 @@ defineExpose({
 <template>
   <!-- 加载 -->
   <div
-    v-if="showLoad" relative
+    v-if="showLoad" relative pt-4
   >
     <div
       ref="loadMoreRef"

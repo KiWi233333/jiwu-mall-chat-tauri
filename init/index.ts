@@ -15,6 +15,8 @@ export async function useInit() {
   useWsInit();
   // 初始化快捷键
   useHotkeyInit();
+  // 初始化数据库
+  // useDBInit();
 }
 export async function useUmounted() {
   useSettingUnmounted();

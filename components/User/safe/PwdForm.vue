@@ -169,7 +169,7 @@ async function getCheckCodeReq(type?: DeviceType) {
     <h3 mb-4 mt-2 text-center tracking-0.2em>
       密码修改
     </h3>
-    <el-form-item v-if="isSecondCheck" type="password" :label="`旧${chooseType === DeviceType.PHONE ? '手机号' : '邮箱'}`" prop="password" class="animated">
+    <el-form-item v-if="isSecondCheck" type="password" :label="`${chooseType === DeviceType.PHONE ? '手机号' : '邮箱'}`" prop="password" class="animated">
       <el-input
         :value="chooseType === DeviceType.PHONE ? user.userInfo.phone : user.userInfo.email"
         disabled

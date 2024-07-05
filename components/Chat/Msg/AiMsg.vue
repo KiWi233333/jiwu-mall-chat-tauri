@@ -20,7 +20,7 @@ const colorMode = useColorMode();
   <div
     v-bind="$attrs"
     :label="data.roomId"
-    class="msg"
+    class="msg !pr-4"
     :class="{
       self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
     }"

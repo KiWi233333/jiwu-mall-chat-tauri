@@ -1,6 +1,7 @@
 
-import type { Result, isTrue } from "@/types/result";
+import { type Result, StatusCode, type isTrue } from "@/types/result";
 import type { Gender } from "@/types/index";
+
 
 /**
  * 获取消息列表（游标）
@@ -24,7 +25,25 @@ export function getChatMessagePage(roomId: number, pageSize = 10, cursor: string
       },
     },
   );
+  // if (res.code === StatusCode.SUCCESS) {
+  //   res.data.list.
+  // }
+  // return res;
 }
+export function getDBMsgPage(roomId: number, pageSize = 10, cursor: string | number | null = null): Promise<Result<CursorPage<ChatMessageVO>>> {
+  const res = {
+    data: {
+      list: [],
+      cursor: null,
+      isLast: false,
+    },
+    code: StatusCode.SUCCESS,
+    message: "",
+  } as Result<CursorPage<ChatMessageVO>>;
+  // const db = useDB().getItem("message", "roomId");
+  return Promise.resolve(res);
+}
+
 
 /**
  * 消息返回体

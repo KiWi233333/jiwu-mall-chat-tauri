@@ -1,5 +1,5 @@
-// const isDev = !import.meta.env.DEV;
-const isDev = false;
+const isDev = import.meta.env.DEV;
+// const isDev = false;
 
 
 // http请求
