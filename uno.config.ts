@@ -37,6 +37,7 @@ export default defineConfig({
     ["layout-default-se", "mx-a sm:px-2rem py-4 w-94vw md:w-1000px"],
     ["absolute-center", "absolute left-1/2 -translate-x-1/2"],
     ["absolute-center-center", "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"],
+    ["absolute-center-x", "absolute left-1/2 -translate-x-1/2"],
   ],
   rules: [
     // 文字

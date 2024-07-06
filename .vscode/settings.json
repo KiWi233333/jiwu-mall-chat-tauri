@@ -2,5 +2,9 @@
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "github-actions.workflows.pinned.workflows": [
     ".github/workflows/release.yml"
-  ]
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "scm.experimental.showHistoryGraph": false
 }

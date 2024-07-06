@@ -424,7 +424,7 @@ function exitGroup() {
       <div hidden sm:flex class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
         <i class="block rounded-2rem op-80 btn-info sm:(h-5 w-5) border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-3 h-3' : 'i-solar:widget-bold-duotone w-2 h-2'" />
       </div>
-      <span my-2>群成员</span>
+      <span my-4 sm:my-0>群成员</span>
       <div class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0" @click="onAdd">
         <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-5 w-5) border-default" i-carbon:add-large />
       </div>

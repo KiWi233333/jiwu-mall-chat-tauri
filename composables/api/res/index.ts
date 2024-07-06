@@ -114,6 +114,7 @@ export enum OssFileType {
   VIDEO = "video",
   FILE = "file",
   FONT = "font",
+  SOUND = "sound",
 }
 /**
  * oss上传临时凭证VO

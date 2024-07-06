@@ -24,6 +24,7 @@ const form = ref({
   role: "user",
   content: "",
 });
+const inputRef = ref();
 const status = ref<WsStatusEnum>(WsStatusEnum.CLOSE);
 
 const body = ref({
@@ -96,23 +97,27 @@ function sendMsg(msg: string, id: string) {
     });
   };
   body.value.ws.onclose = () => {
-    status.value = WsStatusEnum.SAFE_CLOSE;
+    setTimeout(() => {
+      status.value = WsStatusEnum.SAFE_CLOSE;
+    }, 300);
     body.value.ws = null;
     scrollBottom();
+    inputRef.value?.focus();
   };
-
   body.value.ws.onerror = () => {
-    status.value = WsStatusEnum.CLOSE;
     body.value.ws = null;
-
+    setTimeout(() => {
+      status.value = WsStatusEnum.CLOSE;
+    }, 300);
     nextTick(() => {
       scrollBottom();
+      inputRef.value?.focus();
     });
   };
   body.value.ws.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-    status.value = WsStatusEnum.OPEN;
-    if (data) {
+    if (e.data) {
+      const data = JSON.parse(e.data);
+      status.value = WsStatusEnum.OPEN;
       status.value = data.payload.status as WsStatusEnum;
       const text = data?.payload?.choices?.text || [];
       text.value = "";
@@ -256,6 +261,7 @@ definePageMeta({
             }]"
           >
             <el-input
+              ref="inputRef"
               v-model.lazy="form.content"
               :disabled="isChat" placeholder="快开始对话吧 ✨"
               class="content border-0 border-b-1px pt-4 border-default"

@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 
-
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
 }>();
-// function getRoleMap(type: ChatRoomRoleEnum) {
-//   return ChatRoomRoleEnumMap[type] || "";
-// }
+const MAX_CHAT_SECONDS = 120;
+// store
 const user = useUserStore();
 const chat = useChatStore();
 
@@ -20,14 +18,24 @@ const form = ref<ChatMessageDTO>({
   },
 });
 const inputRef = ref(); // 输入框
-watch(() => chat.replyMsg?.message?.id, (val) => {
-  form.value.body.replyMsgId = val;
-  nextTick(() => {
-    if (inputRef.value)
-      inputRef.value?.focus(); // 聚焦
-  });
+const formRef = ref();
+const isSend = ref(false);
+const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
+const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
+// AT @相关
+const atSelectRef = ref();
+const userList = ref<ChatMemberVO[]>([]);
+// 未读数
+const theRoomUnReadLength = computed(() => {
+  return chat.theContact.unReadLength;
 });
-
+const SelfExistTextMap = {
+  [RoomType.SELFT]: "已经不是好友",
+  [RoomType.GROUP]: "已经不是群成员",
+  [RoomType.AICHAT]: "已经被AI拉黑",
+};
+// 右键菜单
+const colorMode = useColorMode();
 
 // 文件上传（图片）
 const inputOssFileUploadRef = ref();
@@ -58,41 +66,183 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
   }
 }
 
+// 语音
+const mediaRecorderContext = shallowRef<MediaRecorder>();
+const isChating = ref();
+const audioRef = ref();
+onMounted(() => {
+  // 监听快捷键
+  window.addEventListener("keydown", startChating);
+});
+onUnmounted(() => {
+  window.removeEventListener("keydown", startChating);
+});
+let audioChunks: Blob[] = [];
+const theAudioFileTokenData = ref<ResOssVO>();
+const theAudioFile = shallowRef<OssFile>();
+const isPalyAudio = ref(false);
+const palyAudio = ref();
+const startEndTime = reactive({ // 录音时间
+  startTime: 0,
+  endTime: 0,
+});
+const getChatSecondes = computed(() => {
+  const diff = (startEndTime.endTime - startEndTime.startTime) / 1000 || 0;
+  if (diff > 0 && startEndTime.endTime > 0)
+    return +diff.toFixed(0);
+  else
+    return 0;
+});
 
-// 是否在返回数据
-const formRef = ref();
-const isSend = ref(false);
-// 发送消息
-function onSubmit() {
-  if (isSend.value)
-    return;
+// 语音转译文字webapi
+const speechRecognition = useSpeechRecognition({
+  continuous: true,
+  interimResults: true,
+  lang: "zh-CN",
+});
+const audioTransfromText = ref<string>();
+async function useAudioTransfromText() {
+  if (form.value.msgType === MessageType.SOUND && theAudioFile.value?.id) {
+    if (!speechRecognition.isSupported)
+      return ElMessage.error("当前浏览器不支持语音转文字！");
+    speechRecognition.start();
+    speechRecognition.recognition?.addEventListener("result", (e) => {
+      const result = e.results?.[0]?.[0];
+      if (!result)
+        return;
+      audioTransfromText.value += result.transcript;
+    });
+  }
+}
+// 开始录音
+async function startChating(e: KeyboardEvent) {
+  if (e.key === "t" && e.ctrlKey && !isChating.value) {
+    e.preventDefault();
+    isChating.value = true;
+    form.value.msgType = MessageType.SOUND; // 语音
+    // // 重新获取
+    // if (!theAudioFileTokenData.value || (theAudioFileTokenData.value?.endDateTime && theAudioFileTokenData.value?.endDateTime >= (Date.now() - MAX_CHAT_SECONDS * 1000))) {
+    //   // 获取上传凭证
+    //   const res = await getResToken(OssFileType.SOUND, user.getToken);
+    //   if (res.code === StatusCode.SUCCESS && theAudioFile.value) {
+    //     theAudioFile.value.key = res.data.key;
+    //     theAudioFileTokenData.value = res.data;
+    //   }
+    // }
+  }
+  else if (e.key === "c" && e.ctrlKey && isChating.value) {
+    e.preventDefault();
+    isChating.value = false;
+    form.value.msgType = MessageType.SOUND; // 语音
+  }
+}
+// 开始录音
+function handleChating() {
+  if (isChating.value) {
+    if (getChatSecondes.value < 1) {
+      ElMessage.warning("录音时间过短！");
+      return;
+    }
+    useAudioTransfromText();
+  }
+  else {
+    resetAudio();
+    speechRecognition.stop();
+  }
+  isChating.value = !isChating.value;
+}
+// 播放录音
+function handlePlayAudio(type: "play" | "del" | "stop") {
+  if (theAudioFile.value?.id && !isPalyAudio.value && type === "play") {
+    const audio = new Audio(theAudioFile.value?.id);
+    palyAudio.value = audio;
+    audio.play();
+    isPalyAudio.value = true;
+    audio.addEventListener("ended", () => {
+      isPalyAudio.value = false;
+    });
+  }
+  else if (isPalyAudio.value && type === "stop") {
+    isPalyAudio.value = false;
+    palyAudio.value?.pause();
+  }
+  else if (type === "del") {
+    isPalyAudio.value = false;
+    palyAudio.value?.pause();
+    resetAudio();
+  }
+}
 
-  form.value.content = form.value.content?.trim().replace(/\n$/g, "");
-  if (!form.value.content?.trim()) {
-    ElMessage.warning("不能发送空白消息！");
+// 监听是否正在录音
+watch(isChating, (val) => {
+  if (val) {
+    if (!navigator?.mediaDevices?.getUserMedia)
+      return ElMessage.error("设备不支持录音！");
+
+    navigator?.mediaDevices?.getUserMedia({ audio: true, video: false }).then(
+      stream => resolveAudioInput(stream),
+      () => ElMessage.warning("用户取消授权麦克风！"),
+    );
+  }
+  else {
+    mediaRecorderContext.value?.stop?.();
+  }
+}, {
+  immediate: false,
+});
+function resolveAudioInput(stream: MediaStream) {
+  if (mediaRecorderContext.value) {
+    mediaRecorderContext.value?.stop?.();
+    mediaRecorderContext.value = undefined;
+  }
+  const MimeType = "audio/mp3";
+  const recorder = new MediaRecorder(stream, {
+    audioBitsPerSecond: 128000,
+    mimeType: "audio/webm",
+  });
+  if (!recorder) {
+    ElMessage.error("设备不支持录音！");
     return;
   }
-  formRef.value?.validate(async (action: boolean) => {
-    if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
-      ElMessage.error("消息内容不能超过500字！");
-    if (!action)
+  mediaRecorderContext.value = recorder;
+  recorder.start(1000);// 1秒采样率
+  startEndTime.startTime = Date.now();
+  recorder.addEventListener("dataavailable", (e) => {
+    const blob = new Blob([e.data], { type: MimeType });
+    startEndTime.endTime = Date.now();
+    audioChunks.push(blob);
+    if (getChatSecondes.value >= MAX_CHAT_SECONDS) {
+      ElMessage.warning("录音时间过长！");
+      recorder.stop();
+    }
+  });
+  recorder.addEventListener("stop", (e) => {
+    isChating.value = false;
+    if (!audioChunks.length && getChatSecondes.value <= 2) {
+      ElMessage.warning("录音时间过短！");
       return;
-
-    isSend.value = true;
-    const res = await addChatMessage({
-      ...form.value,
-      roomId: chat.theContact.roomId,
-    }, user.getToken);
-    isSend.value = false;
-    if (res.code === StatusCode.SUCCESS)
-      emit("submit", res.data);
-    else if (res.message === "您和对方已不是好友！")
+    }
+    // 转化为文件上传
+    const file = new File(audioChunks, `${Date.now()}.mp3`, { type: MimeType });
+    theAudioFile.value = {
+      id: URL.createObjectURL(file),
+      key: undefined,
+      status: "",
+      percent: 0,
+      file, // 文件对象
+    };
+    if (!theAudioFile.value)
       return;
-    form.value.content = "";
-    reloadForm();
+    const url = window.URL.createObjectURL(file);
+    theAudioFile.value.id = url;
   });
 }
 
+
+/**
+ * 粘贴图片上传
+ * @param e 事件对象
+ */
 async function onPaste(e: ClipboardEvent) {
   // 判断粘贴上传图片
   if (!e.clipboardData?.items?.length)
@@ -114,10 +264,51 @@ async function onPaste(e: ClipboardEvent) {
   form.value.msgType = MessageType.IMG; // 图片
 }
 
+
+// 发送消息
+async function onSubmit() {
+  if (isSend.value)
+    return;
+  form.value.content = form.value.content?.trim().replace(/\n$/g, "");
+  formRef.value?.validate(async (action: boolean) => {
+    if (!action)
+      return;
+    if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
+      ElMessage.error("消息内容不能超过500字！");
+
+    isSend.value = true;
+    // 二次处理
+    if (form.value.msgType === MessageType.SOUND) {
+      await onSubmitSound((key) => {
+        form.value.body.url = key;
+        form.value.body.second = getChatSecondes.value;
+        submit();
+      });
+    }
+    else {
+      submit();
+    }
+  });
+}
+
+async function submit() {
+  const res = await addChatMessage({
+    ...form.value,
+    roomId: chat.theContact.roomId,
+  }, user.getToken);
+  isSend.value = false;
+  if (res.code === StatusCode.SUCCESS)
+    emit("submit", res.data);
+  else if (res.message === "您和对方已不是好友！")
+    return;
+  form.value.content = "";
+  resetForm();
+}
+
 // 房间号变化
 let timer: any = 0;
 watch(() => chat.theContact.roomId, () => {
-  reloadForm();
+  resetForm();
   if (inputRef.value)
     inputRef.value?.focus(); // 聚焦
 });
@@ -127,27 +318,30 @@ onUnmounted(() => {
   timer = null;
 });
 
-// 重置表单
-function reloadForm() {
-  form.value = {
-    roomId: chat.theContact.roomId,
-    msgType: MessageType.TEXT, // 默认
-    content: "",
-    body: {
-      atUidList: [],
-    },
-  };
-  imgList.value = [];
-  // store
-  chat.atUserList.splice(0);
-  chat.setReplyMsg({});
+
+// @用户
+async function loadUser() {
+  if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
+    return;
+  const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
+  if (data.value && data.value.code === StatusCode.SUCCESS)
+    userList.value = data.value?.data || [];
 }
-watch(() => chat.theContact.roomId, () => {
-  reloadForm();
-  loadUser();
+// @用户消息
+watch(() => chat.atUserList, (val) => {
+  form.value.body.atUidList = val || [];
+}, { deep: true, immediate: true });
+
+// 回复消息
+watch(() => chat.replyMsg?.message?.id, (val) => {
+  form.value.body.replyMsgId = val;
+  nextTick(() => {
+    if (inputRef.value)
+      inputRef.value?.focus(); // 聚焦
+  });
 });
 
-// 到底部
+// 到底部并消费消息
 function setReadAll() {
   if (chat.theContact.roomId) {
     chat.setReadList(chat.theContact.roomId);
@@ -155,8 +349,12 @@ function setReadAll() {
   }
 }
 
-// 右键菜单
-const colorMode = useColorMode();
+/**
+ * 右键菜单
+ * @param e 事件对象
+ * @param key key
+ * @param index 索引
+ */
 function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
   e.preventDefault();
   const opt = {
@@ -192,34 +390,49 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
   ContextMenu.showContextMenu(opt);
 }
 
-
-const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
-const isNoExist = computed(() => chat.theContact.selfExist === 0);
-
-// @用户
-const atSelectRef = ref();
-const userList = ref<ChatMemberVO[]>([]);
-async function loadUser() {
-  if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
-    return;
-  const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
-  if (data.value && data.value.code === StatusCode.SUCCESS)
-    userList.value = data.value?.data || [];
+// 重置表单
+function resetForm() {
+  form.value = {
+    roomId: chat.theContact.roomId,
+    msgType: MessageType.TEXT, // 默认
+    content: "",
+    body: {
+      atUidList: [],
+    },
+  };
+  imgList.value = [];
+  // store
+  chat.atUserList.splice(0);
+  chat.setReplyMsg({});
+  resetAudio();
 }
-watch(() => chat.atUserList, (val) => {
-  form.value.body.atUidList = val || [];
-}, { deep: true, immediate: true });
+// 重置录音
+function resetAudio() {
+  audioChunks = [];
+  theAudioFile.value = undefined;
+  startEndTime.startTime = 0;
+  startEndTime.endTime = 0;
+  isChating.value = false;
+  isPalyAudio.value = false;
+  palyAudio.value = undefined;
+}
+async function onSubmitSound(callback: (key: string) => void) {
+  if (!theAudioFile.value || !theAudioFile.value.id)
+    return ElMessage.error("请先录制语音");
+  const res = await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
+    callback(event, data, file) {
+      if (event === "error")
+        ElMessage.error("发送语音失败，请稍后再试！");
 
-// 未读数
-const theRoomUnReadLength = computed(() => {
-  return chat.theContact.unReadLength;
+      else if (event === "success")
+        callback(data);
+    },
+  });
+}
+watch(() => chat.theContact.roomId, () => {
+  resetForm();
+  loadUser();
 });
-
-const SelfExistTextMap = {
-  [RoomType.SELFT]: "已经不是好友",
-  [RoomType.GROUP]: "已经不是群成员",
-  [RoomType.AICHAT]: "已经被AI拉黑",
-};
 
 // 挂载
 onMounted(() => {
@@ -282,108 +495,178 @@ onMounted(() => {
         </div>
       </el-form-item>
     </div>
-    <div class="flex flex-col border-0 border-t-1px px-4 py-2 shadow border-default bg-color">
+    <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
       <div
-        class="relative flex grid-gap-4"
+        class="relative min-h-8 flex items-center gap-4 px-2"
       >
-        <!-- @R艾特 群聊可用 -->
-        <el-form-item
-          v-if="chat.theContact.type === RoomType.GROUP"
-          :disabled="form.msgType !== MessageType.TEXT"
-          style="padding: 0;margin: 0;"
-          prop="body.atUidList"
-          class="at-select w-12rem"
-        >
-          <el-select
-            ref="atSelectRef"
-            v-model="chat.atUserList"
-            :disabled="form.msgType !== MessageType.TEXT"
-            :max="20"
-            :max-collapse-tags="1"
-            :clearable="false"
-            ilterable
-            collapse-tags multiple default-first-option :reserve-keyword="true"
-            placeholder="@其他人"
-            @change="(val) => chat.atUserList = val"
-          >
-            <el-option
-              v-for="p in userList"
-              :key="p.userId"
-              :value="p.userId"
-              :label="`@${p.nickName}`"
-            />
-          </el-select>
-        </el-form-item>
-        <!-- 图片 -->
-        <el-form-item
-          style="cursor: pointer; padding: 0;margin: 0;"
-          prop="body.url"
-          class="cursor-pointer"
-        >
-          <InputOssFileUpload
-            ref="inputOssFileUploadRef"
-            v-model="imgList"
-            :multiple="false"
-            :preview="false"
-            :limit="1"
-            :disable="isDisabled"
-            class="i-solar:album-line-duotone h-1.5rem w-1.5rem cursor-pointer"
-            :upload-type="OssFileType.IMAGE"
-            input-class="op-0 h-1.5rem w-1.5rem cursor-pointer "
-            :upload-quality="0.5"
-            @error-msg="(msg:string) => {
-              ElMessage.error(msg)
-            }"
-            @submit="onSubmitImg"
+        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? '语音 Ctrl+T' : '键盘'" placement="top">
+          <i
+            :class="form.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken animate-pulse' : 'i-solar:keyboard-broken'"
+            class="h-6 w-6 cursor-pointer btn-primary"
+            @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />
-        </el-form-item>
+        </el-tooltip>
+        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-4">
+          <!-- @R艾特 群聊可用 -->
+          <el-form-item
+            v-if="chat.theContact.type === RoomType.GROUP"
+            :disabled="form.msgType !== MessageType.TEXT"
+            style="padding: 0;margin: 0;"
+            prop="body.atUidList"
+            class="at-select w-8rem sm:w-10rem"
+          >
+            <el-select
+              ref="atSelectRef"
+              v-model="chat.atUserList"
+              :disabled="form.msgType !== MessageType.TEXT"
+              :max="20"
+              :max-collapse-tags="1"
+              :clearable="false"
+              ilterable
+              collapse-tags multiple default-first-option :reserve-keyword="true"
+              placeholder="@其他人"
+              @change="(val) => chat.atUserList = val"
+            >
+              <el-option
+                v-for="p in userList"
+                :key="p.userId"
+                :value="p.userId"
+                :label="`@${p.nickName}`"
+              />
+            </el-select>
+          </el-form-item>
+          <!-- 图片 -->
+          <el-form-item
+            style="cursor: pointer; padding: 0;margin: 0;"
+            prop="body.url"
+            class="cursor-pointer"
+          >
+            <InputOssFileUpload
+              ref="inputOssFileUploadRef"
+              v-model="imgList"
+              :multiple="false"
+              :preview="false"
+              :limit="1"
+              :disable="isDisabled"
+              class="i-solar:album-line-duotone h-5 w-5 cursor-pointer"
+              pre-class="hidden"
+              :upload-type="OssFileType.IMAGE"
+              input-class="op-0 h-5 w-5 cursor-pointer "
+              :upload-quality="0.5"
+              @error-msg="(msg:string) => {
+                ElMessage.error(msg)
+              }"
+              @submit="onSubmitImg"
+            />
+          </el-form-item>
+        </div>
+        <!-- 语音 -->
+        <div v-show="form.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
+          <BtnElButton
+            type="primary"
+            class="group tracking-0.1em hover:shadow-lg" :class="{ 'is-chating': isChating }"
+            style="padding: 0.8rem 3rem;" round size="small"
+            @click="handleChating"
+          >
+            <i i-solar:soundwave-line-duotone class="icon" p-2.5 />
+            <div w-6rem truncate transition-width class="text px-2 text-center group-hover:w-6rem">
+              <span class="chating-hidden">{{ isChating ? `正在输入 ${getChatSecondes}s` : '语音 Ctrl+T' }}</span>
+              <span hidden class="chating-show">停止录音 {{ getChatSecondes ? `${getChatSecondes}s` : '' }}</span>
+            </div>
+            <audio
+              ref="audioRef"
+              class="hidden"
+              :src="theAudioFile?.id"
+            />
+          </BtnElButton>
+        </div>
+        <div v-show="form.msgType === MessageType.SOUND && theAudioFile?.id" class="absolute-center-x">
+          <i p-2.4 />
+          <BtnElButton
+
+            type="primary"
+            class="group tracking-0.1em op-60 hover:op-100" :class="{ 'is-chating !op-100': isPalyAudio }"
+            style="padding: 0.8rem 3rem;" round size="small"
+            @click="handlePlayAudio(isPalyAudio ? 'stop' : 'play')"
+          >
+            {{ getChatSecondes ? `${getChatSecondes}s` : '' }}
+            <i :class="isPalyAudio ? 'i-solar:stop-bold' : 'i-solar:play-bold'" class="icon" ml-2 p-1 />
+          </BtnElButton>
+          <span
+            ml-4 btn-danger
+            @click="handlePlayAudio('del')"
+          >
+            <i i-solar:trash-bin-minimalistic-broken p-2.4 />
+          </span>
+        </div>
         <!-- 滚动底部 -->
         <div
-          class="ml-a w-fit flex-row-c-c px-2 transition-200 btn-primary"
+          class="ml-a w-fit flex-row-c-c transition-200 btn-primary"
           @click="chat.scrollBottom()"
         >
           <i i-solar:double-alt-arrow-down-line-duotone p-3 />
         </div>
       </div>
       <!-- 内容 -->
-      <div relative my-2 flex items-end gap-3>
-        <el-form-item
-          prop="content"
-          style="padding: 0;margin: 0;"
-          class="w-full"
-          :rules="[
-            { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
-          ]"
+      <el-form-item
+        v-if="form.msgType !== MessageType.SOUND"
+        prop="content"
+        style="padding: 0;margin: 0;"
+        class="relative h-40 w-full"
+        :rules="[
+          { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
+        ]"
+      >
+        <el-input
+          ref="inputRef"
+          v-model.lazy="form.content"
+          :rows="6"
+          show-word-limit
+          :maxlength="500"
+          :autosize="false"
+          type="textarea"
+          resize="none"
+          class="input"
+          autofocus
+          :class="{
+            focused: form.content,
+          }"
+          @paste="onPaste"
+          @keydown.enter.prevent="onSubmit"
+        />
+      </el-form-item>
+      <!-- 录音 -->
+      <small
+        v-if="form.msgType === MessageType.SOUND"
+        style="padding: 0;margin: 0;"
+        class="relative h-40 w-full flex-row-c-c op-90"
+      >
+        {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
+        <!-- <BtnElButton
+          class="ml-4"
+          :disabled="!user.isLogin || isSend"
+          icon-class="i-solar:refresh-outline mr-1"
+          type="primary"
+          round
+          size="small"
+          @click="handleToggleText()"
         >
-          <el-input
-            ref="inputRef"
-            v-model.lazy="form.content"
-            :rows="6"
-            show-word-limit
-            :maxlength="500"
-            :autosize="false"
-            type="textarea"
-            class="input"
-            autofocus
-            :class="{
-              focused: form.content,
-            }"
-            @paste="onPaste"
-            @keydown.enter.prevent="onSubmit"
-          />
-        </el-form-item>
-        <BtnElButton
-          :disabled="!user.isLogin"
-          transition-icon
-          class="group absolute ml-a shadow -bottom-1 -right-1"
-          icon-class="i-solar:map-arrow-right-bold-duotone block -rotate-45 mr-1"
-          type="info"
-          @click="onSubmit()"
-        >
-          发送&nbsp;
-        </BtnElButton>
-      </div>
+          转文字
+        </BtnElButton> -->
+      </small>
+      <BtnElButton
+        :disabled="!user.isLogin || isSend"
+        class="group bottom-2.5 right-2.5 ml-a overflow-hidden shadow !absolute"
+        type="primary"
+        round
+        size="small"
+        :loading="isSend"
+        style="padding: 0.8rem;width: 6rem;"
+        @click="onSubmit()"
+      >
+        发送&nbsp;
+      </BtnElButton>
     </div>
     <div
       v-show="isNoExist"
@@ -404,7 +687,7 @@ onMounted(() => {
   :deep(.el-input__wrapper) {
     box-shadow: none !important;
     background-color: transparent;
-    border-radius: 1rem;
+    padding: 0;
   }
   :deep(.el-form-item__error) {
     padding-left: 1rem;
@@ -426,6 +709,57 @@ onMounted(() => {
     &:hover + .el-input__count  {
       opacity: 1;
     }
+  }
+}
+// 语音
+.is-chating {
+  outline: none !important;
+  &:deep(.el-button) {
+    outline: none !important;
+  }
+  --at-apply: "shadow-lg ";
+  --shadow-color: var(--el-color-primary);
+  transition: all 0.2s;
+  animation: aniamte-poppup-pluse 2s linear infinite;
+  background-color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
+  &:hover .chating-hidden {
+    --at-apply: "hidden";
+  }
+  &:hover .chating-show {
+    --at-apply: "inline-block";
+  }
+  .icon {
+    --at-apply: "animate-pulse";
+  }
+  .text {
+    --at-apply: "!w-6rem";
+  }
+  &:hover {
+    --at-apply: "shadow-md";
+    --shadow-color: var(--el-color-danger);
+    box-shadow: 0 0 0.8rem var(--shadow-color);
+    animation-play-state: paused;
+    background-color: var(--el-color-danger);
+    border-color: var(--el-color-danger);
+  }
+}
+
+@keyframes aniamte-poppup-pluse {
+  0% {
+    box-shadow: 0 0 0.5rem var(--shadow-color);
+  }
+  25% {
+    box-shadow: 0 0 1.2rem var(--shadow-color);
+  }
+  50% {
+    box-shadow: 0 0 0.5rem var(--shadow-color);
+  }
+  75% {
+    box-shadow: 0 0 1.2rem var(--shadow-color);
+  }
+  100% {
+    box-shadow: 0 0 0.5rem var(--shadow-color);
   }
 }
 </style>

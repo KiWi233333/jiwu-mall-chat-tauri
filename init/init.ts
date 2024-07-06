@@ -2,7 +2,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/api/shell";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
-import { appWindow } from "@tauri-apps/api/window";
 import type { PayloadType } from "../types/tauri";
 
 /**

@@ -9,6 +9,14 @@ enum FriendOptType {
   NewFriend = 1,
   GroupFriend = 2,
 }
+export interface PlaySounder {
+  state?: "play" | "pause" | "stop" | "loading" | "error"
+  url?: string
+  msgId?: number
+  currentSecond?: number
+  duration?: number
+  audio?: HTMLAudioElement
+}
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -34,6 +42,14 @@ export const useChatStore = defineStore(
       unreadMsgList: [],
       roomGroup: undefined,
       member: undefined,
+    });
+    const playSounder = ref<PlaySounder>({
+      state: "stop",
+      url: "",
+      msgId: 0,
+      currentSecond: 0,
+      duration: 0,
+      audio: undefined,
     });
     // 改变会话
     function setContact(vo?: ChatContactVO) {
@@ -165,6 +181,7 @@ export const useChatStore = defineStore(
       roomGroupPageInfo,
       onOfflineList,
       isChatScroll,
+      playSounder,
       // 方法
       setContact,
       setReadList,

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { MessageType } from "@/composables/api/chat/message";
-import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgImg, ChatMsgRecall, ChatMsgSystem, ChatMsgText } from "#components";
+import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgImg, ChatMsgRecall, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
 
 
 /**
@@ -19,6 +19,7 @@ const map: MsgComType = {
   [MessageType.IMG]: ChatMsgImg,
   [MessageType.SYSTEM]: ChatMsgSystem,
   [MessageType.AI_CHAT]: ChatMsgAiMsg,
+  [MessageType.SOUND]: ChatMsgSound,
 };
 interface MsgComType {
   [property: number]: any

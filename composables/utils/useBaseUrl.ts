@@ -8,6 +8,7 @@ export const BaseUrl = BASE_URL;
 export const BASE_OSS_PATH = "https://quang.kiwi2333.top/";
 export const BaseUrlImg = BASE_OSS_PATH;
 export const BaseUrlVideo = BASE_OSS_PATH;
+export const BaseUrlSound = BASE_OSS_PATH;
 export const BaseUrlFile = BASE_OSS_PATH;
 export const AuthKey = "Authorization";
 

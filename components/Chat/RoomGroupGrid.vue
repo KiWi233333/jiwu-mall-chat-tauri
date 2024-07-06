@@ -278,7 +278,6 @@ function exitGroup() {
 
 <template>
   <div
-    v-if="data.type === RoomType.GROUP && setting.isOpenGroupMember"
     v-bind="$attrs"
   >
     <div flex-row-bt-c class="mx-a w-3/4 pb-4">

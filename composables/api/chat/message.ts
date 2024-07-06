@@ -126,6 +126,22 @@ export interface UrlInfoDTO {
 }
 
 /**
+ * 语音消息
+ */
+export interface SoundBodyMsgVO<T = object> {
+  url: string
+  second: number
+  reply: {
+    id: number
+    uid: string
+    nickName: string
+    type: MessageType
+    canCallback: isTrue
+    gapCount: number
+    body?: T
+  }
+}
+/**
  * 图片消息
  */
 export interface ImgBodyMsgVO {
