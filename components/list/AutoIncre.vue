@@ -80,7 +80,7 @@ defineExpose({
     v-if="showLoad"
     ref="loadMoreRef"
     key="loadMoreRef"
-    class="min-h-1em"
+    class="absolute z-9 min-h-1em"
   >
     <slot name="load">
       <div key="load" w-full flex-row-c-c py-2 text-center text-bluegray>

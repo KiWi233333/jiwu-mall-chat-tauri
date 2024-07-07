@@ -417,7 +417,7 @@ function exitGroup() {
   <div
     v-if="chat.theContact.type === RoomType.GROUP && setting.isOpenGroupMember"
     v-bind="$attrs"
-    class="group w-1/6 flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/5 flex-col p-4)"
+    class="group w-1/6 flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/4 flex-col p-4)"
   >
     <!-- 添加 -->
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>

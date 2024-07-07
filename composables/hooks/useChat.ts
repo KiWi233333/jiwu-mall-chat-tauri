@@ -149,7 +149,8 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
         speechRecognition.stop();
         return;
       }
-      speechRecognition.start(); // 开始语音转文字
+      if (speechRecognition)
+        speechRecognition.start(); // 开始语音转文字
     });
 
     mediaRecorderContext.value.addEventListener("stop", (e) => {

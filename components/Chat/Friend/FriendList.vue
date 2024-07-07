@@ -32,17 +32,20 @@ watch(() => chat.isAddNewFriend, (val) => {
     chat.isAddNewFriend = false;
   }
 });
-function reloadData() {
+const setting = useSettingStore();
+const [autoAnimateRef, enable] = useAutoAnimate({});
+async function reloadData() {
   pageInfo.value.cursor = null;
   pageInfo.value.isLast = false;
   list.value = [];
-  loadData();
+  await loadData();
+  nextTick(() => {
+    enable(!setting.settingPage.isColseAllTransition);
+  });
 }
 
-const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
-  const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(false);
 });
 </script>
 
@@ -53,6 +56,7 @@ onMounted(() => {
       :auto-stop="true"
       :no-more="pageInfo.isLast"
       :loading="isLoading"
+      loading-class="op-0"
       @load="loadData"
     >
       <div
