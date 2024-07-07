@@ -1,13 +1,28 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { useRecording } from "~/composables/hooks/useChat";
 
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
 }>();
-const MAX_CHAT_SECONDS = 120;
 // store
 const user = useUserStore();
 const chat = useChatStore();
+
+// hooks
+const {
+  isChating,
+  second, // 获取录音时间
+  theAudioFile,
+  speechRecognition,
+  audioTransfromText,
+  isPalyAudio,
+
+  toggle: toggleChating, // 开始/停止录音
+  reset: resetAudio,
+  onEndChat,
+  handlePlayAudio, // 播放录音
+} = useRecording();
 
 // 表单
 const form = ref<ChatMessageDTO>({
@@ -37,7 +52,7 @@ const SelfExistTextMap = {
 // 右键菜单
 const colorMode = useColorMode();
 
-// 文件上传（图片）
+// 文件上传（图片）回调
 const inputOssFileUploadRef = ref();
 const imgList = ref<OssFile[]>([]);
 function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
@@ -67,9 +82,6 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
 }
 
 // 语音
-const mediaRecorderContext = shallowRef<MediaRecorder>();
-const isChating = ref();
-const audioRef = ref();
 onMounted(() => {
   // 监听快捷键
   window.addEventListener("keydown", startChating);
@@ -77,165 +89,18 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("keydown", startChating);
 });
-let audioChunks: Blob[] = [];
-const theAudioFileTokenData = ref<ResOssVO>();
-const theAudioFile = shallowRef<OssFile>();
-const isPalyAudio = ref(false);
-const palyAudio = ref();
-const startEndTime = reactive({ // 录音时间
-  startTime: 0,
-  endTime: 0,
-});
-const getChatSecondes = computed(() => {
-  const diff = (startEndTime.endTime - startEndTime.startTime) / 1000 || 0;
-  if (diff > 0 && startEndTime.endTime > 0)
-    return +diff.toFixed(0);
-  else
-    return 0;
-});
-
-// 语音转译文字webapi
-const speechRecognition = useSpeechRecognition({
-  continuous: true,
-  interimResults: true,
-  lang: "zh-CN",
-});
-const audioTransfromText = ref<string>();
-async function useAudioTransfromText() {
-  if (form.value.msgType === MessageType.SOUND && theAudioFile.value?.id) {
-    if (!speechRecognition.isSupported)
-      return ElMessage.error("当前浏览器不支持语音转文字！");
-    speechRecognition.start();
-    speechRecognition.recognition?.addEventListener("result", (e) => {
-      const result = e.results?.[0]?.[0];
-      if (!result)
-        return;
-      audioTransfromText.value += result.transcript;
-    });
-  }
-}
 // 开始录音
 async function startChating(e: KeyboardEvent) {
   if (e.key === "t" && e.ctrlKey && !isChating.value) {
     e.preventDefault();
     isChating.value = true;
     form.value.msgType = MessageType.SOUND; // 语音
-    // // 重新获取
-    // if (!theAudioFileTokenData.value || (theAudioFileTokenData.value?.endDateTime && theAudioFileTokenData.value?.endDateTime >= (Date.now() - MAX_CHAT_SECONDS * 1000))) {
-    //   // 获取上传凭证
-    //   const res = await getResToken(OssFileType.SOUND, user.getToken);
-    //   if (res.code === StatusCode.SUCCESS && theAudioFile.value) {
-    //     theAudioFile.value.key = res.data.key;
-    //     theAudioFileTokenData.value = res.data;
-    //   }
-    // }
   }
   else if (e.key === "c" && e.ctrlKey && isChating.value) {
     e.preventDefault();
     isChating.value = false;
     form.value.msgType = MessageType.SOUND; // 语音
   }
-}
-// 开始录音
-function handleChating() {
-  if (isChating.value) {
-    if (getChatSecondes.value < 1) {
-      ElMessage.warning("录音时间过短！");
-      return;
-    }
-    useAudioTransfromText();
-  }
-  else {
-    resetAudio();
-    speechRecognition.stop();
-  }
-  isChating.value = !isChating.value;
-}
-// 播放录音
-function handlePlayAudio(type: "play" | "del" | "stop") {
-  if (theAudioFile.value?.id && !isPalyAudio.value && type === "play") {
-    const audio = new Audio(theAudioFile.value?.id);
-    palyAudio.value = audio;
-    audio.play();
-    isPalyAudio.value = true;
-    audio.addEventListener("ended", () => {
-      isPalyAudio.value = false;
-    });
-  }
-  else if (isPalyAudio.value && type === "stop") {
-    isPalyAudio.value = false;
-    palyAudio.value?.pause();
-  }
-  else if (type === "del") {
-    isPalyAudio.value = false;
-    palyAudio.value?.pause();
-    resetAudio();
-  }
-}
-
-// 监听是否正在录音
-watch(isChating, (val) => {
-  if (val) {
-    if (!navigator?.mediaDevices?.getUserMedia)
-      return ElMessage.error("设备不支持录音！");
-
-    navigator?.mediaDevices?.getUserMedia({ audio: true, video: false }).then(
-      stream => resolveAudioInput(stream),
-      () => ElMessage.warning("用户取消授权麦克风！"),
-    );
-  }
-  else {
-    mediaRecorderContext.value?.stop?.();
-  }
-}, {
-  immediate: false,
-});
-function resolveAudioInput(stream: MediaStream) {
-  if (mediaRecorderContext.value) {
-    mediaRecorderContext.value?.stop?.();
-    mediaRecorderContext.value = undefined;
-  }
-  const MimeType = "audio/mp3";
-  const recorder = new MediaRecorder(stream, {
-    audioBitsPerSecond: 128000,
-    mimeType: "audio/webm",
-  });
-  if (!recorder) {
-    ElMessage.error("设备不支持录音！");
-    return;
-  }
-  mediaRecorderContext.value = recorder;
-  recorder.start(1000);// 1秒采样率
-  startEndTime.startTime = Date.now();
-  recorder.addEventListener("dataavailable", (e) => {
-    const blob = new Blob([e.data], { type: MimeType });
-    startEndTime.endTime = Date.now();
-    audioChunks.push(blob);
-    if (getChatSecondes.value >= MAX_CHAT_SECONDS) {
-      ElMessage.warning("录音时间过长！");
-      recorder.stop();
-    }
-  });
-  recorder.addEventListener("stop", (e) => {
-    isChating.value = false;
-    if (!audioChunks.length && getChatSecondes.value <= 2) {
-      ElMessage.warning("录音时间过短！");
-      return;
-    }
-    // 转化为文件上传
-    const file = new File(audioChunks, `${Date.now()}.mp3`, { type: MimeType });
-    theAudioFile.value = {
-      id: URL.createObjectURL(file),
-      key: undefined,
-      status: "",
-      percent: 0,
-      file, // 文件对象
-    };
-    if (!theAudioFile.value)
-      return;
-    const url = window.URL.createObjectURL(file);
-    theAudioFile.value.id = url;
-  });
 }
 
 
@@ -274,14 +139,15 @@ async function onSubmit() {
     if (!action)
       return;
     if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
-      ElMessage.error("消息内容不能超过500字！");
+      return ElMessage.error(!form.value.content ? "消息内容不能为空！" : "消息内容不能超过500字！");
 
     isSend.value = true;
     // 二次处理
     if (form.value.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
         form.value.body.url = key;
-        form.value.body.second = getChatSecondes.value;
+        form.value.body.translate = audioTransfromText.value;
+        form.value.body.second = second.value;
         submit();
       });
     }
@@ -405,16 +271,6 @@ function resetForm() {
   chat.atUserList.splice(0);
   chat.setReplyMsg({});
   resetAudio();
-}
-// 重置录音
-function resetAudio() {
-  audioChunks = [];
-  theAudioFile.value = undefined;
-  startEndTime.startTime = 0;
-  startEndTime.endTime = 0;
-  isChating.value = false;
-  isPalyAudio.value = false;
-  palyAudio.value = undefined;
 }
 async function onSubmitSound(callback: (key: string) => void) {
   if (!theAudioFile.value || !theAudioFile.value.id)
@@ -567,30 +423,24 @@ onMounted(() => {
             type="primary"
             class="group tracking-0.1em hover:shadow-lg" :class="{ 'is-chating': isChating }"
             style="padding: 0.8rem 3rem;" round size="small"
-            @click="handleChating"
+            @click="toggleChating"
           >
             <i i-solar:soundwave-line-duotone class="icon" p-2.5 />
-            <div w-6rem truncate transition-width class="text px-2 text-center group-hover:w-6rem">
-              <span class="chating-hidden">{{ isChating ? `正在输入 ${getChatSecondes}s` : '语音 Ctrl+T' }}</span>
-              <span hidden class="chating-show">停止录音 {{ getChatSecondes ? `${getChatSecondes}s` : '' }}</span>
+            <div w-8rem truncate transition-width class="text px-2 text-center group-hover:w-8rem">
+              <span class="chating-hidden">{{ isChating ? `正在输入 ${second}s` : '语音 Ctrl+T' }}</span>
+              <span hidden class="chating-show">停止录音 {{ second ? `${second}s` : '' }}</span>
             </div>
-            <audio
-              ref="audioRef"
-              class="hidden"
-              :src="theAudioFile?.id"
-            />
           </BtnElButton>
         </div>
         <div v-show="form.msgType === MessageType.SOUND && theAudioFile?.id" class="absolute-center-x">
           <i p-2.4 />
           <BtnElButton
-
             type="primary"
             class="group tracking-0.1em op-60 hover:op-100" :class="{ 'is-chating !op-100': isPalyAudio }"
             style="padding: 0.8rem 3rem;" round size="small"
-            @click="handlePlayAudio(isPalyAudio ? 'stop' : 'play')"
+            @click="handlePlayAudio(isPalyAudio ? 'stop' : 'play', theAudioFile?.id)"
           >
-            {{ getChatSecondes ? `${getChatSecondes}s` : '' }}
+            {{ second ? `${second}s` : '' }}
             <i :class="isPalyAudio ? 'i-solar:stop-bold' : 'i-solar:play-bold'" class="icon" ml-2 p-1 />
           </BtnElButton>
           <span
@@ -637,24 +487,12 @@ onMounted(() => {
         />
       </el-form-item>
       <!-- 录音 -->
-      <small
+      <p
         v-if="form.msgType === MessageType.SOUND"
-        style="padding: 0;margin: 0;"
-        class="relative h-40 w-full flex-row-c-c op-90"
+        class="relative h-40 w-full flex-row-c-c overflow-hidden p-8 pt-2 text-wrap op-90"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
-        <!-- <BtnElButton
-          class="ml-4"
-          :disabled="!user.isLogin || isSend"
-          icon-class="i-solar:refresh-outline mr-1"
-          type="primary"
-          round
-          size="small"
-          @click="handleToggleText()"
-        >
-          转文字
-        </BtnElButton> -->
-      </small>
+      </p>
       <BtnElButton
         :disabled="!user.isLogin || isSend"
         class="group bottom-2.5 right-2.5 ml-a overflow-hidden shadow !absolute"
@@ -662,7 +500,7 @@ onMounted(() => {
         round
         size="small"
         :loading="isSend"
-        style="padding: 0.8rem;width: 6rem;"
+        style="padding: 0.8rem;width: 8rem;"
         @click="onSubmit()"
       >
         发送&nbsp;
@@ -713,16 +551,19 @@ onMounted(() => {
 }
 // 语音
 .is-chating {
-  outline: none !important;
   &:deep(.el-button) {
     outline: none !important;
   }
   --at-apply: "shadow-lg ";
   --shadow-color: var(--el-color-primary);
+  --shadow-color2: var(--el-color-primary-light-3);
+  outline: none !important;
+  background-size: 400% 400%;
   transition: all 0.2s;
-  animation: aniamte-poppup-pluse 2s linear infinite;
-  background-color: var(--el-color-primary);
-  border-color: var(--el-color-primary);
+  animation: aniamte-poppup-pluse 1s linear infinite;
+  background-image: linear-gradient(to right, var(--shadow-color2) 0%, var(--shadow-color) 50%,var(--shadow-color2) 100%);
+  background-color: var(--shadow-color);
+  border-color: var(--shadow-color);
   &:hover .chating-hidden {
     --at-apply: "hidden";
   }
@@ -733,33 +574,31 @@ onMounted(() => {
     --at-apply: "animate-pulse";
   }
   .text {
-    --at-apply: "!w-6rem";
+    --at-apply: "!w-8rem";
   }
   &:hover {
     --at-apply: "shadow-md";
     --shadow-color: var(--el-color-danger);
+    --shadow-color2: var(--el-color-danger-light-3);
     box-shadow: 0 0 0.8rem var(--shadow-color);
     animation-play-state: paused;
-    background-color: var(--el-color-danger);
-    border-color: var(--el-color-danger);
+    background-color: var(-shadow-color);
+    border-color: var(-shadow-color);
   }
 }
 
 @keyframes aniamte-poppup-pluse {
   0% {
     box-shadow: 0 0 0.5rem var(--shadow-color);
-  }
-  25% {
-    box-shadow: 0 0 1.2rem var(--shadow-color);
+    background-position: 0% 50%;
   }
   50% {
-    box-shadow: 0 0 0.5rem var(--shadow-color);
-  }
-  75% {
     box-shadow: 0 0 1.2rem var(--shadow-color);
+    background-position: 100% 50%;
   }
   100% {
     box-shadow: 0 0 0.5rem var(--shadow-color);
+    background-position: 0% 50%;
   }
 }
 </style>

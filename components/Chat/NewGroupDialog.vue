@@ -82,7 +82,7 @@ async function loadData() {
     return;
   isLoading.value = true;
   const { data } = await getChatFriendPage(pageInfo.value.size, pageInfo.value.cursor, user.getToken);
-  if (data.list)
+  if (data?.list)
     userList.value.push(...data.list);
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;

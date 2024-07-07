@@ -120,7 +120,7 @@ function resetPlaySounder() {
           class="msg-popper cursor-pointer hover:op-80" :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
           @click="playSound(body?.url)"
         >
-          <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:refresh-outline animate-spin' : 'i-solar:volume-loud-outline'" p-2 />
+          <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
           {{ chat.playSounder?.url === body.url ? getSoundText : getSoundTextRaw }}
         </p>
       </slot>

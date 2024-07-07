@@ -31,7 +31,7 @@ async function loadData(call?: (data?: Message[]) => void) {
     nextTick(() => {
       // 更新滚动位置
       chat.saveScrollTop && chat.saveScrollTop();
-      if (pageInfo.value.cursor === null) {
+      if (pageInfo.value.cursor === null && !chat.theContact.msgList.length) { // 第一次加载默认没有动画
         chat.scrollBottom(false);
         call && call(chat.theContact.msgList);
       }
@@ -135,10 +135,11 @@ function resolveNewMsg(list: ChatMessageVO[]) {
     if (!p)
       return;
 
+    const body = getBody(p) || "";
     // 1）更新会话列表
     upContact(p.message.roomId,
       {
-        text: `${p.fromUser.nickName}：${p.message.content}`,
+        text: `${p.fromUser.nickName}：${body}`,
       }, false, (contact) => {
         if (contact.roomId !== chat.theContact.roomId) {
         // 添加未读数量
@@ -158,6 +159,27 @@ function resolveNewMsg(list: ChatMessageVO[]) {
     const msg = findMsg(p.message.id);
     if (!msg)
       chat.theContact.msgList.push(p);
+  }
+}
+
+function getBody(msg: ChatMessageVO) {
+  if (msg.message.type === MessageType.SOUND) {
+    const _msg = msg as ChatMessageVO<SoundBodyMsgVO>;
+    return `[语音] ${getSecondsText(_msg?.message?.body?.second || 0)}`;
+  }
+  return msg.message.content;
+}
+// 计算语音消息文本
+function getSecondsText(second?: number) {
+  if (!second)
+    return "";
+  if (second < 60) {
+    return `${second}"`;
+  }
+  else if (second < 3600) {
+    const minute = Math.floor(second / 60);
+    const second_ = second % 60;
+    return `${minute}'${second_}"`;
   }
 }
 

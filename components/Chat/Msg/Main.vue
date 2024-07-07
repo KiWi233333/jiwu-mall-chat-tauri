@@ -44,10 +44,26 @@ const isTheGroupPermission = computed(() => {
 // 右键菜单
 const colorMode = useColorMode();
 const route = useRoute();
+const disabledRightClickList = [
+  MessageType.AI_CHAT,
+  MessageType.SYSTEM,
+  MessageType.RECALL,
+  MessageType.RECALL,
+  MessageType.DELETE,
+];
+const disabledRightClick = computed(() => {
+  const isAiChat = route.path.includes("ai");
+  if (isAiChat)
+    return true;
+
+  if (data.message.type !== undefined && disabledRightClickList.includes(data.message.type))
+    return true;
+
+  return false;
+});
 function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
   e.preventDefault();
-  const isAiChat = route.path.includes("ai");
-  if (item.message.type === MessageType.AI_CHAT || isAiChat)
+  if (disabledRightClick.value)
     return;
   const isSelf = user.userInfo.id === item.fromUser.userId;
   const opt = {

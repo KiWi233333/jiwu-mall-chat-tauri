@@ -115,7 +115,9 @@ export async function useHotkeyInit() {
     if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey))
       e.preventDefault();
     // esc 最小化窗口
-    if (e.key === "Escape" && setting.settingPage.isEscMin)
+    if (e.key === "Escape" && setting.settingPage.isEscMin) {
+      e.preventDefault();
       appWindow.minimize();
+    }
   });
 }

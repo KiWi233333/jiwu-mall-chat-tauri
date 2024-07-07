@@ -9,9 +9,9 @@ defineProps<{
 
 <template>
   <div w-full flex-row-c-c truncate p-2 text-center>
-    <span class="rounded-1em px-4 py-1 text-0.8rem font-500 op-60">
+    <p class="rounded-1em px-4 py-1 text-wrap text-0.8rem font-500 op-60">
       {{ data?.message?.content }}
-    </span>
+    </p>
   </div>
 </template>
 

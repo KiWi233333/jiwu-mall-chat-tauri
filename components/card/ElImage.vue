@@ -4,12 +4,15 @@ defineProps<{
   loadClass?: string
   errorClass?: string
 }>();
+const setting = useSettingStore();
 </script>
 
 <template>
   <el-image
     :src="src"
     fit="cover"
+    hide-on-click-modal
+    :close-on-press-escape="!setting.settingPage.isEscMin"
     v-bind="$attrs"
   >
     <!-- 占位 -->

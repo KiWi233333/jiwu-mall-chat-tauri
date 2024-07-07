@@ -219,7 +219,7 @@ export function addChatMessage(dto: ChatMessageDTO, token: string) {
 /**
  * ChatMessageDTO
  */
-export interface ChatMessageDTO {
+export interface ChatMessageDTO<T = MessageType> {
   /**
    * 房间id
    */
@@ -235,17 +235,34 @@ export interface ChatMessageDTO {
   /**
    * 消息内容，类型不同传值不同
    */
-  body: MessageType extends infer M
-    ? M extends MessageType
-      ? M extends keyof Record<string, MessageType>
-        ? Record<string, MessageType>[M]
-        : { [key: string]: any }
-      : { [key: string]: any }
-    : { [key: string]: any }
+  body: any
   [property: string]: any
 }
 
-
+interface MessageBodyMap {
+  [MessageType.TEXT]: TextBodyDTO
+  [MessageType.IMG]: ImgBodyDTO
+  [MessageType.SOUND]: SoundBodyDTO
+  [MessageType.RECALL]: RecallBodyDTO
+}
+export interface TextBodyDTO {
+  replyMsgId?: string
+  atUidList?: string[]
+}
+export interface ImgBodyDTO {
+  url: string
+  size?: number
+  width?: number
+  height?: number
+}
+export interface SoundBodyDTO {
+  fileName: string
+  second: number
+}
+export interface RecallBodyDTO {
+  recallUid?: string
+  recallTime?: number
+}
 /**
  * 撤回消息
  * @param roomId 房间号

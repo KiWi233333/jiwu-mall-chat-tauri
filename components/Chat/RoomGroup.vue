@@ -434,6 +434,7 @@ function exitGroup() {
         :immediate="true"
         :auto-stop="true"
         :no-more="pageInfo.isLast"
+        loading-class="op-0"
         :loading="isLoading"
         @load="loadData"
       >

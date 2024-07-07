@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <span class="mx-a my-2 w-fit rounded-1em px-4 py-1 pt-1.4 text-0.8rem font-500 op-60 border-default card-default">
+  <span class="mx-a my-2 max-w-full w-fit truncate rounded-1em px-4 py-1 pt-1.4 text-wrap text-0.7rem font-500 op-60 border-default card-default">
     {{ data?.message?.content }}
   </span>
 </template>
