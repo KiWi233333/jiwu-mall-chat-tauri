@@ -57,6 +57,7 @@ const theme = computed({
 onMounted(async () => {
   const v = await getVersion();
   setting.appUploader.version = v;
+  setting.checkUpdates(true);
 });
 </script>
 
