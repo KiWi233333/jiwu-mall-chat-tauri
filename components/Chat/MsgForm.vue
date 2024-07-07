@@ -146,7 +146,7 @@ async function onSubmit() {
     if (form.value.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
         form.value.body.url = key;
-        form.value.body.translate = audioTransfromText.value;
+        form.value.body.translation = audioTransfromText.value;
         form.value.body.second = second.value;
         submit();
       });
