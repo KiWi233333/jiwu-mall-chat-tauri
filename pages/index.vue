@@ -18,7 +18,7 @@ useSeoMeta({
   <div>
     <NuxtLayout name="chat">
       <!-- 会话列表 -->
-      <ChatContactTabs />
+      <ChatContactList />
       <!-- 聊天框 -->
       <ChatContent class="flex-1 truncate border-0 border-l-1px border-default" />
       <!-- 在线人数 -->

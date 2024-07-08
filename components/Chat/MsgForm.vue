@@ -275,11 +275,10 @@ function resetForm() {
 async function onSubmitSound(callback: (key: string) => void) {
   if (!theAudioFile.value || !theAudioFile.value.id)
     return ElMessage.error("请先录制语音");
-  const res = await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
+  await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
     callback(event, data, file) {
       if (event === "error")
         ElMessage.error("发送语音失败，请稍后再试！");
-
       else if (event === "success")
         callback(data);
     },

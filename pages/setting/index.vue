@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { getVersion } from "@tauri-apps/api/app";
+import { MdPreview } from "md-editor-v3";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -53,11 +54,53 @@ const theme = computed({
   set: (val: string) => setting.settingPage.modeToggle.value = val,
 });
 
+// 公告
+const showNotice = ref(false);
+const notice = ref<string | null | undefined>(`# 1.0.15 版本说明
+
+这是一个重要的更新，包括以下功能 🧪
+
+## 🔮 新功能
+
+- [x] 添加语音消息、播放等语音消息功能。
+- [x] 添加语音识别转文字功能。
+- [x] 手机号、邮箱验证更换密码。
+
+## 🔨 修复了以下问题
+
+- [x] 优化聊天框的显示效果。
+- [x] 修复好友列表小屏版显示错误。
+- [x] 修复了一些已知问题。
+- [x] 图片预览与esc冲突，暂时优先级低于esc键退出聊天。
+
+## 🧿 其他更新
+
+- [x] 升级了项目依赖。
+
+## 📌 待办
+
+- [ ] 本地缓存聊天、房间记录功能。(待定)
+- [ ] 基本完结
+
+感谢您的支持！
+`);
+const colorMode = useColorMode();
+
 // 更新
 onMounted(async () => {
   const v = await getVersion();
+  // // 公告
+  // if (v) {
+  //   getVersionNotice(v).then((res) => {
+  //     if (res.code !== StatusCode.SUCCESS)
+  //       return;
+  //     notice.value = res.data.notice;
+  //   });
+  // }
+  // 检查更新
   setting.appUploader.version = v;
-  setting.checkUpdates(true);
+  if (!setting.appUploader.isUpdatateLoad)
+    setting.checkUpdates(true);
 });
 </script>
 
@@ -123,7 +166,8 @@ onMounted(async () => {
           <!-- 更新 -->
           <div class="group h-8 flex-row-bt-c">
             关于更新
-            <ElTooltip :offset="10" popper-style="padding: 0 0.5em;" :content="`版本：${setting.appUploader.version}`">
+            <div class="ml-a flex items-center">
+              <span class="mr-4 text-0.8rem tracking-0.1em btn-info" @click="showNotice = !showNotice">v{{ setting.appUploader.version }}版本公告</span>
               <el-badge
                 :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot
                 :value="+setting.appUploader.isUpload"
@@ -137,10 +181,10 @@ onMounted(async () => {
                     i-solar:refresh-outline mr-1 inline-block p-2
                     :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''"
                   />
-                  <span>检查更新</span>
+                  检查更新
                 </ElButton>
               </el-badge>
-            </ElTooltip>
+            </div>
           </div>
         </section>
         <div class="btns mt-a flex items-center">
@@ -152,6 +196,31 @@ onMounted(async () => {
           </BtnElButton>
         </div>
       </main>
+      <el-dialog
+        v-model="showNotice"
+        center
+        title="公告 🔔"
+        width="500"
+      >
+        <div class="max-h-60vh min-h-30vh overflow-y-auto">
+          <MdPreview
+            language="zh-CN"
+            editor-id="notice-toast"
+            show-code-row-number
+            :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+            preview-theme="smart-blue"
+            :code-foldable="false"
+            code-theme="a11y"
+            class="mt-2 text-1em !bg-transparent"
+            :model-value="notice || '# 暂无内容'"
+          />
+        </div>
+        <div class="mt-2 mt-4 flex-row-c-c">
+          <el-button type="primary" @click="showNotice = false">
+            &emsp;我知道了 🎉
+          </el-button>
+        </div>
+      </el-dialog>
     </NuxtLayout>
   </div>
 </template>

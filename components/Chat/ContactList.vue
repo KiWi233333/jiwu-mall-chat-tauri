@@ -30,6 +30,7 @@ const getContactList = computed(() => {
 interface ChatContactPageDTO {
   type: RoomType
 }
+
 /**
  * 加载会话列表
  */
@@ -134,6 +135,7 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
       refreshItem(roomId);
   }
 }
+
 // 刷新某一房间
 async function refreshItem(roomId: number) {
   if (!roomId)
@@ -303,7 +305,11 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 </script>
 
 <template>
-  <div relative>
+  <div
+    class="group absolute z-4 h-full w-0 flex-shrink-0 overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) card-default"
+    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/5' : 'w-0') : ''"
+  >
+    <!-- 搜索群聊 -->
     <div
       class="p-4"
       flex-row-c-c
@@ -333,7 +339,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
         <ListAutoIncre
           :immediate="true"
           :auto-stop="false"
-          loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-0.4em"
+          loading-class="op-0"
           :no-more="pageInfo.isLast"
           :loading="isLoading"
           @load="loadData(dto)"

@@ -88,13 +88,13 @@
     "windows": [
       {
         "label": "main",
-        "height": 820,
         "resizable": true,
         "title": "极物聊天",
-        "width": 1290,
-        "center": true,
+        "width": 1280,
+        "height": 860,
         "minWidth": 375,
-        "minHeight": 788,
+        "minHeight": 780,
+        "center": true,
         "decorations": false,
         "hiddenTitle": true,
         "transparent": true

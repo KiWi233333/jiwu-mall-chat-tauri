@@ -417,9 +417,8 @@ function exitGroup() {
   <div
     v-if="chat.theContact.type === RoomType.GROUP && setting.isOpenGroupMember"
     v-bind="$attrs"
-    class="group w-1/6 flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/4 flex-col p-4)"
+    class="group w-1/6 flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 transition-200 transition-width sm:(relative w-1/5 flex-col p-4)"
   >
-    <!-- 添加 -->
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
       <div hidden sm:flex class="rounded-2rem p-1.5 transition-all border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
         <i class="block rounded-2rem op-80 btn-info sm:(h-5 w-5) border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-3 h-3' : 'i-solar:widget-bold-duotone w-2 h-2'" />

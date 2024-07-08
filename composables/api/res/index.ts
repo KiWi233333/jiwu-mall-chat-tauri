@@ -2,6 +2,7 @@ import type { EpPropMergeType } from "element-plus/lib/utils";
 import * as qiniu from "qiniu-js";
 import type { Config, Extra, UploadProgress } from "qiniu-js/esm/upload/base";
 import type { PartialObserver } from "qiniu-js/esm/utils/observable";
+import type { StringLiteralLike } from "typescript";
 
 /**
  * @param file 上传文件
@@ -133,4 +134,33 @@ export interface OssFile {
   percent: number
   key?: string
   subscribe?: any
+}
+
+/**
+ * 获取版本公告
+ * @param version 版本号
+ * @returns Result<AppVersionInfoVO>
+ */
+export function getVersionNotice(version: string) {
+  return useHttp.get<Result<AppVersionInfoVO>>(`/res/app/version/${version}`);
+}
+
+/**
+ * 返回数据
+ *
+ * AppVersionInfoVO
+ */
+export interface AppVersionInfoVO {
+  /**
+   * 版本号
+   */
+  version: string
+  /**
+   * 公告
+   */
+  notice?: null | string
+  /**
+   * TAURI Updater内容
+   */
+  updaterInfo?: StringLiteralLike
 }

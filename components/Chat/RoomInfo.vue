@@ -20,7 +20,7 @@ const getType = computed(() => {
 </script>
 
 <template>
-  <h4 class="flex-row-bt-c border-(0 b-1 b-1px default) rounded-0 px-4 py-3.6 card-default">
+  <h4 class="flex-row-bt-c border-(0 b-1 b-1px default) rounded-0 px-4 py-3.6 bg-color">
     <div w-full flex items-center gap-3>
       <CardElImage
         loading="lazy"
