@@ -33,15 +33,17 @@ watch(() => chat.isAddNewFriend, (val) => {
   }
 });
 const setting = useSettingStore();
-const [autoAnimateRef, enable] = useAutoAnimate({});
+const [autoAnimateRef, enable] = useAutoAnimate();
 async function reloadData() {
   pageInfo.value.cursor = null;
   pageInfo.value.isLast = false;
   list.value = [];
   await loadData();
-  nextTick(() => {
-    enable(!setting.settingPage.isColseAllTransition);
-  });
+  setTimeout(() => {
+    nextTick(() => {
+      enable(!setting.settingPage.isColseAllTransition);
+    });
+  }, 40);
 }
 
 onMounted(() => {

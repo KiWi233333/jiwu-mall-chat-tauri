@@ -28,6 +28,7 @@ async function loadData() {
 loadData();
 // 会话store
 const chat = useChatStore();
+const [autoAnimateRef, enable] = useAutoAnimate();
 
 watchDebounced(() => chat.delUserId, (val) => {
   if (val) {
@@ -37,14 +38,18 @@ watchDebounced(() => chat.delUserId, (val) => {
 }, {
   debounce: 300,
 });
+onMounted(() => {
+  enable(false);
+});
 </script>
 
 
 <template>
-  <div w-full flex flex-col>
+  <div ref="autoAnimateRef" w-full flex flex-col gap-2>
     <ListAutoIncre
       :no-more="pageInfo.isLast"
       :loading="isLoading"
+      loading-class="op-0"
       @load="loadData"
     >
       <div
@@ -66,6 +71,6 @@ watchDebounced(() => chat.delUserId, (val) => {
   --at-apply:"h-2.6rem card-default  w-2.6rem flex-row-c-c rounded-6px  shadow-sm border-default"
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-[#b8b8b849] ) transition-300"
+  --at-apply:"flex items-center gap-4 p-2 cursor-pointer rounded-6px hover:(bg-[#b8b8b849] ) transition-300"
 }
 </style>

@@ -499,7 +499,7 @@ onMounted(() => {
         round
         size="small"
         :loading="isSend"
-        style="padding: 0.8rem;width: 8rem;"
+        style="padding: 0.8rem;width: 6rem;"
         @click="onSubmit()"
       >
         发送&nbsp;

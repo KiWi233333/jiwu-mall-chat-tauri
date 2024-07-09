@@ -17,7 +17,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
     class="border-0 border-r-1px transition-200 transition-width border-default"
     v-bind="$attrs"
   >
-    <slot name="top ">
+    <slot name="top">
       <div class="card-item mb-4 border-0 border-b-1px pb-4 border-default">
         <div class="hover:bg-transparent">
           <ChatFriendApplySearch
@@ -29,7 +29,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
       </div>
       <div class="card-item">
         <small op-90>新的朋友</small>
-        <div class="item" @click="onNewView">
+        <div class="item mt-4" @click="onNewView">
           <el-badge :value="ws.wsMsgList.applyMsg.length || 0" :hidden="!ws.wsMsgList.applyMsg.length" :max="99">
             <div class="avatar-icon bg-[var(--el-color-warning)]">
               <i i-solar:user-plus-bold bg-light p-3 />
@@ -62,7 +62,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
   --at-apply:"mb-5 flex flex-col"
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) mt-2 rounded-6px transition-300"
+  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) rounded-6px transition-300"
 }
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {
