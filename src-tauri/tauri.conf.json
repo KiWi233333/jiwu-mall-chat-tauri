@@ -81,7 +81,11 @@
     },
     "updater": {
       "active": true,
-      "endpoints": ["https://release.jiwu.kiwi2333.top/application/jiwuchat", "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/latest/download/latest.json"],
+      "endpoints": [
+        "https://api.jiwu.kiwi2333.top/res/app/latest", 
+        "https://release.jiwu.kiwi2333.top/application/jiwuchat", 
+        "https://github.com/KiWi233333/jiwu-mall-chat-tauri/releases/latest/download/latest.json"
+      ],
       "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjREQTA3MkU1MzNEMzkKUldRNVBWTXVCOXIwVjlBVXhBY0J3WEVNZW5ZTWZSYXJNdlM4VmpoaXBrSDFiOU1QYk85RDBkYW0K"
     },
