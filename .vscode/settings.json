@@ -1,8 +1,6 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "github-actions.workflows.pinned.workflows": [
-    ".github/workflows/release.yml"
-  ],
+  "github-actions.workflows.pinned.workflows": [],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },

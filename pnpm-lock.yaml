@@ -46,8 +46,8 @@ importers:
         specifier: 1.1.9
         version: 1.1.9
       '@iconify-json/tabler':
-        specifier: 1.1.116
-        version: 1.1.116
+        specifier: 1.1.117
+        version: 1.1.117
       '@iconify/vue':
         specifier: 4.1.2
         version: 4.1.2(vue@3.4.31(typescript@5.3.2))
@@ -959,8 +959,8 @@ packages:
   '@iconify-json/solar@1.1.9':
     resolution: {integrity: sha512-BcWzZqA02BiQduYizqU/J4v4RNs0MkjZUGpMbejpozH8YQSt3+S/LfV6zfVRonx/2DhXTVSqiLa1abDRAZtojQ==}
 
-  '@iconify-json/tabler@1.1.116':
-    resolution: {integrity: sha512-p+dJ+3L/M2o10REG2lh179Blu5+AA51TFkwuUwY7F+vQsF5Z8DIjyNck3yoBBiCxWqhDhsLzC+p9YO7dWqISmw==}
+  '@iconify-json/tabler@1.1.117':
+    resolution: {integrity: sha512-RiFbco9Qo0X7jlRFlD2sq9kwLZZ5JFOyacGKi9nzdnao9tV/qFFh1930JDXFay/CTs/jr7+RYPsI+wGFg0jfsA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -6629,7 +6629,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/tabler@1.1.116':
+  '@iconify-json/tabler@1.1.117':
     dependencies:
       '@iconify/types': 2.0.0
 

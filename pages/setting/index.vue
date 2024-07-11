@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { getVersion } from "@tauri-apps/api/app";
 import { MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/preview.css";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -56,52 +57,37 @@ const theme = computed({
 
 // 公告
 const showNotice = ref(false);
-const notice = ref<string | null | undefined>(`# 1.0.15 版本说明
-
-这是一个重要的更新，包括以下功能 🧪
-
-## 🔮 新功能
-
-- [x] 添加语音消息、播放等语音消息功能。
-- [x] 添加语音识别转文字功能。
-- [x] 手机号、邮箱验证更换密码。
-
-## 🔨 修复了以下问题
-
-- [x] 优化聊天框的显示效果。
-- [x] 修复好友列表小屏版显示错误。
-- [x] 修复了一些已知问题。
-- [x] 图片预览与esc冲突，暂时优先级低于esc键退出聊天。
-
-## 🧿 其他更新
-
-- [x] 升级了项目依赖。
-
-## 📌 待办
-
-- [ ] 本地缓存聊天、房间记录功能。(待定)
-- [ ] 基本完结
-
-感谢您的支持！
-`);
+const notice = ref<string>("# 暂无内容");
 const colorMode = useColorMode();
 
 // 更新
 onMounted(async () => {
   const v = await getVersion();
-  // // 公告
-  // if (v) {
-  //   getVersionNotice(v).then((res) => {
-  //     if (res.code !== StatusCode.SUCCESS)
-  //       return;
-  //     notice.value = res.data.notice;
-  //   });
-  // }
+  // 公告
+  if (v) {
+    getVersionNotice(v).then((res) => {
+      if (res.code !== StatusCode.SUCCESS)
+        ElMessage.closeAll("error");
+      if (res.data.notice)
+        notice.value = (res.data.notice || "");
+    });
+  }
   // 检查更新
   setting.appUploader.version = v;
   if (!setting.appUploader.isUpdatateLoad)
     setting.checkUpdates(true);
 });
+
+function showVersionNotice(version: string) {
+  const v = version.replaceAll("v", "");
+  getVersionNotice(v).then((res) => {
+    if (res.code !== StatusCode.SUCCESS)
+      ElMessage.closeAll("error");
+    if (res.data.notice)
+      notice.value = (res.data.notice || "");
+    showNotice.value = true;
+  });
+}
 </script>
 
 <template>
@@ -167,7 +153,7 @@ onMounted(async () => {
           <div class="group h-8 flex-row-bt-c">
             关于更新
             <div class="ml-a flex items-center">
-              <span class="mr-4 text-0.8rem tracking-0.1em btn-info" @click="showNotice = !showNotice">v{{ setting.appUploader.version }}版本公告</span>
+              <span v-if="setting.appUploader.version" class="mr-4 text-0.8rem tracking-0.1em btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
               <el-badge
                 :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot
                 :value="+setting.appUploader.isUpload"
@@ -199,10 +185,12 @@ onMounted(async () => {
       <el-dialog
         v-model="showNotice"
         center
-        title="公告 🔔"
-        width="500"
+        width="fit-content"
       >
-        <div class="max-h-60vh min-h-30vh overflow-y-auto">
+        <template #title>
+          <h3>&emsp;版本公告 🔔</h3>
+        </template>
+        <div class="max-h-60vh min-h-30vh w-90vw overflow-y-auto sm:w-500px">
           <MdPreview
             language="zh-CN"
             editor-id="notice-toast"
@@ -212,7 +200,7 @@ onMounted(async () => {
             :code-foldable="false"
             code-theme="a11y"
             class="mt-2 text-1em !bg-transparent"
-            :model-value="notice || '# 暂无内容'"
+            :model-value="notice"
           />
         </div>
         <div class="mt-2 mt-4 flex-row-c-c">
@@ -264,6 +252,12 @@ onMounted(async () => {
 
   .el-input__inner {
     padding-left: 0.5rem;
+  }
+}
+:deep(.notice-toast-preview-wrapper) {
+
+  .task-list-item-checkbox[type="checkbox"] {
+      display: none !important;
   }
 }
 </style>
