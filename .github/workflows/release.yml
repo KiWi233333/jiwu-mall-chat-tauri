@@ -31,7 +31,7 @@ jobs:
               uses: dtolnay/rust-toolchain@stable
  
             - name: Rust cache
-              uses: swatinem/rust-cache@v2
+              uses: swatinem/rust-cache@v2.7.3
               with:
                   workspaces: './src-tauri -> target'
  
@@ -86,14 +86,14 @@ jobs:
         
 
             - name: Create Release
-              uses: tauri-apps/tauri-action@v0.5.6
+              uses: tauri-apps/tauri-action@v0.5.9
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                 TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
               with:
                 tagName: ${{ github.ref_name }}
-                releaseName: 'v__VERSION__'
+                releaseName: '🔥 Release v__VERSION__'
                 # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
                 releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
                 releaseDraft: false
