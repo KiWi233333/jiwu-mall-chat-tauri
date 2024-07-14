@@ -79,10 +79,10 @@ function reload(roomId: number) {
     nextTick(() => {
       // 更新滚动位置
       chat.saveScrollTop && chat.saveScrollTop();
-      isLoading.value = false;
+      chat.scrollBottom(false);
       setTimeout(() => {
+        isLoading.value = false;
         isReload.value = false;
-        chat.scrollBottom(false);
       }, 50);
     });
   });
@@ -307,7 +307,7 @@ defineExpose({
     v-bind="$attrs"
     flex
     flex-col
-    class="msg-list op-0 transition-opacity transition-duration-100"
+    class="msg-list op-0 transition-opacity transition-duration-50"
     :class="{ 'op-100 ': !isReload }"
   >
     <ListDisAutoIncre

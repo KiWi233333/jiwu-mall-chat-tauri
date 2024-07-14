@@ -23,6 +23,14 @@ const getAtText = computed(() => {
   else
     return "";
 });
+
+function onCopyMsg(msg?: string | null) {
+  if (!msg)
+    return;
+  const res = useCopyText(msg);
+  if (res)
+    ElMessage.success("复制成功");
+}
 </script>
 
 <template>
@@ -45,6 +53,9 @@ const getAtText = computed(() => {
         </small>
         <small class="sendTime text-0.7em op-0">
           {{ dayjs(data.message.sendTime).format("YYYY-MM-DD HH:mm:ss") }}
+        </small>
+        <small class="sendTime text-0.7em op-0 btn-info" @click="onCopyMsg(data.message.content)">
+          复制
         </small>
       </p>
       <!-- 内容 -->

@@ -153,7 +153,7 @@ function showVersionNotice(version: string) {
           <div class="group h-8 flex-row-bt-c">
             关于更新
             <div class="ml-a flex items-center">
-              <span v-if="setting.appUploader.version" class="mr-4 text-0.8rem tracking-0.1em btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
+              <span v-if="setting.appUploader.version" class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
               <el-badge
                 :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot
                 :value="+setting.appUploader.isUpload"
