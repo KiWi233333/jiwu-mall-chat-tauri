@@ -14,7 +14,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # 选择编译平台
+              # 选择编译平台
               platform: [macos-latest, windows-latest]
         runs-on: ${{ matrix.platform }}
         steps:
@@ -83,7 +83,6 @@ jobs:
             #     fi
                 
             #     echo "::set-output name=release_body::$RELEASE_BODY"
-        
 
             - name: Create Release
               uses: tauri-apps/tauri-action@v0.5.9
@@ -95,6 +94,6 @@ jobs:
                 tagName: ${{ github.ref_name }}
                 releaseName: '🔥 Release v__VERSION__'
                 # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-                releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
+                releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md) 有版本更新了"
                 releaseDraft: false
                 prerelease: false
