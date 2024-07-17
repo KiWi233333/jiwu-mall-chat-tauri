@@ -55,8 +55,7 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico",
-        "icons/icon.png",
-        "icons/Square284x284Logo.png"
+        "icons/icon.png"
       ],
       "identifier": "Kiwi2333",
       "longDescription": "",
@@ -76,7 +75,7 @@
         "nsis": {
           "license": "./LICENSE/LICENSE.txt",
           "installMode": "both",
-          "installerIcon": "./icons/StoreLogo.png"
+          "installerIcon": "./icons/icon.png"
         },
         "wix": {
           "language": "zh-CN",
