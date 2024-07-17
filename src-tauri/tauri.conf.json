@@ -76,7 +76,7 @@
         "nsis": {
           "license": "./LICENSE/LICENSE.txt",
           "installMode": "both",
-          "installerIcon": "./icons/128x128.png"
+          "installerIcon": "./icons/StoreLogo.png"
         },
         "wix": {
           "language": "zh-CN",
