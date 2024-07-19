@@ -9,6 +9,7 @@ import {
   transformerVariantGroup,
 } from "unocss";
 
+// @unocss-include
 export default defineConfig({
   shortcuts: [
     ["v-card", "bg-[#ffffff93] dark:bg-dark-5 rounded-1.5"],
@@ -45,22 +46,22 @@ export default defineConfig({
     [/^el-bg-(\w*)$/, ([_, color]) => ({ "background-color": `var(--el-color-${color})` })],
     // 文字按钮
     [/^btn-(\w*)$/, ([_, color]) => ({
-      "--at-apply": `transition-300 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})] `,
+      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
     })],
     [/^btn-(\w*)-text$/, ([_, color]) => ({
-      "--at-apply": `transition-300 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})] `,
+      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
     })],
     // 文字背景按钮
     [/^btn-(\w*)-bg$/, ([_, color]) => ({
-      "--at-apply": `transition-300 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-${color})]) `,
+      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-${color})]) `,
     })],
     // 文字按钮
     [/^btn-(\w*)-plain$/, ([_, color]) => ({
-      "--at-apply": `transition-300 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})] `,
+      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
     })],
     // 文字按钮组
     [/^group-btn-(\w*)$/, ([_, color]) => ({
-      "--at-apply": `transition-300 cursor-pointer rounded-4px group-hover:text-[var(--el-color-${color})] `,
+      "--at-apply": `transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-${color})]`,
     })],
   ],
   theme: {

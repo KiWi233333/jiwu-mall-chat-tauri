@@ -65,9 +65,6 @@ export default defineNuxtConfig({
     // https://nuxt.com.cn/docs/guide/going-further/experimental-features#inlinerouterules
     inlineRouteRules: true,
     payloadExtraction: false,
-    inlineSSRStyles: false,
-    selectiveClient: true, // 3.9 交互式岛屿
-    componentIslands: "local+remote", // false 或 'local+remote' 道路 静态岛屿
     renderJsonPayloads: true, //
     emitRouteChunkError: false, // https://nuxt.com.cn/docs/getting-started/error-handling#js-chunk-%E9%94%99%E8%AF%AF
     viewTransition: true, // 支持View Transition API Chorme111 https://blog.csdn.net/weixin_42553583/article/details/130474259

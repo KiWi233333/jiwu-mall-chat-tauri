@@ -125,7 +125,7 @@ function resetPlaySounder() {
         </p>
       </slot>
       <!-- 回复 -->
-      <small v-if="body?.reply" class="max-w-50vw w-fit truncate truncate px-2 text-0.75em op-80 btn-primary sm:max-w-30em border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
+      <small v-if="body?.reply" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 btn-primary sm:max-w-30em border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
         回复：{{ `${body.reply.nickName}:${body.reply?.body || ''}` }}
       </small>
     </div>

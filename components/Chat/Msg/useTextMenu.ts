@@ -31,9 +31,8 @@ export function onContextMenu(e: MouseEvent, item: ChatMessageVO, callList: MsgM
         //   },
         // });
         const res = await refundChatMessage(item.message.roomId, item.message.id, user.getToken);
-        if (res.code === StatusCode.SUCCESS) {
+        if (res.code === StatusCode.SUCCESS)
           callList?.refundMsgCall && callList?.refundMsgCall();
-        }
       },
     },
     ];
