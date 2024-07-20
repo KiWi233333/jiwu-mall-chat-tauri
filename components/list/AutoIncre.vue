@@ -22,11 +22,6 @@ const emit = defineEmits(["load"]);
 // 停止加载
 const loadMoreRef = ref();
 const isSee = ref(props.immediate);
-// 首次执行
-onMounted(() => {
-  if (props.immediate)
-    emit("load");
-});
 // 定时器
 let timer: any = null;
 const showLoad = computed(() => props.loading);
@@ -58,10 +53,8 @@ function callBack() {
   }
 }
 
-onMounted(() => {
-  if (props.immediate)
-    emit("load");
-});
+if (props.immediate)
+  emit("load");
 onUnmounted(() => {
   clearTimeout(timer);
   stop();
