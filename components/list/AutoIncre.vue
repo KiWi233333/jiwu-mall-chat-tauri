@@ -33,7 +33,6 @@ const { stop, isSupported } = useIntersectionObserver(
     callBack();
   },
 );
-
 // 监听
 watch(isSee, (val) => {
   if (!val)
