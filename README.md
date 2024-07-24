@@ -6,8 +6,30 @@
  </h1>
  <h2 align=center style="font-size: 22px;">极物聊天 Tauri APP</h2>
 
-语言 : 简体中文 | [English](./README.en.md)
+<div>
+      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
+        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-项目地址-blueviolet.svg?style=plasticr">
+      </a>
+      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
+        <img class="disabled-img-view" alt="License"
+          src="https://img.shields.io/github/stars/Kiwi233333/jiwu-mall-chat-tauri.svg?style=social">
+      </a>
+    </div>
+    <div >
+      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/commits" target="_blank">
+        <img class="disabled-img-view" alt="Commit"
+          src="https://img.shields.io/github/commit-activity/m/Kiwi233333/jiwu-mall-chat-tauri">
+      </a>
+      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/issues" target="_blank">
+        <img class="disabled-img-view" alt="Issues" src="https://img.shields.io/github/issues/Kiwi233333/jiwu-mall-chat-tauri">
+      </a>
+      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/master/LICENSE" target="_blank">
+        <img class="disabled-img-view" alt="License: Apache-2.0"
+          src="https://img.shields.io/badge/License-Apache--2.0-blue.svg">
+      </a>
+    </div>
 
+语言 : 简体中文 | [English](./README.en.md)
 </div>
 
 ### 介绍
