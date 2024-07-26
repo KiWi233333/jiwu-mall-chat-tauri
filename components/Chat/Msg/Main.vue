@@ -116,7 +116,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
       {
         label: "回复",
         icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
-        hidden: isSelf,
+        // hidden: isSelf,
         onClick: () => {
           chat.setReplyMsg(item);
         },

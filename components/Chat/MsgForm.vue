@@ -103,7 +103,7 @@ async function startChating(e: KeyboardEvent) {
   }
 }
 
-
+const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status !== "success")?.length);
 /**
  * 粘贴图片上传
  * @param e 事件对象
@@ -119,7 +119,12 @@ async function onPaste(e: ClipboardEvent) {
 
   if (!file || !inputOssFileUploadRef.value)
     return;
-  const url = await inputOssFileUploadRef.value?.onUpload({
+  if (isUploadImg.value) {
+    ElMessage.warning("图片正在上传中，请稍后再试！");
+    return;
+  }
+  inputOssFileUploadRef.value.resetInput?.();
+  await inputOssFileUploadRef.value?.onUpload({
     id: URL.createObjectURL(file),
     key: undefined,
     status: "",
@@ -141,6 +146,12 @@ async function onSubmit() {
     if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
       return ElMessage.error(!form.value.content ? "消息内容不能为空！" : "消息内容不能超过500字！");
 
+    // 图片
+    if (form.value.msgType === MessageType.IMG && isUploadImg.value) {
+      ElMessage.warning("图片正在上传中，请稍后再试！");
+      return;
+    }
+    // 开始提交
     isSend.value = true;
     // 二次处理
     if (form.value.msgType === MessageType.SOUND) {
@@ -150,10 +161,10 @@ async function onSubmit() {
         form.value.body.second = second.value;
         submit();
       });
+      return;
     }
-    else {
-      submit();
-    }
+    // 普通消息
+    submit();
   });
 }
 
@@ -498,7 +509,7 @@ onMounted(() => {
         type="primary"
         round
         size="small"
-        :loading="isSend"
+        :loading="isSend || (form.msgType === MessageType.IMG && isUploadImg)"
         style="padding: 0.8rem;width: 6rem;"
         @click="onSubmit()"
       >

@@ -8,7 +8,6 @@ const props = defineProps<{
   index: number
 }>();
 const { data } = toRefs(props);
-const user = useUserStore();
 // 具体
 const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
 </script>
@@ -31,7 +30,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
         :preview-src-list="[BaseUrlImg + body?.url]"
       />
       <!-- 内容 -->
-      <p class="msg-popper">
+      <p v-if="data.message?.content?.trim()" class="msg-popper">
         {{ data.message.content }}
       </p>
     </template>

@@ -5,6 +5,7 @@ import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 export async function useWsInit() {
 // 1、聊天模块
   const ws = useWs();
+  const user = useUserStore();
   // 通知消息类型  WsMsgBodyType
   const noticeType = [
     WsMsgBodyType.MESSAGE, // 普通消息
@@ -34,7 +35,7 @@ export async function useWsInit() {
             if (chat.theContact.roomId === body.message.roomId)
               chat.setReadList(chat.theContact.roomId);
           }
-          else {
+          else if (body.fromUser.userId !== user.userInfo.id) {
             sendNotification({
               icon: BaseUrlImg + body.fromUser.avatar,
               title: body.fromUser.nickName,
@@ -54,7 +55,6 @@ export async function useWsInit() {
         console.log(e.data.data);
     });
   }
-  const user = useUserStore();
   // 自动重连
   watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
     if (val[0] !== WsStatusEnum.OPEN && val[1])
