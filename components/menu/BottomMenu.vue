@@ -68,24 +68,24 @@ const menuList = [
   },
 ];
 
-// const contactShowBtnRef = ref();
-// const isStart = ref(false);
-// onMounted(() => {
-//   if (contactShowBtnRef.value) {
-//     // 设置按钮位置
-//     contactShowBtnRef.value.style.left = `${setting.contactBtnPosition.x}px`;
-//     contactShowBtnRef.value.style.top = `${setting.contactBtnPosition.y}px`;
-//     moveDom(contactShowBtnRef.value, {
-//       startCallback: () => {
-//         isStart.value = true;
-//       },
-//       endCalllback: (x, y) => {
-//         setting.contactBtnPosition = { x, y };
-//         isStart.value = false;
-//       },
-//     });
-//   }
-// });
+const contactShowBtnRef = ref();
+const isStart = ref(false);
+onMounted(() => {
+  if (contactShowBtnRef.value) {
+    // 设置按钮位置
+    contactShowBtnRef.value.style.left = `${setting.contactBtnPosition.x}px`;
+    contactShowBtnRef.value.style.top = `${setting.contactBtnPosition.y}px`;
+    moveDom(contactShowBtnRef.value, {
+      startCallback: () => {
+        isStart.value = true;
+      },
+      endCalllback: (x, y) => {
+        setting.contactBtnPosition = { x, y };
+        isStart.value = false;
+      },
+    });
+  }
+});
 const activeMenu = computed({
   get: () => route.path,
   set: (val) => {
@@ -96,7 +96,7 @@ const activeMenu = computed({
 
 <template>
   <div>
-    <!-- <span
+    <span
       ref="contactShowBtnRef"
       class="fixed bottom-30 left-2 z-999 h-3rem w-3rem flex-row-c-c rounded-1/2 shadow-lg el-bg-primary hover:shadow-[var(--el-color-primary)]"
     >
@@ -106,7 +106,7 @@ const activeMenu = computed({
           setting.isOpenContact = !setting.isOpenContact
         }"
       />
-    </span> -->
+    </span>
     <div
       class="relative z-998 grid grid-cols-6 border-0 border-t-1px px-4 py-4 shadow-md border-default bg-color"
     >

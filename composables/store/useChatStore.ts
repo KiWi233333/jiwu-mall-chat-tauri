@@ -1,7 +1,7 @@
 /* eslint-disable @stylistic/js/spaced-comment */
 import { acceptHMRUpdate, defineStore } from "pinia";
 import type { ChatContactVO } from "../api/chat/contact";
-import type { ChatContactPageDTO } from "~/components/Chat/ContactTabs.vue";
+import type { ChatContactPageDTO } from "~/components/Chat/ContactList.vue";
 
 enum FriendOptType {
   Empty = -1,
@@ -26,6 +26,7 @@ export const useChatStore = defineStore(
     /******************************* 会话 *********************************/
     const isOpenContact = ref(true);
     const contactList = ref<ChatContactVO[]>([]);
+    const contactIdsSet = computed(() => new Set(contactList.value.map(p => p.roomId)));
     const isChatScroll = ref<boolean>(false);
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
@@ -170,6 +171,7 @@ export const useChatStore = defineStore(
     return {
       // state
       contactList,
+      contactIdsSet,
       theContact,
       replyMsg,
       atUserList,

@@ -24,10 +24,10 @@ const getContactList = computed(() => {
   if (searchKeyWords.value)
     return chat.contactList.sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
   else
-    return chat.contactList.sort((a, b) => b.activeTime - a.activeTime);
+    return chat.contactList.filter((p: ChatContactVO) => chat.contactIdsSet.has(p.roomId)).sort((a, b) => b.activeTime - a.activeTime);
 });
 
-interface ChatContactPageDTO {
+export interface ChatContactPageDTO {
   type: RoomType
 }
 
@@ -306,7 +306,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex-shrink-0 overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) card-default"
+    class="group absolute z-4 h-full w-0 flex-shrink-0 overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
     :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/5' : 'w-0') : ''"
   >
     <!-- 搜索群聊 -->
