@@ -73,7 +73,7 @@ const menuList = [
 
 <template>
   <div
-    class="menu relative z-998 bg-light bg-opacity-80 transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
+    class="menu relative z-998 bg-light transition-300 transition-width md:block dark:bg-[#121212] md:shadow-none"
   >
     <el-menu class="sm:w-12rem" :router="true" :default-active="route.path" :collapse="setting.isUserFold">
       <!-- 顶部 -->
