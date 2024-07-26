@@ -39,30 +39,49 @@ export default defineConfig({
     ["absolute-center", "absolute left-1/2 -translate-x-1/2"],
     ["absolute-center-center", "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"],
     ["absolute-center-x", "absolute left-1/2 -translate-x-1/2"],
+
+    // element风格按钮
+    ["btn-info", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-info)]"],
+    ["btn-success", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-success)]"],
+    ["btn-primary", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)]"],
+    ["btn-danger", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-danger)]"],
+    ["btn-warning", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-warning)]"],
+    ["btn-info-text", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-info)]"],
+    ["btn-success-text", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-success)]"],
+    ["btn-primary-text", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)]"],
+    ["btn-danger-text", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-danger)]"],
+    ["btn-warning-text", "transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-warning)]"],
+    ["btn-info-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-info)])"],
+    ["btn-success-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-success)])"],
+    ["btn-primary-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-primary)])"],
+    ["btn-danger-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-danger)])"],
+    ["btn-warning-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-warning)])"],
+    ["group-btn-info", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-info)]"],
+    ["group-btn-success", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-success)]"],
+    ["group-btn-primary", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-primary)]"],
+    ["group-btn-danger", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-danger)]"],
+    ["group-btn-warning", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-warning)]"],
   ],
   rules: [
+    // color: info success primary danger warning
     // 文字
     [/^el-color-(\w*)$/, ([_, color]) => ({ color: `var(--el-color-${color})` })],
     [/^el-bg-(\w*)$/, ([_, color]) => ({ "background-color": `var(--el-color-${color})` })],
     // 文字按钮
-    [/^btn-(\w*)$/, ([_, color]) => ({
-      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
-    })],
-    [/^btn-(\w*)-text$/, ([_, color]) => ({
-      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
-    })],
-    // 文字背景按钮
-    [/^btn-(\w*)-bg$/, ([_, color]) => ({
-      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-${color})]) `,
-    })],
-    // 文字按钮
-    [/^btn-(\w*)-plain$/, ([_, color]) => ({
-      "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
-    })],
-    // 文字按钮组
-    [/^group-btn-(\w*)$/, ([_, color]) => ({
-      "--at-apply": `transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-${color})]`,
-    })],
+    // [/^btn-(\w*)$/, ([_, color]) => ({
+    //   "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
+    // })],
+    // [/^btn-(\w*)-text$/, ([_, color]) => ({
+    //   "--at-apply": `transition-200 cursor-pointer rounded-4px hover:text-[var(--el-color-${color})]`,
+    // })],
+    // // 文字背景按钮
+    // [/^btn-(\w*)-bg$/, ([_, color]) => ({
+    //   "--at-apply": `transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-${color})]) `,
+    // })],
+    // // 文字按钮组
+    // [/^group-btn-(\w*)$/, ([_, color]) => ({
+    //   "--at-apply": `transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-${color})]`,
+    // })],
   ],
   theme: {
     // ...
