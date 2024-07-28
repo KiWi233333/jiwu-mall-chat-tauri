@@ -52,15 +52,14 @@ export async function useSettingInit() {
   // 6、优化动画性能
   window.addEventListener("resize", () => {
     if (timer.value)
-      clearTimeout(timer.value);// 清除之前的定时器，避免重复触发
+      clearTimeout(timer.value); // 清除之前的定时器，避免重复触发
     const app = document.documentElement;
     if (app)
       app.classList.add("stop-transition");
     timer.value = setTimeout(() => {
-      const app = document.documentElement;
       if (app)
         app.classList.remove("stop-transition");
-    }, 1000);
+    }, 130);
   });
 }
 
