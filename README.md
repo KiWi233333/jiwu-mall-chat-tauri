@@ -2,7 +2,7 @@
  <h1 align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
 <img src="./.doc/jiwuchat-tauri.png" width = "120" height = "120" alt="图片名称" align=center />
  </h1>
- <h2 align=center style="font-size: 22px;">极物聊天 Tauri APP</h2>
+ <h2 align=center style="font-size: 24px;padding-bottom: 20px;">极物聊天 Tauri APP</h2>
 
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
