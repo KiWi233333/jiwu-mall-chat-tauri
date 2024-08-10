@@ -39,6 +39,13 @@
 ```txt
 基于Nuxt3 + Tauri + element-plus 基本框架
 ```
+### 趋势 
+
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date" />
+ </picture>
 
 ### 项目截图
 
@@ -128,8 +135,8 @@ pnpm config set registry https://registry.npmjs.org
 
 | 类别         | 技术/组件          | 版本号       |
 | ------------- | ------------------ | ------------ |
-| 框架         | Nuxt3              | 3.12.2       |
-|              | Tauri              | 1.5.6        |
+| 框架         | Nuxt3              | ^3.12.2+       |
+|              | Tauri              | ^1.5.6        |
 | UI 组件库     | Element Plus       | 2.7.6        |
 | 状态管理     | Pinia              | 2.1.7        |
 | 工具库       | Vueuse             | 10.11.0      |
