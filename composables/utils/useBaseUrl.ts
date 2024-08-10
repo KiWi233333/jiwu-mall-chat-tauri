@@ -1,4 +1,4 @@
-const isDev = import.meta.env.DEV;
+const isDev = !import.meta.env.DEV;
 
 // http请求
 const BASE_URL = isDev ? "http://localhost:9090/" : "https://api.jiwu.kiwi2333.top/";

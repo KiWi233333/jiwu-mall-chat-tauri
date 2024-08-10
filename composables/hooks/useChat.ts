@@ -41,7 +41,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
     speechRecognition.recognition?.addEventListener("result", (e) => {
       for (let i = 0; i < e.results.length; i++) {
         const result = e.results?.[i];
-        if (result && result.isFinal && result?.[0])
+        if (result && result?.[0])
           audioTransfromTextList.value[i] = result?.[0].transcript;
       }
     });

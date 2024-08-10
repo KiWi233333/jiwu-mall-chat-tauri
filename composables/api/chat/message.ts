@@ -131,6 +131,7 @@ export interface UrlInfoDTO {
 export interface SoundBodyMsgVO<T = object> {
   url: string
   second: number
+  translation?: string // 转文本
   reply: {
     id: number
     uid: string

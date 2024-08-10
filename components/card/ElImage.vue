@@ -22,7 +22,7 @@ const setting = useSettingStore();
     <!-- 错误 -->
     <template #error>
       <div class="h-full w-full flex-row-c-c animate-fade-in">
-        <i class="icon" i-solar:danger-triangle-linear :class="errorClass" opacity-50 />
+        <i class="icon i-solar-gallery-remove-bold-duotone" :class="errorClass" opacity-50 />
       </div>
     </template>
   </el-image>

@@ -42,6 +42,7 @@ const isTheGroupPermission = computed(() => {
 
 
 // 右键菜单
+const showTranslation = ref(false);
 const colorMode = useColorMode();
 const route = useRoute();
 const disabledRightClickList = [
@@ -71,6 +72,16 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
     y: e.y,
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
+      {
+        label: showTranslation.value ? "取消转文字" : "转文字",
+        // @ts-expect-error
+        hidden: data.message?.type !== MessageType.SOUND || !data.message.body?.translation,
+        customClass: "group",
+        icon: "i-solar-text-broken group-btn-info",
+        onClick: () => {
+          showTranslation.value = !showTranslation.value;
+        },
+      },
       {
         label: "撤回",
         hidden: !isSelf,
@@ -187,6 +198,7 @@ const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?
   </p>
   <component
     :is="map[data.message?.type || MessageType.TEXT]"
+    :show-translation="showTranslation"
     :last-msg="lastMsg"
     :index="index"
     :data="data"
