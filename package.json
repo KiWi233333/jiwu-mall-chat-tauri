@@ -70,10 +70,8 @@
     }
   },
   "lint-staged": {
-    "*.{ts,vue,js,css}": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
+    "*.{ts,vue,js,sass,css}": [
+      "eslint --fix"
     ]
   }
 }
