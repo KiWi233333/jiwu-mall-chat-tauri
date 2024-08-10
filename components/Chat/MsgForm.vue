@@ -144,7 +144,7 @@ async function onSubmit() {
     if (!action)
       return;
     if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
-      return ElMessage.error(!form.value.content ? "消息内容不能为空！" : "消息内容不能超过500字！");
+      return;
 
     // 图片
     if (form.value.msgType === MessageType.IMG && isUploadImg.value) {

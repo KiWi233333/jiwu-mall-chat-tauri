@@ -5,7 +5,6 @@ import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from 
 const props = defineProps<{ data: ChatContactVO }>();
 const ws = useWs();
 const chat = useChatStore();
-const setting = useSettingStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
 
@@ -285,7 +284,7 @@ function exitGroup() {
       <span>
         群成员
       </span>
-      <i class="block h-1.8em w-1.8em rounded-2rem btn-info sm:(h-1.6em w-1.6em) border-default" i-carbon:add-large @click="onAdd" />
+      <i class="block h-1.8em w-1.8em rounded-2rem sm:(h-1.6em w-1.6em) btn-info border-default" i-carbon:add-large @click="onAdd" />
     </div>
     <el-scrollbar
       height="45vh"
