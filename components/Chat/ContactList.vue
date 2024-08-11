@@ -64,10 +64,8 @@ async function loadData(dto?: ChatContactPageDTO) {
   isLoading.value = false;
   return data.list;
 }
-onBeforeMount(() => {
-  // 初始化
-  reload();
-});
+// 初始化
+reload();
 const setting = useSettingStore();
 const nowDate = Date.now();
 function getTime(time: string | number) {

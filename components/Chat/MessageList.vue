@@ -256,9 +256,13 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
   }
 }
 
+const UpdateContactList: { [key: number]: boolean } = {};
 // 更新会话
 function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
   let isExist = false;
+  if (!UpdateContactList[roomId])
+    return;
+  UpdateContactList[roomId] = true;
   for (let i = 0; i < chat.contactList.length; i++) {
     const p = chat.contactList[i];
     if (p && p.roomId === roomId) {
@@ -278,12 +282,16 @@ function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = fals
         const index = chat.contactList.findIndex(ctx => ctx.roomId === roomId);
         if (index !== -1) { // 更新
           chat.contactList[index] = res.data;
-          return;
         }
-        chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
+        else {
+          chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
+        }
         callBack && callBack(res.data as ChatContactVO);
       }
-    }).catch(() => {});
+    }).catch(() => {})
+      .finally(() => {
+        delete UpdateContactList[roomId];
+      });
   }
 }
 

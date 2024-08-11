@@ -38,6 +38,13 @@ function reload() {
 const theUser = ref<ChatMemberVO>();
 const isShowApply = ref();
 
+onUnmounted(() => {
+  chat.roomGroupPageInfo = {
+    size: 20,
+    cursor: null,
+    isLast: false,
+  };
+});
 
 // 权限
 const getTheRoleType = computed(() => {
@@ -322,7 +329,7 @@ function exitGroup() {
         </div>
       </ListAutoIncre>
     </el-scrollbar>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" round type="danger" plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
