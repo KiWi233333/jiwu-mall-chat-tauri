@@ -13,7 +13,8 @@ export const useSettingStore = defineStore(
       isNotificationSound: true,
     });
     const appUploader = ref({
-      isUpdatateLoad: false,
+      isCheckUpdatateLoad: false,
+      isUpdating: false,
       isUpload: false,
       version: "",
       newVersion: "",
@@ -66,11 +67,11 @@ export const useSettingStore = defineStore(
      * @returns 检查师傅更新
      */
     async function checkUpdates(check = false) {
-      appUploader.value.isUpdatateLoad = true;
+      appUploader.value.isCheckUpdatateLoad = true;
       try {
         const update = await checkUpdate();
         appUploader.value.isUpload = !!update.shouldUpdate;
-        appUploader.value.isUpdatateLoad = false;
+        appUploader.value.isCheckUpdatateLoad = false;
         if (appUploader.value.isUpload && update.manifest?.version) {
           // 忽略
           if (check && appUploader.value.ignoreVersion.includes(update.manifest?.version))
@@ -82,7 +83,8 @@ export const useSettingStore = defineStore(
             center: true,
             callback: async (action: Action) => {
               if (action === "confirm") {
-                ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
+                appUploader.value.isUpdating = true;
+                // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
                 installUpdate().then(async (val) => {
                   console.log(val);
                   await relaunch();
@@ -90,21 +92,22 @@ export const useSettingStore = defineStore(
                   console.error(error);
                   ElMessage.error("更新失败！请检查网络或稍后再试！");
                 }).finally(() => {
-                  appUploader.value.isUpdatateLoad = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
+                  appUploader.value.isUpdating = false;
                   ElLoading.service().close();
                 });
                 onUpdaterEvent(({ error, status }) => {
                   console.log("Updater event", error, status);
-                  appUploader.value.isUpdatateLoad = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
                 }).then((unlisten) => {
                 // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
                   unlisten();
                 }).catch((error) => {
                   console.error(error);
-                  appUploader.value.isUpdatateLoad = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
                   ElMessage.error("更新失败！请检查网络或稍后再试！");
                 }).finally(() => {
-                  appUploader.value.isUpdatateLoad = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
                 });
               }
               else if (action === "cancel") {
@@ -123,7 +126,7 @@ export const useSettingStore = defineStore(
         }
       }
       catch (error) {
-        appUploader.value.isUpdatateLoad = false;
+        appUploader.value.isCheckUpdatateLoad = false;
       }
     }
     return {

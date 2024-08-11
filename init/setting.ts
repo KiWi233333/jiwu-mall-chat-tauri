@@ -18,7 +18,7 @@ export async function useSettingInit() {
     keyToggleTheme(e);
   });
   // 2、获取版本更新
-  setting.appUploader.isUpdatateLoad = false;
+  setting.appUploader.isCheckUpdatateLoad = false;
   setting.appUploader.isUpload = false;
   setting.appUploader.version = "";
   setting.appUploader.newVersion = "";
@@ -96,6 +96,10 @@ export function useSettingUnmounted() {
   window.removeEventListener("resize", () => {});
   window.removeEventListener("contextmenu", () => {});
   window.removeEventListener("keydown", () => {});
+  const setting = useSettingStore();
+  setting.appUploader.isCheckUpdatateLoad = false;
+  setting.appUploader.isUpdating = false;
+  setting.appUploader.isUpload = false;
 }
 
 

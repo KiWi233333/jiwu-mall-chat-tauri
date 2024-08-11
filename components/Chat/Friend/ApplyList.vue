@@ -11,8 +11,10 @@ const pageInfo = ref({
 const list = ref<ChatUserFriendApplyVO[]>([]);
 
 const [autoAnimateRef, enable] = useAutoAnimate({});
-onMounted(() => {
+onMounted(async () => {
   const setting = useSettingStore();
+  enable(false);
+  await loadData();
   enable(!setting.settingPage.isColseAllTransition);
 });
 // 加载数据
@@ -30,15 +32,6 @@ async function loadData() {
   isLoading.value = false;
 }
 
-
-loadData();
-// const nowDate = Date.now();
-// function getTime(time: string) {
-//   return (nowDate - +time) > 24 * 3600
-//     ? useDateFormat(time, "YYYY-MM-DD").value.toString()
-//     : useDateFormat(time, "HH:mm:ss").value.toString()
-//   ;
-// }
 
 // 会话store
 const chat = useChatStore();

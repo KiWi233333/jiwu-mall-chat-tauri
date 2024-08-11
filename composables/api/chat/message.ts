@@ -228,7 +228,7 @@ export interface ChatMessageDTO<T = MessageType> {
   /**
    * 文本消息（可选）
    */
-  content?: null | string
+  content?: string
   /**
    * 消息类型
    */

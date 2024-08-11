@@ -275,6 +275,11 @@ function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = fals
     // 重新拉取会话
     getChatContactInfo(roomId, user.getToken)?.then((res) => {
       if (res.code === StatusCode.SUCCESS) {
+        const index = chat.contactList.findIndex(ctx => ctx.roomId === roomId);
+        if (index !== -1) { // 更新
+          chat.contactList[index] = res.data;
+          return;
+        }
         chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
         callBack && callBack(res.data as ChatContactVO);
       }

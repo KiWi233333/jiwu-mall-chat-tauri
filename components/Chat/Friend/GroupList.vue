@@ -25,7 +25,6 @@ async function loadData() {
   pageInfo.value.cursor = data.cursor;
   isLoading.value = false;
 }
-loadData();
 // 会话store
 const chat = useChatStore();
 const [autoAnimateRef, enable] = useAutoAnimate();
@@ -38,8 +37,11 @@ watchDebounced(() => chat.delUserId, (val) => {
 }, {
   debounce: 300,
 });
-onMounted(() => {
+const setting = useSettingStore();
+onMounted(async () => {
   enable(false);
+  await loadData();
+  enable(!setting.settingPage.isColseAllTransition);
 });
 </script>
 
@@ -54,7 +56,7 @@ onMounted(() => {
     >
       <div
         v-for="p in list"
-        :key="p.id" class="item" data-fade
+        :key="p.id" class="item"
         @click="chat.setTheFriendOpt(FriendOptType.GroupFriend, p)"
       >
         <div class="avatar-icon">

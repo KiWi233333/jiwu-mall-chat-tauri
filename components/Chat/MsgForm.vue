@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { useRecording } from "~/composables/hooks/useChat";
+import type { AtChatMemberOption } from "~/composables/store/useChatStore";
 
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
@@ -20,7 +21,6 @@ const {
 
   toggle: toggleChating, // 开始/停止录音
   reset: resetAudio,
-  onEndChat,
   handlePlayAudio, // 播放录音
 } = useRecording();
 
@@ -32,14 +32,13 @@ const form = ref<ChatMessageDTO>({
   body: {
   },
 });
-const inputRef = ref(); // 输入框
+const inputAllRef = ref(); // 输入框
 const formRef = ref();
 const isSend = ref(false);
 const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
 // AT @相关
-const atSelectRef = ref();
-const userList = ref<ChatMemberVO[]>([]);
+const userOption = ref<AtChatMemberOption[]>([]);
 // 未读数
 const theRoomUnReadLength = computed(() => {
   return chat.theContact.unReadLength;
@@ -124,6 +123,7 @@ async function onPaste(e: ClipboardEvent) {
     return;
   }
   inputOssFileUploadRef.value.resetInput?.();
+  imgList.value = [];
   await inputOssFileUploadRef.value?.onUpload({
     id: URL.createObjectURL(file),
     key: undefined,
@@ -134,12 +134,36 @@ async function onPaste(e: ClipboardEvent) {
   form.value.msgType = MessageType.IMG; // 图片
 }
 
+// 处理@删除
+const atUserListOpt = computed(() => chat.atUserList.map(u => ({
+  label: `${u.nickName}(${u.userId})`,
+  value: u.userId,
+})) || []);
+function checkAtUserWhole(pattern: string, prefix: string) {
+  if (prefix !== "@")
+    return false;
+
+  const atUserListOpt = chat.atUserList.map(u => ({
+    label: `${u.nickName}(${u.userId})`,
+    value: u.userId,
+  }));
+  if (pattern && form.value.content?.endsWith(`${prefix + pattern} `)) {
+    const user = atUserListOpt.find(u => u.label === pattern);
+    if (user)
+      chat.removeAtUid(user.value);
+  }
+  return true;
+}
 
 // 发送消息
 async function onSubmit() {
   if (isSend.value)
     return;
-  form.value.content = form.value.content?.trim().replace(/\n$/g, "");
+  if (atUserListOpt.value) {
+    const atUidList = atUserListOpt.value.map(u => u.value);
+    form.value.body.atUidList = atUidList;
+  }
+
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
       return;
@@ -186,8 +210,8 @@ async function submit() {
 let timer: any = 0;
 watch(() => chat.theContact.roomId, () => {
   resetForm();
-  if (inputRef.value)
-    inputRef.value?.focus(); // 聚焦
+  if (inputAllRef.value?.input)
+    inputAllRef.value?.input?.focus(); // 聚焦
 });
 onUnmounted(() => {
   clearTimeout(timer);
@@ -201,20 +225,22 @@ async function loadUser() {
   if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
     return;
   const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
-  if (data.value && data.value.code === StatusCode.SUCCESS)
-    userList.value = data.value?.data || [];
+  if (data.value && data.value.code === StatusCode.SUCCESS) {
+    userOption.value = (data.value.data || []).map(u => ({
+      ...u,
+      label: u.nickName || "新用户",
+      value: `${u.nickName}(${u.userId})`,
+      disabled: u.userId === user.userInfo.id,
+    }));
+  }
 }
-// @用户消息
-watch(() => chat.atUserList, (val) => {
-  form.value.body.atUidList = val || [];
-}, { deep: true, immediate: true });
 
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
   form.value.body.replyMsgId = val;
   nextTick(() => {
-    if (inputRef.value)
-      inputRef.value?.focus(); // 聚焦
+    if (inputAllRef.value?.input)
+      inputAllRef.value?.input?.focus(); // 聚焦
   });
 });
 
@@ -333,7 +359,7 @@ onMounted(() => {
         v-if="imgList.length > 0"
         class="w-full cursor-pointer"
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;
-        grid-gap:0.2rem;
+        grid-gap:4;
         margin-left: auto;"
       >
         <CardElImage
@@ -357,7 +383,21 @@ onMounted(() => {
           <el-tag effect="dark" class="mr-2">
             回复
           </el-tag><ChatMsgContentCard class="w-4/5 truncate" :data="chat.replyMsg" />
-          <div class="i-solar:close-circle-bold text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" h-2em w-2em @click="chat.setReplyMsg({})" />
+          <div class="i-solar:close-circle-bold h-6 w-6 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
+        </div>
+      </el-form-item>
+      <!-- @ -->
+      <el-form-item
+        v-if="chat.atUserList.length"
+        prop="body.replyMsgId"
+        class="w-full"
+        style="padding: 0.4rem;margin:0;margin-bottom:0.2rem;display: flex;"
+      >
+        <div class="w-full flex animate-[300ms_fade-in] items-center rounded-6px bg-[#ffffff9c] p-2 shadow backdrop-blur-10px border-default dark:bg-dark">
+          <el-tag v-for="(p) in chat.atUserList" :key="p.userId" effect="dark" class="mr-2" closable @close="chat.removeAtUid(p.userId)">
+            @{{ p.nickName }}
+          </el-tag>
+          <!-- <div class="i-solar:close-circle-bold text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" h-2em w-2em  /> -->
         </div>
       </el-form-item>
     </div>
@@ -374,34 +414,6 @@ onMounted(() => {
           />
         </el-tooltip>
         <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-4">
-          <!-- @R艾特 群聊可用 -->
-          <el-form-item
-            v-if="chat.theContact.type === RoomType.GROUP"
-            :disabled="form.msgType !== MessageType.TEXT"
-            style="padding: 0;margin: 0;"
-            prop="body.atUidList"
-            class="at-select w-8rem sm:w-10rem"
-          >
-            <el-select
-              ref="atSelectRef"
-              v-model="chat.atUserList"
-              :disabled="form.msgType !== MessageType.TEXT"
-              :max="20"
-              :max-collapse-tags="1"
-              :clearable="false"
-              ilterable
-              collapse-tags multiple default-first-option :reserve-keyword="true"
-              placeholder="@其他人"
-              @change="(val) => chat.atUserList = val"
-            >
-              <el-option
-                v-for="p in userList"
-                :key="p.userId"
-                :value="p.userId"
-                :label="`@${p.nickName}`"
-              />
-            </el-select>
-          </el-form-item>
           <!-- 图片 -->
           <el-form-item
             style="cursor: pointer; padding: 0;margin: 0;"
@@ -478,23 +490,38 @@ onMounted(() => {
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
       >
-        <el-input
-          ref="inputRef"
+        <el-mention
+          ref="inputAllRef"
           v-model.lazy="form.content"
+          :options="userOption"
+
+          :prefix="['@']"
+          :check-is-whole="checkAtUserWhole"
           :rows="6"
-          show-word-limit
+
+
           :maxlength="500"
           :autosize="false"
           type="textarea"
           resize="none"
           class="input"
-          autofocus
           :class="{
             focused: form.content,
           }"
-          @paste="onPaste"
-          @keydown.enter.prevent="onSubmit"
-        />
+          placement="top"
+          autofocus show-word-limit show-arrow whole
+          :offset="10"
+          @select.self="(val) => chat.atUserList.push(val)"
+          @paste.stop="onPaste"
+          @keydown.enter.stop.prevent="onSubmit"
+        >
+          <template #label="{ item }">
+            <div class="h-full flex items-center pr-2">
+              <CardElImage class="h-6 w-6 rounded-full" :src="BaseUrlImg + item.avatar" />
+              <span class="ml-2">{{ item.label }}</span>
+            </div>
+          </template>
+        </el-mention>
       </el-form-item>
       <!-- 录音 -->
       <p

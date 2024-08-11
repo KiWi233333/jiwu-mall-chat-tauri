@@ -46,12 +46,6 @@ const menuList = [
     icon: "i-solar:ghost-outline",
     activeIcon: "i-solar:ghost-bold",
   },
-  // {
-  //   title: "个人",
-  //   path: "/user",
-  //   icon: "i-solar:user-outline hover:animate-pulse",
-  //   activeIcon: "i-solar:user-bold-duotone hover:animate-pulse",
-  // },
   {
     title: "账号",
     path: "/user/safe",
@@ -86,7 +80,7 @@ const menuList = [
         </NuxtLink>
         <!-- 会话 -->
         <span
-          block sm:hidden class="mx-a my-2 transition-300 btn-primary sm:(ml-a mr-0) hover:scale-120"
+          block sm:hidden class="mx-a my-2 transition-300 sm:(ml-a mr-0) hover:scale-120 btn-primary"
           @click="setting.isOpenContact = !setting.isOpenContact"
         >
           <i class="i-solar:chat-square-bold-duotone" cursor-pointer p-3 />

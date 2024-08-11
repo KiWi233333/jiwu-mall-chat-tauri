@@ -1,7 +1,7 @@
 
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
+import { WsStatusEnum } from "~/composables/types/WsType";
 
 // @unocss-include
 // 右键菜单

@@ -1,6 +1,7 @@
 /* eslint-disable @stylistic/js/spaced-comment */
 import { acceptHMRUpdate, defineStore } from "pinia";
 import type { ChatContactVO } from "../api/chat/contact";
+import type { ChatMemberVO } from "../api/chat/room";
 import type { ChatContactPageDTO } from "~/components/Chat/ContactList.vue";
 
 enum FriendOptType {
@@ -16,6 +17,12 @@ export interface PlaySounder {
   currentSecond?: number
   duration?: number
   audio?: HTMLAudioElement
+}
+
+
+export interface AtChatMemberOption extends ChatMemberVO {
+  label: string
+  value: string
 }
 
 // @unocss-include
@@ -119,16 +126,21 @@ export const useChatStore = defineStore(
 
 
     /******************************* 艾特AT人 *********************************/
-    const atUserList = ref<string[]>([]);
+    const atUserList = ref<Partial<AtChatMemberOption>[]>([]);
     // 设置@AT人
-    function setAtUid(userId: string) {
-      const find = atUserList.value.includes(userId);
+    function setAtUid(user: Partial<AtChatMemberOption> | Partial<ChatMemberVO>) {
+      if (!user.userId)
+        return;
+
+      const find = atUserList.value.find(p => p.userId === user.userId);
       if (!find)
-        atUserList.value.push(userId);
+        atUserList.value.push(user);
     }
     // 移除ai人
-    function removeAtUid(userId: string) {
-      return atUserList.value = atUserList.value.filter(p => p === userId);
+    function removeAtUid(userId?: string) {
+      if (!userId)
+        return;
+      return atUserList.value = atUserList.value.filter(p => p.userId !== userId);
     }
 
     /******************************* 回复消息 *********************************/

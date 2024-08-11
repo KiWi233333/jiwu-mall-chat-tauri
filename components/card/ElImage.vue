@@ -22,7 +22,7 @@ const setting = useSettingStore();
     <!-- 错误 -->
     <template #error>
       <div class="h-full w-full flex-row-c-c animate-fade-in">
-        <i class="icon i-solar-gallery-remove-bold-duotone" :class="errorClass" opacity-50 />
+        <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
     </template>
   </el-image>
@@ -30,6 +30,6 @@ const setting = useSettingStore();
 
 <style scoped lang="scss">
 .icon {
-  -at-apply: "block max-w-2/3 min-h-1rem min-w-1rem"
+  --at-apply: "block max-w-4/5 min-h-5 min-w-5"
 }
 </style>

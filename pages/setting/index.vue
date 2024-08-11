@@ -74,7 +74,7 @@ onMounted(async () => {
   }
   // 检查更新
   setting.appUploader.version = v;
-  if (!setting.appUploader.isUpdatateLoad)
+  if (!setting.appUploader.isCheckUpdatateLoad)
     setting.checkUpdates(true);
 });
 
@@ -159,15 +159,23 @@ function showVersionNotice(version: string) {
                 :value="+setting.appUploader.isUpload"
               >
                 <ElButton
-                  round class="flex-row-c-c cursor-pointer transition-all" type="info" plain
+                  :loading="setting.appUploader.isUpdating"
+                  round class="flex-row-c-c cursor-pointer transition-all"
+                  plain
                   style="height: 2em;padding: 0 0.8em;"
-                  @click="!setting.appUploader.isUpdatateLoad && setting.checkUpdates()"
+                  :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
+                  @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates()"
                 >
-                  <i
-                    i-solar:refresh-outline mr-1 inline-block p-2
-                    :class="setting.appUploader.isUpdatateLoad ? 'animate-spin' : ''"
-                  />
-                  检查更新
+                  <span v-show="!setting.appUploader.isUpdating" flex-row-c-c>
+                    <i
+                      i-solar:refresh-outline mr-1 inline-block p-2
+                      :class="setting.appUploader.isCheckUpdatateLoad ? 'animate-spin' : ''"
+                    />
+                    检查更新
+                  </span>
+                  <span v-show="setting.appUploader.isUpdating" flex-row-c-c>
+                    更新中
+                  </span>
                 </ElButton>
               </el-badge>
             </div>
