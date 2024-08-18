@@ -59,10 +59,10 @@ onMounted(async () => {
           class="mt-6 flex-1 overflow-hidden rounded-2 bg-transparent"
         >
           <el-tab-pane name="security" style="max-height: 100%;height: 100%;" label="账号" lazy>
-            <UserSafeUpdateCards />
+            <UserSafeUpdateCards data-fade />
           </el-tab-pane>
           <el-tab-pane name="account" label="安全管理" lazy>
-            <UserSafeDeviceList />
+            <UserSafeDeviceList data-fade />
           </el-tab-pane>
         </el-tabs>
       </main>

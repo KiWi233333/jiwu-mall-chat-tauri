@@ -10,9 +10,11 @@
   .nickname {
     vertical-align: bottom;
   }
+  .sendTime {
+    transition: none;
+  }
   &:hover {
     .sendTime {
-      transition: opacity 0.2s;
       opacity: 0.6;
     }
   }

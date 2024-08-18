@@ -417,7 +417,7 @@ function exitGroup() {
   >
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
       <div hidden sm:flex class="p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
-        <i class="block rounded-2rem op-80 sm:(h-5 w-5) btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-3 h-3' : 'i-solar:widget-bold-duotone w-2 h-2'" />
+        <i class="block op-80 sm:(h-5 w-5) btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-4 h-4' : 'i-solar:widget-bold-duotone w-2 h-2'" />
       </div>
       <span my-4 sm:my-0>群成员</span>
       <div class="rounded-2rem p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="onAdd">
@@ -469,7 +469,7 @@ function exitGroup() {
         <i i-solar:alt-arrow-down-outline p-2 btn-info />
       </small>
     </el-scrollbar>
-    <div mt-2 hidden w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default>
+    <div class="mt-2 hidden w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em sm:block border-default">
       <div relative mt-3>
         群头像
         <InputOssFileUpload
@@ -519,35 +519,18 @@ function exitGroup() {
           群公告
           <i v-show="isLord && editFormField !== 'notice'" i-solar:pen-2-bold ml-2 p-2 op-0 transition-opacity @click="editFormField = 'notice'" />
         </div>
-        <el-input
+        <textarea
           v-if="theContactClone?.roomGroup?.detail"
           ref="noticeInputRef"
           v-model="theContactClone.roomGroup.detail.notice"
           :disabled="!isLord || editFormField !== 'notice'"
           autofocus
-          class="mt-2 dark:op-70"
-          :rows="5"
-          show-word-limit
+          :rows="8"
           :maxlength="200"
-          :dropzone="false"
+          class="mt-2 border-0 bg-transparent dark:op-70"
           type="textarea"
           style="resize:none;width: 100%;"
           placeholder="未填写"
-          @click.self="() => {
-            if (isLord && editFormField !== 'notice') {
-              editFormField = 'notice'
-            }
-            else if (editFormField !== 'notice'){
-              ElMessageBox({
-                title: '群公告',
-                confirmButtonText: '确定',
-                message: chat.theContact?.roomGroup?.detail?.notice || '未填写',
-                showCancelButton: false,
-                callback() {
-                },
-              })
-            }
-          }"
           @focus="editFormField = 'notice'"
           @blur="submitUpdateRoom('notice', theContactClone?.roomGroup?.detail?.notice)"
         />

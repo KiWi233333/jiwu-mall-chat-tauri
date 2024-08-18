@@ -73,7 +73,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
       {
-        label: showTranslation.value ? "取消转文字" : "转文字",
+        label: showTranslation.value ? "折叠转文字" : "转文字",
         // @ts-expect-error
         hidden: data.message?.type !== MessageType.SOUND || !data.message.body?.translation,
         customClass: "group",

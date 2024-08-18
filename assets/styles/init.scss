@@ -38,11 +38,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 ::selection {
-  background-color: #5324ff;
+  background-color: var(--el-color-primary);
   color: #f0f0f0;
 }
 .dark ::selection {
-  background-color: #5324ff;
+  background-color: var(--el-color-primary);
   color: #f0f0f0;
 }
 // 字体

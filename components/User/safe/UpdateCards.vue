@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 const user = useUserStore();
+const showMarkPhone = ref(true);
 
 async function toExistLogin() {
   ElMessageBox.confirm("是否确认退出登录？", "退出登录", {
@@ -96,7 +97,7 @@ const form = ref({
             opacity-80
             :class="{ 'text-red-5': user.userInfo.isPhoneVerified === 0 }"
           >
-            {{ user.userInfo.phone || "还未绑定" }}
+            {{ (showMarkPhone ? user.markPhone : user.userInfo.phone) || "还未绑定" }}
           </small>
         </small>
         <small

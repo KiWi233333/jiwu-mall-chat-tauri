@@ -119,16 +119,17 @@ function resetPlaySounder() {
       </p>
       <!-- 内容 -->
       <slot name="body">
-        <p
+        <div
           class="msg-popper cursor-pointer sm:max-w-35vw hover:op-80" :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
-          @click="playSound(body?.url)"
         >
-          <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
-          {{ chat.playSounder?.url === body.url ? getSoundText : getSoundTextRaw }}
+          <p @click="playSound(body?.url)">
+            <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
+            {{ chat.playSounder?.url === body.url ? getSoundText : getSoundTextRaw }}
+          </p>
           <small v-if="body?.translation && showTranslation" class="mt-2 block border-t-(1px #8585828e solid) pt-1.5">
             {{ body?.translation }}
           </small>
-        </p>
+        </div>
       </slot>
       <!-- 回复 -->
       <small v-if="body?.reply" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">

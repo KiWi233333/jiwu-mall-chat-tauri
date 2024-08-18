@@ -52,7 +52,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="autoAnimateRef" w-full flex flex-col>
+  <!-- <div ref="autoAnimateRef" w-full flex flex-col> -->
+  <div w-full flex flex-col>
     <ListAutoIncre
       :immediate="true"
       :auto-stop="true"

@@ -273,6 +273,7 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
           if (!key)
             return;
           const res = await deleteOssFile(key, user.getToken);
+          ElMessage.closeAll("error");
           if (res.code === StatusCode.SUCCESS) {
             imgList.value.splice(
               index,
@@ -358,9 +359,7 @@ onMounted(() => {
       <el-form-item
         v-if="imgList.length > 0"
         class="w-full cursor-pointer"
-        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;
-        grid-gap:4;
-        margin-left: auto;"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
       >
         <CardElImage
           v-for="(img, i) in imgList" :key="i"
@@ -368,7 +367,7 @@ onMounted(() => {
           loading="lazy"
           :preview-src-list="[img.id || BaseUrlImg + img.key]"
           :src="img.id || BaseUrlImg + img.key"
-          class="ml-a h-8rem w-8rem overflow-hidden rounded-6px p-2 border-default card-default"
+          class="h-9rem max-w-16rem w-fit overflow-hidden rounded-6px p-2 border-default card-default"
           @contextmenu="onContextMenu($event, img.key, i)"
         />
       </el-form-item>
@@ -408,7 +407,7 @@ onMounted(() => {
       >
         <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? '语音 Ctrl+T' : '键盘'" placement="top">
           <i
-            :class="form.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken animate-pulse' : 'i-solar:keyboard-broken'"
+            :class="form.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken hover:animate-pulse' : 'i-solar:keyboard-broken'"
             class="h-6 w-6 cursor-pointer btn-primary"
             @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />

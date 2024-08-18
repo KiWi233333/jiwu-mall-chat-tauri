@@ -1,11 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { invoke } from "@tauri-apps/api";
 import { type UserInfoVO, type UserWallet, getUserInfo, getUserInfoSSR } from "../api/user/info";
 import { toLogout } from "../api/user";
 import { getUserWallet } from "../api/user/wallet";
-import { useWindow } from "../tauri/window";
-import type { CommCategory } from "@/composables/api/community/category";
-import type { IndexMenuType } from "~/components/menu";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -48,6 +44,10 @@ export const useUserStore = defineStore(
       isEmailVerified: 0,
       isPhoneVerified: 0,
     });
+    const userId = computed(() => userInfo.value.id);
+    const markPhone = computed(() => userInfo.value?.phone?.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") || "");
+
+
     const getToken = computed({
       get() {
         if (!isLogin.value || !token.value) {
@@ -196,6 +196,8 @@ export const useUserStore = defineStore(
       showLoginForm,
       showRegisterForm,
       userInfo,
+      userId,
+      markPhone,
       userWallet,
       // actions
       onUserLogin,

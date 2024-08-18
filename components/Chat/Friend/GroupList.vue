@@ -38,16 +38,16 @@ watchDebounced(() => chat.delUserId, (val) => {
   debounce: 300,
 });
 const setting = useSettingStore();
-onMounted(async () => {
-  enable(false);
-  await loadData();
+loadData();
+onMounted(() => {
   enable(!setting.settingPage.isColseAllTransition);
 });
 </script>
 
 
 <template>
-  <div ref="autoAnimateRef" w-full flex flex-col gap-2>
+  <!-- <div ref="autoAnimateRef" w-full flex flex-col gap-2> -->
+  <div w-full flex flex-col gap-2>
     <ListAutoIncre
       :no-more="pageInfo.isLast"
       :loading="isLoading"
