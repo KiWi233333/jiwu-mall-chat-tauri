@@ -107,6 +107,7 @@ export const useSettingStore = defineStore(
                   appUploader.value.isCheckUpdatateLoad = false;
                   ElMessage.error("更新失败！请检查网络或稍后再试！");
                 }).finally(() => {
+                  appUploader.value.isUpdating = false;
                   appUploader.value.isCheckUpdatateLoad = false;
                 });
               }
@@ -120,6 +121,7 @@ export const useSettingStore = defineStore(
           });
         }
         else {
+          appUploader.value.isCheckUpdatateLoad = false;
           const route = useRoute();
           if (route.path.includes("/setting"))
             ElMessage.info("当前版本已是最新版本！");
