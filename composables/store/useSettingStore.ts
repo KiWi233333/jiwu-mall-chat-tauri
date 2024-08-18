@@ -76,7 +76,6 @@ export const useSettingStore = defineStore(
           // 忽略
           if (check && appUploader.value.ignoreVersion.includes(update.manifest?.version))
             return false;
-
           ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.manifest?.version}`, {
             confirmButtonText: "确定",
             cancelButtonText: "忽略此版本",
@@ -94,6 +93,7 @@ export const useSettingStore = defineStore(
                 }).finally(() => {
                   appUploader.value.isCheckUpdatateLoad = false;
                   appUploader.value.isUpdating = false;
+                  appUploader.value.isUpload = false;
                   ElLoading.service().close();
                 });
                 onUpdaterEvent(({ error, status }) => {
@@ -101,13 +101,14 @@ export const useSettingStore = defineStore(
                   appUploader.value.isCheckUpdatateLoad = false;
                 }).then((unlisten) => {
                 // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
+                  appUploader.value.isUpdating = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
                   unlisten();
                 }).catch((error) => {
                   console.error(error);
                   appUploader.value.isCheckUpdatateLoad = false;
                   ElMessage.error("更新失败！请检查网络或稍后再试！");
                 }).finally(() => {
-                  appUploader.value.isUpdating = false;
                   appUploader.value.isCheckUpdatateLoad = false;
                 });
               }
@@ -122,6 +123,8 @@ export const useSettingStore = defineStore(
         }
         else {
           appUploader.value.isCheckUpdatateLoad = false;
+          appUploader.value.isUpdating = false;
+          appUploader.value.isUpload = false;
           const route = useRoute();
           if (route.path.includes("/setting"))
             ElMessage.info("当前版本已是最新版本！");
@@ -129,6 +132,8 @@ export const useSettingStore = defineStore(
       }
       catch (error) {
         appUploader.value.isCheckUpdatateLoad = false;
+        appUploader.value.isUpdating = false;
+        appUploader.value.isUpload = false;
       }
     }
     return {

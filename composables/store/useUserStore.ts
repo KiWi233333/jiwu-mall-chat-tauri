@@ -87,7 +87,7 @@ export const useUserStore = defineStore(
      */
     const onUserLogin = async (t: string, saveLocal?: boolean) => {
       // 钱包
-      loadUserWallet(t);
+      // loadUserWallet(t);
       // 用户信息
       const res = await getUserInfo(t);
       if (res.code && res.code === StatusCode.SUCCESS) {

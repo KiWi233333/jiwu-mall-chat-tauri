@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { WSMsgDelete, WSMsgRecall } from "~/composables/types/WsType";
 
+const UpdateContactList: { [key: number]: boolean } = {};
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
@@ -53,6 +54,7 @@ async function loadData(call?: (data?: Message[]) => void) {
     pageInfo.value.cursor = null;
   });
 }
+
 // 重新加载
 function reload(roomId: number) {
   pageInfo.value = {
@@ -87,6 +89,7 @@ function reload(roomId: number) {
     });
   });
 }
+
 // 监听房间
 watch(() => chat.theContact.roomId, (val) => {
   if (val) {
@@ -109,6 +112,9 @@ watch(() => ws.wsMsgList.newMsg.length, () => {
   immediate: true,
   deep: true,
 });
+/**
+ * 撤回消息
+ */
 watch(() => ws.wsMsgList.recallMsg.length, () => {
   // 2、撤回消息
   resolveRevokeMsg(ws.wsMsgList.recallMsg);
@@ -116,7 +122,9 @@ watch(() => ws.wsMsgList.recallMsg.length, () => {
   immediate: true,
   deep: true,
 });
-
+/**
+ * 删除消息
+ */
 watch(() => ws.wsMsgList.deleteMsg.length, () => {
   // 3、删除消息
   resolveDeleteMsg(ws.wsMsgList.deleteMsg);
@@ -253,7 +261,6 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
   }
 }
 
-const UpdateContactList: { [key: number]: boolean } = {};
 // 更新会话
 function updateContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
   let isExist = false;
