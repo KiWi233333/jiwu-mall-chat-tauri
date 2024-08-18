@@ -134,10 +134,9 @@ function resolveNewMsg(list: ChatMessageVO[]) {
     const p = list[i];
     if (!p)
       return;
-
     const body = getBody(p) || "";
     // 1）更新会话列表
-    upContact(p.message.roomId,
+    updateContact(p.message.roomId,
       {
         text: `${p.fromUser.nickName}：${body}`,
       }, false, (contact) => {
@@ -192,9 +191,14 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
     const p = list[i];
     if (!p)
       return;
+
+    if (p.roomId !== chat.theContact.roomId) {
+      reloadContact(p.roomId);
+      continue;
+    }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}撤回了一条消息`;
+    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg?.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.contactList.length; k++) {
       const r = chat.contactList[k];
@@ -203,13 +207,8 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
         break;
       }
     }
-    if (p.roomId !== chat.theContact.roomId) {
-      continue;
-    }
-    else {
-      // 消费消息
-      ws.wsMsgList.recallMsg.splice(i, 1);
-    }
+    // 消费消息
+    ws.wsMsgList.recallMsg.splice(i, 1);
     if (msg) {
       msg.message.type = MessageType.RECALL;
       msg.message.content = msgContent;
@@ -229,6 +228,9 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
     if (!p)
       return;
 
+    if (p.roomId !== chat.theContact.roomId)
+      continue;
+
     // 本房间修改状态
     const msg = findMsg(p.msgId);
     const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}删除了一条消息`;
@@ -240,13 +242,8 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
         break;
       }
     }
-    if (p.roomId !== chat.theContact.roomId) {
-      continue;
-    }
-    else {
-      // 消费消息
-      ws.wsMsgList.deleteMsg.splice(i, 1);
-    }
+    // 消费消息
+    ws.wsMsgList.deleteMsg.splice(i, 1);
     if (msg) {
       msg.message.type = MessageType.DELETE;
       msg.message.content = msgContent;
@@ -258,9 +255,9 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
 
 const UpdateContactList: { [key: number]: boolean } = {};
 // 更新会话
-function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
+function updateContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
   let isExist = false;
-  if (!UpdateContactList[roomId])
+  if (UpdateContactList[roomId])
     return;
   UpdateContactList[roomId] = true;
   for (let i = 0; i < chat.contactList.length; i++) {
@@ -275,24 +272,28 @@ function upContact(roomId: number, data: Partial<ChatContactVO>, isReload = fals
       break;
     }
   }
-  if (!isExist) {
-    // 重新拉取会话
-    getChatContactInfo(roomId, user.getToken)?.then((res) => {
-      if (res.code === StatusCode.SUCCESS) {
-        const index = chat.contactList.findIndex(ctx => ctx.roomId === roomId);
-        if (index !== -1) { // 更新
-          chat.contactList[index] = res.data;
-        }
-        else {
-          chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
-        }
-        callBack && callBack(res.data as ChatContactVO);
+  if (!isExist)
+    reloadContact(roomId);
+}
+
+// 重新加载会话列表
+function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => void) {
+  // 重新拉取会话
+  getChatContactInfo(roomId, user.getToken)?.then((res) => {
+    if (res.code === StatusCode.SUCCESS) {
+      const index = chat.contactList.findIndex(ctx => ctx.roomId === roomId);
+      if (index !== -1) { // 更新
+        chat.contactList[index] = res.data;
       }
-    }).catch(() => {})
-      .finally(() => {
-        delete UpdateContactList[roomId];
-      });
-  }
+      else {
+        chat.contactList.unshift(res.data as ChatContactVO); // 追加前置
+      }
+      callBack && callBack(res.data as ChatContactVO);
+    }
+  }).catch(() => {})
+    .finally(() => {
+      delete UpdateContactList[roomId];
+    });
 }
 
 // 添加消息到列表
