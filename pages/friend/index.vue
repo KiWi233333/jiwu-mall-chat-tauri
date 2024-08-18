@@ -33,7 +33,6 @@ const setting = useSettingStore();
         >
           <btn-el-button
             icon-class="i-solar:power-bold"
-            transition-icon
             size="small"
             class="absolute right-1rem top-1rem z-2 block sm:hidden"
             @click="chat.showTheFriendPanel = false"

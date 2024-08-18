@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div class="relative flex flex-col">
-    <h4 class="flex items-center border-0 border-b-1 rounded-0 p-4 border-default bg-color md:p-4">
+    <h4 class="flex items-center border-0 border-b-1 rounded-0 p-4 px-8 border-default bg-color md:p-4">
       <i i-solar:user-plus-bold mr-2 bg-light p-3 />
       新的朋友
     </h4>
