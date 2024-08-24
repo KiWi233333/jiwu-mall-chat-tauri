@@ -335,7 +335,9 @@ onMounted(() => {
 }
 /* stylelint-disable-next-line selector-class-pattern */
 .small-input :deep(.el-input__wrapper) {
-  box-shadow: none;
+  & {
+    box-shadow: none;
+  }
   &.is-focus {
     box-shadow: 0 0 0 1px var(--el-input-foucs-border-color) inset;
   }

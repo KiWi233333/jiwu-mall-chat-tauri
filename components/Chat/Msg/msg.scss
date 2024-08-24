@@ -13,9 +13,15 @@
   .sendTime {
     transition: none;
   }
+  .at-list {
+    opacity: 0;
+  }
   &:hover {
     .sendTime {
       opacity: 0.6;
+    }
+    .at-list {
+      opacity: 1;
     }
   }
   .msg-popper {

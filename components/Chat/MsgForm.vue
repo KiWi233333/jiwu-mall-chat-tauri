@@ -38,7 +38,13 @@ const isSend = ref(false);
 const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
 // AT @相关
-const userOption = ref<AtChatMemberOption[]>([]);
+const userOptions = ref<AtChatMemberOption[]>([]);
+const atUserListOpt = computed(() => chat.atUserList.map(u => ({
+  label: `${u.nickName}(${u.userId})`,
+  value: u.userId,
+})) || []);
+const userOpenOptions = computed(() => userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId))); // 过滤已存在的用户
+
 // 未读数
 const theRoomUnReadLength = computed(() => {
   return chat.theContact.unReadLength;
@@ -135,10 +141,6 @@ async function onPaste(e: ClipboardEvent) {
 }
 
 // 处理@删除
-const atUserListOpt = computed(() => chat.atUserList.map(u => ({
-  label: `${u.nickName}(${u.userId})`,
-  value: u.userId,
-})) || []);
 function checkAtUserWhole(pattern: string, prefix: string) {
   if (prefix !== "@")
     return false;
@@ -159,10 +161,6 @@ function checkAtUserWhole(pattern: string, prefix: string) {
 async function onSubmit() {
   if (isSend.value)
     return;
-  if (atUserListOpt.value) {
-    const atUidList = atUserListOpt.value.map(u => u.value);
-    form.value.body.atUidList = atUidList;
-  }
 
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
@@ -170,11 +168,33 @@ async function onSubmit() {
     if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
       return;
 
+    // 处理 @用户
+    if (atUserListOpt.value?.length && form.value.content && chat.theContact.type === RoomType.GROUP) {
+      const atUidList: AtChatMemberOption[] = [];
+      const matches = form.value.content.matchAll(/@\S+\((\d+)\)\s/g);
+      for (const match of matches) {
+        // 识别@和括号直接的昵称
+        if (match[1]) {
+          const atUser = userOptions.value.find(u => u.userId === match[1]);
+          if (atUser)
+            atUidList.push(atUser);
+        }
+      }
+      chat.atUserList = [...atUidList.map(p => ({
+        userId: p.userId,
+        nickName: p.nickName,
+      }))];
+      form.value.body.atUidList = atUidList.map(p => p.userId) || [];
+    }
+    if (document.querySelector(".at-select")) // enter冲突at选择框
+      return;
+
     // 图片
     if (form.value.msgType === MessageType.IMG && isUploadImg.value) {
       ElMessage.warning("图片正在上传中，请稍后再试！");
       return;
     }
+
     // 开始提交
     isSend.value = true;
     // 二次处理
@@ -226,7 +246,7 @@ async function loadUser() {
     return;
   const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
   if (data.value && data.value.code === StatusCode.SUCCESS) {
-    userOption.value = (data.value.data || []).map(u => ({
+    userOptions.value = (data.value.data || []).map(u => ({
       ...u,
       label: u.nickName || "新用户",
       value: `${u.nickName}(${u.userId})`,
@@ -386,7 +406,7 @@ onMounted(() => {
         </div>
       </el-form-item>
       <!-- @ -->
-      <el-form-item
+      <!-- <el-form-item
         v-if="chat.atUserList.length"
         prop="body.replyMsgId"
         class="w-full"
@@ -396,9 +416,8 @@ onMounted(() => {
           <el-tag v-for="(p) in chat.atUserList" :key="p.userId" effect="dark" class="mr-2" closable @close="chat.removeAtUid(p.userId)">
             @{{ p.nickName }}
           </el-tag>
-          <!-- <div class="i-solar:close-circle-bold text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" h-2em w-2em  /> -->
         </div>
-      </el-form-item>
+      </el-form-item> -->
     </div>
     <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
@@ -492,13 +511,11 @@ onMounted(() => {
         <el-mention
           ref="inputAllRef"
           v-model.lazy="form.content"
-          :options="userOption"
-
+          :options="chat.theContact.type === RoomType.GROUP ? userOpenOptions : []"
           :prefix="['@']"
+          popper-class="at-select"
           :check-is-whole="checkAtUserWhole"
           :rows="6"
-
-
           :maxlength="500"
           :autosize="false"
           type="textarea"
@@ -512,11 +529,15 @@ onMounted(() => {
           :offset="10"
           @select.self="(val) => chat.atUserList.push(val)"
           @paste.stop="onPaste"
-          @keydown.enter.stop.prevent="(e: KeyboardEvent) => {
+          @keydown="(e: KeyboardEvent) => {
             if (e.shiftKey){
               return
             }
-            onSubmit()
+            if (!e.shiftKey && e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
+              onSubmit()
+            }
           }"
         >
           <template #label="{ item }">
