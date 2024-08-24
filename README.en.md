@@ -41,6 +41,14 @@ Jiwu Chat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + e
 Based on Nuxt3 + Tauri + element-plus basic framework
 ```
 
+### Demo Account
+
+- username: ikun233
+- password: 123456
+
+Tip: This account does not have permission to upload pictures, modify passwords, etc.
+
+
 ### Project Screenshots
 
 - Chat Desktop Application Login

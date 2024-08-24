@@ -43,6 +43,13 @@
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
+### 默认账号
+
+- 账号：ikun233
+- 密码：123456
+
+注：该账号上传图片、修改密码等部分没有权限
+
 ### 项目截图
 
 - 聊天桌面应用 Login
