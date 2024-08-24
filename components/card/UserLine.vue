@@ -244,7 +244,7 @@ const menuList = ref([
                 <BtnElButton
                   size="large"
                   type="danger"
-                  plain transition-icon ml-3
+                  transition-icon plain ml-3
                   icon-class="i-solar:logout-3-broken"
                   @click="user.exitLogin"
                 >
@@ -387,7 +387,6 @@ const menuList = ref([
   border-radius: 6px;
   cursor: pointer;
   padding: 0.6em;
-  box-shadow: none;
   transition: $transition-delay;
   &:hover {
     opacity: 0.9;

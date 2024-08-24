@@ -512,7 +512,12 @@ onMounted(() => {
           :offset="10"
           @select.self="(val) => chat.atUserList.push(val)"
           @paste.stop="onPaste"
-          @keydown.enter.stop.prevent="onSubmit"
+          @keydown.enter.stop.prevent="(e: KeyboardEvent) => {
+            if (e.shiftKey){
+              return
+            }
+            onSubmit()
+          }"
         >
           <template #label="{ item }">
             <div class="h-full flex items-center pr-2">

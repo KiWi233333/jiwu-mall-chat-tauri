@@ -82,27 +82,26 @@ export const useSettingStore = defineStore(
             center: true,
             callback: async (action: Action) => {
               if (action === "confirm") {
-                appUploader.value.isUpdating = true;
                 // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
+                appUploader.value.isUpdating = true;
                 installUpdate().then(async (val) => {
                   console.log(val);
                   await relaunch();
                 }).catch((error) => {
                   console.error(error);
+                  appUploader.value.isUpdating = false;
+                  appUploader.value.isUpload = false;
                   ElMessage.error("更新失败！请检查网络或稍后再试！");
                 }).finally(() => {
                   appUploader.value.isCheckUpdatateLoad = false;
                   appUploader.value.isUpdating = false;
                   appUploader.value.isUpload = false;
-                  ElLoading.service().close();
                 });
                 onUpdaterEvent(({ error, status }) => {
                   console.log("Updater event", error, status);
                   appUploader.value.isCheckUpdatateLoad = false;
                 }).then((unlisten) => {
                 // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
-                  appUploader.value.isUpdating = false;
-                  appUploader.value.isCheckUpdatateLoad = false;
                   unlisten();
                 }).catch((error) => {
                   console.error(error);
@@ -136,6 +135,60 @@ export const useSettingStore = defineStore(
         appUploader.value.isUpload = false;
       }
     }
+
+    function reset() {
+      settingPage.value.fontFamily.value = "Alimama";
+      settingPage.value.modeToggle.value = "auto";
+      settingPage.value.isColseAllTransition = false;
+      settingPage.value.isEscMin = true;
+      isChatFold.value = false;
+      isOpenContact.value = true;
+      isOpenGroupMember.value = true;
+      showChatMenu.value = true;
+      isThemeChangeLoad.value = false;
+      appUploader.value = {
+        isCheckUpdatateLoad: false,
+        isUpdating: false,
+        isUpload: false,
+        version: "",
+        newVersion: "",
+        ignoreVersion: [] as string[],
+      };
+      contactBtnPosition.value = { x: 0, y: 0 };
+
+      isFold.value = true;
+      isCollapse.value = true;
+      isUserFold.value = true;
+      isUserCollapse.value = true;
+
+      sysPermission.value = {
+        isNotification: false,
+        isNotificationSound: true,
+      };
+      settingPage.value = {
+        // 字体
+        fontFamily: {
+          value: "Alimama",
+          list: [
+            { name: "阿里妈妈方圆体", value: "Alimama" },
+            { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
+            { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
+            { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
+            { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
+          ],
+        },
+        modeToggle: {
+          value: "auto",
+          list: [
+            { name: "自动", value: "auto" },
+            { name: "日间", value: "light" },
+            { name: "夜间", value: "dark" },
+          ],
+        },
+        isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
+        isEscMin: true, // esc
+      };
+    }
     return {
       isChatFold,
       // state
@@ -153,6 +206,7 @@ export const useSettingStore = defineStore(
       contactBtnPosition,
       // actions
       checkUpdates,
+      reset,
       // getter
     };
   },

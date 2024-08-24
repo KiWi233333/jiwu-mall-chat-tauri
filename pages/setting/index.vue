@@ -46,9 +46,6 @@ useSeoMeta({
   description: "设置 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });
-function onSave() {
-  ElNotification.success("保存成功！");
-}
 
 const theme = computed({
   get: () => setting.settingPage.modeToggle.value,
@@ -183,7 +180,14 @@ function showVersionNotice(version: string) {
         </section>
         <div class="btns mt-a flex items-center">
           <BtnElButton
-            class="ml-a shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
+            class="ml-a shadow" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
+            round
+            @click="setting.reset()"
+          >
+            重置
+          </BtnElButton>
+          <BtnElButton
+            class="shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
             round @click="user.exitLogin()"
           >
             退出登录
@@ -263,7 +267,6 @@ function showVersionNotice(version: string) {
   }
 }
 :deep(.notice-toast-preview-wrapper) {
-
   .task-list-item-checkbox[type="checkbox"] {
       display: none !important;
   }
