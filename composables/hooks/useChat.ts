@@ -36,7 +36,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
   const audioTransfromText = computed(() => audioTransfromTextList.value.join(""));
   async function useAudioTransfromText() {
     if (!speechRecognition.isSupported)
-      return ElMessage.error("当前浏览器不支持语音转文字！");
+      return ElMessage.error("当前不支持语音转文字！");
     speechRecognition.start();
     speechRecognition.recognition?.addEventListener("result", (e) => {
       for (let i = 0; i < e.results.length; i++) {
@@ -105,12 +105,21 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
   // 监听是否录音
   watch(isChating, (val) => {
     if (val) {
-      if (!navigator?.mediaDevices?.getUserMedia)
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        isChating.value = false;
         return ElMessage.error("设备不支持录音！");
-
+      }
+      // 重新授权
       navigator?.mediaDevices?.getUserMedia({ audio: true, video: false }).then(
         stream => resolveAudioInput(stream),
-        () => ElMessage.warning("用户取消授权麦克风！"),
+        (reason) => {
+          isChating.value = false;
+          if (reason.code === 0) {
+            ElMessage.warning("暂无麦克风权限！");
+            return;
+          }
+          ElMessage.warning("拒绝授权麦克风，录音功能无法使用！");
+        },
       );
     }
     else {
@@ -122,6 +131,8 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
 
   // 解析音频输入
   function resolveAudioInput(stream: MediaStream) {
+    console.log(stream);
+
     if (mediaRecorderContext.value) { // 防止重复创建
       mediaRecorderContext.value?.stop?.();
       mediaRecorderContext.value = undefined;
