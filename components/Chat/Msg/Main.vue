@@ -121,11 +121,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
         customClass: "group",
         hidden: isSelf,
         onClick: () => {
-          chat.setAtUid({
-            userId: item.fromUser.userId,
-            nickName: item.fromUser.nickName,
-            avatar: item.fromUser.avatar as string | undefined,
-          });
+          chat.setAtUid(item.fromUser.userId);
         },
       },
       {
@@ -168,7 +164,6 @@ function deleteMsg(roomId: number, msgId: number) {
         return;
       const res = await deleteChatMessage(roomId, msgId, user.getToken);
       if (res.code === StatusCode.SUCCESS) {
-        ElMessage.success("删除成功！");
         if (data.message.id === msgId) {
           data.message.type = MessageType.RECALL;
           data.message.content = "删除了一条消息";

@@ -52,7 +52,7 @@ export function getRoomGroupUserPage(roomId: number | null = null, pageSize = 10
  * @returns 分页
  */
 export function getRoomGroupAllUser(roomId: number, token: string) {
-  return useFetch<Result<ChatMemberVO[]>>(
+  return useFetch<Result<ChatMemberSeVO[]>>(
     `${BaseUrl}/chat/room/group/member/list/${roomId}`,
     {
       headers: {
@@ -258,6 +258,19 @@ export interface ChatMemberVO {
    */
   roleType?: ChatRoomRoleEnum | null
 }
+
+/**
+ * Description: @ 群成员列表的成员信息
+ *
+ * ChatMemberSeVO
+ */
+export interface ChatMemberSeVO {
+  userId: string
+  nickName: string
+  username: string
+}
+
+
 export enum ChatOfflineType {
   ONLINE = 1,
   OFFLINE = 0,

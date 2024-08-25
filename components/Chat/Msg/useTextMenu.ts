@@ -49,11 +49,7 @@ export function onContextMenu(e: MouseEvent, item: ChatMessageVO, callList: MsgM
       label: "@TA",
       disabled: isSelf,
       onClick: () => {
-        chat.setAtUid({
-          userId: item.fromUser.userId,
-          nickName: item.fromUser.nickName,
-          avatar: item.fromUser.avatar as string | undefined,
-        });
+        chat.setAtUid(item.fromUser.userId);
       },
     }];
   }

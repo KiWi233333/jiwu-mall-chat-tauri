@@ -193,3 +193,35 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
     handlePlayAudio,
   };
 }
+
+/**
+ * 识别@用户
+ * @param text 文本内容
+ * @param userOptions 所有用户列表
+ * @returns
+ *  uidList: 识别到的@用户的uid列表
+ *  atUidList: 识别到的@用户的{userId, nickName}列表
+ */
+export function useAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(\#(\S+)\)\s/g }): { uidList: string[]; atUidList: AtChatMemberOption[] } {
+  const { regExp } = configs;
+  if (!regExp)
+    throw new Error("regExp is required");
+  const atUidList: AtChatMemberOption[] = [];
+  const matches = text.matchAll(regExp);
+  for (const match of matches) {
+    // 识别@和括号直接的昵称
+    if (match[1]) {
+      const atUser = userOptions.find(u => u.username === match[1]);
+      if (atUser)
+        atUidList.push(atUser);
+    }
+  }
+  return {
+    uidList: atUidList.map(p => p.userId) || [],
+    atUidList: JSON.parse(JSON.stringify(atUidList)),
+  };
+}
+
+interface AtConfigs {
+  regExp?: RegExp
+}

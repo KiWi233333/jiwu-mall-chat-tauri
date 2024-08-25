@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { useRecording } from "~/composables/hooks/useChat";
+import { useAtUsers, useRecording } from "~/composables/hooks/useChat";
 import type { AtChatMemberOption } from "~/composables/store/useChatStore";
 
 const emit = defineEmits<{
@@ -39,10 +39,6 @@ const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist ==
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
 // AT @相关
 const userOptions = ref<AtChatMemberOption[]>([]);
-const atUserListOpt = computed(() => chat.atUserList.map(u => ({
-  label: `${u.nickName}(${u.userId})`,
-  value: u.userId,
-})) || []);
 const userOpenOptions = computed(() => userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId))); // 过滤已存在的用户
 
 // 未读数
@@ -140,28 +136,18 @@ async function onPaste(e: ClipboardEvent) {
   form.value.msgType = MessageType.IMG; // 图片
 }
 
-// 处理@删除
-function checkAtUserWhole(pattern: string, prefix: string) {
-  if (prefix !== "@")
-    return false;
-
-  const atUserListOpt = chat.atUserList.map(u => ({
-    label: `${u.nickName}(${u.userId})`,
-    value: u.userId,
-  }));
-  if (pattern && form.value.content?.endsWith(`${prefix + pattern} `)) {
-    const user = atUserListOpt.find(u => u.label === pattern);
-    if (user)
-      chat.removeAtUid(user.value);
-  }
-  return true;
-}
-
-// 发送消息
-async function onSubmit() {
+/**
+ * 发送消息
+ */
+async function onSubmit(e?: KeyboardEvent) {
+  if (e?.shiftKey && e.key === "Enter")
+    return;
+  if (e?.key !== "Enter")
+    return;
+  e.preventDefault && e.preventDefault();
+  e.stopPropagation && e.stopPropagation();
   if (isSend.value)
     return;
-
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
       return;
@@ -169,26 +155,16 @@ async function onSubmit() {
       return;
 
     // 处理 @用户
-    if (atUserListOpt.value?.length && form.value.content && chat.theContact.type === RoomType.GROUP) {
-      const atUidList: AtChatMemberOption[] = [];
-      const matches = form.value.content.matchAll(/@\S+\((\d+)\)\s/g);
-      for (const match of matches) {
-        // 识别@和括号直接的昵称
-        if (match[1]) {
-          const atUser = userOptions.value.find(u => u.userId === match[1]);
-          if (atUser)
-            atUidList.push(atUser);
-        }
-      }
-      chat.atUserList = [...atUidList.map(p => ({
-        userId: p.userId,
-        nickName: p.nickName,
-      }))];
-      form.value.body.atUidList = atUidList.map(p => p.userId) || [];
+    if (chat.theContact.type === RoomType.GROUP && form.value.content?.includes("@")) {
+      const { uidList, atUidList } = useAtUsers(form.value.content, userOptions.value);
+      chat.atUserList = [...atUidList];
+      form.value.body.atUidList = [...new Set(uidList)];
+      if (document.querySelector(".at-select")) // enter冲突at选择框
+        return;
     }
-    if (document.querySelector(".at-select")) // enter冲突at选择框
-      return;
-
+    else {
+      form.value.body.atUidList = [];
+    }
     // 图片
     if (form.value.msgType === MessageType.IMG && isUploadImg.value) {
       ElMessage.warning("图片正在上传中，请稍后再试！");
@@ -212,6 +188,10 @@ async function onSubmit() {
   });
 }
 
+
+/**
+ * 发送消息
+ */
 async function submit() {
   const res = await addChatMessage({
     ...form.value,
@@ -247,13 +227,41 @@ async function loadUser() {
   const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
   if (data.value && data.value.code === StatusCode.SUCCESS) {
     userOptions.value = (data.value.data || []).map(u => ({
-      ...u,
-      label: u.nickName || "新用户",
-      value: `${u.nickName}(${u.userId})`,
-      disabled: u.userId === user.userInfo.id,
-    }));
+      label: u.nickName,
+      value: `${u.nickName}(#${u.username})`,
+      userId: u.userId,
+      username: u.username,
+      nickName: u.nickName,
+    })).filter(u => u.userId !== user.userInfo.id);
   }
 }
+watch(() => chat.atUidListTemp, (val) => {
+  if (val.length) {
+    form.value.content += val.map((uid) => {
+      const user = userOptions.value.find(u => u.userId === uid);
+      return user ? `@${user.nickName}(#${user.username}) ` : "";
+    }).join("");
+    inputAllRef.value?.input?.focus(); // 聚焦
+    chat.atUidListTemp.splice(0);
+  }
+}, { deep: true });
+// 处理@删除
+function checkAtUserWhole(pattern: string, prefix: string) {
+  if (prefix !== "@")
+    return false;
+  const atUserListOpt = chat.atUserList.map(u => ({
+    ...u,
+    label: `${u.nickName}(#${u.username})`,
+    value: u.userId,
+  }));
+  if (pattern && form.value.content?.endsWith(`${prefix + pattern} `)) {
+    const user = atUserListOpt.find(u => u.label === pattern.trim());
+    if (user)
+      chat.removeAtByUsername(user.username);
+  }
+  return true;
+}
+
 
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
@@ -387,7 +395,8 @@ onMounted(() => {
           loading="lazy"
           :preview-src-list="[img.id || BaseUrlImg + img.key]"
           :src="img.id || BaseUrlImg + img.key"
-          class="h-9rem max-w-16rem w-fit overflow-hidden rounded-6px p-2 border-default card-default"
+          class="max-h-9rem max-w-16rem min-h-2rem w-16rem w-fit p-2 shadow-sm border-default card-default bg-color hover:shadow-lg"
+          title="左键放大 | 右键删除"
           @contextmenu="onContextMenu($event, img.key, i)"
         />
       </el-form-item>
@@ -405,19 +414,6 @@ onMounted(() => {
           <div class="i-solar:close-circle-bold h-6 w-6 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
         </div>
       </el-form-item>
-      <!-- @ -->
-      <!-- <el-form-item
-        v-if="chat.atUserList.length"
-        prop="body.replyMsgId"
-        class="w-full"
-        style="padding: 0.4rem;margin:0;margin-bottom:0.2rem;display: flex;"
-      >
-        <div class="w-full flex animate-[300ms_fade-in] items-center rounded-6px bg-[#ffffff9c] p-2 shadow backdrop-blur-10px border-default dark:bg-dark">
-          <el-tag v-for="(p) in chat.atUserList" :key="p.userId" effect="dark" class="mr-2" closable @close="chat.removeAtUid(p.userId)">
-            @{{ p.nickName }}
-          </el-tag>
-        </div>
-      </el-form-item> -->
     </div>
     <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
@@ -527,18 +523,8 @@ onMounted(() => {
           placement="top"
           autofocus show-word-limit show-arrow whole
           :offset="10"
-          @select.self="(val) => chat.atUserList.push(val)"
           @paste.stop="onPaste"
-          @keydown="(e: KeyboardEvent) => {
-            if (e.shiftKey){
-              return
-            }
-            if (!e.shiftKey && e.key === 'Enter') {
-              e.preventDefault();
-              e.stopPropagation();
-              onSubmit()
-            }
-          }"
+          @keydown="(e: KeyboardEvent) => onSubmit(e)"
         >
           <template #label="{ item }">
             <div class="h-full flex items-center pr-2">
@@ -613,9 +599,6 @@ onMounted(() => {
 }
 // 语音
 .is-chating {
-  &:deep(.el-button) {
-    outline: none !important;
-  }
   --at-apply: "shadow-lg ";
   --shadow-color: var(--el-color-primary);
   --shadow-color2: var(--el-color-primary-light-3);
@@ -626,6 +609,9 @@ onMounted(() => {
   background-image: linear-gradient(to right, var(--shadow-color2) 0%, var(--shadow-color) 50%,var(--shadow-color2) 100%);
   background-color: var(--shadow-color);
   border-color: var(--shadow-color);
+  &:deep(.el-button) {
+    outline: none !important;
+  }
   &:hover .chating-hidden {
     --at-apply: "hidden";
   }

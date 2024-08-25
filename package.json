@@ -52,7 +52,7 @@
     "postcss-html": "1.7.0",
     "postcss-scss": "4.0.9",
     "prettier": "3.3.3",
-    "sass": "1.77.8",
+    "sass": "1.77.5",
     "tsc-watch": "6.2.0",
     "typescript": "5.5.4",
     "vite-plugin-chunk-split": "0.5.0",

@@ -72,7 +72,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         label: "@ 他",
         hidden: isSelf,
         onClick: () => {
-          chat.setAtUid(item);
+          chat.setAtUid(item.userId);
         },
       }, {
         icon: "btn-info i-solar:user-bold ",

@@ -20,9 +20,12 @@ export interface PlaySounder {
 }
 
 
-export interface AtChatMemberOption extends ChatMemberVO {
+export interface AtChatMemberOption {
   label: string
   value: string
+  userId: string
+  username: string
+  nickName?: string
 }
 
 // @unocss-include
@@ -124,23 +127,21 @@ export const useChatStore = defineStore(
     const saveScrollTop = () => {};
     const scrollTop = (size: number) => {};
 
-
     /******************************* 艾特AT人 *********************************/
     const atUserList = ref<Partial<AtChatMemberOption>[]>([]);
+    const atUidListTemp = ref<string[]>([]);
     // 设置@AT人
-    function setAtUid(user: Partial<AtChatMemberOption> | Partial<ChatMemberVO>) {
-      if (!user.userId)
-        return;
-
-      const find = atUserList.value.find(p => p.userId === user.userId);
-      if (!find)
-        atUserList.value.push(user);
-    }
-    // 移除ai人
-    function removeAtUid(userId?: string) {
+    function setAtUid(userId: string) {
       if (!userId)
         return;
-      return atUserList.value = atUserList.value.filter(p => p.userId !== userId);
+      if (!atUidListTemp.value.includes(userId))
+        atUidListTemp.value.push(userId);
+    }
+    // 移除@人
+    function removeAtByUsername(username?: string) {
+      if (!username)
+        return;
+      atUserList.value = atUserList.value.filter(p => p.username !== username);
     }
 
     /******************************* 回复消息 *********************************/
@@ -187,6 +188,7 @@ export const useChatStore = defineStore(
       theContact,
       replyMsg,
       atUserList,
+      atUidListTemp,
       theFriendOpt,
       showTheFriendPanel,
       delUserId,
@@ -202,7 +204,7 @@ export const useChatStore = defineStore(
       setGroupMember,
       setIsAddNewFriend,
       setAtUid,
-      removeAtUid,
+      removeAtByUsername,
       setReplyMsg,
       setDelUserId,
       setTheFriendOpt,
