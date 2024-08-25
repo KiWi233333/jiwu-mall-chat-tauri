@@ -32,13 +32,7 @@ export const useSettingStore = defineStore(
       // 字体
       fontFamily: {
         value: "Alimama",
-        list: [
-          { name: "阿里妈妈方圆体", value: "Alimama" },
-          { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
-          { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
-          { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
-          { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
-        ],
+        list: [] as { name: string; value: string }[],
       },
       modeToggle: {
         value: "auto",
@@ -49,7 +43,7 @@ export const useSettingStore = defineStore(
         ],
       },
       isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
-      isEscMin: true, // esc
+      isEscMin: false, // esc
     });
     const contactBtnPosition = ref({
       x: 0,
@@ -136,6 +130,41 @@ export const useSettingStore = defineStore(
       }
     }
 
+    async function loadSystemFonts() {
+      settingPage.value.fontFamily.list = [
+        { name: "阿里妈妈方圆体", value: "Alimama" },
+        { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
+        { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
+        { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
+        { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
+      ];
+      // @ts-expect-error
+      if (window.queryLocalFonts) {
+        try {
+        // @ts-expect-error
+          const availableFonts = await window.queryLocalFonts();
+          // 获取前20个可用字体
+          const fontsMap = {} as { [key: string]: { name: string; value: string } };
+          availableFonts.forEach((font: any) => {
+            if (fontsMap[font.family])
+              return;
+            fontsMap[font.family] = {
+              name: font.family,
+              value: font.family,
+            };
+          });
+          const arr = [
+            ...settingPage.value.fontFamily.list,
+            ...Object.values(fontsMap),
+          ];
+          settingPage.value.fontFamily.list = arr;
+        }
+        catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
     function reset() {
       settingPage.value.fontFamily.value = "Alimama";
       settingPage.value.modeToggle.value = "auto";
@@ -169,13 +198,7 @@ export const useSettingStore = defineStore(
         // 字体
         fontFamily: {
           value: "Alimama",
-          list: [
-            { name: "阿里妈妈方圆体", value: "Alimama" },
-            { name: "字玩哥特黑白无常体", value: "ZiWanGeTe" },
-            { name: "阿里健康体2.0", value: "AlibabaHealthFont2" },
-            { name: "阿里妈妈刀隶体", value: "AlimamaDaoLiTi" },
-            { name: "阿里妈妈东方大楷", value: "Alimama_DongFangDaKai" },
-          ],
+          list: [],
         },
         modeToggle: {
           value: "auto",
@@ -188,6 +211,7 @@ export const useSettingStore = defineStore(
         isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: true, // esc
       };
+      loadSystemFonts();
     }
     return {
       isChatFold,
@@ -206,6 +230,7 @@ export const useSettingStore = defineStore(
       contactBtnPosition,
       // actions
       checkUpdates,
+      loadSystemFonts,
       reset,
       // getter
     };

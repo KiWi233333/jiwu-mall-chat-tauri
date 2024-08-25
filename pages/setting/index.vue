@@ -59,6 +59,7 @@ const colorMode = useColorMode();
 
 // 更新
 onMounted(async () => {
+  setting.loadSystemFonts();
   const v = await getVersion();
   // 公告
   if (v) {
@@ -101,12 +102,21 @@ function showVersionNotice(version: string) {
           <div class="group h-8 flex-row-bt-c">
             字体设置
             <el-select
-              v-model="setting.settingPage.fontFamily.value" style="width: 13rem;" :teleported="false"
-              :disabled="isLoading" class="inputs" placeholder="请选择主题字体"
+              v-model="setting.settingPage.fontFamily.value"
+              allow-create
+              style="width: 13rem;" :teleported="false"
+              :disabled="isLoading"
+              placement="bottom-end"
+              class="inputs"
+              fit-input-width
+              filterable
+              default-first-option
+              placeholder="请选择主题字体"
             >
               <el-option
                 v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :label="item.name"
                 :value="item.value"
+                :title="item.name"
               />
             </el-select>
           </div>
@@ -227,7 +237,7 @@ function showVersionNotice(version: string) {
 
 <style scoped lang="scss">
 .inputs {
-  --at-apply: 'transition-200  select-none opacity-80 group-hover:opacity-100';
+  --at-apply: 'transition-200  select-none';
   --el-border-radius-base: 2em !important;
 }
 
