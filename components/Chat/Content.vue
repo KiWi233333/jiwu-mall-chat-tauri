@@ -99,7 +99,7 @@ function onSendMsg(msg: ChatMessageVO) {
   nextTick(() => {
     setTimeout(() => {
       scrollBottom(false);
-    }, 100);
+    }, 200);
   }); // 发送消息后自动滚动到底部
 };
 

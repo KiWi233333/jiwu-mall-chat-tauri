@@ -79,13 +79,11 @@ function reload(roomId: number) {
     pageInfo.value.isLast = data.isLast;
     pageInfo.value.cursor = data.cursor;
     nextTick(() => {
-      setTimeout(() => {
       // 更新滚动位置
-        chat.saveScrollTop && chat.saveScrollTop();
-        chat.scrollBottom(false);
-        isLoading.value = false;
-        isReload.value = false;
-      }, 50);
+      chat.saveScrollTop && chat.saveScrollTop();
+      chat.scrollBottom(false);
+      isLoading.value = false;
+      isReload.value = false;
     });
   });
 }

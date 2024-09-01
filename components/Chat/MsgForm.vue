@@ -432,7 +432,7 @@ onMounted(() => {
           <el-form-item
             style="cursor: pointer; padding: 0;margin: 0;"
             prop="body.url"
-            class="cursor-pointer"
+            class="cursor-pointer btn-primary"
           >
             <InputOssFileUpload
               ref="inputOssFileUploadRef"
