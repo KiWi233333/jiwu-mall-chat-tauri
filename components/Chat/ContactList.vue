@@ -304,7 +304,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex-shrink-0 overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
     :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/5' : 'w-0') : ''"
   >
     <!-- 搜索群聊 -->
@@ -332,55 +332,57 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       </BtnElButton>
     </div>
     <!-- 会话列表 -->
-    <el-radio-group v-model="theContactId" class="contact-list w-full">
-      <div ref="autoAnimateRef" w-full flex flex-col>
-        <ListAutoIncre
-          :immediate="true"
-          :auto-stop="false"
-          loading-class="op-0"
-          :no-more="pageInfo.isLast"
-          :loading="isLoading"
-          @load="loadData(dto)"
-        >
-          <el-radio
-            v-for="room in getContactList"
-            :key="room.roomId"
-            style="border-radius: 0;"
-            :value="room.roomId"
+    <el-scrollbar wrap-class="w-full h-full" class="flex-1">
+      <el-radio-group v-model="theContactId" class="contact-list w-full">
+        <div ref="autoAnimateRef" w-full flex flex-col>
+          <ListAutoIncre
+            :immediate="true"
+            :auto-stop="false"
+            loading-class="op-0"
+            :no-more="pageInfo.isLast"
+            :loading="isLoading"
+            @load="loadData(dto)"
           >
-            <div
-              :class="{ 'shadow-inset': room.roomId === theContactId }"
-              class="flex gap-4 truncate p-4 px-5 transition-200 transition-shadow sm:w-full text-color"
-              @contextmenu.stop="onContextMenu($event, room)"
+            <el-radio
+              v-for="room in getContactList"
+              :key="room.roomId"
+              style="border-radius: 0;"
+              :value="room.roomId"
             >
-              <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">
-                <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.6rem w-2.6rem object-cover card-default" />
-              </el-badge>
-              <div class="flex flex-1 flex-col justify-between truncate">
-                <div flex truncate>
-                  <p truncate>
-                    {{ room.name }}
-                  </p>
-                  <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block>
-                    {{ getTime(room.activeTime) }}
-                  </span>
+              <div
+                :class="{ 'shadow-inset': room.roomId === theContactId }"
+                class="flex gap-4 truncate p-4 px-5 transition-200 transition-shadow sm:w-full text-color"
+                @contextmenu.stop="onContextMenu($event, room)"
+              >
+                <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">
+                  <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.6rem w-2.6rem object-cover card-default" />
+                </el-badge>
+                <div class="flex flex-1 flex-col justify-between truncate">
+                  <div flex truncate>
+                    <p truncate>
+                      {{ room.name }}
+                    </p>
+                    <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block>
+                      {{ getTime(room.activeTime) }}
+                    </span>
+                  </div>
+                  <small
+                    overflow-hidden truncate op-70 :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                  >{{ room.text }}</small>
                 </div>
-                <small
-                  overflow-hidden truncate op-70 :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
-                >{{ room.text }}</small>
               </div>
-            </div>
-          </el-radio>
-          <template #done>
-            <small
-              class="block w-full truncate text-center text-0.8rem opacity-60"
-            >
-              暂无更多
-            </small>
-          </template>
-        </ListAutoIncre>
-      </div>
-    </el-radio-group>
+            </el-radio>
+            <template #done>
+              <small
+                class="mb-6 block w-full truncate text-center text-0.8rem opacity-60"
+              >
+                暂无更多
+              </small>
+            </template>
+          </ListAutoIncre>
+        </div>
+      </el-radio-group>
+    </el-scrollbar>
     <!-- 新建群聊 -->
     <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showDialog" />
   </div>
