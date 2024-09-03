@@ -90,7 +90,7 @@ export function useAsyncCopyText(text: string): Promise<boolean> {
       if (useCopyText(text))
         return resolve(true);
       else
-        return reject(false);
+        return resolve(false);
     });
   }
 }
@@ -122,8 +122,10 @@ export function deepCompareObj<T extends object>(oldObj: T, newObj: T): Partial<
       const newValue = newObj[key];
 
       if (typeof oldValue === "object" && typeof newValue === "object") {
+        // @ts-expect-error
         const nestedUpdates = compareObjects(oldValue, newValue);
         if (Object.keys(nestedUpdates).length > 0)
+          // @ts-expect-error
           updatedObj[key] = nestedUpdates;
       }
       else if (oldValue !== newValue) {
