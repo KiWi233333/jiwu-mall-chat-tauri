@@ -346,6 +346,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
             <el-radio
               v-for="room in getContactList"
               :key="room.roomId"
+              aria-selected="true"
               style="border-radius: 0;"
               :value="room.roomId"
             >

@@ -268,6 +268,7 @@ export interface ChatMemberSeVO {
   userId: string
   nickName: string
   username: string
+  avatar?: string
 }
 
 

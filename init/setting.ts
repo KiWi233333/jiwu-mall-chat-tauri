@@ -60,7 +60,11 @@ export async function useSettingInit() {
     timer.value = setTimeout(() => {
       if (app)
         app.classList.remove("stop-transition");
-    }, 130);
+      timer.value = null;
+      // 页面大小
+      const setting = useSettingStore();
+      setting.isMobile = window.innerWidth < 640;
+    }, 300);
   });
 
   // 7、获取系统信息
@@ -69,6 +73,7 @@ export async function useSettingInit() {
       setting.appPlatform = res;
     }).catch((e) => {
       console.log(e);
+      setting.appPlatform = "web";
     });
   }
   else {

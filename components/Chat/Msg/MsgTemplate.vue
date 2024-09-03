@@ -65,11 +65,14 @@ function onCopyMsg(msg?: string | null) {
         </p>
       </slot>
       <!-- AT @ -->
-      <small v-if="body?.atUidList && body?.atUidList.length && getAtText" class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 op-70 border-default card-default">
+      <small
+        v-if="body?.atUidList && body?.atUidList.length && getAtText"
+        :title="getAtText" class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 op-70 border-default card-default"
+      >
         {{ getAtText }}
       </small>
       <!-- 回复 -->
-      <small v-if="body?.reply" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
+      <small v-if="body?.reply" title="点击跳转" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
         回复：{{ `${body.reply.nickName}:${body.reply?.body || ''}` }}
       </small>
     </div>

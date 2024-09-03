@@ -19,12 +19,15 @@
     }
   }
   .msg-popper {
-    --at-apply: "transform-origin-ct transition-300 transition-transform w-fit p-2 px-4 leading-1.2em  card-default ";
+    --at-apply: "max-w-40vw md:max-w-30em p-2 px-3 leading-1.2em  card-default ";
     box-shadow:
       rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     border-radius: 4px 1rem 1rem 1rem;
   }
+} 
+.at-list {
+  --at-apply: "max-w-40vw md:max-w-30em";
 }
 
 .reply-shaing {

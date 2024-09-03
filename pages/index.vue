@@ -22,7 +22,7 @@ useSeoMeta({
       <!-- 聊天框 -->
       <ChatContent class="flex-1 truncate border-0 border-l-1px border-default" />
       <!-- 在线人数 -->
-      <ChatRoomGroup class="p-2 bg-color sm:p-4" />
+      <ChatRoomGroup />
     </NuxtLayout>
   </div>
 </template>

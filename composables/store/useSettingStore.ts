@@ -28,7 +28,9 @@ export const useSettingStore = defineStore(
     // 主页页折叠
     const isFold = ref(true);
     const isCollapse = ref(true);
+    // 平台
     const appPlatform = ref<Platform | "web" | "">("");
+    const isMobile = ref(false);
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -216,6 +218,7 @@ export const useSettingStore = defineStore(
       loadSystemFonts();
     }
     return {
+      isMobile,
       isChatFold,
       // state
       isCollapse,

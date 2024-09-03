@@ -1,32 +1,10 @@
 
 <script lang="ts" setup>
-import ContextMenu from "@imengyu/vue3-context-menu";
 import { WsStatusEnum } from "~/composables/types/WsType";
 
-// @unocss-include
-// 右键菜单
-const colorMode = useColorMode();
-function onContextMenu(e: MouseEvent) {
-  e.preventDefault();
-  const opt = {
-    x: e.x,
-    y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
-    items: [
-      {
-        icon: colorMode.preference === "light" ? "i-solar:moon-stars-bold-duotone  text-[var(--el-color-primary)]" : "i-solar:sun-bold text-[var(--el-color-warning)]",
-        shortcut: "Alt+K",
-        label: colorMode.preference === "dark" ? "切换日间" : "切换夜间",
-        onClick: () => {
-          useModeToggle(colorMode.preference === "dark" ? "light" : "dark", e);
-        },
-      },
-    ] as any,
-  };
-  ContextMenu.showContextMenu(opt);
-}
 const user = useUserStore();
 const ws = useWs();
+const setting = useSettingStore();
 </script>
 
 <template>
@@ -75,11 +53,11 @@ const ws = useWs();
         class="main-box relative"
         v-bind="$attrs"
       >
-        <MenuChatMenu class="hidden sm:block" />
+        <MenuChatMenu class="!hidden sm:!block" />
         <slot />
       </div>
     </div>
-    <LazyMenuBottomMenu class="!block !sm:hidden" />
+    <LazyMenuBottomMenu class="block sm:hidden" />
   </main>
 </template>
 

@@ -73,6 +73,11 @@ const colorMode = useColorMode();
         border-radius: 0 0 8px 8px;
       }
     }
+
+    img {
+      border-radius: 0.25rem;
+      overflow: hidden;
+    }
   }
 }
 </style>

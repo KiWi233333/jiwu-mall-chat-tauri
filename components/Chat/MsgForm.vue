@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { useAtUsers, useRecording } from "~/composables/hooks/useChat";
+import { useLinterFileDrop } from "~/composables/hooks/useFileDrop";
 import type { AtChatMemberOption } from "~/composables/store/useChatStore";
 
 const emit = defineEmits<{
@@ -18,7 +19,6 @@ const {
   speechRecognition,
   audioTransfromText,
   isPalyAudio,
-
   toggle: toggleChating, // 开始/停止录音
   reset: resetAudio,
   handlePlayAudio, // 播放录音
@@ -39,7 +39,7 @@ const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist ==
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
 // AT @相关
 const userOptions = ref<AtChatMemberOption[]>([]);
-const userOpenOptions = computed(() => userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId))); // 过滤已存在的用户
+const userOpenOptions = computed(() => chat.theContact.type === RoomType.GROUP ? userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId)) : []); // 过滤已存在的用户
 
 // 未读数
 const theRoomUnReadLength = computed(() => {
@@ -230,6 +230,7 @@ async function loadUser() {
       label: u.nickName,
       value: `${u.nickName}(#${u.username})`,
       userId: u.userId,
+      avatar: u.avatar,
       username: u.username,
       nickName: u.nickName,
     })).filter(u => u.userId !== user.userInfo.id);
@@ -356,9 +357,13 @@ watch(() => chat.theContact.roomId, () => {
 });
 
 // 挂载
-onMounted(() => {
+onMounted(async () => {
   // 加载用户
   loadUser();
+
+  // 监听文件拖拽事件
+  const { fileList: fileDropList } = await useLinterFileDrop();
+  console.log(fileDropList);
 });
 </script>
 
@@ -507,7 +512,7 @@ onMounted(() => {
         <el-mention
           ref="inputAllRef"
           v-model.lazy="form.content"
-          :options="chat.theContact.type === RoomType.GROUP ? userOpenOptions : []"
+          :options="userOpenOptions"
           :prefix="['@']"
           popper-class="at-select"
           :check-is-whole="checkAtUserWhole"
@@ -521,16 +526,26 @@ onMounted(() => {
             focused: form.content,
           }"
           placement="top"
-          autofocus show-word-limit show-arrow whole
+          autofocus
+          show-word-limit
+          whole
           :offset="10"
+          :popper-options="{
+            placement: 'top-start',
+          }"
           @paste.stop="onPaste"
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
         >
           <template #label="{ item }">
-            <div class="h-full flex items-center pr-2">
+            <div class="h-full flex items-center pr-1">
               <CardElImage class="h-6 w-6 rounded-full" :src="BaseUrlImg + item.avatar" />
-              <span class="ml-2">{{ item.label }}</span>
+              <span class="ml-2 inline-block max-w-10em truncate">{{ item.label }}</span>
             </div>
+          </template>
+          <template #header>
+            <span ml-2 op-70>
+              群成员
+            </span>
           </template>
         </el-mention>
       </el-form-item>
@@ -577,6 +592,14 @@ onMounted(() => {
   }
   :deep(.el-form-item__error) {
     padding-left: 1rem;
+  }
+}
+:deep(.el-mention-popper) {
+  .el-mention-dropdown__header {
+    padding: 0.2rem;
+  }
+  .el-mention-dropdown__item {
+    padding: 0 0.4rem;
   }
 }
 .input {

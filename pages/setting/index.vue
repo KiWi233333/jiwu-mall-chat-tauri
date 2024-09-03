@@ -121,10 +121,10 @@ function showVersionNotice(version: string) {
             </el-select>
           </div>
           <!-- 黑暗 -->
-          <div class="group h-8 flex-row-bt-c">
+          <div :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
             深色模式
             <el-radio-group
-              :id="DEFAULT_THEME_TOGGLE_ID" v-model="theme" class="inputs" :disabled="isLoading"
+              v-model="theme" class="inputs" :disabled="isLoading"
               @click="(e: MouseEvent) => theEvent = e"
             >
               <el-radio-button

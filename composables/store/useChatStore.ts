@@ -26,6 +26,7 @@ export interface AtChatMemberOption {
   userId: string
   username: string
   nickName?: string
+  avatar?: string
 }
 
 // @unocss-include
