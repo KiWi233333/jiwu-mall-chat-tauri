@@ -1,3 +1,4 @@
+import type { Platform } from "@tauri-apps/api/os";
 import { relaunch } from "@tauri-apps/api/process";
 import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
 import type { Action } from "element-plus";
@@ -27,6 +28,7 @@ export const useSettingStore = defineStore(
     // 主页页折叠
     const isFold = ref(true);
     const isCollapse = ref(true);
+    const appPlatform = ref<Platform | "web" | "">("");
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -184,7 +186,7 @@ export const useSettingStore = defineStore(
         ignoreVersion: [] as string[],
       };
       contactBtnPosition.value = { x: 0, y: 0 };
-
+      appPlatform.value = "";
       isFold.value = true;
       isCollapse.value = true;
       isUserFold.value = true;
@@ -227,6 +229,7 @@ export const useSettingStore = defineStore(
       isThemeChangeLoad,
       appUploader,
       showChatMenu,
+      appPlatform,
       contactBtnPosition,
       // actions
       checkUpdates,

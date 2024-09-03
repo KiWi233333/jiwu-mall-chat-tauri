@@ -1,3 +1,4 @@
+import { platform } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 
 export async function useSettingInit() {
@@ -61,6 +62,18 @@ export async function useSettingInit() {
         app.classList.remove("stop-transition");
     }, 130);
   });
+
+  // 7、获取系统信息
+  if (typeof platform === "function") {
+    platform().then((res) => {
+      setting.appPlatform = res;
+    }).catch((e) => {
+      console.log(e);
+    });
+  }
+  else {
+    setting.appPlatform = "web";
+  }
 }
 
 function keyToggleTheme(e: KeyboardEvent) {

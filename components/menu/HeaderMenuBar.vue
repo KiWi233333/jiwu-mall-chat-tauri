@@ -40,7 +40,7 @@ const setting = useSettingStore();
           p-2 @click="user.exitLogin()"
         />
       </div>
-      <div class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
+      <div v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
         <MenuController>
           <template #start="{ data }">
             <ElButton
