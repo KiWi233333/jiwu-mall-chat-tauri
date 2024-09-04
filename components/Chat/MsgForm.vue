@@ -356,13 +356,32 @@ watch(() => chat.theContact.roomId, () => {
   loadUser();
 });
 
+
+// 监听文件拖拽事件
+const { fileList: fileDropList } = await useLinterFileDrop();
+watch(fileDropList, (val) => {
+  if (val.length) {
+    console.log(val);
+
+    ElMessageBox.confirm("是否上传文件？", "上传文件将会覆盖当前消息内容，是否继续？").then(async () => {
+      // 上传文件
+      inputOssFileUploadRef.value.resetInput?.();
+      imgList.value = [];
+      await inputOssFileUploadRef.value?.onUpload({
+        id: val[0],
+        key: undefined,
+        status: "",
+        percent: 0,
+        file: val[0],
+      });
+      form.value.msgType = MessageType.IMG; // 图片
+    });
+  }
+});
 // 挂载
 onMounted(async () => {
   // 加载用户
   loadUser();
-
-  // 监听文件拖拽事件
-  const { fileList: fileDropList } = await useLinterFileDrop();
 });
 </script>
 
@@ -393,16 +412,17 @@ onMounted(async () => {
         class="w-full cursor-pointer"
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
       >
-        <CardElImage
-          v-for="(img, i) in imgList" :key="i"
-          preview-teleported
-          loading="lazy"
-          :preview-src-list="[img.id || BaseUrlImg + img.key]"
-          :src="img.id || BaseUrlImg + img.key"
-          class="max-h-9rem max-w-16rem min-h-2rem w-16rem w-fit p-2 shadow-sm border-default card-default bg-color hover:shadow-lg"
-          title="左键放大 | 右键删除"
-          @contextmenu="onContextMenu($event, img.key, i)"
-        />
+        <div v-for="(img, i) in imgList" :key="i" class="flex-row-c-c p-2 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg">
+          <CardElImage
+            preview-teleported
+            loading="lazy"
+            :preview-src-list="[img.id || BaseUrlImg + img.key]"
+            :src="img.id || BaseUrlImg + img.key"
+            class="max-h-9rem max-w-16rem min-h-2rem w-16rem w-fit rounded p-0"
+            title="左键放大 | 右键删除"
+            @contextmenu="onContextMenu($event, img.key, i)"
+          />
+        </div>
       </el-form-item>
       <!-- 回复 -->
       <el-form-item
