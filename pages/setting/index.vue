@@ -79,9 +79,12 @@ onMounted(async () => {
 function showVersionNotice(version: string) {
   const v = version.replaceAll("v", "");
   getVersionNotice(v).then((res) => {
-    if (res.code !== StatusCode.SUCCESS)
+    if (res.code !== StatusCode.SUCCESS) {
       ElMessage.closeAll("error");
-    if (res.data.notice)
+      ElMessage.warning(res.message);
+      return;
+    }
+    if (res?.data?.notice)
       notice.value = (res.data.notice || "");
     showNotice.value = true;
   });
