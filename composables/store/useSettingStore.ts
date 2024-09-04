@@ -28,8 +28,6 @@ export const useSettingStore = defineStore(
     // 主页页折叠
     const isFold = ref(true);
     const isCollapse = ref(true);
-    // 平台
-    const appPlatform = ref<Platform | "web" | "">("");
     const isMobile = ref(false);
     // ---------------------设置-----------------
     const settingPage = ref({
@@ -188,7 +186,7 @@ export const useSettingStore = defineStore(
         ignoreVersion: [] as string[],
       };
       contactBtnPosition.value = { x: 0, y: 0 };
-      appPlatform.value = "";
+      isMobile.value = false;
       isFold.value = true;
       isCollapse.value = true;
       isUserFold.value = true;
@@ -232,7 +230,6 @@ export const useSettingStore = defineStore(
       isThemeChangeLoad,
       appUploader,
       showChatMenu,
-      appPlatform,
       contactBtnPosition,
       // actions
       checkUpdates,

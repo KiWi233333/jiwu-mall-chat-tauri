@@ -363,7 +363,6 @@ onMounted(async () => {
 
   // 监听文件拖拽事件
   const { fileList: fileDropList } = await useLinterFileDrop();
-  console.log(fileDropList);
 });
 </script>
 

@@ -1,14 +1,27 @@
 <script lang="ts" setup>
+import { type Platform, platform } from "@tauri-apps/api/os";
+
 const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
+const appPlatform = ref<Platform | "web">("darwin");
+
+onMounted(async () => {
+  try {
+    appPlatform.value = await platform();
+  }
+  catch (error) {
+    console.log(error);
+    appPlatform.value = "web";
+  }
+});
 // @unocss-include
 </script>
 
 <template>
   <!-- 菜单栏 -->
   <menu
-    class="nav group sticky left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
+    class="group nav sticky left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
   >
     <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
       <CardElImage
@@ -40,7 +53,7 @@ const setting = useSettingStore();
           p-2 @click="user.exitLogin()"
         />
       </div>
-      <div v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
+      <div v-if="appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
         <MenuController>
           <template #start="{ data }">
             <ElButton
