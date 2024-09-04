@@ -12,16 +12,17 @@ definePageMeta({
   layout: false,
 });
 
+
 const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
   const setting = useSettingStore();
+  user.showLoginForm = true;
   enable(!setting.settingPage.isColseAllTransition);
 });
 </script>
 
 <template>
   <div
-    v-if="user.showLoginForm || user.showRegisterForm"
     class="relative min-h-100vh flex-1 overflow-hidden overflow-hidden shadow border-default card-default bg-color"
     grid="~ cols-1 md:cols-2"
   >

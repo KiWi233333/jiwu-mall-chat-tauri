@@ -120,7 +120,7 @@ function resetPlaySounder() {
       <!-- 内容 -->
       <slot name="body">
         <div
-          class="msg-popper cursor-pointer sm:max-w-35vw hover:op-80" :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
+          class="msg-popper min-w-6em cursor-pointer hover:op-80" :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
         >
           <p @click="playSound(body?.url)">
             <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
