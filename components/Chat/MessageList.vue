@@ -56,7 +56,7 @@ async function loadData(call?: (data?: Message[]) => void) {
 }
 
 // 重新加载
-function reload(roomId: number) {
+function reload(roomId: number, timer = 40) {
   pageInfo.value = {
     cursor: null as null | string,
     isLast: false,
@@ -85,7 +85,7 @@ function reload(roomId: number) {
         chat.scrollBottom(false);
         isLoading.value = false;
         isReload.value = false;
-      }, 0);
+      }, timer);
     });
   });
 }
@@ -334,8 +334,8 @@ defineExpose({
     <ListDisAutoIncre
       :auto-stop="false"
       :immediate="false"
-      :no-more="pageInfo.isLast"
-      :loading="isLoading"
+      :no-more="pageInfo.isLast && !isReload"
+      :loading="isLoading && !isReload"
       loading-class="load-chaotic-orbit"
       @load="loadData"
     >
