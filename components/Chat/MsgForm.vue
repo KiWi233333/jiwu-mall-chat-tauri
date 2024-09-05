@@ -361,8 +361,6 @@ watch(() => chat.theContact.roomId, () => {
 const { fileList: fileDropList } = await useLinterFileDrop();
 watch(fileDropList, (val) => {
   if (val.length) {
-    console.log(val);
-
     ElMessageBox.confirm("是否上传文件？", "上传文件将会覆盖当前消息内容，是否继续？").then(async () => {
       // 上传文件
       inputOssFileUploadRef.value.resetInput?.();

@@ -27,11 +27,13 @@ onMounted(() => {
 onUnmounted(() => {
   useUmounted();
 });
+const keepaliveProps = {
+};
 </script>
 
 <template>
   <div id="app scale-100">
-    <NuxtPage keepalive />
+    <NuxtPage />
   </div>
 </template>
 
