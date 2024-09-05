@@ -17,6 +17,9 @@
         "relaunch": true,
         "relaunchDangerousAllowSymlinkMacos": false
       },
+      "os": {
+        "all": true
+      },
       "notification": {
         "all": true
       },

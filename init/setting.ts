@@ -66,19 +66,6 @@ export async function useSettingInit() {
       setting.isMobile = window.innerWidth < 640;
     }, 300);
   });
-
-  // 7、获取系统信息
-  if (typeof platform === "function") {
-    platform().then((res) => {
-      setting.appPlatform = res;
-    }).catch((e) => {
-      console.log(e);
-      setting.appPlatform = "web";
-    });
-  }
-  else {
-    setting.appPlatform = "web";
-  }
 }
 
 function keyToggleTheme(e: KeyboardEvent) {

@@ -30,7 +30,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="app">
+  <div id="app scale-100">
     <NuxtPage keepalive />
   </div>
 </template>

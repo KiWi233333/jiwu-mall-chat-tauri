@@ -55,8 +55,9 @@ async function loadData(call?: (data?: Message[]) => void) {
   });
 }
 
+const theRequest = ref<Promise<any> | null>(null);
 // 重新加载
-function reload(roomId: number, timer = 40) {
+function reload(roomId: number) {
   pageInfo.value = {
     cursor: null as null | string,
     isLast: false,
@@ -64,12 +65,9 @@ function reload(roomId: number, timer = 40) {
   };
   chat.theContact.msgList.splice(0);
   chat.scrollTopSize = 0;
-  if (isLoading.value || isReload.value)
-    return;
-
   isReload.value = true;
   isLoading.value = true;
-  getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
+  theRequest.value = getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
     if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
@@ -85,7 +83,7 @@ function reload(roomId: number, timer = 40) {
         chat.scrollBottom(false);
         isLoading.value = false;
         isReload.value = false;
-      }, timer);
+      }, 0);
     });
   });
 }
@@ -328,8 +326,8 @@ defineExpose({
     v-bind="$attrs"
     flex
     flex-col
-    class="msg-list op-0 transition-opacity transition-duration-50"
-    :class="{ 'op-100 ': !isReload }"
+    class="msg-list op-0 transition-opacity transition-duration-200"
+    :class="{ 'op-100': !isReload }"
   >
     <ListDisAutoIncre
       :auto-stop="false"
