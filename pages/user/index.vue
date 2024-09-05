@@ -67,10 +67,10 @@ definePageMeta({
             :user="user"
             grid-class="grid grid-cols-4 gap-4"
             card-class="truncate word-nowrap text-0.85rem"
-            class="p-4 card-default-br"
+            class="p-4 shadow-md card-default-br"
           />
           <!-- 签到 -->
-          <UserInfoSigninCard class="" />
+          <UserInfoSigninCard />
         </div>
       </div>
     </div>
