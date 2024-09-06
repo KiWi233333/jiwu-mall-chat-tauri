@@ -27,8 +27,6 @@ onMounted(() => {
 onUnmounted(() => {
   useUmounted();
 });
-const keepaliveProps = {
-};
 </script>
 
 <template>

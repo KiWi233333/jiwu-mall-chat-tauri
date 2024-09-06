@@ -199,7 +199,7 @@ async function onLogin(formEl: any | undefined) {
         store.$patch({
           token: res.data,
           isLogin: true,
-          showLoginForm: false,
+          showLoginForm: true,
           showRegisterForm: false,
         });
         await store.onUserLogin(res.data, autoLogin.value);
