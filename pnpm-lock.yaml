@@ -21,8 +21,8 @@ importers:
         specifier: 6.1.0
         version: 6.1.0
       md-editor-v3:
-        specifier: 4.19.2
-        version: 4.19.2(@codemirror/view@6.33.0)(@lezer/common@1.2.1)(vue@3.5.2(typescript@5.5.4))
+        specifier: 4.20.0
+        version: 4.20.0(@codemirror/view@6.33.0)(@lezer/common@1.2.1)(vue@3.5.2(typescript@5.5.4))
       qiniu-js:
         specifier: 3.4.2
         version: 3.4.2
@@ -3846,12 +3846,18 @@ packages:
     peerDependencies:
       markdown-it: '*'
 
+  markdown-it-sub@2.0.0:
+    resolution: {integrity: sha512-iCBKgwCkfQBRg2vApy9vx1C1Tu6D8XYo8NvevI3OlwzBRmiMtsJ2sXupBgEA7PPxiDwNni3qIUkhZ6j5wofDUA==}
+
+  markdown-it-sup@2.0.0:
+    resolution: {integrity: sha512-5VgmdKlkBd8sgXuoDoxMpiU+BiEt3I49GItBzzw7Mxq9CxvnhE/k09HFli09zgfFDRixDQDfDxi0mgBCXtaTvA==}
+
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  md-editor-v3@4.19.2:
-    resolution: {integrity: sha512-2NWg5S1C+8tyq6j32ZxqpuVPn1Ev26HXo349mBXeqsVMwzDVRt2QRXYermCkAbFSSK7TwAtNRcplmT4JvE6qeA==}
+  md-editor-v3@4.20.0:
+    resolution: {integrity: sha512-b2kiWuYjb9qlgFkNVLa+fabb3rZmLdfwjSRHYk4Nk9BRcwkp3WD+n7ILDwNtzOy1jrRPExWrlkb8G3/69KL6ag==}
     peerDependencies:
       vue: ^3.2.47
 
@@ -10212,6 +10218,10 @@ snapshots:
     dependencies:
       markdown-it: 14.1.0
 
+  markdown-it-sub@2.0.0: {}
+
+  markdown-it-sup@2.0.0: {}
+
   markdown-it@14.1.0:
     dependencies:
       argparse: 2.0.1
@@ -10221,7 +10231,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  md-editor-v3@4.19.2(@codemirror/view@6.33.0)(@lezer/common@1.2.1)(vue@3.5.2(typescript@5.5.4)):
+  md-editor-v3@4.20.0(@codemirror/view@6.33.0)(@lezer/common@1.2.1)(vue@3.5.2(typescript@5.5.4)):
     dependencies:
       '@codemirror/lang-markdown': 6.2.5
       '@codemirror/language-data': 6.5.1(@codemirror/view@6.33.0)
@@ -10232,6 +10242,8 @@ snapshots:
       lru-cache: 10.4.3
       markdown-it: 14.1.0
       markdown-it-image-figures: 2.1.1(markdown-it@14.1.0)
+      markdown-it-sub: 2.0.0
+      markdown-it-sup: 2.0.0
       medium-zoom: 1.1.0
       punycode: 2.3.1
       vue: 3.5.2(typescript@5.5.4)

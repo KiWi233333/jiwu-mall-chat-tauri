@@ -63,7 +63,7 @@
     "@tauri-apps/api": "1.6.0",
     "currency.js": "2.0.4",
     "element-china-area-data": "6.1.0",
-    "md-editor-v3": "4.19.2",
+    "md-editor-v3": "4.20.0",
     "qiniu-js": "3.4.2"
   },
   "husky": {
