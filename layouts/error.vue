@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <main mx-a h-100vh w-full flex-row-c-c>
+  <main class="mx-a h-100vh w-full flex-row-c-c border-default card-default">
     <slot />
   </main>
 </template>
