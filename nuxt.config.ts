@@ -16,13 +16,14 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@popperjs/core", "resize-detector"],
   },
-
+  nuxtLink: {
+    prefetch: true,
+    prefetchOn: { visibility: true },
+  },
   // spa情况下loading状态
   // spaLoadingTemplate: "./app/spa-loading-template.html",
-  pageTransition: { name: "page", mode: "out-in" },
-
-  layoutTransition: { name: "layout", mode: "out-in" },
-
+  // pageTransition: { name: "page", mode: "out-in" },
+  // layoutTransition: { name: "layout", mode: "out-in" },
   // 模块
   modules: [
     // 工具
