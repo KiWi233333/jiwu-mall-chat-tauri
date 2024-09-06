@@ -10,7 +10,6 @@ const props = defineProps<{
   index: number
 }>();
 
-const { data } = toRefs(props);
 const user = useUserStore();
 const colorMode = useColorMode();
 </script>

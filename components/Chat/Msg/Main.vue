@@ -62,6 +62,8 @@ const disabledRightClick = computed(() => {
 
   return false;
 });
+
+// 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
   e.preventDefault();
   if (disabledRightClick.value)
