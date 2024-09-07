@@ -40,18 +40,18 @@ watch(isSee, (val) => {
 function callBack() {
   if (showLoad.value && isSee.value) {
     emit("load");
-    timer = setTimeout(callBack, props.delay);
+    timer = setInterval(callBack, props.delay);
   }
   else if (props.noMore && props.autoStop) {
     stop && stop();
-    clearTimeout(timer);
+    clearInterval(timer);
   }
 }
 
 if (props.immediate)
   emit("load");
 onUnmounted(() => {
-  clearTimeout(timer);
+  clearInterval(timer);
   stop();
   timer = null;
 });

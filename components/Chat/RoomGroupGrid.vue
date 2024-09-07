@@ -303,13 +303,13 @@ function exitGroup() {
         :auto-stop="true"
         :no-more="!isLoading && chat.roomGroupPageInfo.isLast"
         loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-2"
-        :loading="isLoading"
         @load="loadData"
       >
         <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 w-2/3 gap-4) sm:(grid-cols-5 w-2/3 gap-4)">
           <div
             v-for="p in merberList"
             :key="p.userId"
+            :title="p.nickName"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
             class="flex-row-c-c flex-col p-2 btn-primary-bg"
             @contextmenu="onContextMenu($event, p)"
@@ -329,7 +329,7 @@ function exitGroup() {
         </div>
       </ListAutoIncre>
     </el-scrollbar>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

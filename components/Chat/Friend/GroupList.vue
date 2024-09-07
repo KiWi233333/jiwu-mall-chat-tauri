@@ -50,7 +50,6 @@ onMounted(() => {
   <div w-full flex flex-col gap-2>
     <ListAutoIncre
       :no-more="pageInfo.isLast"
-      :loading="isLoading"
       loading-class="op-0"
       @load="loadData"
     >
