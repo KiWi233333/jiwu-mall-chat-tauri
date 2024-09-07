@@ -142,7 +142,7 @@ defineExpose({
       class="relative max-h-400px flex"
     >
       <div ref="autoAnimateRef">
-        <div v-show="!showImg" key="left" class="w-90vw flex md:w-800px">
+        <div v-show="!showImg" key="left" class="w-84vw flex md:w-800px">
           <!-- 未选列表 -->
           <el-form-item
             label="好友列表"

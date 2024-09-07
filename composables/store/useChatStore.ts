@@ -175,10 +175,9 @@ export const useChatStore = defineStore(
     const showTheFriendPanel = computed({
       get: () => theFriendOpt.value.type !== FriendOptType.Empty,
       set: (val) => {
-        if (!val)
-          setTheFriendOpt(FriendOptType.Empty);
+        setTheFriendOpt(FriendOptType.Empty);
       },
-    });
+    }) as Ref<boolean>;
 
     /******************************* 消息相关 *********************************/
 

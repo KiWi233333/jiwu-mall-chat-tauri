@@ -295,8 +295,7 @@ function exitGroup() {
     </div>
     <el-scrollbar
       height="45vh"
-      view-class="max-w-full mx-a tracking-0.1em flex flex-col gap-2"
-      wrap-class="w-full mx-a"
+      wrap-class="shadow-in"
     >
       <ListAutoIncre
         :immediate="true"
@@ -305,7 +304,7 @@ function exitGroup() {
         loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-2"
         @load="loadData"
       >
-        <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 w-2/3 gap-4) sm:(grid-cols-5 w-2/3 gap-4)">
+        <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 gap-4)">
           <div
             v-for="p in merberList"
             :key="p.userId"
@@ -329,7 +328,7 @@ function exitGroup() {
         </div>
       </ListAutoIncre>
     </el-scrollbar>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
@@ -372,5 +371,21 @@ function exitGroup() {
 }
 :deep(.el-scrollbar__thumb) {
   display: none;
+}
+
+.shadow-in {
+  position: relative;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+}
+.shadow-in::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  z-index: 99;
+  height: 40%;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
 </style>

@@ -81,8 +81,8 @@ async function toSend(roomId: number) {
   >
     <div
       v-show="!isLoading"
-      class="animate-[0.3s_fade-in]"
-      v-bind="$attrs" h-full w-full flex-1 gap-1rem p-4 bg-color
+      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1 bg-color"
+      v-bind="$attrs"
     >
       <!-- 顶部 -->
       <div
@@ -90,16 +90,16 @@ async function toSend(roomId: number) {
       >
         <CardElImage
           :src="BaseUrlImg + data.data.avatar" fit="cover"
-          class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default v-card"
+          class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default card-default"
         />
         <strong text-1rem>{{ room.groupName }}</strong>
         <small op-60 el-color-info>在线：{{ room.onlineNum || "0" }}</small>
       </div>
       <!-- 群成员 -->
-      <ChatRoomGroupGrid class="max-h-50vh" :data="data.data" />
-      <ElDivider style="margin: 1rem auto;width: 30%;" />
+      <ChatRoomGroupGrid class="mx-a mt-8 max-h-50vh sm:w-2/3" :data="data.data" />
+      <div class="mx-a my-6 w-4/5 border-0 border-b-1px sm:(my-10 w-3/5) border-default" />
       <!-- 按钮 -->
-      <div flex-row-c-c py-4>
+      <div flex-row-c-c gap-4>
         <BtnElButton
           v-if="isOnGroup"
           icon-class="i-solar:exit-outline p-2 mr-2"

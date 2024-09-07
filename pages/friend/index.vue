@@ -32,12 +32,12 @@ const setting = useSettingStore();
           :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
         >
           <btn-el-button
-            icon-class="i-solar:power-bold"
+            icon-class="i-solar:arrow-left-outline mr-1"
             size="small"
-            class="absolute right-1rem top-1rem z-2 block sm:hidden"
+            class="absolute right-4 top-4 z-2 block sm:hidden"
             @click="chat.showTheFriendPanel = false"
           >
-            关闭
+            返回
           </btn-el-button>
           <!-- 面板 -->
           <ChatFriendMainType
