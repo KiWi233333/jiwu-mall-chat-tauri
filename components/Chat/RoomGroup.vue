@@ -3,8 +3,6 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
 import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
-const [autoAnimateListRef, enable] = useAutoAnimate();
-
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
 const chat = useChatStore();
@@ -149,7 +147,6 @@ async function loadData() {
     return;
   isLoading.value = true;
   const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
-
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
   if (data.list)
@@ -158,7 +155,6 @@ async function loadData() {
 }
 
 async function reload() {
-  enable(false);
   chat.onOfflineList = [];
   pageInfo.value = {
     cursor: null,
@@ -170,9 +166,6 @@ async function reload() {
   isLoading.value = false;
   // 动画
   await loadData();
-  nextTick(() => {
-    enable(setting.settingPage.isColseAllTransition);
-  });
 }
 // 添加好友
 const theUser = ref<ChatMemberVO>();
@@ -427,13 +420,11 @@ function exitGroup() {
     <el-scrollbar ref="memberScrollbarRef" style="height: auto;">
       <ListAutoIncre
         :immediate="true"
-        :auto-stop="true"
+        :auto-stop="false"
         :no-more="pageInfo.isLast"
-        loading-class="op-0"
-        :loading="isLoading"
         @load="loadData"
       >
-        <div ref="autoAnimateListRef" :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-2 md:gap-0>
+        <div :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-2 md:gap-0>
           <div
             v-for="p in merberList" :key="p.userId"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"

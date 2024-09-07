@@ -3,7 +3,6 @@ const props = withDefaults(defineProps<{
   noMore?: boolean
   immediate?: boolean
   delay?: number
-  loading?: boolean
   loadingClass?: string
   appendLoadingClass?: string
   ssr?: boolean
@@ -11,7 +10,6 @@ const props = withDefaults(defineProps<{
 }>(), {
   noMore: false,
   immediate: true,
-  loading: false,
   ssr: true,
   autoStop: true,
   delay: 400,
@@ -24,7 +22,7 @@ const loadMoreRef = ref();
 const isSee = ref(props.immediate);
 // 定时器
 let timer: any = null;
-const showLoad = computed(() => props.loading);
+const showLoad = computed(() => !props.noMore);
 // 刷新
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
@@ -35,8 +33,6 @@ const { stop, isSupported } = useIntersectionObserver(
 );
 // 监听
 watch(isSee, (val) => {
-  if (!val)
-    return clearTimeout(timer);
   callBack();
 });
 
