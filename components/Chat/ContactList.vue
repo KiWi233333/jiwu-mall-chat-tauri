@@ -59,9 +59,13 @@ async function loadData(dto?: ChatContactPageDTO) {
       chat.contactList.push(...data.list);
     }
   }
+  console.log(data.cursor, data.isLast);
+
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
-  isLoading.value = false;
+  nextTick(() => {
+    isLoading.value = false;
+  });
   return data.list;
 }
 // 初始化

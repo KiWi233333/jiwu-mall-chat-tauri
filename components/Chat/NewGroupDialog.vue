@@ -139,36 +139,34 @@ defineExpose({
       ref="formRef"
       label-position="top"
       :model="form"
-      class="relative max-h-400px flex"
+      class="relative"
     >
       <div ref="autoAnimateRef">
-        <div v-show="!showImg" key="left" class="w-84vw flex md:w-800px">
+        <div v-show="!showImg" key="first" class="mt-4 w-84vw flex flex flex-col gap-4 px-4 md:w-800px md:flex-row">
           <!-- 未选列表 -->
           <el-form-item
             label="好友列表"
             class="left flex-1"
           >
             <el-checkbox-group v-model="form.uidList" class="w-full">
-              <el-scrollbar height="350px" wrap-class="pr-2 w-full">
-                <div flex flex-col>
-                  <ListAutoIncre
-                    :immediate="true"
-                    :auto-stop="true"
-                    :no-more="pageInfo.isLast"
-                    :loading="isLoading"
-                    @load="loadData"
-                  >
-                    <el-checkbox v-for="p in userList" :key="p.userId" class="check-item mb-2" :value="p.userId" :label="p.userId" style="width: 100%;height: fit-content;">
-                      <div class="w-full flex items-center gap-2">
-                        <div class="avatar-icon">
-                          <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
-                        </div>
-                        <strong truncate>{{ p.nickName || "未填写" }}</strong>
+              <div max-h-200px flex flex-col overflow-y-auto sm:max-h-300px sm:pr-4>
+                <ListAutoIncre
+                  :immediate="true"
+                  :auto-stop="true"
+                  :no-more="pageInfo.isLast"
+                  :loading="isLoading"
+                  @load="loadData"
+                >
+                  <el-checkbox v-for="p in userList" :key="p.userId" class="check-item mb-2" :value="p.userId" :label="p.userId" style="width: 100%;height: fit-content;">
+                    <div class="w-full flex items-center gap-2">
+                      <div class="avatar-icon">
+                        <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
                       </div>
-                    </el-checkbox>
-                  </ListAutoIncre>
-                </div>
-              </el-scrollbar>
+                      <strong truncate>{{ p.nickName || "未填写" }}</strong>
+                    </div>
+                  </el-checkbox>
+                </ListAutoIncre>
+              </div>
             </el-checkbox-group>
           </el-form-item>
           <!-- 已选列表 -->
@@ -181,19 +179,19 @@ defineExpose({
                 trigger: ['blur'],
                 message: '群成员不能为空！',
               }]"
-            class="right flex-1 pb-2rem"
+            class="right h-fit flex-1"
             style="display: flex;;flex-direction: column;"
           >
-            <el-scrollbar style="width: 100%;" height="300px" view-class="min-h-full bg-light items-start w-full v-card grid md:grid-cols-5 gap-4 p-2 dark:bg-dark-9 mt-0">
-              <div v-for="p in getCheckList" :key="p.userId" class="item relative flex-col truncate p-2" :label="p.userId">
-                <i i-solar:close-circle-bold p-2 btn-primary class="absolute right-0 top-0 z-1" @click="remove(p.userId)" />
+            <div class="grid grid-cols-3 mt-0 max-h-200px min-h-200px w-full items-start gap-col-2 overflow-y-auto bg-light p-2 sm:(grid-cols-4 max-h-300px min-h-300px) card-default dark:bg-dark-9">
+              <div v-for="p in getCheckList" :key="p.userId" class="item" :label="p.userId">
+                <i i-solar:close-circle-bold p-2 btn-primary class="absolute right-2px top-2px z-1" @click="remove(p.userId)" />
                 <div class="avatar-icon">
                   <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
                 </div>
-                <span>{{ p.nickName || "未填写" }}</span>
+                <span class="block max-w-18 truncate">{{ p.nickName || "未填写" }}</span>
               </div>
-            </el-scrollbar>
-            <div mt-a w-full flex-row-c-c>
+            </div>
+            <div mt-8 w-full flex-row-c-c>
               <el-button class="w-1/3" @click="show = false">
                 取消
               </el-button>
@@ -205,11 +203,12 @@ defineExpose({
         </div>
         <div
           v-if="showImg"
-          key="2" class="h-300px w-90vw flex-row-c-c flex-col md:w-400px"
+          key="2" class="h-250px w-90vw flex-row-c-c flex-col md:w-400px sm:h-300px"
         >
           <!-- 选择头像 -->
           <el-form-item
-            label="群头像"
+            label=""
+            class="avatar"
             prop="avatar"
             :rules="[
               {
@@ -217,23 +216,27 @@ defineExpose({
                 trigger: ['blur'],
                 message: '群头像不能为空！',
               }]"
-            class="right flex-1 pb-2rem"
-            style="display: flex;;flex-direction: column;"
+            style="height: fit-content;margin: auto;margin-bottom: 0;"
           >
-            <InputOssFileUpload
-              ref="inputOssFileUploadRef"
-              key="inputOssFileUploadRef"
-              :multiple="false"
-              :limit="1"
-              input-class="w-8rem h-8rem mr-2 flex-row-c-c flex-shrink-0  v-card"
-              :upload-quality="0.4"
-              @error-msg="(msg:string) => {
-                ElMessage.error(msg)
-              }"
-              @submit="onSubmitImages"
-            />
+            <div class="flex-row-c-c flex-col">
+              <InputOssFileUpload
+                ref="inputOssFileUploadRef"
+                key="inputOssFileUploadRef"
+                :multiple="false"
+                :limit="1"
+                input-class="w-8rem h-8rem flex-row-c-c flex-shrink-0  card-default"
+                :upload-quality="0.4"
+                @error-msg="(msg:string) => {
+                  ElMessage.error(msg)
+                }"
+                @submit="onSubmitImages"
+              />
+              <div class="mb-4 text-center">
+                群头像
+              </div>
+            </div>
           </el-form-item>
-          <div mt-a w-full flex-row-c-c>
+          <div mb-4 mt-a w-full flex-row-c-c>
             <el-button class="w-1/5" @click="showImg = false">
               上一步
             </el-button>
@@ -264,13 +267,18 @@ defineExpose({
   --at-apply:"h-2.6rem card-default  w-2.6rem flex-row-c-c rounded-6px  shadow-sm border-default"
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer rounded-6px hover:(bg-[#b8b8b818] ) transition-300"
+  --at-apply:"flex flex-col relative items-center gap-4 px-2 py-3.6 cursor-pointer rounded-6px hover:(bg-[#b8b8b818] ) transition-300"
 }
 .check-item {
   --at-apply:"flex items-center px-4 gap-2 cursor-pointer rounded-6px p-2 hover:(bg-[#b8b8b818] ) transition-300"
-
 }
 :deep(.el-checkbox.is-checked){
   --at-apply:" bg-[#b8b8b818] shadow-sm"
+}
+.avatar {
+  :deep(.el-form-item__error) {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>

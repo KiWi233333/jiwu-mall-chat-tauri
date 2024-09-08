@@ -242,3 +242,9 @@
     --at-apply: "!card-default-br";
   }
 }
+
+
+.el-dialog__header.show-close {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
