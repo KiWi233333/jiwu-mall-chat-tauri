@@ -35,7 +35,7 @@ importers:
         version: 2.3.1(vue@3.5.3(typescript@5.5.4))
       '@element-plus/nuxt':
         specifier: 1.0.10
-        version: 1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.1(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
+        version: 1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
       '@formkit/auto-animate':
         specifier: 0.8.2
         version: 0.8.2
@@ -88,8 +88,8 @@ importers:
         specifier: 4.2.0
         version: 4.2.0
       element-plus:
-        specifier: 2.8.1
-        version: 2.8.1(vue@3.5.3(typescript@5.5.4))
+        specifier: 2.8.2
+        version: 2.8.2(vue@3.5.3(typescript@5.5.4))
       eslint:
         specifier: 8.56.0
         version: 8.56.0
@@ -2668,8 +2668,8 @@ packages:
   element-china-area-data@6.1.0:
     resolution: {integrity: sha512-IkpcjwQv2A/2AxFiSoaISZ+oMw1rZCPUSOg5sOCwT5jKc96TaawmKZeY81xfxXsO0QbKxU5LLc6AirhG52hUmg==}
 
-  element-plus@2.8.1:
-    resolution: {integrity: sha512-p11/6w/O0+hGvPhiN3jrcgh+XG+eg5jZlLdQVYvcPHZYhhCh3J3YeZWW1JO/REPES1vevkboT6VAi+9wHA8Dsg==}
+  element-plus@2.8.2:
+    resolution: {integrity: sha512-pqoQlaUmzUFCjjTHyxGO7Cd0CizsQpIaad1ozV9PCaYjh2T4MIMnjfifqiYs2lWoZ/8GVwrRG1WTCfnZEjwfcg==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -6162,11 +6162,11 @@ snapshots:
     dependencies:
       vue: 3.5.3(typescript@5.5.4)
 
-  '@element-plus/nuxt@1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.1(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
+  '@element-plus/nuxt@1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
     dependencies:
       '@element-plus/icons-vue': 2.3.1(vue@3.5.3(typescript@5.5.4))
       '@nuxt/kit': 3.13.1(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
-      element-plus: 2.8.1(vue@3.5.3(typescript@5.5.4))
+      element-plus: 2.8.2(vue@3.5.3(typescript@5.5.4))
       magic-string: 0.27.0
       unplugin: 1.13.1(webpack-sources@3.2.3)
     transitivePeerDependencies:
@@ -8683,7 +8683,7 @@ snapshots:
     dependencies:
       china-division: 2.7.0
 
-  element-plus@2.8.1(vue@3.5.3(typescript@5.5.4)):
+  element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.1(vue@3.5.3(typescript@5.5.4))

@@ -38,7 +38,7 @@
     "@unocss/nuxt": "0.62.3",
     "@vueuse/nuxt": "11.0.3",
     "crypto-js": "4.2.0",
-    "element-plus": "2.8.1",
+    "element-plus": "2.8.2",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "2.29.1",
