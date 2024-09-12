@@ -331,7 +331,6 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
             :auto-stop="false"
             loading-class="op-0"
             :no-more="pageInfo.isLast"
-            :loading="isLoading"
             @load="loadData(dto)"
           >
             <el-radio

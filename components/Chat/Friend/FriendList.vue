@@ -58,7 +58,6 @@ onMounted(() => {
       :immediate="true"
       :auto-stop="true"
       :no-more="pageInfo.isLast"
-      :loading="isLoading"
       loading-class="op-0"
       @load="loadData"
     >

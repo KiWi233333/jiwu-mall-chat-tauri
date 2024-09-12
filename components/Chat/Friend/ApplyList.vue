@@ -68,7 +68,6 @@ function onArgeeFriend(applyId: number) {
       :immediate="true"
       :auto-stop="true"
       :no-more="pageInfo.isLast"
-      :loading="isLoading"
       @load="loadData"
     >
       <div

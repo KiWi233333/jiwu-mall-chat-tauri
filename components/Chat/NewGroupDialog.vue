@@ -154,7 +154,6 @@ defineExpose({
                   :immediate="true"
                   :auto-stop="true"
                   :no-more="pageInfo.isLast"
-                  :loading="isLoading"
                   @load="loadData"
                 >
                   <el-checkbox v-for="p in userList" :key="p.userId" class="check-item mb-2" :value="p.userId" :label="p.userId" style="width: 100%;height: fit-content;">
