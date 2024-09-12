@@ -119,10 +119,18 @@
   }
 }
 
+// 消息确认框
+body .el-message {
+  width: max-content; 
+  max-width: 94%;
+  padding: 0.5rem 0.8rem;
+  transform: translate(-50%, -26%) !important;
+  --at-apply: "card-default-br rounded-2rem";
+}
+
 // 单选钮
 .el-radio-group {
   font-size: medium;
-
   .el-radio__inner {
     border-radius: 4px;
     transform: scale(1.1);

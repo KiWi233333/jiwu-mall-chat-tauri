@@ -62,8 +62,8 @@
     (
       "bg-color": getCssVar("color", "info", "light-9"),
       "border-color": getCssVar("border-color-lighter"),
-      "padding": 10px 14px,
-      "close-size": 16px,
+      "padding": 0.5rem 0.8rem,
+      "close-size": 1rem,
       "close-icon-color": getCssVar("text-color-placeholder"),
       "close-hover-color": getCssVar("text-color-secondary")
     ),
