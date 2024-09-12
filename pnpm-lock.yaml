@@ -46,8 +46,8 @@ importers:
         specifier: 1.2.0
         version: 1.2.0
       '@iconify-json/tabler':
-        specifier: 1.2.1
-        version: 1.2.1
+        specifier: 1.2.2
+        version: 1.2.2
       '@iconify/vue':
         specifier: 4.1.2
         version: 4.1.2(vue@3.5.3(typescript@5.5.4))
@@ -106,8 +106,8 @@ importers:
         specifier: 9.17.0
         version: 9.17.0(eslint@8.56.0)
       husky:
-        specifier: ^9.1.4
-        version: 9.1.5
+        specifier: ^9.1.6
+        version: 9.1.6
       lint-staged:
         specifier: ^15.2.10
         version: 15.2.10
@@ -934,8 +934,8 @@ packages:
   '@iconify-json/solar@1.2.0':
     resolution: {integrity: sha512-xMspRoN2S2Op8mgjZHgiMJq2Xqo5oVlBp/1NICTeMByfePpkEKF67Fwh5KdBRF+SBey/cNLhjkTuHmKeSIEkog==}
 
-  '@iconify-json/tabler@1.2.1':
-    resolution: {integrity: sha512-Ek2kVGZDuh3nD3+3FHnHRsthnwZScA1YQi8bNrEAZvU9C5gyNcUDRM9MBJ8eYR3C5P/2HkPjboMk+tIIewbc2w==}
+  '@iconify-json/tabler@1.2.2':
+    resolution: {integrity: sha512-sdHGvNKWm4TofzGm/rP5UythJBp82DqTOfjSlCLUTnuwCuRSJia5vfoIx2aEVRKq8jINj/V80c+A2k7jAW8Hlg==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -3381,8 +3381,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  husky@9.1.5:
-    resolution: {integrity: sha512-rowAVRUBfI0b4+niA4SJMhfQwc107VLkBUgEYYAOQAbqDCnra1nYh83hF/MDmhYs9t9n1E3DuKOrs2LYNC+0Ag==}
+  husky@9.1.6:
+    resolution: {integrity: sha512-sqbjZKK7kf44hfdE94EoX8MZNk0n7HeW37O4YrVGCF4wzgQjp+akPAkfUK5LZ6KuR/6sqeAVuXHji+RzQgOn5A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6455,7 +6455,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/tabler@1.2.1':
+  '@iconify-json/tabler@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -9672,7 +9672,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  husky@9.1.5: {}
+  husky@9.1.6: {}
 
   ieee754@1.2.1: {}
 
