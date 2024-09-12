@@ -7,4 +7,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return "/login";
     }
   }
+  else {
+    if (user.isLogin)
+      return "/";
+  }
 });
