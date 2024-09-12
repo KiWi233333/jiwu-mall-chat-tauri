@@ -20,6 +20,14 @@ useSeoMeta({
   description: "极物圈-主页 开启你的极物之旅！",
   keywords: appKeywords,
 });
+
+// 用于iframe嵌入快速登录
+const route = useRoute();
+const user = useUserStore();
+const token = route.query.token;
+if (token)
+  user.onUserLogin(String(token), true, "/");
+
 onMounted(() => {
   useInit();
 });
