@@ -82,6 +82,8 @@ export const useSettingStore = defineStore(
                 appUploader.value.isUpdating = true;
                 installUpdate().then(async (val) => {
                   console.log(val);
+                  appUploader.value.isUpdating = false;
+                  appUploader.value.isUpload = false;
                   await relaunch();
                 }).catch((error) => {
                   console.error(error);

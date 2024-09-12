@@ -1,4 +1,3 @@
-import { platform } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 
 export async function useSettingInit() {
