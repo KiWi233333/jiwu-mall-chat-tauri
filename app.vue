@@ -21,12 +21,6 @@ useSeoMeta({
   keywords: appKeywords,
 });
 
-// 用于iframe嵌入快速登录
-const route = useRoute();
-const user = useUserStore();
-const token = route.query.token;
-if (token)
-  user.onUserLogin(String(token), true, "/");
 
 onMounted(() => {
   useInit();

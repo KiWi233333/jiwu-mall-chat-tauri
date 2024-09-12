@@ -85,7 +85,7 @@ export const useUserStore = defineStore(
      * 用户登录
      * @param t t
      */
-    const onUserLogin = async (t: string, saveLocal?: boolean, redirectTo?: string) => {
+    const onUserLogin = async (t: string, saveLocal?: boolean, redirectTo?: string, callback?: (data: UserInfoVO) => void) => {
       // 钱包
       // loadUserWallet(t);
       // 用户信息
@@ -94,6 +94,7 @@ export const useUserStore = defineStore(
         userInfo.value = res.data as UserInfoVO;
         isLogin.value = true;
         token.value = t;
+        callback && callback(res.data);
         if (redirectTo)
           await navigateTo(redirectTo);
       }

@@ -39,6 +39,20 @@ export async function userTauriInit() {
  */
 export async function useAuthInit() {
   const user = useUserStore();
-  // 1、确认是否登录
-  user.onCheckLogin();
+  // 用于iframe嵌入快速登录
+  const route = useRoute();
+  const token = route.query.token;
+  if (token && !user.isLogin) {
+    let loading = {} as any;
+    loading = ElLoading.service({ fullscreen: true, text: "正在登录，请稍等..." });
+    user.onUserLogin(String(token), true, "/", () => {
+      setTimeout(() => {
+        loading?.close?.();
+      }, 300);
+    });
+  }
+  else {
+    // 确认是否登录
+    user.onCheckLogin();
+  }
 }
