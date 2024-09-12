@@ -86,7 +86,6 @@ async function scrollTop(size: number) {
   });
   chat.isChatScroll = false;
 }
-
 // 绑定事件
 chat.scrollBottom = scrollBottom;
 chat.scrollReplyMsg = scrollReplyMsg;
@@ -99,7 +98,7 @@ function onSendMsg(msg: ChatMessageVO) {
   nextTick(() => {
     setTimeout(() => {
       scrollBottom(false);
-    }, 200);
+    }, 300);
   }); // 发送消息后自动滚动到底部
 };
 

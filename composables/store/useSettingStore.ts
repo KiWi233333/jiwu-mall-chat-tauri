@@ -57,6 +57,7 @@ export const useSettingStore = defineStore(
     const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
     const isOpenContact = ref(true);// 是否打开会话列表
     const showChatMenu = ref(true);
+    const downUpChangeContact = ref(true); // 向上向下切换联系人列表
 
     /**
      * 检查更新
@@ -233,6 +234,7 @@ export const useSettingStore = defineStore(
       appUploader,
       showChatMenu,
       contactBtnPosition,
+      downUpChangeContact,
       // actions
       checkUpdates,
       loadSystemFonts,

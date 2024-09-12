@@ -37,7 +37,14 @@ export const useChatStore = defineStore(
     /******************************* 会话 *********************************/
     const isOpenContact = ref(true);
     const contactList = ref<ChatContactVO[]>([]);
-    const contactIdsSet = computed(() => new Set(contactList.value.map(p => p.roomId)));
+    const searchKeyWords = ref("");
+    const getContactList = computed(() => {
+      if (searchKeyWords.value)
+        return contactList.value.sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
+      else
+        return contactList.value.sort((a, b) => b.activeTime - a.activeTime);
+    });
+    const contactIdsSet = computed(() => new Set(getContactList.value.map(p => p.roomId)));
     const isChatScroll = ref<boolean>(false);
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
@@ -127,6 +134,34 @@ export const useChatStore = defineStore(
     const scrollReplyMsg = (msgId: number, gapCount: number = 0) => {};
     const saveScrollTop = () => {};
     const scrollTop = (size: number) => {};
+    // 房间
+    const onChangeRoom = async (newRoomId: number) => {
+    };
+    const onDownUpChangeRoomLoading = ref(false);
+    // 向下/向上切换房间
+    const onDownUpChangeRoom = async (type: "down" | "up") => {
+      if (onDownUpChangeRoomLoading.value)
+        return;
+      const index = getContactList.value.findIndex(p => p.roomId === theContact.value.roomId);
+      onDownUpChangeRoomLoading.value = true;
+      const chat = useChatStore();
+      if (index === -1 && getContactList?.value?.[0]?.roomId) {
+        await chat.onChangeRoom(getContactList?.value?.[0]?.roomId as number);
+        onDownUpChangeRoomLoading.value = false;
+        return;
+      }
+      if (type === "down") {
+        // 向下
+        if (index < getContactList.value.length - 1 && getContactList?.value?.[index + 1]?.roomId)
+          await chat.onChangeRoom(getContactList.value[index + 1]?.roomId as number);
+      }
+      else {
+        // 向上
+        if (index > 0 && getContactList?.value?.[index - 1]?.roomId)
+          await chat.onChangeRoom(getContactList.value[index - 1]?.roomId as number);
+      }
+      onDownUpChangeRoomLoading.value = false;
+    };
 
     /******************************* 艾特AT人 *********************************/
     const atUserList = ref<Partial<AtChatMemberOption>[]>([]);
@@ -184,7 +219,9 @@ export const useChatStore = defineStore(
     return {
       // state
       contactList,
+      searchKeyWords,
       contactIdsSet,
+      getContactList,
       theContact,
       replyMsg,
       atUserList,
@@ -215,7 +252,8 @@ export const useChatStore = defineStore(
       scrollReplyMsg,
       scrollBottom,
       scrollTop,
-
+      onChangeRoom,
+      onDownUpChangeRoom,
     };
   },
   {

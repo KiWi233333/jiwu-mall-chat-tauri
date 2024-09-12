@@ -372,20 +372,4 @@ function exitGroup() {
 :deep(.el-scrollbar__thumb) {
   display: none;
 }
-
-.shadow-in {
-  position: relative;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-}
-.shadow-in::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  display: block;
-  width: 100%;
-  z-index: 99;
-  height: 40%;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-}
 </style>

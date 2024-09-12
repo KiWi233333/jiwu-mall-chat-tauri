@@ -8,7 +8,6 @@ const props = defineProps<{
 }>();
 const [autoAnimateRef, enable] = useAutoAnimate();
 onMounted(() => {
-  const setting = useSettingStore();
   enable(false);
 });
 const isLoading = ref<boolean>(false);
@@ -18,13 +17,6 @@ const pageInfo = ref({
   cursor: null as null | string,
   isLast: false,
   size: 10,
-});
-const searchKeyWords = ref("");
-const getContactList = computed(() => {
-  if (searchKeyWords.value)
-    return chat.contactList.sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
-  else
-    return chat.contactList.filter((p: ChatContactVO) => chat.contactIdsSet.has(p.roomId)).sort((a, b) => b.activeTime - a.activeTime);
 });
 
 export interface ChatContactPageDTO {
@@ -59,17 +51,14 @@ async function loadData(dto?: ChatContactPageDTO) {
       chat.contactList.push(...data.list);
     }
   }
-  console.log(data.cursor, data.isLast);
-
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
-  nextTick(() => {
-    isLoading.value = false;
-  });
+  isLoading.value = false;
   return data.list;
 }
 // 初始化
 reload();
+
 const setting = useSettingStore();
 const nowDate = Date.now();
 function getTime(time: string | number) {
@@ -113,9 +102,7 @@ async function onChangeRoom(newRoomId: number) {
   }
   setting.isOpenContact = false;
 }
-if (theContactId.value) // 初始化当前会话
-  onChangeRoom(theContactId.value);
-
+chat.onChangeRoom = onChangeRoom;
 // 刷新
 async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isAll) {
@@ -317,7 +304,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       flex-row-c-c
     >
       <ElInput
-        v-model.lazy="searchKeyWords"
+        v-model.lazy="chat.searchKeyWords"
         class="mr-2"
         type="text"
         clearable
@@ -348,7 +335,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
             @load="loadData(dto)"
           >
             <el-radio
-              v-for="room in getContactList"
+              v-for="room in chat.getContactList"
               :key="room.roomId"
               aria-selected="true"
               style="border-radius: 0;"

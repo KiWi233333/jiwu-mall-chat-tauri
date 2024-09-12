@@ -151,6 +151,19 @@ function showVersionNotice(version: string) {
               />
             </el-tooltip>
           </div>
+          <!-- 上下按键切换会话 -->
+          <div class="group h-8 flex-row-bt-c">
+            切换会话
+            <el-tooltip
+              :content="!setting.downUpChangeContact ? '开启方向上下键切换' : '关闭方向上下键切换'" placement="left"
+              popper-style="padding: 0 0.5em;"
+            >
+              <el-switch
+                v-model="setting.downUpChangeContact" size="large" active-text="开启"
+                inactive-text="关闭" inline-prompt
+              />
+            </el-tooltip>
+          </div>
           <!-- Esc -->
           <div class="group h-8 flex-row-bt-c">
             ESC关闭

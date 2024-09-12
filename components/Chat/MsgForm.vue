@@ -10,6 +10,7 @@ const emit = defineEmits<{
 // store
 const user = useUserStore();
 const chat = useChatStore();
+const setting = useSettingStore();
 
 // hooks
 const {
@@ -140,12 +141,19 @@ async function onPaste(e: ClipboardEvent) {
  * 发送消息
  */
 async function onSubmit(e?: KeyboardEvent) {
-  if (e?.shiftKey && e.key === "Enter")
-    return;
-  if (e?.key !== "Enter")
-    return;
-  e.preventDefault && e.preventDefault();
-  e.stopPropagation && e.stopPropagation();
+  if (e) {
+    // 上下键
+    if (!form?.value?.content?.trim() && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+      chat.onDownUpChangeRoom(e.key === "ArrowDown" ? "down" : "up");
+      return;
+    }
+    if (e?.shiftKey && e?.key === "Enter")
+      return;
+    if (e?.key !== "Enter")
+      return;
+    e.preventDefault && e.preventDefault();
+    e.stopPropagation && e.stopPropagation();
+  }
   if (isSend.value)
     return;
   formRef.value?.validate(async (action: boolean) => {
@@ -390,7 +398,6 @@ onMounted(async () => {
     :disabled="isDisabled"
     class="w-full"
     style="position: relative;"
-    @submit.prevent="onSubmit"
   >
     <div class="top absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
       <!-- 新消息 -->
