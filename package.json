@@ -38,7 +38,7 @@
     "@unocss/nuxt": "0.62.3",
     "@vueuse/nuxt": "11.0.3",
     "crypto-js": "4.2.0",
-    "element-plus": "2.8.2",
+    "element-plus": "2.8.3",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "2.29.1",
@@ -48,7 +48,7 @@
     "lint-staged": "^15.2.10",
     "nuxt": "3.13.1",
     "pinia": "2.2.2",
-    "postcss": "8.4.41",
+    "postcss": "8.4.45",
     "postcss-html": "1.7.0",
     "postcss-scss": "4.0.9",
     "prettier": "3.3.3",
@@ -59,7 +59,7 @@
     "vue-tsc": "2.0.29"
   },
   "dependencies": {
-    "@nuxtjs/color-mode": "3.4.4",
+    "@nuxtjs/color-mode": "3.5.0",
     "@tauri-apps/api": "1.6.0",
     "currency.js": "2.0.4",
     "element-china-area-data": "6.1.0",

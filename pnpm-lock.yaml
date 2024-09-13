@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@nuxtjs/color-mode':
-        specifier: 3.4.4
-        version: 3.4.4(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
+        specifier: 3.5.0
+        version: 3.5.0(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
       '@tauri-apps/api':
         specifier: 1.6.0
         version: 1.6.0
@@ -35,7 +35,7 @@ importers:
         version: 2.3.1(vue@3.5.3(typescript@5.5.4))
       '@element-plus/nuxt':
         specifier: 1.0.10
-        version: 1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
+        version: 1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.3(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
       '@formkit/auto-animate':
         specifier: 0.8.2
         version: 0.8.2
@@ -80,7 +80,7 @@ importers:
         version: 0.62.3(eslint@8.56.0)(typescript@5.5.4)
       '@unocss/nuxt':
         specifier: 0.62.3
-        version: 0.62.3(magicast@0.3.5)(postcss@8.4.41)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))(webpack-sources@3.2.3)(webpack@5.94.0(esbuild@0.23.1))
+        version: 0.62.3(magicast@0.3.5)(postcss@8.4.45)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))(webpack-sources@3.2.3)(webpack@5.94.0(esbuild@0.23.1))
       '@vueuse/nuxt':
         specifier: 11.0.3
         version: 11.0.3(magicast@0.3.5)(nuxt@3.13.1(@parcel/watcher@2.4.1)(@types/node@22.5.4)(eslint@8.56.0)(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.21.2)(sass@1.77.5)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))(vue-tsc@2.0.29(typescript@5.5.4))(webpack-sources@3.2.3))(rollup@4.21.2)(vue@3.5.3(typescript@5.5.4))(webpack-sources@3.2.3)
@@ -88,8 +88,8 @@ importers:
         specifier: 4.2.0
         version: 4.2.0
       element-plus:
-        specifier: 2.8.2
-        version: 2.8.2(vue@3.5.3(typescript@5.5.4))
+        specifier: 2.8.3
+        version: 2.8.3(vue@3.5.3(typescript@5.5.4))
       eslint:
         specifier: 8.56.0
         version: 8.56.0
@@ -118,14 +118,14 @@ importers:
         specifier: 2.2.2
         version: 2.2.2(typescript@5.5.4)(vue@3.5.3(typescript@5.5.4))
       postcss:
-        specifier: 8.4.41
-        version: 8.4.41
+        specifier: 8.4.45
+        version: 8.4.45
       postcss-html:
         specifier: 1.7.0
         version: 1.7.0
       postcss-scss:
         specifier: 4.0.9
-        version: 4.0.9(postcss@8.4.41)
+        version: 4.0.9(postcss@8.4.45)
       prettier:
         specifier: 3.3.3
         version: 3.3.3
@@ -1104,8 +1104,8 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
-  '@nuxtjs/color-mode@3.4.4':
-    resolution: {integrity: sha512-VSNJVGnRIjiGmfbMa0cN+rwNRowDRTL/wku/z5MpKSanVo3khIRitBNqNviso1l3T+LW0pLHeXBNp6L8g/l1EA==}
+  '@nuxtjs/color-mode@3.5.0':
+    resolution: {integrity: sha512-vM14Gx05X+nqRXN0h48WqcxQ6YQVCKyobU04KIzqlRrzlpRA5bbuHpHEg+X0vGJCq2JX0skK1rBqvrQv3DVDPw==}
 
   '@nuxtjs/eslint-config-typescript@12.1.0':
     resolution: {integrity: sha512-l2fLouDYwdAvCZEEw7wGxOBj+i8TQcHFu3zMPTLqKuv1qu6WcZIr0uztkbaa8ND1uKZ9YPqKx6UlSOjM4Le69Q==}
@@ -2670,8 +2670,8 @@ packages:
   element-china-area-data@6.1.0:
     resolution: {integrity: sha512-IkpcjwQv2A/2AxFiSoaISZ+oMw1rZCPUSOg5sOCwT5jKc96TaawmKZeY81xfxXsO0QbKxU5LLc6AirhG52hUmg==}
 
-  element-plus@2.8.2:
-    resolution: {integrity: sha512-pqoQlaUmzUFCjjTHyxGO7Cd0CizsQpIaad1ozV9PCaYjh2T4MIMnjfifqiYs2lWoZ/8GVwrRG1WTCfnZEjwfcg==}
+  element-plus@2.8.3:
+    resolution: {integrity: sha512-BXQOyDf0s7JHyNEV8iaO+iaOzTZPsBXVKMzMI967vLCodUBDLrtiY5vglAn1YEebQcUOEUMhGcttTpIvEkcBjQ==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -6168,11 +6168,11 @@ snapshots:
     dependencies:
       vue: 3.5.3(typescript@5.5.4)
 
-  '@element-plus/nuxt@1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
+  '@element-plus/nuxt@1.0.10(@element-plus/icons-vue@2.3.1(vue@3.5.3(typescript@5.5.4)))(element-plus@2.8.3(vue@3.5.3(typescript@5.5.4)))(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
     dependencies:
       '@element-plus/icons-vue': 2.3.1(vue@3.5.3(typescript@5.5.4))
       '@nuxt/kit': 3.13.1(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
-      element-plus: 2.8.2(vue@3.5.3(typescript@5.5.4))
+      element-plus: 2.8.3(vue@3.5.3(typescript@5.5.4))
       magic-string: 0.27.0
       unplugin: 1.13.1(webpack-sources@3.2.3)
     transitivePeerDependencies:
@@ -6861,7 +6861,7 @@ snapshots:
       - vue-tsc
       - webpack-sources
 
-  '@nuxtjs/color-mode@3.4.4(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
+  '@nuxtjs/color-mode@3.5.0(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)':
     dependencies:
       '@nuxt/kit': 3.13.1(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
       pathe: 1.1.2
@@ -7551,7 +7551,7 @@ snapshots:
       gzip-size: 6.0.0
       sirv: 2.0.4
 
-  '@unocss/nuxt@0.62.3(magicast@0.3.5)(postcss@8.4.41)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))(webpack-sources@3.2.3)(webpack@5.94.0(esbuild@0.23.1))':
+  '@unocss/nuxt@0.62.3(magicast@0.3.5)(postcss@8.4.45)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))(webpack-sources@3.2.3)(webpack@5.94.0(esbuild@0.23.1))':
     dependencies:
       '@nuxt/kit': 3.13.1(magicast@0.3.5)(rollup@4.21.2)(webpack-sources@3.2.3)
       '@unocss/config': 0.62.3
@@ -7566,7 +7566,7 @@ snapshots:
       '@unocss/reset': 0.62.3
       '@unocss/vite': 0.62.3(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))
       '@unocss/webpack': 0.62.3(rollup@4.21.2)(webpack@5.94.0(esbuild@0.23.1))
-      unocss: 0.62.3(@unocss/webpack@0.62.3(rollup@4.21.2)(webpack@5.94.0(esbuild@0.23.1)))(postcss@8.4.41)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))
+      unocss: 0.62.3(@unocss/webpack@0.62.3(rollup@4.21.2)(webpack@5.94.0(esbuild@0.23.1)))(postcss@8.4.45)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))
     transitivePeerDependencies:
       - magicast
       - postcss
@@ -7576,14 +7576,14 @@ snapshots:
       - webpack
       - webpack-sources
 
-  '@unocss/postcss@0.62.3(postcss@8.4.41)':
+  '@unocss/postcss@0.62.3(postcss@8.4.45)':
     dependencies:
       '@unocss/config': 0.62.3
       '@unocss/core': 0.62.3
       '@unocss/rule-utils': 0.62.3
       css-tree: 2.3.1
       magic-string: 0.30.11
-      postcss: 8.4.41
+      postcss: 8.4.45
       tinyglobby: 0.2.5
     transitivePeerDependencies:
       - supports-color
@@ -8691,7 +8691,7 @@ snapshots:
     dependencies:
       china-division: 2.7.0
 
-  element-plus@2.8.2(vue@3.5.3(typescript@5.5.4)):
+  element-plus@2.8.3(vue@3.5.3(typescript@5.5.4)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.1(vue@3.5.3(typescript@5.5.4))
@@ -10901,9 +10901,9 @@ snapshots:
     dependencies:
       postcss: 8.4.41
 
-  postcss-scss@4.0.9(postcss@8.4.41):
+  postcss-scss@4.0.9(postcss@8.4.45):
     dependencies:
-      postcss: 8.4.41
+      postcss: 8.4.45
 
   postcss-selector-parser@6.1.2:
     dependencies:
@@ -11687,13 +11687,13 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss@0.62.3(@unocss/webpack@0.62.3(rollup@4.21.2)(webpack@5.94.0(esbuild@0.23.1)))(postcss@8.4.41)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6)):
+  unocss@0.62.3(@unocss/webpack@0.62.3(rollup@4.21.2)(webpack@5.94.0(esbuild@0.23.1)))(postcss@8.4.45)(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6)):
     dependencies:
       '@unocss/astro': 0.62.3(rollup@4.21.2)(vite@5.4.3(@types/node@22.5.4)(sass@1.77.5)(terser@5.31.6))
       '@unocss/cli': 0.62.3(rollup@4.21.2)
       '@unocss/core': 0.62.3
       '@unocss/extractor-arbitrary-variants': 0.62.3
-      '@unocss/postcss': 0.62.3(postcss@8.4.41)
+      '@unocss/postcss': 0.62.3(postcss@8.4.45)
       '@unocss/preset-attributify': 0.62.3
       '@unocss/preset-icons': 0.62.3
       '@unocss/preset-mini': 0.62.3
