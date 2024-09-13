@@ -56,9 +56,6 @@ async function loadData(dto?: ChatContactPageDTO) {
   isLoading.value = false;
   return data.list;
 }
-// 初始化
-reload();
-
 const setting = useSettingStore();
 const nowDate = Date.now();
 function getTime(time: string | number) {
@@ -103,8 +100,12 @@ async function onChangeRoom(newRoomId: number) {
   setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
+const isReload = ref(false);
 // 刷新
 async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
+  if (isReload.value)
+    return;
+  isReload.value = true;
   if (isAll) {
     enable(false);// 首次不开启动画
     chat.contactList = [];
@@ -123,7 +124,10 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
     if (roomId)
       refreshItem(roomId);
   }
+  isReload.value = false;
 }
+// 初始化
+reload();
 
 // 刷新某一房间
 async function refreshItem(roomId: number) {
