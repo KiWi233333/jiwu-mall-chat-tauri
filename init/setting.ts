@@ -65,6 +65,13 @@ export async function useSettingInit() {
       setting.isMobile = window.innerWidth < 640;
     }, 300);
   });
+
+  // 7、页面加载完整后，滚动到底部
+  await nextTick();
+  setTimeout(() => {
+    const chat = useChatStore();
+    chat.scrollBottom(false);
+  }, 500);
 }
 
 function keyToggleTheme(e: KeyboardEvent) {
