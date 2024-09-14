@@ -8,7 +8,7 @@ const setting = useSettingStore();
 </script>
 
 <template>
-  <main class="h-100vh flex flex-col overflow-hidden border-default v-card">
+  <main class="h-100dvh flex flex-col overflow-hidden border-default v-card">
     <div
       class="relative h-full flex flex-col overflow-hidden"
     >
@@ -70,6 +70,6 @@ const setting = useSettingStore();
 }
 .content {
   overflow-y: scroll;
-  height: calc(100vh - $top-nav-height);
+  height: calc(100dvh - $top-nav-height);
 }
 </style>

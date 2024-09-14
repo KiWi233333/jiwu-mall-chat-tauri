@@ -33,7 +33,7 @@ const ws = useWs();
 </script>
 
 <template>
-  <main class="h-100vh flex flex-col overflow-hidden shadow-lg v-card">
+  <main class="h-100dvh flex flex-col overflow-hidden shadow-lg v-card">
     <div
       v-if="user.isLogin && ws.status === WsStatusEnum.OPEN"
       class="relative h-full flex flex-col"
@@ -60,6 +60,6 @@ const ws = useWs();
 }
 .content {
   overflow-y: scroll;
-  height: calc(100vh - $top-nav-height);
+  height: calc(100dvh - $top-nav-height);
 }
 </style>
