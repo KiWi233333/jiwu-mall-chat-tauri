@@ -67,10 +67,10 @@ definePageMeta({
             :user="user"
             grid-class="grid grid-cols-4 gap-4"
             card-class="truncate word-nowrap text-0.85rem"
-            class="p-4 shadow-md card-default-br"
+            class="p-4 border-default card-default-br"
           />
           <!-- 签到 -->
-          <UserInfoSigninCard />
+          <UserInfoSigninCard class="border-default card-default-br" />
         </div>
       </div>
     </div>
@@ -79,6 +79,6 @@ definePageMeta({
 
 <style scoped lang="scss">
 .main {
-  --at-apply: 'grid grid-cols-1 px-2rem sm:(grid-cols-[2fr_1fr] px-4rem)';
+  --at-apply: 'grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
 }
 </style>

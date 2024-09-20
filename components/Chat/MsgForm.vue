@@ -9,7 +9,6 @@ const emit = defineEmits<{
 // store
 const user = useUserStore();
 const chat = useChatStore();
-const setting = useSettingStore();
 
 // hooks
 const {
@@ -34,7 +33,7 @@ const form = ref<ChatMessageDTO>({
 });
 const inputAllRef = ref(); // 输入框
 const formRef = ref();
-const isSend = ref(false);
+const isSending = ref(false);
 const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
 
@@ -163,7 +162,7 @@ async function onSubmit(e?: KeyboardEvent) {
     e.preventDefault && e.preventDefault();
     e.stopPropagation && e.stopPropagation();
   }
-  if (isSend.value)
+  if (isSending.value)
     return;
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
@@ -189,7 +188,7 @@ async function onSubmit(e?: KeyboardEvent) {
     }
 
     // 开始提交
-    isSend.value = true;
+    isSending.value = true;
     // 二次处理
     if (form.value.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
@@ -214,7 +213,7 @@ async function submit() {
     ...form.value,
     roomId: chat.theContact.roomId,
   }, user.getToken);
-  isSend.value = false;
+  isSending.value = false;
   if (res.code === StatusCode.SUCCESS)
     emit("submit", res.data);
   else if (res.message === "您和对方已不是好友！")
@@ -522,12 +521,12 @@ const { fileList: fileDropList } = await useLinterFileDrop();
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
       <BtnElButton
-        :disabled="!user.isLogin || isSend"
+        :disabled="!user.isLogin || isSending"
         class="group bottom-2.5 right-2.5 ml-a overflow-hidden shadow !absolute"
         type="primary"
         round
         size="small"
-        :loading="isSend || (form.msgType === MessageType.IMG && isUploadImg)"
+        :loading="isSending || (form.msgType === MessageType.IMG && isUploadImg)"
         style="padding: 0.8rem;width: 6rem;"
         @click="onSubmit()"
       >

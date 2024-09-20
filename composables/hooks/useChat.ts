@@ -306,3 +306,4 @@ export function checkAtUserWhole(context: string | undefined | null, pattern: st
   }
   return true;
 }
+

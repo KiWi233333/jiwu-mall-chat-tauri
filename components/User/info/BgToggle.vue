@@ -12,10 +12,10 @@ const bgUrl = useLocalStorage("jiwu_user_bg", "/image/user-bg/kiwi-bg-4.jpg");
 <template>
   <div class="group top-bg relative select-none shadow-lg shadow-inset">
     <el-popover
-      :width="400"
+      width="fit-content"
       placement="top"
       title="切换壁纸"
-      :teleported="false"
+      :teleported="true"
       trigger="click"
       class=""
     >
@@ -34,7 +34,7 @@ const bgUrl = useLocalStorage("jiwu_user_bg", "/image/user-bg/kiwi-bg-4.jpg");
       </template>
       <template #default>
         <ClientOnly>
-          <div class="img-list">
+          <div class="img-list grid grid-cols-3 mt-4 w-94vw gap-4 sm:w-400px">
             <card-el-image
               v-for="(p, i) in bgList"
               :key="i"
@@ -42,7 +42,7 @@ const bgUrl = useLocalStorage("jiwu_user_bg", "/image/user-bg/kiwi-bg-4.jpg");
               alt="Design By Kiwi23333"
               :src="BaseUrlImg + p"
               object-cover
-              class="hover: m-1 h-4em w-1/1 w-6em rounded-4px object-cover transition-300 hover:scale-110 border-default"
+              class="h-5em cursor-pointer rounded-4px object-cover transition-300 hover:scale-105 border-default"
               @click="bgUrl = p"
             />
           </div>

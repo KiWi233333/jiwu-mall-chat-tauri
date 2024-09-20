@@ -126,6 +126,7 @@ function showInvitation() {
 function onBlur() {
   setTimeout(() => {
     isEditNickname.value = false;
+    isEditSlogan.value = false;
   }, 300);
 }
 
@@ -261,7 +262,7 @@ onMounted(() => {
             placeholder="展示你的个性签名吧~ ✨"
             @keyup.enter="submitUpdateUser('slogan')"
             @focus="isEditSlogan = true"
-            @blur="isEditSlogan = false"
+            @blur="onBlur()"
           />
           <el-button
             v-show="isEditSlogan"

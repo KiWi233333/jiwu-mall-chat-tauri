@@ -11,7 +11,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="rounded-4px px-10 py-8 shadow-md card-default-br">
+  <div class="px-10 py-8">
     <div class="flex justify-between">
       <!-- 积分 -->
       <strong class="inline-block w-8rem flex-row-c-c cursor-pointer opacity-90 transition-300 hover:scale-110">

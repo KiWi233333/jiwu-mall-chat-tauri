@@ -19,7 +19,7 @@ let timer = Date.now();
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
-    if (obj.isIntersecting)
+    if (obj && obj.isIntersecting)
       requestAnimationFrame(callBack);
     else
       timer && clearInterval(timer);

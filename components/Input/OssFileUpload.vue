@@ -38,6 +38,7 @@ interface Props {
   modelValue?: OssFile[]
   preview?: boolean
   disable?: boolean
+  isAnimate?: boolean
   uploadQuality?: number
   /**
    * 文件类型
