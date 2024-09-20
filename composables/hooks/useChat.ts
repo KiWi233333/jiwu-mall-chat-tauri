@@ -236,3 +236,73 @@ export function useAtUsers(text: string, userOptions: AtChatMemberOption[], conf
 interface AtConfigs {
   regExp?: RegExp
 }
+
+
+/**
+ * 加载@用户列表
+ * @returns
+ *  userOptions: 所有用户列表
+ *  userOpenOptions: 未添加的用户列表
+ *  loadUser: 加载用户列表
+ */
+export function useLoadAtUserList() {
+// AT @相关
+  const chat = useChatStore();
+  const user = useUserStore();
+  const userOptions = ref<AtChatMemberOption[]>([]);
+  const userOpenOptions = computed(() => chat.theContact.type === RoomType.GROUP ? userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId)) : []); // 过滤已存在的用户
+
+  /**
+   * 加载@用户列表
+   */
+  async function loadUser() {
+    if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
+      return;
+    const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
+    if (data.value && data.value.code === StatusCode.SUCCESS) {
+      userOptions.value = (data.value.data || []).map(u => ({
+        label: u.nickName,
+        value: `${u.nickName}(#${u.username})`,
+        userId: u.userId,
+        avatar: u.avatar,
+        username: u.username,
+        nickName: u.nickName,
+      })).filter(u => u.userId !== user.userInfo.id);
+    }
+  }
+
+  // 挂载
+  onMounted(async () => {
+    // 加载用户
+    loadUser();
+  });
+  return {
+    userOptions,
+    userOpenOptions,
+    loadUser,
+  };
+}
+
+/**
+ * 处理@删除
+ * @param context 文本内容
+ * @param pattern 正则
+ * @param prefix 前缀
+ * @returns 是否匹配删除
+ */
+export function checkAtUserWhole(context: string | undefined | null, pattern: string, prefix: string) {
+  const chat = useChatStore();
+  if (prefix !== "@")
+    return false;
+  const atUserListOpt = chat.atUserList.map(u => ({
+    ...u,
+    label: `${u.nickName}(#${u.username})`,
+    value: u.userId,
+  }));
+  if (pattern && context?.endsWith(`${prefix + pattern} `)) {
+    const user = atUserListOpt.find(u => u.label === pattern.trim());
+    if (user)
+      chat.removeAtByUsername(user.username);
+  }
+  return true;
+}

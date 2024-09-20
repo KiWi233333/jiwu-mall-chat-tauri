@@ -14,7 +14,23 @@ export async function useLinterFileDrop() {
 
   // // 取消监听
   // unlisten();
-
+  // watch(fileDropList, (val) => {
+  //   if (val.length) {
+  //     ElMessageBox.confirm("是否上传文件？", "上传文件将会覆盖当前消息内容，是否继续？").then(async () => {
+  //       // 上传文件
+  //       inputOssFileUploadRef.value.resetInput?.();
+  //       imgList.value = [];
+  //       await inputOssFileUploadRef.value?.onUpload({
+  //         id: val[0],
+  //         key: undefined,
+  //         status: "",
+  //         percent: 0,
+  //         file: val[0],
+  //       });
+  //       form.value.msgType = MessageType.IMG; // 图片
+  //     });
+  //   }
+  // });
   return {
     fileList,
   };

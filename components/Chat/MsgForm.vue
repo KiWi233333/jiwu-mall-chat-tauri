@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { useAtUsers, useRecording } from "~/composables/hooks/useChat";
+import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
 import { useLinterFileDrop } from "~/composables/hooks/useFileDrop";
-import type { AtChatMemberOption } from "~/composables/store/useChatStore";
 
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
@@ -38,9 +37,19 @@ const formRef = ref();
 const isSend = ref(false);
 const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
-// AT @相关
-const userOptions = ref<AtChatMemberOption[]>([]);
-const userOpenOptions = computed(() => chat.theContact.type === RoomType.GROUP ? userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId)) : []); // 过滤已存在的用户
+
+// 读取@用户列表 hook
+const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
+watch(() => chat.atUidListTemp, (val) => {
+  if (val.length) {
+    form.value.content += val.map((uid) => {
+      const user = userOptions.value.find(u => u.userId === uid);
+      return user ? `@${user.nickName}(#${user.username}) ` : "";
+    }).join("");
+    inputAllRef.value?.input?.focus(); // 聚焦
+    chat.atUidListTemp.splice(0);
+  }
+}, { deep: true });
 
 // 未读数
 const theRoomUnReadLength = computed(() => {
@@ -227,51 +236,6 @@ onUnmounted(() => {
   timer = null;
 });
 
-
-// @用户
-async function loadUser() {
-  if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
-    return;
-  const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
-  if (data.value && data.value.code === StatusCode.SUCCESS) {
-    userOptions.value = (data.value.data || []).map(u => ({
-      label: u.nickName,
-      value: `${u.nickName}(#${u.username})`,
-      userId: u.userId,
-      avatar: u.avatar,
-      username: u.username,
-      nickName: u.nickName,
-    })).filter(u => u.userId !== user.userInfo.id);
-  }
-}
-watch(() => chat.atUidListTemp, (val) => {
-  if (val.length) {
-    form.value.content += val.map((uid) => {
-      const user = userOptions.value.find(u => u.userId === uid);
-      return user ? `@${user.nickName}(#${user.username}) ` : "";
-    }).join("");
-    inputAllRef.value?.input?.focus(); // 聚焦
-    chat.atUidListTemp.splice(0);
-  }
-}, { deep: true });
-// 处理@删除
-function checkAtUserWhole(pattern: string, prefix: string) {
-  if (prefix !== "@")
-    return false;
-  const atUserListOpt = chat.atUserList.map(u => ({
-    ...u,
-    label: `${u.nickName}(#${u.username})`,
-    value: u.userId,
-  }));
-  if (pattern && form.value.content?.endsWith(`${prefix + pattern} `)) {
-    const user = atUserListOpt.find(u => u.label === pattern.trim());
-    if (user)
-      chat.removeAtByUsername(user.username);
-  }
-  return true;
-}
-
-
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
   form.value.body.replyMsgId = val;
@@ -364,31 +328,8 @@ watch(() => chat.theContact.roomId, () => {
   loadUser();
 });
 
-
 // 监听文件拖拽事件
 const { fileList: fileDropList } = await useLinterFileDrop();
-watch(fileDropList, (val) => {
-  if (val.length) {
-    ElMessageBox.confirm("是否上传文件？", "上传文件将会覆盖当前消息内容，是否继续？").then(async () => {
-      // 上传文件
-      inputOssFileUploadRef.value.resetInput?.();
-      imgList.value = [];
-      await inputOssFileUploadRef.value?.onUpload({
-        id: val[0],
-        key: undefined,
-        status: "",
-        percent: 0,
-        file: val[0],
-      });
-      form.value.msgType = MessageType.IMG; // 图片
-    });
-  }
-});
-// 挂载
-onMounted(async () => {
-  // 加载用户
-  loadUser();
-});
 </script>
 
 <template>
@@ -539,7 +480,7 @@ onMounted(async () => {
           :options="userOpenOptions"
           :prefix="['@']"
           popper-class="at-select"
-          :check-is-whole="checkAtUserWhole"
+          :check-is-whole="(pattern, value) => checkAtUserWhole(form.content, pattern, value)"
           :rows="6"
           :maxlength="500"
           :autosize="false"
