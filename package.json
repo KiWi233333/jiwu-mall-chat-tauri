@@ -36,6 +36,7 @@
     "@typescript-eslint/parser": "6.12.0",
     "@unocss/eslint-config": "0.62.4",
     "@unocss/nuxt": "0.62.4",
+    "@vite-pwa/nuxt": "^0.10.5",
     "@vueuse/nuxt": "11.1.0",
     "crypto-js": "4.2.0",
     "element-plus": "2.8.3",
