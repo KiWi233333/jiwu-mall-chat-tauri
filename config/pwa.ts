@@ -35,22 +35,22 @@ export const pwa: ModuleOptions = {
   },
   workbox: {
     globPatterns: ["**\/*.{js,css,html,png,jpg,svg,woff,woff2,ttf}"],
-    maximumFileSizeToCacheInBytes: 10000000,
+    maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5m
     runtimeCaching: [
-      {
-        urlPattern: "/^(https|http)://*.kiwi233.top/font/* /i",
-        handler: "CacheFirst",
-        options: {
-          cacheName: "jiwuquan-fonts-cache",
-          expiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 31, // <== 365 days
-          },
-          cacheableResponse: {
-            statuses: [0, 200],
-          },
-        },
-      },
+      // {
+      //   urlPattern: "/^(https|http)://*.kiwi233.top/font/* /i",
+      //   handler: "CacheFirst",
+      //   options: {
+      //     cacheName: "jiwuquan-fonts-cache",
+      //     expiration: {
+      //       maxEntries: 10,
+      //       maxAgeSeconds: 60 * 60 * 24 * 31, // <== 365 days
+      //     },
+      //     cacheableResponse: {
+      //       statuses: [0, 200],
+      //     },
+      //   },
+      // },
     ],
   },
   registerWebManifestInRouteRules: true,
