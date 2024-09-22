@@ -1,14 +1,15 @@
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{
+const {
+  dto,
+  gridClass = "grid grid-cols-4 grid-gap-4",
+  cardClass = "",
+} = defineProps<{
   user?: Partial<(UserInfoVO | PostUserSeVO)>
   dto: PostTotalDTO
   gridClass?: string
   cardClass?: string
-}>(), {
-  gridClass: "grid grid-cols-4 grid-gap-4",
-  cardClass: "",
+}>();
 
-});
 
 const store = useUserStore();
 const dataList = ref<{
@@ -33,9 +34,9 @@ const dataList = ref<{
   },
 ]);
 async function loadData() {
-  if (props?.dto?.userId) {
+  if (dto?.userId) {
     const res = await getPostTotal({
-      userId: props?.dto?.userId,
+      userId: dto?.userId,
     }, store.getToken);
 
     if (res.code === StatusCode.SUCCESS) {
@@ -59,7 +60,7 @@ loadData();
       :to="{
         path: `/user/info`,
         query: {
-          id: props?.dto?.userId,
+          id: dto?.userId,
         },
       }" class="flex flex-col"
     >
