@@ -199,17 +199,16 @@ function handleNewChat() {
   });
 }
 
+const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
+  inputRef.value?.focus();
   if (msgList.value.length === 0)
     msgList.value.push(INIT_MSG);
 
   nextTick(() => {
     scrollBottom(false);
   });
-});
-
-const [autoAnimateRef, enable] = useAutoAnimate({});
-onMounted(() => {
+  // 切换页面时关闭动画
   const setting = useSettingStore();
   enable(!setting.settingPage.isColseAllTransition);
 });
@@ -248,7 +247,7 @@ definePageMeta({
             <el-tooltip content="新对话" placement="top">
               <CardElImage
                 :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-                class="h-2.4rem w-2.4rem rounded-1/2 border-default"
+                class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 border-default"
                 @click="handleNewChat"
               />
             </el-tooltip>

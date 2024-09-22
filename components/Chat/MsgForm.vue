@@ -95,6 +95,7 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
 onMounted(() => {
   // 监听快捷键
   window.addEventListener("keydown", startChating);
+  inputAllRef.value?.input?.focus(); // 聚焦
 });
 onUnmounted(() => {
   window.removeEventListener("keydown", startChating);
