@@ -75,6 +75,7 @@ const theContactId = computed({
     onChangeRoom(contactId);
   },
 });
+// 切换房间
 async function onChangeRoom(newRoomId: number) {
   const item = chat.contactList.find(p => p.roomId === newRoomId);
   if (!item)
@@ -129,18 +130,27 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
 // 初始化
 reload();
 
+const isLoadRoomMap: Record<number, boolean> = {};
 // 刷新某一房间
 async function refreshItem(roomId: number) {
-  if (!roomId)
+  if (!roomId || isLoadRoomMap[roomId])
     return;
-
-  const itemIndex = chat.contactList.findIndex(p => p.roomId === roomId);
-  if (itemIndex === -1)
-    return;
-  if (chat.contactList[itemIndex]?.type === RoomType.GROUP) {
-    const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
-    if (res)
-      chat.contactList[itemIndex] = res.data;
+  isLoadRoomMap[roomId] = true;
+  try {
+    const itemIndex = chat.contactList.findIndex(p => p.roomId === roomId);
+    if (itemIndex === -1)
+      return;
+    if (chat.contactList[itemIndex]?.type === RoomType.GROUP) {
+      const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
+      if (res)
+        chat.contactList[itemIndex] = res.data;
+    }
+  }
+  catch (error) {
+    console.log(error);
+  }
+  finally {
+    delete isLoadRoomMap[roomId];
   }
 }
 contact.onReloadContact = reload;
@@ -223,7 +233,6 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 }
 
 const ws = useWs();
-const isUpload = ref(false);
 // 成员变动消息
 watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   if (!len)
@@ -233,9 +242,6 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
     for (const p of ws.wsMsgList.memberMsg) {
       // 新加入
       if (p.changeType === WSMemberStatusEnum.JOIN) {
-        // 更新会话
-        if (isUpload.value)
-          return;
         getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
           if (res) {
             const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
@@ -248,26 +254,22 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
             }
           }
         }).finally(() => {
-          isUpload.value = false;
         });
-        if (chat.roomGroupPageInfo.isLast && chat.onOfflineList.findIndex(ctx => ctx.userId === p.uid) === -1) {
-          // 更新用户列表
-          if (!p.uid)
-            return;
-
-          getCommUserInfoSe(p.uid, user.getToken).then((res) => {
-            if (res.code === StatusCode.SUCCESS) {
-              chat.onOfflineList.push({
-                userId: p.uid,
-                avatar: res.data.avatar,
-                nickName: res.data.nickname,
-                activeStatus: 0,
-                lastOptTime: res.data.lastLoginTime,
-                roleType: ChatRoomRoleEnum.MEMBER,
-              });
-            }
-          });
-        }
+        // 更新用户列表
+        if (!p.uid)
+          return;
+        getCommUserInfoSe(p.uid, user.getToken).then((res) => {
+          if (res.code === StatusCode.SUCCESS) {
+            chat.onOfflineList.push({
+              userId: p.uid,
+              avatar: res.data.avatar,
+              nickName: res.data.nickname,
+              activeStatus: 0,
+              lastOptTime: res.data.lastLoginTime,
+              roleType: ChatRoomRoleEnum.MEMBER,
+            });
+          }
+        });
       }
       else if (p.changeType === WSMemberStatusEnum.LEAVE) {
         for (let i = 0; i < chat.onOfflineList.length; i++) {
@@ -282,7 +284,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       else if (p.changeType === WSMemberStatusEnum.DEL) {
         for (let i = 0; i < chat.contactList.length; i++) {
           const u = chat.contactList[i];
-          // 下线删除用户
+          // 删除会话
           if (u && u.roomId === p.roomId) {
             chat.contactList.splice(i, 1);// 删除会话
             break;
@@ -293,7 +295,7 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
     ws.wsMsgList.memberMsg.splice(0);
   }
 }, {
-  immediate: true,
+  immediate: false,
 });
 </script>
 

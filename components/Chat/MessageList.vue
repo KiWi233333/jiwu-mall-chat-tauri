@@ -129,8 +129,7 @@ watch(() => ws.wsMsgList.newMsg.length, () => {
   if (ws.wsMsgList.newMsg)
     resolveNewMsg(ws.wsMsgList.newMsg);
 }, {
-  immediate: true,
-  deep: true,
+  immediate: false,
 });
 /**
  * 撤回消息
@@ -139,8 +138,7 @@ watch(() => ws.wsMsgList.recallMsg.length, () => {
   // 2、撤回消息
   resolveRevokeMsg(ws.wsMsgList.recallMsg);
 }, {
-  immediate: true,
-  deep: true,
+  immediate: false,
 });
 /**
  * 删除消息
@@ -149,8 +147,7 @@ watch(() => ws.wsMsgList.deleteMsg.length, () => {
   // 3、删除消息
   resolveDeleteMsg(ws.wsMsgList.deleteMsg);
 }, {
-  immediate: true,
-  deep: true,
+  immediate: false,
 });
 
 /**

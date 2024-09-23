@@ -258,9 +258,9 @@ export function useLoadAtUserList() {
   async function loadUser() {
     if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
       return;
-    const { data } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
-    if (data.value && data.value.code === StatusCode.SUCCESS) {
-      userOptions.value = (data.value.data || []).map(u => ({
+    const { data, code } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
+    if (data && code === StatusCode.SUCCESS) {
+      userOptions.value = (data || []).map(u => ({
         label: u.nickName,
         value: `${u.nickName}(#${u.username})`,
         userId: u.userId,
@@ -271,9 +271,14 @@ export function useLoadAtUserList() {
     }
   }
 
-  // 挂载
-  onMounted(async () => {
-    // 加载用户
+  // 加载用户
+  const ws = useWs();
+  watch(() => ws.wsMsgList.memberMsg.length, (len) => {
+    if (!len)
+      return;
+    loadUser();
+  });
+  onMounted(() => {
     loadUser();
   });
   return {

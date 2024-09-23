@@ -52,7 +52,7 @@ export function getRoomGroupUserPage(roomId: number | null = null, pageSize = 10
  * @returns 分页
  */
 export function getRoomGroupAllUser(roomId: number, token: string) {
-  return useFetch<Result<ChatMemberSeVO[]>>(
+  return $fetch<Result<ChatMemberSeVO[]>>(
     `${BaseUrl}/chat/room/group/member/list/${roomId}`,
     {
       headers: {
