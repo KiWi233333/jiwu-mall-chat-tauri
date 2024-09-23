@@ -364,7 +364,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
             loading="lazy"
             :preview-src-list="[img.id || BaseUrlImg + img.key]"
             :src="img.id || BaseUrlImg + img.key"
-            class="max-h-9rem max-w-16rem min-h-2rem w-16rem w-fit rounded p-0"
+            class="h-fit max-h-9rem max-w-16rem w-16rem w-fit rounded p-0"
             title="左键放大 | 右键删除"
             @contextmenu="onContextMenu($event, img.key, i)"
           />
