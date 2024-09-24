@@ -224,7 +224,7 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
     }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg?.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? "\"本人\"" : "\"对方\""}撤回了一条消息`;
+    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg?.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? `"${user.userInfo.nickname || "我"}"` : "\"对方\""}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.getContactList.length; k++) {
       const r = chat.getContactList[k];

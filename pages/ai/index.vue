@@ -41,7 +41,7 @@ const dto = ref({
       domain: "general",
       temperature: 0.8,
       top_k: 4,
-      max_tokens: 2028,
+      max_tokens: 2048,
     },
   },
   payload: {
