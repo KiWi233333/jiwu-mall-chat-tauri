@@ -149,7 +149,7 @@ async function loadData() {
   const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
-  if (data.list)
+  if (data && data.list)
     chat.onOfflineList.push(...data.list);
   isLoading.value = false;
 }
@@ -527,7 +527,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" round type="danger" plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

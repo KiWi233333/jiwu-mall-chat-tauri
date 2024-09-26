@@ -20,7 +20,7 @@ async function loadData() {
   const { data } = await getRoomGroupUserPage(props.data.roomId, chat.roomGroupPageInfo.size, chat.roomGroupPageInfo.cursor, user.getToken);
   chat.roomGroupPageInfo.isLast = data.isLast;
   chat.roomGroupPageInfo.cursor = data.cursor;
-  if (data.list)
+  if (data && data.list)
     chat.onOfflineList.push(...data.list);
   isLoading.value = false;
 }

@@ -34,7 +34,7 @@ async function loadData(dto?: ChatContactPageDTO) {
     pageSize: pageInfo.value.size,
     cursor: pageInfo.value.cursor,
   }, user.getToken);
-  if (data.list) {
+  if (data && data.list) {
     if (dto?.type === RoomType.GROUP) {
       data.list.forEach((p: ChatContactVO) => {
         if (p.type === RoomType.GROUP)

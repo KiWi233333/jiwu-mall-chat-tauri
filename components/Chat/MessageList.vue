@@ -26,7 +26,7 @@ async function loadData(call?: (data?: Message[]) => void) {
     if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
-    if (data.list && data.list.length)
+    if (data?.list && data.list.length)
       chat.theContact.msgList.unshift(...data.list);
     const oldSize = chat.scrollTopSize;
     nextTick(() => {

@@ -19,7 +19,7 @@ async function loadData() {
     cursor: pageInfo.value.cursor,
     type: RoomType.GROUP,
   }, user.getToken);
-  if (data.list)
+  if (data && data.list)
     list.value.push(...data.list);
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
