@@ -34,7 +34,7 @@ export const pwa: ModuleOptions = {
     ],
   },
   workbox: {
-    globPatterns: ["**\/*.{js,css,html,png,jpg,svg,woff,woff2,ttf}"],
+    globPatterns: ["**\/*.{js,css,html,woff,woff2,ttf}"],
     maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5m
     runtimeCaching: [
       // {

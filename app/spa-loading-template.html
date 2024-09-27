@@ -1,4 +1,9 @@
 <style>
+  body {
+    border-radius: 0.5rem;
+    background-color: transparent;
+  }
+
   /* loading */
   #first-app-loading {
     transition: all 0.3;
@@ -7,12 +12,15 @@
     left: 0;
     width: 100vw;
     height: 100dvh;
+    border-radius: 0.5rem;
+    overflow: hidden;
     background: #fff;
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    letter-spacing: 0.5rem;
     font-family: Alimama;
   }
 
@@ -23,8 +31,9 @@
   }
 
   #first-app-loading h2 {
-    letter-spacing: 0.75rem;
-    animation: loading-fade-in-out 1.4s ease-in-out infinite;
+    padding: 0;
+    margin: 0;
+    /* animation: loading-fade-in-out 1.4s ease-in-out infinite; */
   }
 
 
@@ -33,6 +42,7 @@
     color: #f3f3f3;
   }
 
+  /* 
   @keyframes loading-fade-in-out {
     0% {
       opacity: 1;
@@ -45,10 +55,23 @@
     100% {
       opacity: 1;
     }
+  } */
+  #app-loading-spinner {
+    margin-top: 1rem;
+    display: block;
+    animation: app-loading-spinner-rotate 1s linear infinite;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  @keyframes app-loading-spinner-rotate {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>
 
-<body style="border-radius: 0.5rem; overflow: hidden;">
+<body>
   <!-- 获取模式 -->
   <script>
     const mode = localStorage.getItem("vueuse-color-scheme");
@@ -57,8 +80,11 @@
   </script>
   <div id="first-app-loading">
     <h2 style="display: flex; align-items: center;">
-      <img loading="lazy" src="/logo.png" style="width: 2rem;height: 2rem;margin: 0 1rem 0 0 ;" />
+      <img src="/logo.png" style="width: 1.9rem;height: 1.9rem;margin-right: 0.5rem;" />
       极物圈
     </h2>
+    <svg id="app-loading-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8" />
+    </svg>
   </div>
 </body>
