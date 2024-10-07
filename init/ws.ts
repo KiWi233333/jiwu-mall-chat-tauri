@@ -1,6 +1,8 @@
-import { sendNotification } from "@tauri-apps/api/notification";
-import { appWindow } from "@tauri-apps/api/window";
+import { sendNotification } from "@tauri-apps/plugin-notification";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
+
+const appWindow = getCurrentWebviewWindow();
 
 export async function useWsInit() {
 // 1、聊天模块

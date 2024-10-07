@@ -8,7 +8,7 @@ const setting = useSettingStore();
 </script>
 
 <template>
-  <main class="h-100dvh flex flex-col overflow-hidden border-default v-card">
+  <main class="h-full flex flex-col !overflow-hidden card-default">
     <div
       class="relative h-full flex flex-col overflow-hidden"
     >

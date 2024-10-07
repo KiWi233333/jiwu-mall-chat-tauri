@@ -172,35 +172,55 @@ function showVersionNotice(version: string) {
               inline-prompt @change="(val) => setting.settingPage.isEscMin = !!val"
             />
           </div>
+          <!-- 自启动 -->
+          <div :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
+            开机自启
+            <el-switch
+              v-model="setting.settingPage.isAutoStart" size="large" active-text="自启"
+              inactive-text="关闭" inline-prompt
+            />
+          </div>
           <!-- 更新 -->
           <div class="group h-8 flex-row-bt-c">
             关于更新
             <div class="ml-a flex items-center">
-              <span v-if="setting.appUploader.version" class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
+              <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
               <el-badge
-                :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload" is-dot
+                v-if="!setting.appUploader.isUpdating"
+                :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload"
+                is-dot
                 :value="+setting.appUploader.isUpload"
               >
                 <ElButton
-                  :loading="setting.appUploader.isUpdating"
                   round class="flex-row-c-c cursor-pointer transition-all"
                   plain
                   style="height: 2em;padding: 0 0.8em;"
                   :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                   @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates()"
                 >
-                  <span v-show="!setting.appUploader.isUpdating" flex-row-c-c>
+                  <span flex-row-c-c>
                     <i
                       i-solar:refresh-outline mr-1 inline-block p-2
                       :class="setting.appUploader.isCheckUpdatateLoad ? 'animate-spin' : ''"
                     />
                     检查更新
                   </span>
-                  <span v-show="setting.appUploader.isUpdating" flex-row-c-c>
+                  <!-- <span v-show="setting.appUploader.isUpdating" flex-row-c-c>
                     更新中
-                  </span>
+                  </span> -->
                 </ElButton>
               </el-badge>
+              <el-progress
+                v-else
+                :percentage="+((setting.appUploader.downloaded / setting.appUploader.contentLength) * 100 || 0).toFixed(2)"
+                :stroke-width="18"
+                striped
+                striped-flow
+                text-inside
+                class="progress-bar w-13rem"
+              >
+                {{ setting.appUploader.downloadedText || "- / - MB" }}
+              </el-progress>
             </div>
           </div>
         </section>
@@ -225,7 +245,7 @@ function showVersionNotice(version: string) {
         center
         width="fit-content"
       >
-        <template #title>
+        <template #header>
           <h3>&emsp;版本公告 🔔</h3>
         </template>
         <div class="max-h-60vh min-h-30vh w-90vw overflow-y-auto sm:w-500px">
@@ -252,6 +272,14 @@ function showVersionNotice(version: string) {
 </template>
 
 <style scoped lang="scss">
+:deep(.progress-bar.el-progress) {
+  .el-progress__text {
+    // text-align: center;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+  }
+}
 .inputs {
   --at-apply: 'transition-200  select-none';
   --el-border-radius-base: 2em !important;

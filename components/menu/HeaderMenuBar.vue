@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { type Platform, platform } from "@tauri-apps/api/os";
+import { type Platform, platform } from "@tauri-apps/plugin-os";
 
 const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
-const appPlatform = ref<Platform | "web">("darwin");
+const appPlatform = ref<Platform | "web">("windows");
 
 onMounted(async () => {
   try {
     appPlatform.value = await platform();
   }
   catch (error) {
-    console.log(error);
+    console.warn(error);
     appPlatform.value = "web";
   }
 });
@@ -21,7 +21,7 @@ onMounted(async () => {
 <template>
   <!-- 菜单栏 -->
   <menu
-    class="group nav sticky left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
+    class="group nav left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
   >
     <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
       <CardElImage
@@ -57,9 +57,10 @@ onMounted(async () => {
         <MenuController>
           <template #start="{ data }">
             <ElButton
-              text text-amber-1 size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="() => {
+              text text-amber-1 size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="async () => {
                 if (data.onToggleWindow) {
-                  isTop = data.onToggleWindow('alwaysOnTop').isAlwaysOnTopVal
+                  const val = await data.onToggleWindow('alwaysOnTop')
+                  isTop = val.isAlwaysOnTopVal
                 }
               }"
             >

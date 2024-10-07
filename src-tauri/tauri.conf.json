@@ -1,103 +1,14 @@
 {
-  "build": {
-    "devPath": "http://localhost:3000",
-    "distDir": "../.output/public",
-    "withGlobalTauri": true
-  },
-  "package": {
-    "productName": "JiwuChat",
-    "version": "../package.json"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "process": {
-        "all": false,
-        "exit": true,
-        "relaunch": true,
-        "relaunchDangerousAllowSymlinkMacos": false
-      },
-      "os": {
-        "all": true
-      },
-      "notification": {
-        "all": true
-      },
-      "window": {
-        "all": false,
-        "close": true,
-        "hide": true,
-        "show": true,
-        "maximize": true,
-        "create": true,
-        "setAlwaysOnTop": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true,
-        "startDragging": true
-      },
-      "shell": {
-        "all": false,
-        "execute": false,
-        "open": true,
-        "scope": [],
-        "sidecar": false
-      }
-    },
-    "bundle": {
-      "active": true,
-      "category": "SocialNetworking",
-      "copyright": "Kiwi2333",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/icon.icns",
-        "icons/icon.ico",
-        "icons/icon.png"
-      ],
-      "identifier": "Kiwi2333",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null,
-        "license": "./LICENSE/LICENSE.txt",
-        "minimumSystemVersion": "10.13"
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "nsis": {
-          "license": "./LICENSE/LICENSE.txt",
-          "installerIcon": "./icons/icon.ico"
-        },
-        "wix": {
-          "language": "zh-CN",
-          "license": "./LICENSE/LICENSE.txt"
-        }
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": true,
-      "endpoints": [
-        "https://api.jiwu.kiwi2333.top/res/app/latest"
-      ],
-      "dialog": false,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjREQTA3MkU1MzNEMzkKUldRNVBWTXVCOXIwVjlBVXhBY0J3WEVNZW5ZTWZSYXJNdlM4VmpoaXBrSDFiOU1QYk85RDBkYW0K"
-    },
+  "productName": "JiwuChat",
+  "mainBinaryName": "JiwuChat",
+  "version": "../package.json",
+  "identifier": "com.jiwuchat.app",
+  "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "label": "main",
+        "shadow": false,
         "resizable": true,
         "title": "极物聊天",
         "width": 1280,
@@ -110,9 +21,67 @@
         "transparent": true
       }
     ],
-    "systemTray": {
-      "iconPath": "icons/icon.png",
+    "security": {
+      "csp": null
+    },
+    "trayIcon": {
+      "id": "com.jiwuchat.app",
+      "title": "极物聊天",
+      "tooltip": "极物聊天",
+      "menuOnLeftClick": false,
+      "iconPath": "icons/icon.ico",
       "iconAsTemplate": true
     }
+  },
+  "build": {
+    "frontendDist": "../.output/public",
+    "devUrl": "http://localhost:3000"
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjREQTA3MkU1MzNEMzkKUldRNVBWTXVCOXIwVjlBVXhBY0J3WEVNZW5ZTWZSYXJNdlM4VmpoaXBrSDFiOU1QYk85RDBkYW0K",
+      "endpoints": [
+        "https://api.jiwu.kiwi2333.top/res/app/latest"
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "SocialNetworking",
+    "copyright": "Kiwi2333",
+    "targets": "all", 
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "./icons/icon.ico"
+      },
+      "wix": {
+        "language": "zh-CN"
+      }
+    },
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null,
+      "minimumSystemVersion": "10.13"
+    },
+    "resources": [],
+    "shortDescription": "",
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    },
+    "licenseFile": "./LICENSE/LICENSE.txt",
+    "createUpdaterArtifacts": "v1Compatible"
   }
 }

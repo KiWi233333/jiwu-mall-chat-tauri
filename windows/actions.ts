@@ -2,7 +2,7 @@
  * 处理渲染器进程到主进程的异步通信
  */
 
-import { WebviewWindow } from "@tauri-apps/api/window";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { emit } from "@tauri-apps/api/event";
 
 /**

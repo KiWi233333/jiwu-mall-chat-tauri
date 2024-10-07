@@ -1,26 +1,36 @@
 [package]
-name = "app"
+name = "jiwu-mall-chat-tauri"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
 edition = "2021"
-rust-version = "1.60"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "jiwu_mall_chat_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
 [build-dependencies]
-tauri-build = { version = "1.5.1", features = [] }
+tauri-build = { version = "2.0.0", features = [] }
 
 [dependencies]
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.6.2", features = [ "os-all", "process-relaunch", "process-exit", "updater", "shell-open", "notification-all", "window-create", "window-set-always-on-top", "window-unmaximize", "window-hide", "window-minimize", "window-unminimize", "window-maximize", "window-start-dragging", "window-close", "window-show", "system-tray"] }
+tauri = { version = "2.0.0", features = ["tray-icon"] }
+tauri-plugin-shell = "2.0.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri-plugin-os = "2"
+tauri-plugin-notification = "2"
 
-[features]
-# this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
-# If you use cargo directly instead of tauri's cli you can use this feature flag to switch between tauri's `dev` and `build` modes.
-# DO NOT REMOVE!!
-custom-protocol = [ "tauri/custom-protocol" ]
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-window-state = "2"
+
+[target."cfg(target_os = \"macos\")".dependencies]
+cocoa = "0.25"
+

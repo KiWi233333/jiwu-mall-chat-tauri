@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 withDefaults(defineProps<{
   showMin?: boolean
@@ -10,21 +10,21 @@ withDefaults(defineProps<{
   showMax: true,
   showClose: true,
 });
+const appWindow = getCurrentWindow();
 
 const isMaximized = ref(false);
 const isAlwaysOnTopVal = ref(false);
-function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
+async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
   if (type === "min")
-    appWindow.minimize();
+    await appWindow.minimize();
   if (type === "max") {
-    isMaximized.value = !isMaximized.value;
-    appWindow.toggleMaximize();
+    await appWindow.toggleMaximize();
+    const isMax = await appWindow.isMaximized();
+    isMaximized.value = isMax;
   };
   if (type === "close") {
-    appWindow.minimize();
-    setTimeout(() => {
-      appWindow.hide();
-    }, 300);
+    await appWindow.minimize();
+    await appWindow.hide();
     // ElMessageBox.confirm("是否关闭至托盘？", {
     //   title: "提示",
     //   confirmButtonText: "关闭",

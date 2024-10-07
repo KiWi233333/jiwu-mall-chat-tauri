@@ -1,4 +1,8 @@
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
+
+const appWindow = getCurrentWebviewWindow();
 
 export async function useSettingInit() {
   const timer = ref<any>(null);
@@ -72,6 +76,32 @@ export async function useSettingInit() {
     const chat = useChatStore();
     chat.scrollBottom(false);
   }, 500);
+
+
+  // 8、初始化窗口
+  restoreStateCurrent(StateFlags.ALL);
+  // 9、自动重启
+  try {
+    const isAutoStart = await isEnabled();
+    setting.settingPage.isAutoStart = isAutoStart;
+  }
+  catch (error) {
+    setting.settingPage.isAutoStart = false;
+    console.error(error);
+    disable();
+  }
+  watch(() => setting.settingPage.isAutoStart, async (val) => {
+    if (val)
+      await enable();
+    else
+      await disable();
+  });
+
+  watch(() => [
+    setting.isMobile,
+  ], () => {
+    saveWindowState(StateFlags.ALL);
+  });
 }
 
 function keyToggleTheme(e: KeyboardEvent) {

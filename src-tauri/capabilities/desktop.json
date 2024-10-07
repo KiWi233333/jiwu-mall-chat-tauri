@@ -1,0 +1,15 @@
+{
+  "identifier": "desktop-capability",
+  "platforms": [
+    "macOS",
+    "windows",
+    "linux"
+  ],
+  "permissions": [
+    "updater:default",
+    "notification:default",
+    "autostart:default",
+    "autostart:default",
+    "window-state:default"
+  ]
+}

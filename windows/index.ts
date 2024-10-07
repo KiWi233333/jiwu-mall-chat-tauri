@@ -4,11 +4,14 @@
  * @time    2024.5.4
  */
 
-import { WebviewWindow, type WindowOptions, appWindow, getAll, getCurrent } from "@tauri-apps/api/window";
-import { exit, relaunch } from "@tauri-apps/api/process";
+import { WebviewWindow, getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { exit, relaunch } from "@tauri-apps/plugin-process";
 import { emit, listen } from "@tauri-apps/api/event";
 
+import { type WindowOptions, getAllWindows } from "@tauri-apps/api/window";
 import { setWin } from "./actions";
+
+const appWindow = getCurrentWebviewWindow();
 
 // 系统参数配置
 export const windowConfig = {
@@ -42,16 +45,17 @@ class Windows {
   }
 
   // 获取全部窗口
-  getAllWin() {
-    return getAll();
+  async getAllWin() {
+    return await getAllWindows();
   }
 
   // 创建新窗口
   async createWin(options: WindowOptions) {
-    const args = Object.assign({}, windowConfig, options) as WindowOptions;
+    const args = Object.assign({}, windowConfig, options) as WindowOptions; // 合并配置参数
 
     // 判断窗口是否存在
-    const existWin = getAll().find(w => w.label === args.label);
+    const wins = await getAllWindows();
+    const existWin = wins.find(w => w.label === args.title);
     if (existWin) {
       if (!existWin.label.includes("main")) {
         await existWin?.unminimize();
@@ -62,7 +66,10 @@ class Windows {
     }
 
     // 创建窗口对象
-    const win = new WebviewWindow(args.label, args);
+    if (!args.title)
+      return;
+
+    const win = new WebviewWindow(args.title, args);
 
     // 是否最大化
     if (args.maximized && args.resizable)

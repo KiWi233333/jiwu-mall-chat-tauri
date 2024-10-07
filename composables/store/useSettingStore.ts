@@ -1,8 +1,9 @@
-import type { Platform } from "@tauri-apps/api/os";
-import { relaunch } from "@tauri-apps/api/process";
-import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater";
+import { relaunch } from "@tauri-apps/plugin-process";
+import type { Update } from "@tauri-apps/plugin-updater";
+import { check } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
+import { disable } from "@tauri-apps/plugin-autostart";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -19,6 +20,9 @@ export const useSettingStore = defineStore(
       isUpload: false,
       version: "",
       newVersion: "",
+      contentLength: 0,
+      downloaded: 0,
+      downloadedText: "",
       ignoreVersion: [] as string[],
     });
 
@@ -44,6 +48,7 @@ export const useSettingStore = defineStore(
           { name: "夜间", value: "dark" },
         ],
       },
+      isAutoStart: false, // 开机自启
       isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
     });
@@ -59,76 +64,86 @@ export const useSettingStore = defineStore(
     const showChatMenu = ref(true);
     const downUpChangeContact = ref(true); // 向上向下切换联系人列表
 
+
     /**
      * 检查更新
-     * @returns 检查师傅更新
+     * @returns 是否更新
      */
-    async function checkUpdates(check = false) {
+    async function checkUpdates(checkLog = false) {
       appUploader.value.isCheckUpdatateLoad = true;
       try {
-        const update = await checkUpdate();
-        appUploader.value.isUpload = !!update.shouldUpdate;
+        const update = await check() as Update;
+        appUploader.value.isUpload = !!update?.available;
         appUploader.value.isCheckUpdatateLoad = false;
-        if (appUploader.value.isUpload && update.manifest?.version) {
-          // 忽略
-          if (check && appUploader.value.ignoreVersion.includes(update.manifest?.version))
-            return false;
-          ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.manifest?.version}`, {
-            confirmButtonText: "确定",
-            cancelButtonText: "忽略此版本",
-            center: true,
-            callback: async (action: Action) => {
-              if (action === "confirm") {
-                // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
-                appUploader.value.isUpdating = true;
-                installUpdate().then(async (val) => {
-                  console.log(val);
-                  appUploader.value.isUpdating = false;
-                  appUploader.value.isUpload = false;
-                  await relaunch();
-                }).catch((error) => {
-                  console.error(error);
-                  appUploader.value.isUpdating = false;
-                  appUploader.value.isUpload = false;
-                  ElMessage.error("更新失败！请检查网络或稍后再试！");
-                }).finally(() => {
-                  appUploader.value.isCheckUpdatateLoad = false;
-                  appUploader.value.isUpdating = false;
-                  appUploader.value.isUpload = false;
-                });
-                onUpdaterEvent(({ error, status }) => {
-                  console.log("Updater event", error, status);
-                  appUploader.value.isCheckUpdatateLoad = false;
-                }).then((unlisten) => {
-                // 如果处理程序超出范围，例如组件被卸载，则需要调用 unisten。
-                  unlisten();
-                }).catch((error) => {
-                  console.error(error);
-                  appUploader.value.isCheckUpdatateLoad = false;
-                  ElMessage.error("更新失败！请检查网络或稍后再试！");
-                }).finally(() => {
-                  appUploader.value.isCheckUpdatateLoad = false;
-                });
-              }
-              else if (action === "cancel") {
-                if (update?.manifest?.version) {
-                  if (!appUploader.value.ignoreVersion.includes(update.manifest?.version))
-                    appUploader.value.ignoreVersion.push(update?.manifest?.version);
-                }
-              }
-            },
-          });
-        }
-        else {
+        if (!appUploader.value.isUpload || !update.version) {
           appUploader.value.isCheckUpdatateLoad = false;
           appUploader.value.isUpdating = false;
           appUploader.value.isUpload = false;
           const route = useRoute();
           if (route.path.includes("/setting"))
             ElMessage.info("当前版本已是最新版本！");
+          return false;
         }
+        // 检查是否忽略当前版本
+        if (checkLog && appUploader.value.ignoreVersion.includes(update.version))
+          return false;
+        ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.version}`, {
+          confirmButtonText: "确定",
+          cancelButtonText: "忽略此版本",
+          center: true,
+          callback: async (action: Action) => {
+            if (action === "confirm") {
+              // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
+              appUploader.value.isUpdating = true;
+              update.downloadAndInstall((e) => {
+                switch (e.event) {
+                  case "Started":
+                    console.log(e.data.contentLength);
+                    appUploader.value.contentLength = e.data.contentLength || 0;
+                    console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
+                    break;
+                  case "Progress":
+                    appUploader.value.downloaded += e.data.chunkLength || 0;
+                    appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
+                    console.log(`下载中 ${appUploader.value.downloadedText}`);
+                    break;
+                  case "Finished":
+                    console.log("下载完成");
+                    appUploader.value.isUpload = false;
+                    appUploader.value.isCheckUpdatateLoad = false;
+                    appUploader.value.isUpdating = false;
+                    appUploader.value.downloaded = 0;
+                    appUploader.value.downloadedText = "";
+                    appUploader.value.contentLength = 0;
+                    appUploader.value.newVersion = "";
+                    break;
+                }
+              }).then(async (val) => {
+                console.log(val);
+                await relaunch();
+              }).catch((error) => {
+                console.error(error);
+                ElMessage.error("更新失败！请检查网络或稍后再试！");
+              }).finally(() => {
+                appUploader.value.isCheckUpdatateLoad = false;
+                appUploader.value.isUpload = false;
+                appUploader.value.isCheckUpdatateLoad = false;
+                appUploader.value.isUpdating = false;
+                appUploader.value.downloaded = 0;
+                appUploader.value.downloadedText = "";
+                appUploader.value.contentLength = 0;
+                appUploader.value.newVersion = "";
+              });
+            }
+            else if (action === "cancel") {
+              if (!appUploader.value.ignoreVersion.includes(update.version))
+                appUploader.value.ignoreVersion.push(update.version);
+            }
+          },
+        });
       }
       catch (error) {
+        console.error(error);
         appUploader.value.isCheckUpdatateLoad = false;
         appUploader.value.isUpdating = false;
         appUploader.value.isUpload = false;
@@ -186,6 +201,9 @@ export const useSettingStore = defineStore(
         isUpload: false,
         version: "",
         newVersion: "",
+        contentLength: 0,
+        downloaded: 0,
+        downloadedText: "",
         ignoreVersion: [] as string[],
       };
       contactBtnPosition.value = { x: 0, y: 0 };
@@ -213,9 +231,12 @@ export const useSettingStore = defineStore(
             { name: "夜间", value: "dark" },
           ],
         },
+        isAutoStart: false, // 开机自启
         isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: true, // esc
       };
+
+      disable();// 关闭自启动
       loadSystemFonts();
     }
     return {

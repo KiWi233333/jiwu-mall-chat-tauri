@@ -32,9 +32,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="app scale-100">
-    <NuxtPage />
-  </div>
+  <NuxtPage class="h-100dvh border-default card-default" />
 </template>
 
 <style lang="scss">

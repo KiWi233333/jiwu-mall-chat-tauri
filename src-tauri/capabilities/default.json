@@ -1,0 +1,82 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "shell:default",
+    "core:window:default",
+    "core:app:default",
+    "core:event:default",
+    "core:tray:default",
+    "core:menu:default",
+    "core:path:default",
+    "core:webview:default",
+    "core:image:default",
+    "core:resources:default",
+    "core:window:allow-close",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:window:allow-hide",
+    "core:window:allow-destroy",
+    "core:window:allow-is-enabled",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-is-closable",
+    "core:window:allow-is-minimizable",
+    "core:window:allow-is-maximizable",
+    "core:window:allow-is-resizable",
+    "core:window:allow-is-maximized",
+    "core:window:allow-is-visible",
+    "core:window:allow-get-all-windows",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-start-dragging",
+    "core:app:allow-version",
+    "core:event:allow-emit",
+    "core:event:allow-emit-to",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "updater:default",
+    "core:app:allow-set-app-theme",
+    "updater:allow-check",
+    "updater:allow-download",
+    "updater:allow-install",
+    "updater:allow-download-and-install",
+    "os:default",
+    "os:allow-arch",
+    "os:allow-exe-extension",
+    "os:allow-os-type",
+    "os:allow-family",
+    "os:allow-hostname",
+    "os:allow-version",
+    "os:allow-locale",
+    "os:allow-platform",
+    "notification:default",
+    
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled",
+    
+    "window-state:default",
+    "window-state:allow-restore-state",
+    "window-state:allow-save-window-state"
+  ],
+  "platforms": [
+    "windows",
+    "linux",
+    "macOS",
+    "android",
+    "iOS"
+  ],
+  "local": true,
+  "remote": {
+    "urls": [
+      "https://*.kiwi2333.top",
+      "https://*.kiwi233.top"
+    ]
+  },
+  "webviews": []
+}

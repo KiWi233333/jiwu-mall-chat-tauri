@@ -1,7 +1,7 @@
 
 import { listen } from "@tauri-apps/api/event";
-import { open } from "@tauri-apps/api/shell";
-import { isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
+import { open } from "@tauri-apps/plugin-shell";
+import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import type { PayloadType } from "../types/tauri";
 
 /**

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import {
   DeviceType,
   getLoginCodeByType,
@@ -31,11 +31,6 @@ const rules = reactive({
   password: [
     { required: true, message: "密码不能为空！", trigger: "blur" },
     { min: 6, max: 20, message: "密码长度6-20位！", trigger: "blur" },
-    // {
-    //   pattern: /^\w{6,20}$/,
-    //   message: "密码字母数字下划线组成",
-    //   trigger: "blur",
-    // },
   ],
   code: [
     {
