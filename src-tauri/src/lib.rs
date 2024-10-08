@@ -2,8 +2,7 @@
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    utils::TitleBarStyle,
-    AppHandle, Emitter, Manager, WebviewUrl, WebviewWindowBuilder,
+    AppHandle, Emitter, Manager,
 };
 use tauri_plugin_autostart::MacosLauncher;
 
