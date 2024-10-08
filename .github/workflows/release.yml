@@ -42,8 +42,8 @@ jobs:
         if: matrix.platform == 'ubuntu-20.04' # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev
-        # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev
+        # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2. 版本不同，需要安装不同的依赖。
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
       # 使用 pnpm 作为包管理器
@@ -77,7 +77,7 @@ jobs:
             TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Create Release
-        uses: tauri-apps/tauri-action@v0.5.9
+        uses: tauri-apps/tauri-action@v0.5.15
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
