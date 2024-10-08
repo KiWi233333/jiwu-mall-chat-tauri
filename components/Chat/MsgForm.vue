@@ -136,36 +136,52 @@ async function startChating(e: KeyboardEvent) {
 const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status !== "success")?.length);
 const isUploadFile = computed(() => form.value.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status !== "success")?.length);
 /**
- * 粘贴图片上传
+ * 粘贴上传
  * @param e 事件对象
  */
 async function onPaste(e: ClipboardEvent) {
-  // 判断粘贴上传图片
+  // 判断粘贴上传
   if (!e.clipboardData?.items?.length)
     return;
   // 拿到粘贴板上的 image file 对象
-  const file = Array.from(e.clipboardData.items)
-    .find(v => v.type.includes("image"))
-    ?.getAsFile();
-
-  if (!file || !inputOssImgUploadRef.value)
+  const fileArr = Array.from(e.clipboardData.items);
+  const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
+  const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
+  if ((!img && !file) || !inputOssImgUploadRef.value)
     return;
-  if (isUploadImg.value) {
-    ElMessage.warning("图片正在上传中，请稍后再试！");
-    return;
+  if (file) {
+    if (isUploadFile.value) {
+      ElMessage.warning("文件正在上传中，请稍后再试！");
+      return;
+    }
+    inputOssImgUploadRef.value.resetInput?.();
+    inputOssFileUploadRef.value.resetInput?.();
+    fileList.value = [];
+    await inputOssFileUploadRef.value?.onUpload({
+      id: URL.createObjectURL(file),
+      key: undefined,
+      status: "",
+      percent: 0,
+      file,
+    });
   }
-  inputOssImgUploadRef.value.resetInput?.();
-  inputOssFileUploadRef.value.resetInput?.();
-
-  imgList.value = [];
-  await inputOssImgUploadRef.value?.onUpload({
-    id: URL.createObjectURL(file),
-    key: undefined,
-    status: "",
-    percent: 0,
-    file,
-  });
-  form.value.msgType = MessageType.IMG; // 图片
+  if (img) {
+    if (isUploadImg.value) {
+      ElMessage.warning("图片正在上传中，请稍后再试！");
+      return;
+    }
+    inputOssImgUploadRef.value.resetInput?.();
+    inputOssFileUploadRef.value.resetInput?.();
+    imgList.value = [];
+    await inputOssImgUploadRef.value?.onUpload({
+      id: URL.createObjectURL(img),
+      key: undefined,
+      status: "",
+      percent: 0,
+      file: img,
+    });
+    form.value.msgType = MessageType.IMG; // 图片
+  }
 }
 
 /**

@@ -140,7 +140,6 @@ async function onUpload(file: OssFile) {
   else {
     error.value = "";
   }
-
   // 1）获取凭证
   const data = await getResToken(uploadType, user.getToken);
   if (data.code !== StatusCode.SUCCESS) {

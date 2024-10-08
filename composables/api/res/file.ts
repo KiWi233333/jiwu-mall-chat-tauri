@@ -16,10 +16,6 @@ export const FILE_TYPE_ICON_MAP = {
   "application/x-pdf": "/images/icon/PDF.png",
   "application/x-bzpdf": "/images/icon/PDF.png",
   "application/x-gzpdf": "/images/icon/PDF.png",
-
-  // 未知文件
-  "undefined": "/images/icon/DEFAULT.png",
-  "": "/images/icon/DEFAULT.png",
 } as Record<string, string>;
 /**
  * 默认文件图标

@@ -14,6 +14,7 @@ const { data } = toRefs(props);
 // 具体
 const body: Partial<FileBodyMsgVO> | undefined = props.data.message?.body || {};
 function downloadFile() {
+
 }
 const fileName = body.fileName || `${body?.url?.split("/").pop() || "未知文件"}.${body.fileType?.toLocaleLowerCase()}`;
 </script>
@@ -27,13 +28,13 @@ const fileName = body.fileName || `${body?.url?.split("/").pop() || "未知文�
   >
     <template #body>
       <!-- 文件 -->
-      <div :title="fileName" class="max-w-14em flex-row-c-c cursor-pointer gap-2 p-3 leading-1.2em shadow-sm transition-all border-default card-default bg-color hover:shadow-lg" @click="downloadFile">
+      <div :title="fileName" class="max-w-14em flex-row-c-c cursor-pointer gap-4 p-3 leading-1.2em shadow-sm transition-all border-default hover:border-[var(--el-color-primary)] card-default bg-color hover:shadow-lg" @click="downloadFile">
         <img :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
         <div class="flex flex-col justify-between">
           <p class="text-overflow-2 text-sm">
             {{ fileName }}
           </p>
-          <small class="op-80">
+          <small class="text-xs op-80">
             {{ formatFileSize(body.size || 0) }}</small>
         </div>
       </div>
