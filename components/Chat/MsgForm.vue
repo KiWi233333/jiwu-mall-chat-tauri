@@ -612,7 +612,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
         type="primary"
         round
         size="small"
-        :loading="isSending || (form.msgType === MessageType.IMG && isUploadImg)"
+        :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
         style="padding: 0.8rem;width: 6rem;"
         @click="onSubmit()"
       >

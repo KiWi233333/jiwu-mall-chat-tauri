@@ -39,15 +39,16 @@ function onDownloadFile(url: string, fileName: string) {
       <div
         v-loading="isDownload"
         loading-
-        :title="fileName" class="max-w-14em flex-row-c-c cursor-pointer gap-3 p-3 leading-1.2em shadow-sm transition-all border-default hover:border-[var(--el-color-primary)] card-default bg-color hover:shadow-lg" @click="onDownloadFile(BaseUrlFile + body.url, fileName)"
+        :title="fileName" class="max-w-14em w-fit flex cursor-pointer gap-3 p-3 shadow-sm transition-all !items-center border-default hover:border-[var(--el-color-primary)] card-default bg-color hover:shadow-lg" @click="onDownloadFile(BaseUrlFile + body.url, fileName)"
       >
-        <img :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
+        <img :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8 object-contain">
         <div class="flex flex-col justify-between">
           <p class="text-overflow-2 text-sm">
             {{ fileName }}
           </p>
-          <small class="text-xs op-80">
-            {{ formatFileSize(body.size || 0) }}</small>
+          <small class="ml-a text-xs op-60">
+            {{ formatFileSize(body.size || 0) }}
+          </small>
         </div>
       </div>
       <!-- 内容 -->
