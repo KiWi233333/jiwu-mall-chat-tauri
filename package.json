@@ -14,6 +14,7 @@
     "build:nuxt": "nuxi generate",
     "build:tauri": "tauri build",
     "build:tauri-prod": "nuxi generate && tauri build",
+    "release": "npm version minor && git push --tag && git fetch && git push",
     "release:major": "npm version major && git push --tag && git fetch && git push",
     "release:minor": "npm version minor && git push --tag && git fetch && git push",
     "release:patch": "npm version patch && git push --tag && git fetch && git push",
