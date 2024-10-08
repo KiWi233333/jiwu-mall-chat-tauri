@@ -1,10 +1,10 @@
 name: JiwuChat CI All
-  
+
 on:
   push:
-      # Sequence of patterns matched against refs/tags
-      tags:
-          - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-            node-version: 20
+          node-version: 20
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -42,8 +42,8 @@ jobs:
         if: matrix.platform == 'ubuntu-20.04' # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev
-        # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2. 版本不同，需要安装不同的依赖。
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+        # webkitgtk（libwebkit2gtk-4.0-dev） 4.0 is for Tauri v1  - webkitgtk 4.1 is for Tauri v2. 版本不同，需要安装不同的依赖。
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
       # 使用 pnpm 作为包管理器
@@ -51,30 +51,29 @@ jobs:
         uses: pnpm/action-setup@v4
         id: pnpm-install
         with:
-            version: 8
-            run_install: false
+          version: 8
+          run_install: false
 
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
         run: |
-            echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
-            path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-            key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-            restore-keys: |
-                ${{ runner.os }}-pnpm-store-
-
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install app dependencies and build it
         run: pnpm i && pnpm build:nuxt
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-            TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Create Release
         uses: tauri-apps/tauri-action@v0.5.15
@@ -86,7 +85,7 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: '🔥 Release v__VERSION__'
           # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-          releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
+          releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
