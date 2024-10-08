@@ -29,6 +29,9 @@ importers:
       qiniu-js:
         specifier: 3.4.2
         version: 3.4.2
+      streamsaver:
+        specifier: ^2.0.6
+        version: 2.0.6
     devDependencies:
       '@antfu/eslint-config':
         specifier: 0.43.1
@@ -5749,6 +5752,9 @@ packages:
 
   stream-combiner@0.0.4:
     resolution: {integrity: sha512-rT00SPnTVyRsaSz5zgSPma/aHSOic5U1prhYdRy5HS2kTZviFpmDgzilbtsJsxiroqACmayynDN/9VzIbX5DOw==}
+
+  streamsaver@2.0.6:
+    resolution: {integrity: sha512-LK4e7TfCV8HzuM0PKXuVUfKyCB1FtT9L0EGxsFk5Up8njj0bXK8pJM9+Wq2Nya7/jslmCQwRK39LFm55h7NBTw==}
 
   streamx@2.20.1:
     resolution: {integrity: sha512-uTa0mU6WUC65iUvzKH4X9hEdvSW7rbPxPtwfWiLMSj3qTdQbAiUboZTxauKfpFuGIGa1C2BYijZ7wgdUXICJhA==}
@@ -13427,6 +13433,8 @@ snapshots:
   stream-combiner@0.0.4:
     dependencies:
       duplexer: 0.1.2
+
+  streamsaver@2.0.6: {}
 
   streamx@2.20.1:
     dependencies:

@@ -14,7 +14,9 @@
     "build:nuxt": "nuxi generate",
     "build:tauri": "tauri build",
     "build:tauri-prod": "nuxi generate && tauri build",
-    "release": "npm version patch && git push --tag && git fetch && git push",
+    "release:major": "npm version major && git push --tag && git fetch && git push",
+    "release:minor": "npm version minor && git push --tag && git fetch && git push",
+    "release:patch": "npm version patch && git push --tag && git fetch && git push",
     "lint-staged": "lint-staged"
   },
   "devDependencies": {
@@ -72,7 +74,8 @@
     "currency.js": "2.0.4",
     "element-china-area-data": "6.1.0",
     "md-editor-v3": "4.20.2",
-    "qiniu-js": "3.4.2"
+    "qiniu-js": "3.4.2",
+    "streamsaver": "^2.0.6"
   },
   "husky": {
     "hooks": {
