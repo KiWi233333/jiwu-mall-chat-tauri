@@ -97,7 +97,7 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
         [field]: val?.trim(),
       } as UpdateRoomGroupDTO;
   ElMessageBox.confirm(`是否确认修改${TextMap[field]}？`, {
-    // title: TextMap[field] || "提示",
+    title: TextMap[field] || "提示",
     center: true,
     confirmButtonText: "确认",
     cancelButtonText: "取消",
@@ -527,7 +527,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

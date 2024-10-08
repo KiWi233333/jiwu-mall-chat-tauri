@@ -146,13 +146,35 @@ export interface SoundBodyMsgVO<T = object> {
  * 图片消息
  */
 export interface ImgBodyMsgVO {
-  // content: string
-  // urlContentMap: { [key: string]: UrlInfoDTO }
-  // atUidList: string[]
   url: string
   size?: number
   width?: number
   height?: number
+  reply: {
+    id: number
+    uid: string
+    nickName: string
+    type: MessageType
+    /**
+     * 是否可消息跳转 0否 1是
+     */
+    canCallback: isTrue
+    /**
+     * 跳转间隔的消息条数
+     */
+    gapCount: number
+    body?: any
+  }
+}
+/**
+ * 文件消息
+ */
+export interface FileBodyMsgVO {
+  url: string
+  size: number
+  fileName: string
+  mimeType?: string
+  fileType?: "TXT" | "EXCEL" | "XLSX" | "PDF" | "PPT" | "PPTX" | "DOC" | "DOCX"
   reply: {
     id: number
     uid: string

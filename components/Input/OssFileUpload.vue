@@ -3,25 +3,26 @@ import * as qiniu from "qiniu-js";
 import { OssFileType, deleteOssFile, getOssErrorCode, getResToken, uploadOssFileSe } from "@/composables/api/res";
 import { StatusCode } from "@/types/result";
 
-const props = withDefaults(
-  defineProps<Props>(),
-  {
-    limit: 1,
-    multiple: false,
-    showEdit: true,
-    showDelete: true,
-    required: false,
-    isAnimate: true,
-    disable: false,
-    modelValue: () => [] as OssFile[],
-    accept: "image/*",
-    acceptDesc: () => ["image/jpeg", "image/png", "image/bmp", "image/webp", "image/jpg", "image/tiff", "image/tif", "image/ico", "image/x-icon"],
-    uploadType: OssFileType.IMAGE,
-    uploadQuality: 0.4,
-    preview: true,
-    isAsync: true,
-  },
-);
+const {
+  limit = 1,
+  size,
+  draggable = false,
+  preClass = "",
+  errorClass = "",
+  inputClass = "",
+  multiple = false,
+  showEdit = true,
+  showDelete = true,
+  required = false,
+  isAnimate = true,
+  disable = false,
+  modelValue = [] as OssFile[],
+  accept = "image/*",
+  acceptDesc = ["image/jpeg", "image/png", "image/bmp", "image/webp", "image/jpg", "image/tiff", "image/tif", "image/ico", "image/x-icon"],
+  uploadType = OssFileType.IMAGE,
+  uploadQuality = 0.4,
+  preview = true,
+} = defineProps<Props>();
 // emit
 const emit = defineEmits<{
   (e: "submit", newKey: string, pathList: string[], fileList: OssFile[]): any
@@ -47,6 +48,9 @@ interface Props {
   accept?: string
   acceptDesc?: string[]
   uploadType?: OssFileType
+  /**
+   * 文件大小限制 单位：Byte
+   */
   size?: number
   draggable?: boolean
   preClass?: string
@@ -57,7 +61,7 @@ interface Props {
 const user = useUserStore();
 
 // 已上传文件列表 (public)
-const fileList = ref<OssFile[]>(props.modelValue || []);
+const fileList = ref<OssFile[]>(modelValue || []);
 const pathList = computed(() => {
   return getNewPathList(fileList.value);
 });
@@ -81,13 +85,13 @@ const inputRef = ref();
 
 // 1、文件改变
 async function hangdleChange(e: Event) {
-  if (props.disable)
+  if (disable)
     return;
   const t = e.target as HTMLInputElement;
   if (!t.files?.length)
     return;
   // 单文件
-  if (props.limit === 1) {
+  if (limit === 1) {
     if (fileList.value.length)
       fileList.value.splice(0);
     await onUpload(
@@ -102,16 +106,16 @@ async function hangdleChange(e: Event) {
   }
   else {
     // 多文件
-    if (t.files.length > props.limit || fileList.value.length + t.files.length > props.limit) {
-      emit("errorMsg", `最多只能上传${props.limit}个文件`);
-      return error.value = `最多只能上传${props.limit}个文件`;
+    if (t.files.length > limit || fileList.value.length + t.files.length > limit) {
+      emit("errorMsg", `最多只能上传${limit}个文件`);
+      return error.value = `最多只能上传${limit}个文件`;
     }
     else {
       error.value = "";
     }
     const data = [...t.files].map((p) => {
       return {
-        id: props.uploadType === OssFileType.IMAGE ? URL.createObjectURL(p) : BaseUrlVideo + p,
+        id: uploadType === OssFileType.IMAGE ? URL.createObjectURL(p) : BaseUrlVideo + p,
         key: undefined,
         status: "",
         percent: 0,
@@ -129,8 +133,8 @@ async function hangdleChange(e: Event) {
  */
 async function onUpload(file: OssFile) {
   // 文件校验
-  if (props.size !== undefined && file?.file?.size && file?.file?.size > props.size) {
-    error.value = `文件大小不能超过${props.size / 1024 / 1024}M`;
+  if (size !== undefined && file?.file?.size && file?.file?.size > size) {
+    error.value = `文件大小不能超过${size / 1024 / 1024}M`;
     return;
   }
   else {
@@ -138,7 +142,7 @@ async function onUpload(file: OssFile) {
   }
 
   // 1）获取凭证
-  const data = await getResToken(props.uploadType, user.getToken);
+  const data = await getResToken(uploadType, user.getToken);
   if (data.code !== StatusCode.SUCCESS) {
     error.value = data.message;
     file.status = "warning";
@@ -148,7 +152,7 @@ async function onUpload(file: OssFile) {
     file.key = data.data.key;
   }
   const options = {
-    quality: props.uploadQuality || 0.6,
+    quality: uploadQuality || 0.6,
     noCompressIfLarger: true,
   };
   if (!file?.file)
@@ -156,7 +160,7 @@ async function onUpload(file: OssFile) {
 
   // ------------添加到队列-----------
   // 上传中 只能压缩图片
-  if (props.uploadType === OssFileType.IMAGE && props.acceptDesc.includes(file.file.type)) {
+  if (uploadType === OssFileType.IMAGE && acceptDesc.includes(file.file.type)) {
     qiniu.compressImage(file?.file, options).then((res) => {
       // 2）上传 监视器
       qiniuUpload(res.dist as File, file?.key || "", data.data.uploadToken, file);
@@ -249,12 +253,12 @@ function resetInput() {
  */
 const preImageClass = computed(() => {
   const arr: string[] = [];
-  if (props.limit === 1)
+  if (limit === 1)
     arr.push("absolute top-0 z-1");
-  if (props.inputClass)
-    arr.push(props?.inputClass);
-  if (props.preClass)
-    arr.push(props?.preClass);
+  if (inputClass)
+    arr.push(inputClass);
+  if (preClass)
+    arr.push(preClass);
   return arr;
 });
 
@@ -268,14 +272,14 @@ defineExpose({
 });
 
 // 初始化文件列表
-watch(() => props.modelValue, (val) => {
+watch(() => modelValue, (val) => {
   if (val)
     fileList.value = val;
 }, { immediate: true },
 );
 
 const getPreImage = computed(() => {
-  if (props.preview)
+  if (preview)
     return pathList.value.map(p => BaseUrlImg + p);
   else
     return [];
@@ -285,7 +289,7 @@ const [autoAnimateRef, enable] = useAutoAnimate({
 });
 onMounted(() => {
   const setting = useSettingStore();
-  enable(props.isAnimate && !setting.settingPage.isColseAllTransition);
+  enable(isAnimate && !setting.settingPage.isColseAllTransition);
 });
 </script>
 

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { FILE_MAX_SIZE, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
 import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
 import { useLinterFileDrop } from "~/composables/hooks/useFileDrop";
+
 
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
 }>();
-// store
 const user = useUserStore();
 const chat = useChatStore();
 
@@ -63,7 +64,7 @@ const SelfExistTextMap = {
 const colorMode = useColorMode();
 
 // 文件上传（图片）回调
-const inputOssFileUploadRef = ref();
+const inputOssImgUploadRef = ref();
 const imgList = ref<OssFile[]>([]);
 function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
   const file = imgList.value.find(f => f.key === key);
@@ -85,6 +86,24 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
         url: key,
         width,
         height,
+        size: file?.file?.size,
+      },
+    };
+  }
+}
+// 文件上传（文件）回调
+const inputOssFileUploadRef = ref();
+const fileList = ref<OssFile[]>([]);
+function onSubmitFile(key: string, pathList: string[]) {
+  const file = fileList.value.find(f => f.key === key);
+  if (key && file?.file) {
+    form.value = {
+      roomId: chat.theContact.roomId,
+      msgType: MessageType.FILE, // 文件
+      content: form.value.content,
+      body: {
+        url: key,
+        fileName: file?.file?.name,
         size: file?.file?.size,
       },
     };
@@ -115,6 +134,7 @@ async function startChating(e: KeyboardEvent) {
 }
 
 const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status !== "success")?.length);
+const isUploadFile = computed(() => form.value.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status !== "success")?.length);
 /**
  * 粘贴图片上传
  * @param e 事件对象
@@ -128,15 +148,17 @@ async function onPaste(e: ClipboardEvent) {
     .find(v => v.type.includes("image"))
     ?.getAsFile();
 
-  if (!file || !inputOssFileUploadRef.value)
+  if (!file || !inputOssImgUploadRef.value)
     return;
   if (isUploadImg.value) {
     ElMessage.warning("图片正在上传中，请稍后再试！");
     return;
   }
+  inputOssImgUploadRef.value.resetInput?.();
   inputOssFileUploadRef.value.resetInput?.();
+
   imgList.value = [];
-  await inputOssFileUploadRef.value?.onUpload({
+  await inputOssImgUploadRef.value?.onUpload({
     id: URL.createObjectURL(file),
     key: undefined,
     status: "",
@@ -185,6 +207,11 @@ async function onSubmit(e?: KeyboardEvent) {
     // 图片
     if (form.value.msgType === MessageType.IMG && isUploadImg.value) {
       ElMessage.warning("图片正在上传中，请稍后再试！");
+      return;
+    }
+    // 文件
+    if (form.value.msgType === MessageType.FILE && isUploadFile.value) {
+      ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
 
@@ -259,8 +286,13 @@ function setReadAll() {
  * @param key key
  * @param index 索引
  */
-function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
+function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: OssFileType = OssFileType.IMAGE) {
   e.preventDefault();
+  const textMap = {
+    [OssFileType.IMAGE]: "图片",
+    [OssFileType.FILE]: "文件",
+    [OssFileType.SOUND]: "语音",
+  } as Record<OssFileType, string>;
   const opt = {
     x: e.x,
     y: e.y,
@@ -269,25 +301,26 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0) {
       {
         customClass: "group",
         icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger",
-        label: "删除图片",
+        label: `删除${textMap[type]}`,
         onClick: async () => {
           if (!key)
             return;
           const res = await deleteOssFile(key, user.getToken);
           ElMessage.closeAll("error");
-          if (res.code === StatusCode.SUCCESS) {
+          if (type === OssFileType.IMAGE) {
             imgList.value.splice(
               index,
               1,
             );
+            inputOssImgUploadRef?.value.resetInput?.();
           }
-          else if (res.code === StatusCode.DELETE_ERR) {
-            imgList.value.splice(
+          if (type === OssFileType.FILE) {
+            fileList.value.splice(
               index,
               1,
             );
+            inputOssFileUploadRef?.value.resetInput?.();
           }
-          inputOssFileUploadRef?.value.resetInput?.();
         },
       },
     ],
@@ -306,6 +339,7 @@ function resetForm() {
     },
   };
   imgList.value = [];
+  fileList.value = [];
   // store
   chat.atUserList.splice(0);
   chat.setReplyMsg({});
@@ -366,8 +400,30 @@ const { fileList: fileDropList } = await useLinterFileDrop();
             :src="img.id || BaseUrlImg + img.key"
             class="h-fit max-h-9rem max-w-16rem w-16rem w-fit rounded p-0"
             title="左键放大 | 右键删除"
-            @contextmenu="onContextMenu($event, img.key, i)"
+            @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
           />
+        </div>
+      </el-form-item>
+      <!-- 文件 -->
+      <el-form-item
+        v-if="fileList.length > 0"
+        class="w-full cursor-pointer"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
+      >
+        <div
+          v-for="(file, i) in fileList"
+          :key="i" class="flex-row-c-c p-3 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg"
+          @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
+        >
+          <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
+          <div class="ml-2 flex flex-col justify-between">
+            <div class="max-w-40vw truncate text-sm">
+              {{ file?.file?.name || file.key }}
+            </div>
+            <el-progress class="min-w-8em" :percentage="file?.percent || 0" :stroke-width="4" :status="file?.status as any || 'active'">
+              {{ formatFileSize(file?.file?.size || 0) }}
+            </el-progress>
+          </div>
         </div>
       </el-form-item>
       <!-- 回复 -->
@@ -399,29 +455,42 @@ const { fileList: fileDropList } = await useLinterFileDrop();
         </el-tooltip>
         <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-4">
           <!-- 图片 -->
-          <el-form-item
-            style="cursor: pointer; padding: 0;margin: 0;"
-            prop="body.url"
-            class="cursor-pointer btn-primary"
-          >
-            <InputOssFileUpload
-              ref="inputOssFileUploadRef"
-              v-model="imgList"
-              :multiple="false"
-              :preview="false"
-              :limit="1"
-              :disable="isDisabled"
-              class="i-solar:album-line-duotone h-5 w-5 cursor-pointer"
-              pre-class="hidden"
-              :upload-type="OssFileType.IMAGE"
-              input-class="op-0 h-5 w-5 cursor-pointer "
-              :upload-quality="0.5"
-              @error-msg="(msg:string) => {
-                ElMessage.error(msg)
-              }"
-              @submit="onSubmitImg"
-            />
-          </el-form-item>
+          <InputOssFileUpload
+            ref="inputOssImgUploadRef"
+            v-model="imgList"
+            :multiple="false"
+            :preview="false"
+            :limit="1"
+            :disable="isDisabled"
+            class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            pre-class="hidden"
+            :upload-type="OssFileType.IMAGE"
+            input-class="op-0 h-5 w-5 cursor-pointer "
+            :upload-quality="0.5"
+            @error-msg="(msg:string) => {
+              ElMessage.error(msg)
+            }"
+            @submit="onSubmitImg"
+          />
+          <!-- 文件 -->
+          <InputOssFileUpload
+            ref="inputOssFileUploadRef"
+            v-model="fileList"
+            :multiple="false"
+            :size="FILE_MAX_SIZE"
+            :preview="false"
+            :limit="1"
+            :disable="isDisabled"
+            class="i-solar-folder-with-files-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            pre-class="hidden"
+            :upload-type="OssFileType.FILE"
+            input-class="op-0 h-5 w-5 cursor-pointer "
+            accept="text/plain,application/vnd.ms-excel,application/vnd.-openxmlformats-officedocument.-spreadsheetml.-sheet,application/vnd.ms-powerpoint,application/pdf, application/x-pdf, application/x-bzpdf, application/x-gzpdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            @error-msg="(msg:string) => {
+              ElMessage.error(msg)
+            }"
+            @submit="onSubmitFile"
+          />
         </div>
         <!-- 语音 -->
         <div v-show="form.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
