@@ -101,21 +101,21 @@ pub fn run() {
                     }
                 })
                 .build(app)?;
-            // 仅在构建 macOS 时设置背景颜色
-            #[cfg(target_os = "macos")]
-            {
-                let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default());
-                let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
-                win_builder.build().unwrap();
-                use cocoa::appkit::{NSColor, NSWindow};
-                use cocoa::base::{id, nil};
-                let ns_window = window.ns_window().unwrap() as id;
-                unsafe {
-                    ns_window.setBackgroundColor_(NSColor::colorWithRed_green_blue_alpha_(
-                        nil, nil, nil, nil, 0.0, // 透明度
-                    ));
-                }
-            }
+            // // 仅在构建 macOS 时设置背景颜色
+            // #[cfg(target_os = "macos")]
+            // {
+            //     let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default());
+            //     let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
+            //     win_builder.build().unwrap();
+            //     use cocoa::appkit::{NSColor, NSWindow};
+            //     use cocoa::base::{id, nil};
+            //     let ns_window = window.ns_window().unwrap() as id;
+            //     unsafe {
+            //         ns_window.setBackgroundColor_(NSColor::colorWithRed_green_blue_alpha_(
+            //             nil, nil, nil, nil, 0.0, // 透明度
+            //         ));
+            //     }
+            // }
 
             Ok(())
         })
