@@ -8,7 +8,6 @@ use tauri_plugin_autostart::MacosLauncher;
 
 fn show_window(app: &AppHandle) {
     let windows = app.webview_windows();
-
     windows
         .values()
         .next()
@@ -115,7 +114,6 @@ pub fn run() {
             //         ));
             //     }
             // }
-
             Ok(())
         })
         .run(tauri::generate_context!())
