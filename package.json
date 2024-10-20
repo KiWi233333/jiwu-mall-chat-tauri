@@ -74,7 +74,7 @@
     "@tauri-apps/plugin-window-state": "~2",
     "currency.js": "2.0.4",
     "element-china-area-data": "6.1.0",
-    "md-editor-v3": "4.20.4",
+    "md-editor-v3": "4.21.0",
     "qiniu-js": "3.4.2",
     "streamsaver": "^2.0.6"
   },
