@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { MessageType } from "@/composables/api/chat/message";
-import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgRecall, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
+import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
 
 
 /**
@@ -199,7 +199,7 @@ const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?
     {{ formatDate(new Date(data.message.sendTime)) }}
   </p>
   <component
-    :is="map[data.message?.type || MessageType.TEXT]"
+    :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
     :show-translation="showTranslation"
     :last-msg="lastMsg"
     :index="index"
