@@ -62,6 +62,7 @@ function addGroupApply() {
       title: "发起邀请提醒",
       message: +res.data === form.value.uidList.length ? "群聊邀请已发送！" : "部分邀请未送达！",
     });
+    reload();
   });
 }
 
@@ -111,6 +112,11 @@ function reload(uidList = []) {
   form.value.uidList = uidList;
   form.value.avatar = null;
   showImg.value = false;
+  userList.value = [];
+  pageInfo.value.cursor = null;
+  pageInfo.value.isLast = false;
+  pageInfo.value.total = -1;
+  loadData();
 }
 reload();
 
