@@ -61,15 +61,9 @@ const setting = useSettingStore();
   </main>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .main-box {
-  --at-apply: "max-w-100vw mx-a py-4 flex-1 w-full flex overflow-hidden p-0 bg-color";
-}
-.main-box {
+  --at-apply: "mx-a py-4 flex-1 w-full flex overflow-hidden p-0 bg-color";
   padding: 0 !important;
-}
-.content {
-  overflow-y: scroll;
-  height: calc(100dvh - $top-nav-height);
 }
 </style>

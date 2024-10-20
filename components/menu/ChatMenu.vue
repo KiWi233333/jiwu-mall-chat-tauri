@@ -68,10 +68,11 @@ const menuList = [
 <template>
   <div
     class="menu relative z-998 flex flex-col items-center border-l-0 bg-light px-2 md:block border-default dark:bg-[#121212] md:shadow-none"
+    style="border: 0;border-right: 1px;"
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 hover:bg-transparent">
-      <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a border-default card-default">
+      <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a card-default">
         <CardElImage
           :src="BaseUrlImg + user?.userInfo?.avatar"
           class="relative z-100 mx-a h-8 w-8 sm:mr-a border-default card-default" alt="头像"
