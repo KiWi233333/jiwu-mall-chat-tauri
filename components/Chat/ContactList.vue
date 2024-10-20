@@ -395,7 +395,6 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
     margin: 0;
     width: 100%;
   }
-
   :deep(.el-radio){
     width: 100%;
     height: fit-content;
@@ -419,5 +418,9 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       padding: 0;
     }
   }
+}
+
+:deep(.el-scrollbar__bar) {
+  opacity: 0.4;
 }
 </style>

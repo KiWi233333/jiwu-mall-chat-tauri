@@ -1,10 +1,21 @@
 
 <script lang="ts" setup>
+import { type Platform, platform } from "@tauri-apps/plugin-os";
 import { WsStatusEnum } from "~/composables/types/WsType";
 
 const user = useUserStore();
 const ws = useWs();
-const setting = useSettingStore();
+const appPlatform = ref<Platform | "web">("windows");
+
+onMounted(async () => {
+  try {
+    appPlatform.value = platform();
+  }
+  catch (error) {
+    console.warn(error);
+    appPlatform.value = "web";
+  }
+});
 </script>
 
 <template>
@@ -12,7 +23,7 @@ const setting = useSettingStore();
     <div
       class="relative h-full flex flex-col overflow-hidden"
     >
-      <MenuHeaderMenuBar>
+      <MenuHeaderMenuBar v-if="!['android', 'ios'].includes(appPlatform)" :app-platform="appPlatform">
         <template #drag-content>
           <div
             v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)"

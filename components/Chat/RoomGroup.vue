@@ -417,7 +417,7 @@ function exitGroup() {
         <i class="block h-1.8em w-1.8em rounded-2rem sm:(h-5 w-5) btn-info border-default" i-carbon:add-large />
       </div>
     </div>
-    <el-scrollbar ref="memberScrollbarRef" style="height: auto;">
+    <el-scrollbar ref="memberScrollbarRef" wrap-class="sm:px-0 px-2" style="height: auto;">
       <ListAutoIncre
         :immediate="true"
         :auto-stop="false"
@@ -527,7 +527,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

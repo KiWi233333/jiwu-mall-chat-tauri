@@ -96,6 +96,7 @@ const menuList = [
           action: route.path === p.path,
           [`${p.class}`]: p.class,
         }"
+        :title="p.title"
         class="h-10 w-10 flex-row-c-c transition-all"
       >
         <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">

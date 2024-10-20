@@ -1,20 +1,12 @@
 <script lang="ts" setup>
-import { type Platform, platform } from "@tauri-apps/plugin-os";
+import { type Platform } from "@tauri-apps/plugin-os";
 
+const { appPlatform = "windows" } = defineProps<{
+  appPlatform: Platform | "web"
+}>();
 const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
-const appPlatform = ref<Platform | "web">("windows");
-
-onMounted(async () => {
-  try {
-    appPlatform.value = await platform();
-  }
-  catch (error) {
-    console.warn(error);
-    appPlatform.value = "web";
-  }
-});
 // @unocss-include
 </script>
 
@@ -45,12 +37,12 @@ onMounted(async () => {
         />
         <!-- 退出登录 -->
         <i
-          circle plain
+
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          i-solar:logout-3-broken
-          p-2 @click="user.exitLogin()"
+
+          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <div v-if="appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
