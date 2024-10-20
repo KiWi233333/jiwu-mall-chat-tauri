@@ -52,7 +52,7 @@ Based on the Nuxt3 + Tauri + element-plus framework
 
 Note: This account does not have permissions for uploading images, changing passwords, etc.
 
-### Feature Table
+### Feature List
 
 | Feature Module | Feature Description | Status |
 | --- | --- | --- |
