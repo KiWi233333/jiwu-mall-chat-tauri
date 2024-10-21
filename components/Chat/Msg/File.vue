@@ -38,7 +38,6 @@ function onDownloadFile(url: string, fileName: string) {
       <!-- 文件 -->
       <div
         v-loading="isDownload"
-        loading-
         :title="fileName" class="max-w-14em w-fit flex cursor-pointer gap-3 p-3 shadow-sm transition-all !items-center border-default hover:border-[var(--el-color-primary)] card-default bg-color hover:shadow-lg" @click="onDownloadFile(BaseUrlFile + body.url, fileName)"
       >
         <img :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8 object-contain">

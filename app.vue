@@ -21,7 +21,6 @@ useSeoMeta({
   keywords: appKeywords,
 });
 
-
 onMounted(() => {
   useInit();
 });

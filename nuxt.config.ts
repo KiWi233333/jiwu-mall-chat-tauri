@@ -4,15 +4,21 @@
 import { pwa } from "./config/pwa";
 import { appDescription, appName } from "./constants/index";
 
-const BASE_URL = process.env.VITE_PUBLIC_API_BASE_URL;
-const isSSR = process.env.NODE_ENV === "development" ? true : process.env.NUXT_PUBLIC_SPA === "true";
-
+const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
+const isSSR = process.env.NUXT_PUBLIC_SPA;
+const mode = process.env.NUXT_PUBLIC_NODE_ENV;
 // 打印
-console.log(`mode:${process.env.NODE_ENV}，api_url:${BASE_URL}，SSR:${false}`);
+console.log(`mode:${mode} api_url:${BASE_URL} SSR:${isSSR}`);
 export default defineNuxtConfig({
   ssr: false,
   future: {
     compatibilityVersion: 4,
+  },
+  runtimeConfig: {
+    public: {
+      baseUrl: BASE_URL,
+      mode,
+    },
   },
   build: {
     transpile: ["@popperjs/core", "resize-detector"],
