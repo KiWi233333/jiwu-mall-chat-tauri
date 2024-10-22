@@ -97,11 +97,14 @@ const load = "<i i-tabler:loader p-4></i>";
     v-loading="isLoading"
     element-loading-background="initial"
     :class="{ 'op-100': !isLoading }"
-    v-bind="$attrs" h-full w-full flex flex-1 flex-col items-center gap-1rem pt-6rem op-0 transition-120 bg-color
+    v-bind="$attrs" h-full w-full flex flex-1 flex-col items-center gap-4 pt-6rem op-0 transition-120 bg-color
   >
     <div flex gap-4>
       <CardElImage
         :src="BaseUrlImg + user.avatar" fit="cover"
+        :preview-src-list="[BaseUrlImg + user.avatar]"
+        preview-teleported
+        loading="lazy"
         class="h-3.8rem w-3.8rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default v-card"
       />
       <div class="text-2.8">
