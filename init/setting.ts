@@ -2,7 +2,6 @@ import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
 
-const appWindow = getCurrentWebviewWindow();
 
 export async function useSettingInit() {
   const timer = ref<any>(null);
@@ -35,6 +34,7 @@ export async function useSettingInit() {
   ElMessage.closeAll("error");
   const font = setting.settingPage.fontFamily.value || null;
 
+  setting.showDownloadPanel = false;
 
   // 4、设置字体
   if (font)
@@ -79,7 +79,12 @@ export async function useSettingInit() {
 
 
   // 8、初始化窗口
-  restoreStateCurrent(StateFlags.ALL);
+  try {
+    restoreStateCurrent(StateFlags.ALL);
+  }
+  catch (error) { // web端兼容
+    console.warn(error);
+  }
   // 9、自动重启
   try {
     const isAutoStart = await isEnabled();
@@ -87,7 +92,7 @@ export async function useSettingInit() {
   }
   catch (error) {
     setting.settingPage.isAutoStart = false;
-    console.error(error);
+    console.warn(error);
     disable();
   }
   watch(() => setting.settingPage.isAutoStart, async (val) => {
@@ -161,6 +166,7 @@ export async function useHotkeyInit() {
     // esc 最小化窗口
     if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {
       e.preventDefault();
+      const appWindow = getCurrentWebviewWindow();
       appWindow.minimize();
     }
   });

@@ -2,12 +2,21 @@
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
+import { platform } from "@tauri-apps/plugin-os";
 import type { PayloadType } from "../types/tauri";
 
 /**
  * Tauri事件
  */
 export async function userTauriInit() {
+  try {
+    const platforms = platform();
+    if (platforms)
+      return;
+  }
+  catch (error) {
+    console.warn(error);
+  }
   // 监听open_url事件
   listen<PayloadType>("open_url", (e) => {
     const url = e.payload.message; // 路径

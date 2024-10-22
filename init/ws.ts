@@ -2,7 +2,6 @@ import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 
-const appWindow = getCurrentWebviewWindow();
 
 export async function useWsInit() {
 // 1、聊天模块
@@ -32,6 +31,7 @@ export async function useWsInit() {
       // 消息通知
         if (noticeType.includes(msg.type)) {
           const body = msg.data as ChatMessageVO;
+          const appWindow = getCurrentWebviewWindow();
           const isFocused = await appWindow.isFocused();
           if (isFocused) {
             if (chat.theContact.roomId === body.message.roomId)

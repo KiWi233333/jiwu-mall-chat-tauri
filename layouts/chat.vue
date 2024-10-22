@@ -23,7 +23,7 @@ onMounted(async () => {
     <div
       class="relative h-full flex flex-col overflow-hidden"
     >
-      <MenuHeaderMenuBar v-if="!['android', 'ios'].includes(appPlatform)" :app-platform="appPlatform">
+      <MenuHeaderMenuBar :app-platform="appPlatform">
         <template #drag-content>
           <div
             v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)"

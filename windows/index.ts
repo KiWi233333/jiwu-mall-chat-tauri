@@ -11,7 +11,6 @@ import { emit, listen } from "@tauri-apps/api/event";
 import { type WindowOptions, getAllWindows } from "@tauri-apps/api/window";
 import { setWin } from "./actions";
 
-const appWindow = getCurrentWebviewWindow();
 
 // 系统参数配置
 export const windowConfig = {
@@ -94,6 +93,7 @@ class Windows {
       this.createWin(JSON.parse(event.payload as string));
     });
 
+    const appWindow = getCurrentWebviewWindow();
     // 显示窗体
     await listen("win-show", async (event) => {
       if (!appWindow.label.includes("main"))
