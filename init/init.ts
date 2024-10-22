@@ -9,13 +9,16 @@ import type { PayloadType } from "../types/tauri";
  * Tauri事件
  */
 export async function userTauriInit() {
+  const setting = useSettingStore();
   try {
-    const platforms = platform();
-    if (platforms)
+    const appPlatform = platform();
+    if (appPlatform)
       return;
+    setting.appPlatform = appPlatform;
   }
   catch (error) {
     console.warn(error);
+    setting.appPlatform = "web";
     return;
   }
   // 监听open_url事件
@@ -32,7 +35,6 @@ export async function userTauriInit() {
   });
 
   // 2、获取通知权限
-  const setting = useSettingStore();
   let permissionGranted = await isPermissionGranted();
   if (!permissionGranted) {
     const permission = await requestPermission();

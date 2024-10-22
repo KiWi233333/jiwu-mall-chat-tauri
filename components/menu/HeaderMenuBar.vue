@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { type Platform } from "@tauri-apps/plugin-os";
-
-const { appPlatform = "windows" } = defineProps<{
-  appPlatform: Platform | "web"
-}>();
 const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
@@ -44,7 +39,7 @@ onMounted(async () => {
     </div>
     <div class="flex flex-shrink-0 items-center gap-4">
       <a
-        v-if="appPlatform === 'web'"
+        v-if="setting.appPlatform === 'web'"
         :href="downloadUrl"
         class="block rounded-2rem py-1.5 pl-4 pr-6 text-xs btn-info-bg border-default card-default"
       >
@@ -53,7 +48,7 @@ onMounted(async () => {
       </a>
       <div class="flex items-center gap-3 rounded-2rem px-3 py-1 border-default card-default">
         <!-- 下载（部分端） -->
-        <BtnDownload v-if="!['android', 'web', 'ios'].includes(appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
+        <BtnDownload v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
         <!-- 主题 -->
         <BtnTheme
           id="toggle-theme-btn"
@@ -68,7 +63,7 @@ onMounted(async () => {
           circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
-      <div v-if="!['android', 'web', 'ios'].includes(appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
+      <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
         <MenuController>
           <template #start="{ data }">
             <ElButton

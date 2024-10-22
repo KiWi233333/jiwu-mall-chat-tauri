@@ -6,6 +6,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { disable } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory, exists, remove } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
+import type { Platform } from "@tauri-apps/plugin-os";
 
 export interface FileItem {
   url: string
@@ -47,6 +48,7 @@ export const useSettingStore = defineStore(
       downloadedText: "",
       ignoreVersion: [] as string[],
     });
+    const appPlatform = ref<Platform | "web">("web");
 
     // 用户页折叠
     const isUserFold = ref(true);
@@ -361,6 +363,7 @@ export const useSettingStore = defineStore(
       showDownloadPanel,
       fileDownloadMap,
       fileDownloadList,
+      appPlatform,
       // actions
       checkUpdates,
       loadSystemFonts,

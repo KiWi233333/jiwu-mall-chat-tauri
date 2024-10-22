@@ -65,20 +65,20 @@ export const DownFileTextMap: Record<FileStatus, string> = {
  * @returns 下载进度对象
  */
 export async function downloadFile(url: string, fileName: string, mimeType: string = "", callback?: (progress: number) => void) {
-  const platformType: string = platform() || "web";
-  const isSupport = platformType !== "web";
-  const appDataDirUrl = isSupport ? await appDataDir() : "";
-  const appDataDownloadDirUrl = `${appDataDirUrl}\\downloads`;
-
+  const setting = useSettingStore();
+  const platformType = setting.appPlatform;
   if (["android", "ios", "web"].includes(platformType) || !platformType) {
     // 移动端使用 streamSaver 下载
     return downloadFileByStreamSaver(url, fileName, callback);
   }
+  const isSupport = platformType !== "web";
+  const appDataDirUrl = isSupport ? await appDataDir() : "";
+  const appDataDownloadDirUrl = `${appDataDirUrl}\\downloads`;
+
   const existsDir = await exists(appDataDownloadDirUrl);
   if (!existsDir)
     mkdir(appDataDownloadDirUrl);
   // 文件下载
-  const setting = useSettingStore();
   setting.fileDownloadMap[url] = {
     url,
     fileName,
