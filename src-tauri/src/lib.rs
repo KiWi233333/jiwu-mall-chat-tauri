@@ -23,6 +23,9 @@ struct Payload {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_upload::init())
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
             let _ = show_window(app);
@@ -96,7 +99,7 @@ pub fn run() {
                             let _ = webview_window.show();
                             let _ = webview_window.unminimize();
                             let _ = webview_window.set_focus();
-                        }else {
+                        } else {
                             let _ = show_window(&app);
                         }
                     }

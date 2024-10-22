@@ -7,7 +7,6 @@
   ],
   "permissions": [
     "core:default",
-    "shell:default",
     "core:window:default",
     "core:app:default",
     "core:event:default",
@@ -54,16 +53,36 @@
     "os:allow-version",
     "os:allow-locale",
     "os:allow-platform",
-    "notification:default",
-    
     "autostart:allow-enable",
     "autostart:allow-disable",
     "autostart:allow-is-enabled",
-    
     "window-state:default",
     "window-state:allow-restore-state",
-    "window-state:allow-save-window-state"
-  ],
+    "window-state:allow-save-window-state",
+    "upload:default",
+    "fs:default",
+    {
+        "identifier": "fs:default",
+        "allow": [
+            {
+                "path": "$APPDATA/*"
+            }
+        ]
+    },
+    "fs:allow-app-write-recursive",
+    "fs:allow-app-read-recursive",
+    "fs:allow-appdata-write-recursive",
+    "fs:allow-appdata-read-recursive",
+    
+    "shell:default",
+    "shell:allow-execute",
+    "shell:allow-open",
+    "shell:allow-stdin-write",
+
+    "notification:default",
+    "notification:allow-get-active"
+
+],
   "platforms": [
     "windows",
     "linux",
