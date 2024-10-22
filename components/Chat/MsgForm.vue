@@ -164,6 +164,7 @@ async function onPaste(e: ClipboardEvent) {
       percent: 0,
       file,
     });
+    form.value.msgType = MessageType.FILE; // 文件
   }
   if (img) {
     if (isUploadImg.value) {
@@ -358,6 +359,10 @@ function resetForm() {
   fileList.value = [];
   // store
   chat.atUserList.splice(0);
+
+  // 重置上传
+  inputOssImgUploadRef.value.resetInput?.();
+  inputOssFileUploadRef.value.resetInput?.();
   chat.setReplyMsg({});
   resetAudio();
 }
@@ -432,11 +437,17 @@ const { fileList: fileDropList } = await useLinterFileDrop();
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
           <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
-          <div class="ml-2 flex flex-col justify-between">
-            <div class="max-w-40vw truncate text-sm">
+          <div class="ml-2 max-w-20vw">
+            <p class="truncate text-sm">
               {{ file?.file?.name || file.key }}
-            </div>
-            <el-progress class="min-w-8em" :percentage="file?.percent || 0" :stroke-width="4" :status="file?.status as any || 'active'">
+            </p>
+            <el-progress
+              striped
+              striped-flow
+              :duration="10"
+              class="mt-2"
+              :percentage="file?.percent || 0" :stroke-width="4" :status="file?.status as any || 'active'"
+            >
               {{ formatFileSize(file?.file?.size || 0) }}
             </el-progress>
           </div>
