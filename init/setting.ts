@@ -1,5 +1,6 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { platform } from "@tauri-apps/plugin-os";
 import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
 
 
@@ -80,6 +81,7 @@ export async function useSettingInit() {
 
   // 8、初始化窗口
   try {
+    platform();
     restoreStateCurrent(StateFlags.ALL);
   }
   catch (error) { // web端兼容
@@ -93,7 +95,6 @@ export async function useSettingInit() {
   catch (error) {
     setting.settingPage.isAutoStart = false;
     console.warn(error);
-    disable();
   }
   watch(() => setting.settingPage.isAutoStart, async (val) => {
     if (val)

@@ -16,6 +16,7 @@ export async function userTauriInit() {
   }
   catch (error) {
     console.warn(error);
+    return;
   }
   // 监听open_url事件
   listen<PayloadType>("open_url", (e) => {
