@@ -29,17 +29,15 @@ const { data } = defineProps<{
       系统：{{ data.operatingSystem }}
     </small>
     <small
-
       text-0.7em opacity-80
     >
       浏览器：{{ data.browser }}
     </small>
-    <small
-
+    <!-- <small
       text-0.7em opacity-80
     >
       运营商：{{ data.operator }}
-    </small>
+    </small> -->
     <div
       class="btns mt-1 flex-row-bt-c opacity-100 transition-300 group-hover:opacity-100 md:opacity-0"
     >

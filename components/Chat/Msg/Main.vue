@@ -25,7 +25,7 @@ const map: MsgComType = {
 interface MsgComType {
   [property: number]: any
 }
-
+const msgRef = ref<any>();
 const chat = useChatStore();
 const user = useUserStore();
 
@@ -63,6 +63,7 @@ const disabledRightClick = computed(() => {
 
   return false;
 });
+const setting = useSettingStore();
 
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
@@ -70,15 +71,36 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
   if (disabledRightClick.value)
     return;
   const isSelf = user.userInfo.id === item.fromUser.userId;
+  const msgType = data.message?.type;
+  const isDownloaded = msgType === MessageType.FILE && setting.fileDownloadMap?.[BaseUrlFile + item.message.body.url];
   const opt = {
     x: e.x,
     y: e.y,
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
       {
+        label: isDownloaded ? "打开文件" : "下载文件",
+        hidden: msgType !== MessageType.FILE,
+        customClass: "group",
+        icon: isDownloaded ? "i-solar-file-line-duotone group-btn-info" : "i-solar-download-minimalistic-broken group-btn-info",
+        onClick: () => {
+          // 下载或者打开文件
+          msgRef.value?.onDownloadFileAndOpen?.();
+        },
+      },
+      {
+        label: "在文件夹打开",
+        hidden: msgType !== MessageType.FILE || !isDownloaded,
+        customClass: "group",
+        icon: "i-solar-folder-with-files-line-duotone group-btn-info",
+        onClick: () => {
+          // 打开文件所在文件夹
+          setting.openFileFolder(isDownloaded as FileItem);
+        },
+      },
+      {
         label: showTranslation.value ? "折叠转文字" : "转文字",
-        // @ts-expect-error
-        hidden: data.message?.type !== MessageType.SOUND || !data.message.body?.translation,
+        hidden: msgType !== MessageType.SOUND || !data.message.body?.translation,
         customClass: "group",
         icon: "i-solar-text-broken group-btn-info",
         onClick: () => {
@@ -141,7 +163,6 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
   ContextMenu.showContextMenu(opt);
 }
 
-
 // 撤回消息
 async function refundMsg(roomId: number, msgId: number) {
   const res = await refundChatMessage(roomId, msgId, user.getToken);
@@ -200,6 +221,7 @@ const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?
   </p>
   <component
     :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
+    ref="msgRef"
     :show-translation="showTranslation"
     :last-msg="lastMsg"
     :index="index"

@@ -4,6 +4,28 @@ import { check } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { disable } from "@tauri-apps/plugin-autostart";
+import { BaseDirectory, exists, remove } from "@tauri-apps/plugin-fs";
+import { open } from "@tauri-apps/plugin-shell";
+
+export interface FileItem {
+  url: string
+  fileName: string
+  currentSize: number
+  totalSize: number
+  status: FileStatus
+  localPath: string
+  mimeType: string
+  downloadTime: number
+  fromUid?: string
+}
+
+export enum FileStatus {
+  NOT_FOUND = 0,
+  DOWNLOADING = 1,
+  DOWNLOADED = 2,
+  PAUSED = 3,
+  ERROR = 4,
+}
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -60,11 +82,89 @@ export const useSettingStore = defineStore(
     const isThemeChangeLoad = ref(false);
     // --------------------- 聊天设置 -----------------
     const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
-    const isOpenContact = ref(true);// 是否打开会话列表
+    const isOpenContact = ref(true); // 是否打开会话列表
     const showChatMenu = ref(true);
     const downUpChangeContact = ref(true); // 向上向下切换联系人列表
 
+    // ---------------------- 下载管理 -----------------
+    const showDownloadPanel = ref(false);
+    const fileDownloadMap = ref<Record<string, FileItem>>({});
+    const fileDownloadList = computed(() => Object.values(fileDownloadMap.value).sort((a, b) => a.downloadTime - b.downloadTime));
+    // 下载文件回调
+    function fileDownProgressCallback(url: string, currentSize: number = 0, totalSize: number = 0, status: FileStatus = FileStatus.DOWNLOADING) {
+      const item = fileDownloadMap.value[url];
+      if (!item)
+        return;
+      item.currentSize = currentSize;
+      item.totalSize = totalSize;
+      item.status = status;
+      if (currentSize >= totalSize)
+        item.status = FileStatus.DOWNLOADED;
+    }
 
+    // 删除文件
+    async function deleteDownloadFile(item: FileItem) {
+      const file = fileDownloadMap.value?.[item.url];
+      if (!file)
+        return;
+      try {
+        // 是否存在
+        const isExists = await exists(file.localPath, { baseDir: BaseDirectory.AppData });
+        if (!isExists) {
+          ElMessage.warning("文件已不存在，请手动删除！");
+          return;
+        }
+        await remove(item.localPath, { baseDir: BaseDirectory.AppData });
+      }
+      catch (error) {
+        console.warn(error);
+        ElMessage.warning("文件已不存在，请手动删除！");
+      }
+      finally {
+        delete fileDownloadMap.value[item.url];
+      }
+    }
+
+    // 打开文件
+    async function openFileByDefaultApp(item: FileItem) {
+      // 是否存在
+      const isExists = await exists(item.localPath, { baseDir: BaseDirectory.AppData });
+      if (!item.localPath || !isExists) {
+        ElMessage.warning("文件已不存在，请手动删除！");
+        item.status = FileStatus.NOT_FOUND;
+        return;
+      }
+      try {
+        await open(item.localPath);
+      }
+      catch (error) {
+        console.warn(error);
+        item.status = FileStatus.ERROR;
+        ElMessage.error("打开文件失败！");
+      }
+    }
+
+    // 打开文件所在文件夹
+    async function openFileFolder(item: FileItem) {
+      if (!item.localPath) {
+        ElMessage.error("文件不存在！");
+        item.status = FileStatus.NOT_FOUND;
+        return;
+      }
+      // 去除文件名
+      const folderPath = item.localPath.split("\\").slice(0, -1).join("\\");
+      try {
+        if (!await exists(folderPath)) {
+          ElMessage.error("文件夹不存在！");
+          return;
+        }
+        open(folderPath);
+      }
+      catch (error) {
+        console.warn(error);
+        ElMessage.error("打开文件夹失败！");
+      }
+    }
     /**
      * 检查更新
      * @returns 是否更新
@@ -72,7 +172,7 @@ export const useSettingStore = defineStore(
     async function checkUpdates(checkLog = false) {
       appUploader.value.isCheckUpdatateLoad = true;
       try {
-        const update = await check() as Update;
+        const update = (await check()) as Update;
         appUploader.value.isUpload = !!update?.available;
         appUploader.value.isCheckUpdatateLoad = false;
         if (!appUploader.value.isUpload || !update.version) {
@@ -95,45 +195,49 @@ export const useSettingStore = defineStore(
             if (action === "confirm") {
               // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
               appUploader.value.isUpdating = true;
-              update.downloadAndInstall((e) => {
-                switch (e.event) {
-                  case "Started":
-                    console.log(e.data.contentLength);
-                    appUploader.value.contentLength = e.data.contentLength || 0;
-                    console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
-                    break;
-                  case "Progress":
-                    appUploader.value.downloaded += e.data.chunkLength || 0;
-                    appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
-                    console.log(`下载中 ${appUploader.value.downloadedText}`);
-                    break;
-                  case "Finished":
-                    console.log("下载完成");
-                    appUploader.value.isUpload = false;
-                    appUploader.value.isCheckUpdatateLoad = false;
-                    appUploader.value.isUpdating = false;
-                    appUploader.value.downloaded = 0;
-                    appUploader.value.downloadedText = "";
-                    appUploader.value.contentLength = 0;
-                    appUploader.value.newVersion = "";
-                    break;
-                }
-              }).then(async (val) => {
-                console.log(val);
-                await relaunch();
-              }).catch((error) => {
-                console.error(error);
-                ElMessage.error("更新失败！请检查网络或稍后再试！");
-              }).finally(() => {
-                appUploader.value.isCheckUpdatateLoad = false;
-                appUploader.value.isUpload = false;
-                appUploader.value.isCheckUpdatateLoad = false;
-                appUploader.value.isUpdating = false;
-                appUploader.value.downloaded = 0;
-                appUploader.value.downloadedText = "";
-                appUploader.value.contentLength = 0;
-                appUploader.value.newVersion = "";
-              });
+              update
+                .downloadAndInstall((e) => {
+                  switch (e.event) {
+                    case "Started":
+                      console.log(e.data.contentLength);
+                      appUploader.value.contentLength = e.data.contentLength || 0;
+                      console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
+                      break;
+                    case "Progress":
+                      appUploader.value.downloaded += e.data.chunkLength || 0;
+                      appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
+                      console.log(`下载中 ${appUploader.value.downloadedText}`);
+                      break;
+                    case "Finished":
+                      console.log("下载完成");
+                      appUploader.value.isUpload = false;
+                      appUploader.value.isCheckUpdatateLoad = false;
+                      appUploader.value.isUpdating = false;
+                      appUploader.value.downloaded = 0;
+                      appUploader.value.downloadedText = "";
+                      appUploader.value.contentLength = 0;
+                      appUploader.value.newVersion = "";
+                      break;
+                  }
+                })
+                .then(async (val) => {
+                  console.log(val);
+                  await relaunch();
+                })
+                .catch((error) => {
+                  console.error(error);
+                  ElMessage.error("更新失败！请检查网络或稍后再试！");
+                })
+                .finally(() => {
+                  appUploader.value.isCheckUpdatateLoad = false;
+                  appUploader.value.isUpload = false;
+                  appUploader.value.isCheckUpdatateLoad = false;
+                  appUploader.value.isUpdating = false;
+                  appUploader.value.downloaded = 0;
+                  appUploader.value.downloadedText = "";
+                  appUploader.value.contentLength = 0;
+                  appUploader.value.newVersion = "";
+                });
             }
             else if (action === "cancel") {
               if (!appUploader.value.ignoreVersion.includes(update.version))
@@ -143,7 +247,7 @@ export const useSettingStore = defineStore(
         });
       }
       catch (error) {
-        console.error(error);
+        console.warn(error);
         appUploader.value.isCheckUpdatateLoad = false;
         appUploader.value.isUpdating = false;
         appUploader.value.isUpload = false;
@@ -161,7 +265,7 @@ export const useSettingStore = defineStore(
       // @ts-expect-error
       if (window.queryLocalFonts) {
         try {
-        // @ts-expect-error
+          // @ts-expect-error
           const availableFonts = await window.queryLocalFonts();
           // 获取前20个可用字体
           const fontsMap = {} as { [key: string]: { name: string; value: string } };
@@ -173,10 +277,7 @@ export const useSettingStore = defineStore(
               value: font.family,
             };
           });
-          const arr = [
-            ...settingPage.value.fontFamily.list,
-            ...Object.values(fontsMap),
-          ];
+          const arr = [...settingPage.value.fontFamily.list, ...Object.values(fontsMap)];
           settingPage.value.fontFamily.list = arr;
         }
         catch (err) {
@@ -212,7 +313,8 @@ export const useSettingStore = defineStore(
       isCollapse.value = true;
       isUserFold.value = true;
       isUserCollapse.value = true;
-
+      // 下载管理
+      showDownloadPanel.value = false;
       sysPermission.value = {
         isNotification: false,
         isNotificationSound: true,
@@ -236,7 +338,7 @@ export const useSettingStore = defineStore(
         isEscMin: true, // esc
       };
 
-      disable();// 关闭自启动
+      disable(); // 关闭自启动
       loadSystemFonts();
     }
     return {
@@ -256,10 +358,17 @@ export const useSettingStore = defineStore(
       showChatMenu,
       contactBtnPosition,
       downUpChangeContact,
+      showDownloadPanel,
+      fileDownloadMap,
+      fileDownloadList,
       // actions
       checkUpdates,
       loadSystemFonts,
       reset,
+      fileDownProgressCallback,
+      openFileByDefaultApp,
+      deleteDownloadFile,
+      openFileFolder,
       // getter
     };
   },

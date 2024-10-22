@@ -1,3 +1,7 @@
+import { appDataDir } from "@tauri-apps/api/path";
+import { exists, mkdir } from "@tauri-apps/plugin-fs";
+import { platform } from "@tauri-apps/plugin-os";
+import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
 export const FILE_MAX_SIZE = 100 * 1024 * 1024;// 100MB
@@ -44,16 +48,77 @@ export function formatFileSize(size: number): string {
     return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
-
+export const DownFileTextMap: Record<FileStatus, string> = {
+  [FileStatus.DOWNLOADING]: "正在下载",
+  [FileStatus.ERROR]: "下载失败",
+  [FileStatus.PAUSED]: "暂停下载",
+  [FileStatus.NOT_FOUND]: "文件不存在",
+  [FileStatus.DOWNLOADED]: "下载完成",
+};
 /**
  * https://segmentfault.com/a/1190000044342886
  * 下载文件
  * @param url 下载地址
  * @param fileName 下载后的文件名
+ * @param mimeType 文件类型
  * @param callback 下载进度回调函数
  * @returns 下载进度对象
  */
-export function downloadFile(url: string, fileName: string, callback?: (progress: number) => void) {
+export async function downloadFile(url: string, fileName: string, mimeType: string = "", callback?: (progress: number) => void) {
+  const platformType: string = platform() || "web";
+  const isSupport = platformType !== "web";
+  const appDataDirUrl = isSupport ? await appDataDir() : "";
+  const appDataDownloadDirUrl = `${appDataDirUrl}\\downloads`;
+
+  if (["android", "ios", "web"].includes(platformType) || !platformType) {
+    // 移动端使用 streamSaver 下载
+    return downloadFileByStreamSaver(url, fileName, callback);
+  }
+  const existsDir = await exists(appDataDownloadDirUrl);
+  if (!existsDir)
+    mkdir(appDataDownloadDirUrl);
+  // 文件下载
+  const setting = useSettingStore();
+  setting.fileDownloadMap[url] = {
+    url,
+    fileName,
+    localPath: `${appDataDownloadDirUrl}\\${fileName}`,
+    currentSize: 0,
+    totalSize: 0,
+    status: FileStatus.DOWNLOADING,
+    mimeType,
+    downloadTime: Date.now(),
+    fromUid: "",
+  };
+  let currentSize = 0;
+  try {
+    await download(
+      url,
+      `${appDataDownloadDirUrl}\\${fileName}`,
+      ({ progress, total }) => {
+        currentSize += progress;
+        setting.fileDownProgressCallback(url, currentSize, total);
+      },
+      { "Content-Type": "application/octet-stream" } as any,
+    );
+    // 下载完成后，通知设置存储
+    if (typeof callback === "function")
+      callback(1);
+  }
+  catch (error) {
+    console.warn(error);
+    setting.fileDownloadMap[url]!.status = FileStatus.ERROR;
+  }
+}
+
+/**
+ * 下载文件 by streamSaver
+ * @param url 下载地址
+ * @param fileName 下载后的文件名
+ * @param callback 下载进度回调函数
+ * @returns 下载进度对象
+ */
+export function downloadFileByStreamSaver(url: string, fileName: string, callback?: (progress: number) => void) {
   const progress = ref(0);
   let writer: WritableStreamDefaultWriter<Uint8Array>;
   // 【步骤1】创建一个文件，该文件支持写入操作

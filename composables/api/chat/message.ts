@@ -51,7 +51,7 @@ export function getDBMsgPage(roomId: number, pageSize = 10, cursor: string | num
  *
  * ChatMessageVO
  */
-export interface ChatMessageVO<T extends object = object> {
+export interface ChatMessageVO<T extends object = any> {
   /**
    * 发送者信息
    */
@@ -174,7 +174,7 @@ export interface FileBodyMsgVO {
   size: number
   fileName: string
   mimeType?: string
-  fileType?: "TXT" | "EXCEL" | "XLSX" | "PDF" | "PPT" | "PPTX" | "DOC" | "DOCX"
+  fileType?: FileBodyMsgTypeEnum
   reply: {
     id: number
     uid: string
@@ -192,6 +192,17 @@ export interface FileBodyMsgVO {
   }
 }
 
+export enum FileBodyMsgTypeEnum {
+  //  "TXT" | "EXCEL" | "XLSX" | "PDF" | "PPT" | "PPTX" | "DOC" | "DOCX"
+  TXT = "TXT",
+  EXCEL = "EXCEL",
+  XLSX = "XLSX",
+  PDF = "PDF",
+  PPT = "PPT",
+  PPTX = "PPTX",
+  DOC = "DOC",
+  DOCX = "DOCX",
+}
 
 export enum MessageType {
   TEXT = 1,

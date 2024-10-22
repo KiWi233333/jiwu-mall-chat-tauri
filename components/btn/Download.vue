@@ -1,0 +1,163 @@
+<script lang="ts" setup>
+import { exists } from "@tauri-apps/plugin-fs";
+import { open } from "@tauri-apps/plugin-shell";
+import { dayjs } from "element-plus";
+import { type FileItem, FileStatus } from "~/composables/store/useSettingStore";
+
+const [autoAnimateRef, enable] = useAutoAnimate();
+const scollRef = ref();
+const inputRef = ref();
+
+const search = ref("");
+const showSearch = ref(false);
+const setting = useSettingStore();
+
+
+// 打开搜索
+async function openSearch() {
+  showSearch.value = !showSearch.value;
+  inputRef.value?.focus?.();
+}
+
+// 过滤文件列表
+const filterList = computed(() => {
+  if (search.value.trim()) {
+    return setting.fileDownloadList.filter(p =>
+      p.fileName.toLowerCase().includes(search.value.toLowerCase()),
+    );
+  }
+  return setting.fileDownloadList;
+});
+const FileStatusClassMap: Record<FileStatus, string> = {
+  [FileStatus.ERROR]: "el-color-error",
+  [FileStatus.PAUSED]: "el-color-warning",
+  [FileStatus.NOT_FOUND]: "line-through grayscale",
+  [FileStatus.DOWNLOADING]: "",
+  [FileStatus.DOWNLOADED]: "",
+};
+onActivated(() => {
+  enable(!setting.settingPage.isColseAllTransition);
+});
+</script>
+
+<template>
+  <el-popover
+    v-model:visible="setting.showDownloadPanel"
+    placement="top"
+    width="fit-content"
+    :teleported="true" popper-class="popover"
+    transition="fade" trigger="click" append-to="body" :hide-after="0"
+  >
+    <template #reference>
+      <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" />
+    </template>
+    <template #default>
+      <div class="w-90vw md:w-350px">
+        <div class="flex items-center gap-2 p-2 pt-0">
+          <i class="i-solar-download-minimalistic-broken p-0.6em" />
+          <span>下载</span>
+          <!-- 搜索框 -->
+          <el-input
+            ref="inputRef"
+            v-model.lazy="search"
+            placeholder="搜索"
+            size="small" clearable
+            class="ml-a overflow-hidden transition-width"
+            :style="{ width: showSearch ? '40%' : '0' }"
+          />
+          <span class="btn-primary" :title="showSearch ? '关闭搜索' : '打开搜索'" @click="openSearch()">
+            <i class="p-0.6em" :class="showSearch ? 'i-carbon:close' : 'i-solar-magnifer-broken'" />
+          </span>
+        </div>
+        <!-- 内容 -->
+        <el-scrollbar
+          ref="scollRef" view-class="p-2 h-50dvh md:h-340px"
+          class="rounded bg-light shadow shadow-inset dark:bg-dark-9"
+        >
+          <div v-if="filterList.length" ref="autoAnimateRef" relative flex flex-col pb-4>
+            <!-- 文件 -->
+            <div
+              v-for="(p, i) in filterList"
+              :key="`${p.url}-${i}`"
+              :title="`${p.fileName} 打开文件`"
+              class="mb-2 w-full flex cursor-pointer gap-2 rounded bg-white px-3 py-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:shadow"
+              :class="FileStatusClassMap[p.status]"
+              @click="setting.openFileByDefaultApp(p)"
+            >
+              <img
+                :src="p.mimeType ? FILE_TYPE_ICON_MAP[p.mimeType] : FILE_TYPE_ICON_DEFAULT"
+                class="h-6 w-6 object-contain"
+              >
+              <div class="flex flex-1 flex-col justify-between gap-1 px-1">
+                <p class="truncate text-sm">
+                  {{ p.fileName }}
+                </p>
+                <p flex-row-bt-c gap-2 truncate text-xs op-60>
+                  <el-progress
+                    v-if="p.status === FileStatus.DOWNLOADING"
+                    :stroke-width="6"
+                    :percentage="+((p.currentSize / p.totalSize) * 100 || 0).toFixed(2)"
+                    :show-text="false"
+                    striped
+                    striped-flow
+                    class="progress-bar w-1/2"
+                  />
+                  <small v-else>
+                    {{ DownFileTextMap[p.status] }}
+                    <!-- {{ dayjs(p.downloadTime).format("YYYY-MM-DD HH:mm") }} -->
+                  </small>
+                  <small>
+                    <template v-if="p.status === FileStatus.DOWNLOADING">
+                      {{ formatFileSize(p.currentSize || 0) }} /
+                    </template>
+                    {{ formatFileSize(p.totalSize || 0) }}
+                  </small>
+                </p>
+              </div>
+              <div flex gap-3>
+                <i
+                  i-solar-folder-with-files-line-duotone block h-4 w-4 btn-primary
+                  title="打开所在文件夹"
+                  @click.stop.prevent="setting.openFileFolder(p)"
+                />
+                <i
+                  i-solar:trash-bin-trash-outline block h-4 w-4 btn-danger
+                  title="删除文件"
+                  @click.stop.prevent="setting.deleteDownloadFile(p)"
+                />
+              </div>
+            </div>
+            <small block text-center>暂无更多</small>
+          </div>
+          <!-- 没有文件 -->
+          <div v-else class="h-full flex-row-c-c flex-col text-center op-70">
+            <i i-solar-bookmark-opened-line-duotone class="mb-2 h-8 w-8" />
+            <small class="text-sm">
+              暂无文件
+            </small>
+          </div>
+        </el-scrollbar>
+      </div>
+    </template>
+  </el-popover>
+</template>
+
+<style lang="scss" scoped>
+.btn {
+  padding: 0em 0.4em;
+  transition: $transition-delay;
+
+  span {
+    width: 0;
+    overflow: hidden;
+    transition: $transition-delay;
+    letter-spacing: 0.1em;
+  }
+
+  &:hover span,
+  &:focus span {
+    width: 4.6em;
+    margin: 0 0.4em;
+  }
+}
+</style>

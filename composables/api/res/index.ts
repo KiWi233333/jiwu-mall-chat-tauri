@@ -164,3 +164,31 @@ export interface AppVersionInfoVO {
    */
   updaterInfo?: StringLiteralLike
 }
+
+
+/**
+ * 获取最新版本信息
+ * @returns Result<any>
+ *
+ */
+export function getLatestVersion() {
+  return useHttp.get<AppPlatformsJSON>("/res/app/latest");
+}
+
+
+export interface AppPlatformsJSON {
+  version: string
+  notes?: string
+  platforms: AppPlatforms
+}
+export interface AppPlatforms {
+  "darwin-aarch64": DarwinAarch64
+  "darwin-x86_64": DarwinAarch64
+  "windows-x86_64": DarwinAarch64
+  "linux-x86_64": DarwinAarch64
+}
+
+export interface DarwinAarch64 {
+  signature: string
+  url: string
+}
