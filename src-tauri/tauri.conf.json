@@ -23,14 +23,6 @@
     ],
     "security": {
       "csp": null
-    },
-    "trayIcon": {
-      "id": "com.jiwuchat.app",
-      "title": "极物聊天",
-      "tooltip": "极物聊天",
-      "menuOnLeftClick": false,
-      "iconPath": "icons/icon.ico",
-      "iconAsTemplate": true
     }
   },
   "build": {
