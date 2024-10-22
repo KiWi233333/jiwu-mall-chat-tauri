@@ -37,7 +37,7 @@ export async function useWsInit() {
             if (chat.theContact.roomId === body.message.roomId)
               chat.setReadList(chat.theContact.roomId);
           }
-          else if (body.fromUser.userId !== user.userInfo.id) {
+          else {
             sendNotification({
               icon: BaseUrlImg + body.fromUser.avatar,
               title: body.fromUser.nickName,
