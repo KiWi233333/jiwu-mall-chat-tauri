@@ -59,7 +59,7 @@ defineExpose({
           <p class="text-overflow-2 text-sm leading-4">
             {{ fileName }}
           </p>
-          <small v-if="isDownload && body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]" class="float-left mt-2 text-xs op-60">
+          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status === FileStatus.DOWNLOADED" class="float-left mt-2 text-xs op-60">
             <i i-solar-check-circle-outline p-2 />&nbsp;已下载
           </small>
           <small class="float-right mt-2 text-xs op-60">
