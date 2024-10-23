@@ -322,11 +322,12 @@ onMounted(() => {
         class="pre-group flex flex-shrink-0 overflow-hidden backdrop-blur-12px"
         :class="preImageClass"
       >
-        <ElImage
+        <CardElImage
           loading="lazy"
           :alt="p.id"
           fit="cover"
           :src="p.id"
+          load-class="none"
           :preview-src-list="preview ? getPreImage : []"
           preview-teleported
           :initial-index="index"

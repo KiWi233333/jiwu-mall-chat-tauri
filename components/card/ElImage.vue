@@ -17,11 +17,11 @@ const setting = useSettingStore();
   >
     <!-- 占位 -->
     <template #placeholder>
-      <div :class="loadClass !== undefined ? loadClass : 'sky-loading h-full w-full flex-row-c-c'" />
+      <div :class="loadClass !== undefined ? loadClass : 'sky-loading '" h-full w-full flex-row-c-c />
     </template>
     <!-- 错误 -->
     <template #error>
-      <div class="h-full w-full flex-row-c-c animate-fade-in">
+      <div class="h-full w-full flex-row-c-c">
         <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
     </template>
