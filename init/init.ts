@@ -4,7 +4,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
-import { exists } from "@tauri-apps/plugin-fs";
+import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
 import type { PayloadType } from "../types/tauri";
 
 /**
@@ -48,8 +48,23 @@ export async function userTauriInit() {
   }
 
   // 3、获取文件路径
-  if (!await exists(setting.appDataDownloadDirUrl))
+  if (!await existsFile(setting.appDataDownloadDirUrl))
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
+  // 4、初始化窗口
+  try {
+    platform();
+    restoreStateCurrent(StateFlags.ALL);
+  }
+  catch (error) { // web端兼容
+    console.warn(error);
+  }
+  watch(() => [
+    setting.isMobile,
+  ], () => {
+    saveWindowState(StateFlags.ALL);
+  }, {
+    immediate: true,
+  });
 }
 
 /**

@@ -125,6 +125,21 @@ pub fn run() {
             // }
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![exist_file, remove_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+
+
+#[tauri::command]
+async fn exist_file(path: std::path::PathBuf) -> bool {
+    // 文件是否存在
+    path.exists()
+}
+
+#[tauri::command]
+async fn remove_file(path: std::path::PathBuf) -> bool {
+    // 删除文件
+    std::fs::remove_file(path).is_ok()
 }

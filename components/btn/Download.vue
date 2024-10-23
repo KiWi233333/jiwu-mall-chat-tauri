@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { exists } from "@tauri-apps/plugin-fs";
-import { open } from "@tauri-apps/plugin-shell";
 import { dayjs } from "element-plus";
-import { type FileItem, FileStatus } from "~/composables/store/useSettingStore";
 
 const [autoAnimateRef, enable] = useAutoAnimate();
 const scollRef = ref();
@@ -30,13 +27,20 @@ const filterList = computed(() => {
 });
 const FileStatusClassMap: Record<FileStatus, string> = {
   [FileStatus.ERROR]: "el-color-error",
-  [FileStatus.PAUSED]: "el-color-warning",
+  [FileStatus.PAUSED]: "op-70",
   [FileStatus.NOT_FOUND]: "line-through grayscale",
   [FileStatus.DOWNLOADING]: "",
   [FileStatus.DOWNLOADED]: "",
 };
-onActivated(() => {
+onMounted(() => {
   enable(!setting.settingPage.isColseAllTransition);
+  setting.fileDownloadList.filter(p => p.status === FileStatus.DOWNLOADING).forEach(async (p) => {
+    const isExist = await existsFile(p.localPath);
+    if (!isExist)
+      p.status = FileStatus.NOT_FOUND;
+    else
+      p.status = FileStatus.DOWNLOADED;
+  });
 });
 </script>
 
@@ -73,7 +77,7 @@ onActivated(() => {
         <!-- 内容 -->
         <el-scrollbar
           ref="scollRef" view-class="p-2 h-50dvh md:h-340px"
-          class="rounded bg-light shadow shadow-inset dark:bg-dark-9"
+          class="relative rounded bg-light shadow shadow-inset dark:bg-dark-9"
         >
           <div v-if="filterList.length" ref="autoAnimateRef" relative flex flex-col pb-4>
             <!-- 文件 -->

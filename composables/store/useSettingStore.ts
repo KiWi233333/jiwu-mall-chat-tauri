@@ -4,30 +4,10 @@ import { check } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { disable } from "@tauri-apps/plugin-autostart";
-import { BaseDirectory, exists, remove } from "@tauri-apps/plugin-fs";
+import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
 import type { Platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
-
-export interface FileItem {
-  url: string
-  fileName: string
-  currentSize: number
-  totalSize: number
-  status: FileStatus
-  localPath: string
-  mimeType: string
-  downloadTime: number
-  fromUid?: string
-}
-
-export enum FileStatus {
-  NOT_FOUND = 0,
-  DOWNLOADING = 1,
-  DOWNLOADED = 2,
-  PAUSED = 3,
-  ERROR = 4,
-}
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -113,29 +93,35 @@ export const useSettingStore = defineStore(
       const file = fileDownloadMap.value?.[item.url];
       if (!file)
         return;
+      if (file.status === FileStatus.NOT_FOUND) {
+        delete fileDownloadMap.value[item.url];
+        return;
+      }
       try {
         // 是否存在
-        const isExists = await exists(file.localPath);
+        const isExists = await existsFile(file.localPath);
         if (checked && !isExists) {
           ElMessage.warning("文件已不存在，请手动删除！");
+          file.status = FileStatus.NOT_FOUND;
           return;
         }
-        await remove(item.localPath);
+        await removeFile(item.localPath);
+        delete fileDownloadMap.value[item.url];
       }
       catch (error) {
         console.warn(error);
         if (checked)
-          ElMessage.warning("文件已不存在，请手动删除！");
-      }
-      finally {
-        delete fileDownloadMap.value[item.url];
+          ElMessage.warning("文件已打开，请关闭后再尝试删除！");
       }
     }
 
     // 打开文件
     async function openFileByDefaultApp(item: FileItem) {
+      if (!item.mimeType)
+        return;
+
       // 是否存在
-      const isExists = await exists(item.localPath);
+      const isExists = await existsFile(item.localPath);
       if (!item.localPath || !isExists) {
         ElMessage.warning("文件已不存在，请手动删除！");
         item.status = FileStatus.NOT_FOUND;
@@ -161,7 +147,7 @@ export const useSettingStore = defineStore(
       // 去除文件名
       const folderPath = item.localPath.split("\\").slice(0, -1).join("\\");
       try {
-        if (!await exists(folderPath)) {
+        if (!await existsFile(folderPath)) {
           ElMessage.error("文件夹不存在！");
           return;
         }
@@ -373,6 +359,7 @@ export const useSettingStore = defineStore(
       fileDownloadList,
       appPlatform,
       appDataDownloadDirUrl,
+      BaseDirCode,
       isWeb,
       // actions
       checkUpdates,

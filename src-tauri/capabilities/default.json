@@ -38,6 +38,7 @@
     "core:event:allow-emit-to",
     "core:event:allow-listen",
     "core:event:allow-unlisten",
+    "core:window:allow-set-always-on-bottom",
     "updater:default",
     "core:app:allow-set-app-theme",
     "updater:allow-check",
@@ -58,21 +59,12 @@
     "autostart:allow-is-enabled",
     "window-state:default",
     "window-state:allow-restore-state",
+    "window-state:allow-filename",
     "window-state:allow-save-window-state",
     "upload:default",
     "fs:default",
-    {
-      "identifier": "fs:default",
-      "allow": [
-        {
-          "path": "$APPDATA/*"
-        }
-      ]
-    },
-    "fs:allow-app-write-recursive",
-    "fs:allow-app-read-recursive",
-    "fs:allow-appdata-write-recursive",
-    "fs:allow-appdata-read-recursive",
+    "fs:read-all",
+    "fs:write-all",
     "shell:default",
     "shell:allow-execute",
     "shell:allow-open",

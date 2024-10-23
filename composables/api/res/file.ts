@@ -1,4 +1,5 @@
-import { exists, mkdir } from "@tauri-apps/plugin-fs";
+import { invoke } from "@tauri-apps/api/core";
+import { mkdir } from "@tauri-apps/plugin-fs";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
@@ -26,6 +27,10 @@ export const FILE_TYPE_ICON_MAP = {
 export const FILE_TYPE_ICON_DEFAULT = "/images/icon/DEFAULT.png";
 
 
+// 定制fs实现任意路径 https://github.com/lencx/tauri-tutorial/discussions/13
+export const existsFile = (path: string) => invoke("exist_file", { path });
+export const removeFile = (path: string) => invoke("remove_file", { path });
+
 /**
  * 格式化文件大小
  * @param size 字节大小
@@ -46,6 +51,27 @@ export function formatFileSize(size: number): string {
     return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
+
+export interface FileItem {
+  url: string
+  fileName: string
+  currentSize: number
+  totalSize: number
+  status: FileStatus
+  localPath: string
+  mimeType: string
+  downloadTime: number
+  fromUid?: string
+}
+
+export enum FileStatus {
+  NOT_FOUND = 0,
+  DOWNLOADING = 1,
+  DOWNLOADED = 2,
+  PAUSED = 3,
+  ERROR = 4,
+}
+
 export const DownFileTextMap: Record<FileStatus, string> = {
   [FileStatus.DOWNLOADING]: "正在下载",
   [FileStatus.ERROR]: "下载失败",
@@ -62,16 +88,24 @@ export const DownFileStatusIconMap: Record<FileStatus, string> = {
   [FileStatus.NOT_FOUND]: "i-solar-file-corrupted-broken",
   [FileStatus.DOWNLOADED]: "i-solar-check-circle-outline",
 };
+
 /**
  * https://segmentfault.com/a/1190000044342886
  * 下载文件
  * @param url 下载地址
  * @param fileName 下载后的文件名
- * @param mimeType 文件类型
+ * @param options 下载选项
+ * @param options.targetPath 下载到指定目录
+ * @param options.mimeType 文件类型
  * @param callback 下载进度回调函数
  * @returns 下载进度对象
  */
-export async function downloadFile(url: string, fileName: string, mimeType: string = "", callback?: (progress: number) => void) {
+export async function downloadFile(url: string, fileName: string, options: {
+  targetPath?: string
+  mimeType?: string
+} = {},
+callback?: (progress: number) => void) {
+  const { targetPath = "", mimeType = "" } = options;
   const setting = useSettingStore();
   const platformType = setting.appPlatform;
   if (["android", "ios", "web"].includes(platformType) || !platformType) {
@@ -79,14 +113,14 @@ export async function downloadFile(url: string, fileName: string, mimeType: stri
     return downloadFileByStreamSaver(url, fileName, callback);
   }
   const dir = setting.appDataDownloadDirUrl;
-  const existsDir = await exists(dir);
+  const existsDir = await existsFile(dir);
   if (!existsDir)
     mkdir(dir);
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
     fileName,
-    localPath: `${dir}\\${fileName}`,
+    localPath: targetPath || `${dir}\\${fileName}`,
     currentSize: 0,
     totalSize: 0,
     status: FileStatus.DOWNLOADING,
@@ -98,7 +132,7 @@ export async function downloadFile(url: string, fileName: string, mimeType: stri
   try {
     await download(
       url,
-      `${dir}\\${fileName}`,
+      targetPath || `${dir}\\${fileName}`,
       ({ progress, total }) => {
         currentSize += progress;
         setting.fileDownProgressCallback(url, currentSize, total);
@@ -158,3 +192,4 @@ export function downloadFileByStreamSaver(url: string, fileName: string, callbac
     progress,
   };
 }
+

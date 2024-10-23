@@ -10,8 +10,10 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   setting.isThemeChangeLoad = true;
   // 切换动画
   const colorMode = useColorMode();
-  const isAppearanceTransition
-    = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // @ts-expect-error
+  const isAppearanceTransition = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  console.log(isAppearanceTransition);
+
   if (mode === "auto") {
     const hours = new Date().getHours();
     colorMode.preference = hours < 18 && hours > 6 ? "light" : "dark";
@@ -38,7 +40,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   const x = event.clientX;
   const y = event.clientY;
   const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-  // @ts-expect-error
   const transition = document.startViewTransition(() => {
     colorMode.preference = mode;
   });

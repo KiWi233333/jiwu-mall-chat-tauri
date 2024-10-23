@@ -7,10 +7,10 @@ import { useWSUnmounted, useWsInit } from "./ws";
 export async function useInit() {
   // 鉴权
   useAuthInit();
-  // 设置配置
-  useSettingInit();
   // Tauri
   userTauriInit();
+  // 设置配置
+  useSettingInit();
   // 会话
   useWsInit();
   // 初始化快捷键

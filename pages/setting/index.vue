@@ -3,7 +3,6 @@ import { getVersion } from "@tauri-apps/api/app";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { open as openFile } from "@tauri-apps/plugin-shell";
-import { exists } from "@tauri-apps/plugin-fs";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
@@ -105,7 +104,7 @@ async function changeDownloadDir() {
   });
   if (!path)
     return;
-  if (!await exists(path)) {
+  if (!await existsFile(path)) {
     ElMessage.error("目标路径不存在！");
     return;
   }
@@ -115,7 +114,7 @@ async function changeDownloadDir() {
 
 // 打开下载文件夹
 async function openFileFolder() {
-  if (!await exists(setting.appDataDownloadDirUrl))
+  if (!await existsFile(setting.appDataDownloadDirUrl))
     return;
   openFile(setting.appDataDownloadDirUrl);
 }
@@ -308,14 +307,6 @@ async function openFileFolder() {
 </template>
 
 <style scoped lang="scss">
-:deep(.progress-bar.el-progress) {
-  .el-progress__text {
-    // text-align: center;
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-  }
-}
 .inputs {
   --at-apply: 'transition-200  select-none';
   --el-border-radius-base: 2em !important;

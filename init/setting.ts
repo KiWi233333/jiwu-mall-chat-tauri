@@ -1,7 +1,7 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 import { platform } from "@tauri-apps/plugin-os";
-import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
+import { StateFlags, restoreStateCurrent } from "@tauri-apps/plugin-window-state";
 
 
 export async function useSettingInit() {
@@ -78,18 +78,9 @@ export async function useSettingInit() {
     chat.scrollBottom(false);
   }, 500);
 
-
-  // 8、初始化窗口
+  // 8、自动重启
   try {
-    platform();
-    restoreStateCurrent(StateFlags.ALL);
-  }
-  catch (error) { // web端兼容
-    console.warn(error);
-  }
-  // 9、自动重启
-  try {
-    const isAutoStart = await isEnabled();
+    const isAutoStart = await isAutoStartEnabled();
     setting.settingPage.isAutoStart = isAutoStart;
   }
   catch (error) {
@@ -98,15 +89,9 @@ export async function useSettingInit() {
   }
   watch(() => setting.settingPage.isAutoStart, async (val) => {
     if (val)
-      await enable();
+      await enableAutoStart();
     else
-      await disable();
-  });
-
-  watch(() => [
-    setting.isMobile,
-  ], () => {
-    saveWindowState(StateFlags.ALL);
+      await disableAutoStart();
   });
 }
 
@@ -150,6 +135,7 @@ export function useSettingUnmounted() {
 }
 
 
+const dev = import.meta.env.MODE === "development";
 /**
  * 初始化快捷键
  */
@@ -162,7 +148,8 @@ export async function useHotkeyInit() {
   // 快捷键阻止
   window.addEventListener("keydown", (e) => {
     // 关闭打印 搜索快捷键
-    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey))
+    const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
+    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (!dev && isReload))
       e.preventDefault();
     // esc 最小化窗口
     if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {

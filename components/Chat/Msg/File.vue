@@ -25,7 +25,9 @@ function onDownloadFile(url: string, fileName: string) {
     setting.openFileByDefaultApp(item);
     return;
   }
-  downloadFile(url, fileName, body?.mimeType, (val) => {
+  downloadFile(url, fileName, {
+    mimeType: body?.mimeType,
+  }, (val) => {
   });
   nextTick(() => {
     setting.showDownloadPanel = true;

@@ -267,7 +267,6 @@ async function onSubmit(e?: KeyboardEvent) {
   });
 }
 
-
 /**
  * 发送消息
  */
@@ -340,7 +339,10 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
         onClick: async () => {
           if (!key)
             return;
-          const res = await deleteOssFile(key, user.getToken);
+          const item = fileList.value.find(f => f.key === key);
+          if (item)
+            item.subscribe.unsubscribe();
+          await deleteOssFile(key, user.getToken);
           ElMessage.closeAll("error");
           if (type === OssFileType.IMAGE) {
             imgList.value.splice(

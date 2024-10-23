@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { save } from "@tauri-apps/plugin-dialog";
 import { MessageType } from "@/composables/api/chat/message";
 import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
 
@@ -78,6 +79,31 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
     y: e.y,
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
+      {
+        label: "保存图片",
+        hidden: setting.isWeb || msgType !== MessageType.IMG,
+        customClass: "group",
+        icon: "i-solar-download-minimalistic-broken group-btn-info",
+        onClick: async () => {
+          const path = await save({
+            filters: [
+              {
+                name: "图片文件",
+                extensions: ["png", "jpeg", "jpg", "svg", "webp"],
+              },
+            ],
+          });
+          if (!path)
+            return;
+          const fileName = path.split("\\").pop() || "default.png";
+          // 下载图片
+          downloadFile(BaseUrlFile + item.message.body.url, fileName, {
+            targetPath: path,
+          }, () => {
+            ElMessage.success(`图片已保存到 ${path}`);
+          });
+        },
+      },
       {
         label: isDownloaded ? "打开文件" : "下载文件",
         hidden: setting.isWeb || msgType !== MessageType.FILE,
