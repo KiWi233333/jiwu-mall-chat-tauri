@@ -26,6 +26,7 @@ tauri-plugin-os = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-upload = "2"
+tauri-plugin-dialog = "2"
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
 tauri-plugin-autostart = "2"

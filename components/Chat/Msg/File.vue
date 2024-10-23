@@ -15,19 +15,17 @@ const { data } = toRefs(props);
 const body: Partial<FileBodyMsgVO> | undefined = props.data.message?.body || {};
 const fileName = body.fileName || `${body?.url?.split("/").pop() || "未知文件"}.${body.fileType?.toLocaleLowerCase()}`;
 const setting = useSettingStore();
-const isDownload = ref(false);
 function onDownloadFile(url: string, fileName: string) {
-  if (isDownload.value)
-    return;
   const item = setting.fileDownloadMap?.[url];
+  if (item && item.status === FileStatus.DOWNLOADING) {
+    setting.showDownloadPanel = true;
+    return;
+  }
   if (item) {
     setting.openFileByDefaultApp(item);
     return;
   }
-  isDownload.value = true;
   downloadFile(url, fileName, body?.mimeType, (val) => {
-    if (val >= 1)
-      isDownload.value = false;
   });
   nextTick(() => {
     setting.showDownloadPanel = true;
@@ -61,8 +59,8 @@ const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url])
           <p class="text-overflow-2 text-sm leading-4">
             {{ fileName }}
           </p>
-          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status !== undefined" class="float-left mt-2 text-xs op-60">
-            <i :class="fileItem?.status ? DownFileStatusIconMap[fileItem?.status] : ''" p-2 />&nbsp;{{ fileItem ? DownFileTextMap[fileItem?.status] : "" }}
+          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status !== undefined" class="float-left mr-2 mt-2 text-xs op-60">
+            <i :class="fileItem?.status !== undefined ? DownFileStatusIconMap[fileItem?.status] : ''" p-2 />&nbsp;{{ fileItem ? DownFileTextMap[fileItem?.status] : "" }}
           </small>
           <small class="float-right mt-2 text-xs op-60">
             {{ formatFileSize(body.size || 0) }}

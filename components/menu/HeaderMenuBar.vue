@@ -39,7 +39,7 @@ onMounted(async () => {
     </div>
     <div class="flex flex-shrink-0 items-center gap-4">
       <a
-        v-if="setting.appPlatform === 'web'"
+        v-if="setting.isWeb"
         :href="downloadUrl"
         class="block rounded-2rem py-1.5 pl-4 pr-6 text-xs btn-info-bg border-default card-default"
       >

@@ -7,6 +7,7 @@ import { disable } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory, exists, remove } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
 import type { Platform } from "@tauri-apps/plugin-os";
+import { appDataDir } from "@tauri-apps/api/path";
 
 export interface FileItem {
   url: string
@@ -49,7 +50,7 @@ export const useSettingStore = defineStore(
       ignoreVersion: [] as string[],
     });
     const appPlatform = ref<Platform | "web">("web");
-
+    const isWeb = computed(() => appPlatform.value === "web");
     // 用户页折叠
     const isUserFold = ref(true);
     const isUserCollapse = ref(true);
@@ -89,9 +90,12 @@ export const useSettingStore = defineStore(
     const downUpChangeContact = ref(true); // 向上向下切换联系人列表
 
     // ---------------------- 下载管理 -----------------
+    const BaseDirCode = BaseDirectory.AppData;
     const showDownloadPanel = ref(false);
     const fileDownloadMap = ref<Record<string, FileItem>>({});
     const fileDownloadList = computed(() => Object.values(fileDownloadMap.value).sort((a, b) => b.downloadTime - a.downloadTime));
+    const appDataDownloadDirUrl = ref("");
+
     // 下载文件回调
     function fileDownProgressCallback(url: string, currentSize: number = 0, totalSize: number = 0, status: FileStatus = FileStatus.DOWNLOADING) {
       const item = fileDownloadMap.value[url];
@@ -111,12 +115,12 @@ export const useSettingStore = defineStore(
         return;
       try {
         // 是否存在
-        const isExists = await exists(file.localPath, { baseDir: BaseDirectory.AppData });
+        const isExists = await exists(file.localPath);
         if (checked && !isExists) {
           ElMessage.warning("文件已不存在，请手动删除！");
           return;
         }
-        await remove(item.localPath, { baseDir: BaseDirectory.AppData });
+        await remove(item.localPath);
       }
       catch (error) {
         console.warn(error);
@@ -131,7 +135,7 @@ export const useSettingStore = defineStore(
     // 打开文件
     async function openFileByDefaultApp(item: FileItem) {
       // 是否存在
-      const isExists = await exists(item.localPath, { baseDir: BaseDirectory.AppData });
+      const isExists = await exists(item.localPath);
       if (!item.localPath || !isExists) {
         ElMessage.warning("文件已不存在，请手动删除！");
         item.status = FileStatus.NOT_FOUND;
@@ -183,7 +187,7 @@ export const useSettingStore = defineStore(
           appUploader.value.isUpdating = false;
           appUploader.value.isUpload = false;
           const route = useRoute();
-          if (route.path.includes("/setting"))
+          if (route.path.includes("/setting") && checkLog)
             ElMessage.info("当前版本已是最新版本！");
           return false;
         }
@@ -289,7 +293,7 @@ export const useSettingStore = defineStore(
       }
     }
 
-    function reset() {
+    async function reset() {
       settingPage.value.fontFamily.value = "Alimama";
       settingPage.value.modeToggle.value = "auto";
       settingPage.value.isColseAllTransition = false;
@@ -343,6 +347,9 @@ export const useSettingStore = defineStore(
 
       disable(); // 关闭自启动
       loadSystemFonts();
+
+      if (!isWeb.value)
+        appDataDownloadDirUrl.value = `${await appDataDir()}\\downloads`;
     }
     return {
       isMobile,
@@ -365,6 +372,8 @@ export const useSettingStore = defineStore(
       fileDownloadMap,
       fileDownloadList,
       appPlatform,
+      appDataDownloadDirUrl,
+      isWeb,
       // actions
       checkUpdates,
       loadSystemFonts,

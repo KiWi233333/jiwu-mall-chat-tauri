@@ -62,27 +62,25 @@
     "upload:default",
     "fs:default",
     {
-        "identifier": "fs:default",
-        "allow": [
-            {
-                "path": "$APPDATA/*"
-            }
-        ]
+      "identifier": "fs:default",
+      "allow": [
+        {
+          "path": "$APPDATA/*"
+        }
+      ]
     },
     "fs:allow-app-write-recursive",
     "fs:allow-app-read-recursive",
     "fs:allow-appdata-write-recursive",
     "fs:allow-appdata-read-recursive",
-    
     "shell:default",
     "shell:allow-execute",
     "shell:allow-open",
     "shell:allow-stdin-write",
-
     "notification:default",
-    "notification:allow-get-active"
-
-],
+    "notification:allow-get-active",
+    "dialog:default"
+  ],
   "platforms": [
     "windows",
     "linux",

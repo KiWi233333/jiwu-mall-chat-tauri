@@ -56,13 +56,14 @@ onActivated(() => {
         <div class="flex items-center gap-2 p-2 pt-0">
           <i class="i-solar-download-minimalistic-broken p-0.6em" />
           <span>下载</span>
+          <nuxt-link to="/setting#download" class="i-solar:settings-linear ml-a p-0.6em btn-primary" />
           <!-- 搜索框 -->
           <el-input
             ref="inputRef"
             v-model.lazy="search"
             placeholder="搜索"
             size="small" clearable
-            class="ml-a overflow-hidden transition-width"
+            class="overflow-hidden transition-width"
             :style="{ width: showSearch ? '40%' : '0' }"
           />
           <span class="btn-primary" :title="showSearch ? '关闭搜索' : '打开搜索'" @click="openSearch()">

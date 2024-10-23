@@ -1,10 +1,8 @@
-import { appDataDir } from "@tauri-apps/api/path";
 import { exists, mkdir } from "@tauri-apps/plugin-fs";
-import { platform } from "@tauri-apps/plugin-os";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
-export const FILE_MAX_SIZE = 100 * 1024 * 1024;// 100MB
+export const FILE_MAX_SIZE = 50 * 1024 * 1024;// 50MB
 export const FILE_TYPE_ICON_MAP = {
   "text/plain": "/images/icon/TXT.png",
 
@@ -61,7 +59,7 @@ export const DownFileStatusIconMap: Record<FileStatus, string> = {
   [FileStatus.DOWNLOADING]: "i-solar-download-minimalistic-broken",
   [FileStatus.ERROR]: "i-solar-danger-circle-outline",
   [FileStatus.PAUSED]: "i-solar-alt-arrow-right-bold",
-  [FileStatus.NOT_FOUND]: "i-solar-file-remove-line-duotone",
+  [FileStatus.NOT_FOUND]: "i-solar-file-corrupted-broken",
   [FileStatus.DOWNLOADED]: "i-solar-check-circle-outline",
 };
 /**
@@ -80,18 +78,15 @@ export async function downloadFile(url: string, fileName: string, mimeType: stri
     // 移动端使用 streamSaver 下载
     return downloadFileByStreamSaver(url, fileName, callback);
   }
-  const isSupport = platformType !== "web";
-  const appDataDirUrl = isSupport ? await appDataDir() : "";
-  const appDataDownloadDirUrl = `${appDataDirUrl}\\downloads`;
-
-  const existsDir = await exists(appDataDownloadDirUrl);
+  const dir = setting.appDataDownloadDirUrl;
+  const existsDir = await exists(dir);
   if (!existsDir)
-    mkdir(appDataDownloadDirUrl);
+    mkdir(dir);
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
     fileName,
-    localPath: `${appDataDownloadDirUrl}\\${fileName}`,
+    localPath: `${dir}\\${fileName}`,
     currentSize: 0,
     totalSize: 0,
     status: FileStatus.DOWNLOADING,
@@ -103,7 +98,7 @@ export async function downloadFile(url: string, fileName: string, mimeType: stri
   try {
     await download(
       url,
-      `${appDataDownloadDirUrl}\\${fileName}`,
+      `${dir}\\${fileName}`,
       ({ progress, total }) => {
         currentSize += progress;
         setting.fileDownProgressCallback(url, currentSize, total);

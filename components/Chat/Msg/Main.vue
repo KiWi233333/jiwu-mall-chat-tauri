@@ -80,7 +80,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
     items: [
       {
         label: isDownloaded ? "打开文件" : "下载文件",
-        hidden: msgType !== MessageType.FILE,
+        hidden: setting.isWeb || msgType !== MessageType.FILE,
         customClass: "group",
         icon: isDownloaded ? "i-solar-file-line-duotone group-btn-info" : "i-solar-download-minimalistic-broken group-btn-info",
         onClick: () => {
@@ -90,7 +90,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
       },
       {
         label: "在文件夹打开",
-        hidden: msgType !== MessageType.FILE || !isDownloaded,
+        hidden: setting.isWeb || msgType !== MessageType.FILE || !isDownloaded,
         customClass: "group",
         icon: "i-solar-folder-with-files-line-duotone group-btn-info",
         onClick: () => {

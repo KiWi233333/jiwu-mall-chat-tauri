@@ -2,6 +2,9 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
+import { open as openFile } from "@tauri-apps/plugin-shell";
+import { exists } from "@tauri-apps/plugin-fs";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -60,6 +63,9 @@ const colorMode = useColorMode();
 // 更新
 onMounted(async () => {
   setting.loadSystemFonts();
+  if (setting.isWeb)
+    return;
+
   const v = await getVersion();
   // 公告
   if (v) {
@@ -73,9 +79,10 @@ onMounted(async () => {
   // 检查更新
   setting.appUploader.version = v;
   if (!setting.appUploader.isCheckUpdatateLoad)
-    setting.checkUpdates(true);
+    setting.checkUpdates();
 });
 
+// 公告
 function showVersionNotice(version: string) {
   const v = version.replaceAll("v", "");
   getVersionNotice(v).then((res) => {
@@ -88,6 +95,29 @@ function showVersionNotice(version: string) {
       notice.value = (res.data.notice || "");
     showNotice.value = true;
   });
+}
+
+// 更改下载文件夹路径
+async function changeDownloadDir() {
+  const path = await openDialog({
+    multiple: false,
+    directory: true,
+  });
+  if (!path)
+    return;
+  if (!await exists(path)) {
+    ElMessage.error("目标路径不存在！");
+    return;
+  }
+  setting.appDataDownloadDirUrl = path;
+  ElMessage.success("下载路径已更改！");
+}
+
+// 打开下载文件夹
+async function openFileFolder() {
+  if (!await exists(setting.appDataDownloadDirUrl))
+    return;
+  openFile(setting.appDataDownloadDirUrl);
 }
 </script>
 
@@ -165,7 +195,7 @@ function showVersionNotice(version: string) {
             </el-tooltip>
           </div>
           <!-- Esc -->
-          <div class="group h-8 flex-row-bt-c">
+          <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
             ESC关闭
             <el-switch
               v-model="setting.settingPage.isEscMin" size="large" active-text="开启" inactive-text="关闭"
@@ -173,7 +203,7 @@ function showVersionNotice(version: string) {
             />
           </div>
           <!-- 自启动 -->
-          <div :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
+          <div v-if="!setting.isWeb" :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
             开机自启
             <el-switch
               v-model="setting.settingPage.isAutoStart" size="large" active-text="自启"
@@ -181,7 +211,7 @@ function showVersionNotice(version: string) {
             />
           </div>
           <!-- 更新 -->
-          <div class="group h-8 flex-row-bt-c">
+          <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
             关于更新
             <div class="ml-a flex items-center">
               <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
@@ -196,7 +226,7 @@ function showVersionNotice(version: string) {
                   plain
                   style="height: 2em;padding: 0 0.8em;"
                   :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
-                  @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates()"
+                  @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
                 >
                   <span flex-row-c-c>
                     <i
@@ -205,9 +235,6 @@ function showVersionNotice(version: string) {
                     />
                     检查更新
                   </span>
-                  <!-- <span v-show="setting.appUploader.isUpdating" flex-row-c-c>
-                    更新中
-                  </span> -->
                 </ElButton>
               </el-badge>
               <el-progress
@@ -221,6 +248,15 @@ function showVersionNotice(version: string) {
               >
                 {{ setting.appUploader.downloadedText || "- / - MB" }}
               </el-progress>
+            </div>
+          </div>
+          <!-- 下载路径 -->
+          <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
+            下载
+            <div class="ml-a flex items-center" :title="setting.appDataDownloadDirUrl">
+              <small class="mr-4 max-w-50vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
+              <span class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-primary" @click="changeDownloadDir()">更改</span>
+              <span class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="openFileFolder()">打开目录</span>
             </div>
           </div>
         </section>
