@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FileBodyMsgVO } from "~/composables/api/chat/message";
-import { FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, downloadFile, formatFileSize } from "~/composables/api/res/file";
+import { DownFileStatusIconMap, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, downloadFile, formatFileSize } from "~/composables/api/res/file";
 
 /**
  * 文件消息
@@ -38,6 +38,8 @@ function onDownloadFile(url: string, fileName: string) {
 defineExpose({
   onDownloadFileAndOpen: () => onDownloadFile(BaseUrlFile + body.url, fileName),
 });
+
+const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url]);
 </script>
 
 <template>
@@ -59,8 +61,8 @@ defineExpose({
           <p class="text-overflow-2 text-sm leading-4">
             {{ fileName }}
           </p>
-          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status === FileStatus.DOWNLOADED" class="float-left mt-2 text-xs op-60">
-            <i i-solar-check-circle-outline p-2 />&nbsp;已下载
+          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status !== undefined" class="float-left mt-2 text-xs op-60">
+            <i :class="fileItem?.status ? DownFileStatusIconMap[fileItem?.status] : ''" p-2 />&nbsp;{{ fileItem ? DownFileTextMap[fileItem?.status] : "" }}
           </small>
           <small class="float-right mt-2 text-xs op-60">
             {{ formatFileSize(body.size || 0) }}

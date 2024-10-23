@@ -77,10 +77,10 @@ onActivated(() => {
           <div v-if="filterList.length" ref="autoAnimateRef" relative flex flex-col pb-4>
             <!-- 文件 -->
             <div
-              v-for="(p, i) in filterList"
-              :key="`${p.url}-${i}`"
+              v-for="p in filterList"
+              :key="p.downloadTime"
               :title="`${p.fileName} 打开文件`"
-              class="mb-2 w-full flex cursor-pointer gap-2 rounded bg-white px-3 py-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:shadow"
+              class="group mb-2 w-full flex cursor-pointer gap-2 rounded bg-white px-3 py-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:shadow"
               :class="FileStatusClassMap[p.status]"
               @click="setting.openFileByDefaultApp(p)"
             >
@@ -104,7 +104,9 @@ onActivated(() => {
                   />
                   <small v-else>
                     {{ DownFileTextMap[p.status] }}
-                    <!-- {{ dayjs(p.downloadTime).format("YYYY-MM-DD HH:mm") }} -->
+                    <span class="hidden group-hover:inline">
+                      {{ dayjs(p.downloadTime).format("YYYY-MM-DD HH:mm") }}
+                    </span>
                   </small>
                   <small>
                     <template v-if="p.status === FileStatus.DOWNLOADING">
@@ -114,7 +116,7 @@ onActivated(() => {
                   </small>
                 </p>
               </div>
-              <div flex gap-3>
+              <div v-if="[FileStatus.DOWNLOADED, FileStatus.NOT_FOUND].includes(p.status as any)" flex gap-3>
                 <i
                   i-solar-folder-with-files-line-duotone block h-4 w-4 btn-primary
                   title="打开所在文件夹"
@@ -126,12 +128,20 @@ onActivated(() => {
                   @click.stop.prevent="setting.deleteDownloadFile(p)"
                 />
               </div>
+              <!-- <div v-if="[FileStatus.PAUSED, FileStatus.DOWNLOADING, FileStatus.ERROR].includes(p.status as any)" flex gap-3>
+                <i
+                  i-solar:trash-bin-trash-outline
+                  block h-4 w-4 btn-danger
+                  title="删除下载"
+                  @click.stop.prevent="setting.deleteDownloadFile(p, false)"
+                />
+              </div> -->
             </div>
             <small block text-center>暂无更多</small>
           </div>
           <!-- 没有文件 -->
           <div v-else class="h-full flex-row-c-c flex-col text-center op-70">
-            <i i-solar-bookmark-opened-line-duotone class="mb-2 h-8 w-8" />
+            <i i-solar-folder-with-files-line-duotone class="mb-2 h-8 w-8" />
             <small class="text-sm">
               暂无文件
             </small>

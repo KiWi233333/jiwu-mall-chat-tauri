@@ -105,14 +105,14 @@ export const useSettingStore = defineStore(
     }
 
     // 删除文件
-    async function deleteDownloadFile(item: FileItem) {
+    async function deleteDownloadFile(item: FileItem, checked: boolean = true) {
       const file = fileDownloadMap.value?.[item.url];
       if (!file)
         return;
       try {
         // 是否存在
         const isExists = await exists(file.localPath, { baseDir: BaseDirectory.AppData });
-        if (!isExists) {
+        if (checked && !isExists) {
           ElMessage.warning("文件已不存在，请手动删除！");
           return;
         }
@@ -120,7 +120,8 @@ export const useSettingStore = defineStore(
       }
       catch (error) {
         console.warn(error);
-        ElMessage.warning("文件已不存在，请手动删除！");
+        if (checked)
+          ElMessage.warning("文件已不存在，请手动删除！");
       }
       finally {
         delete fileDownloadMap.value[item.url];

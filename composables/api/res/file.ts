@@ -55,6 +55,15 @@ export const DownFileTextMap: Record<FileStatus, string> = {
   [FileStatus.NOT_FOUND]: "文件不存在",
   [FileStatus.DOWNLOADED]: "下载完成",
 };
+
+// @unocss-include
+export const DownFileStatusIconMap: Record<FileStatus, string> = {
+  [FileStatus.DOWNLOADING]: "i-solar-download-minimalistic-broken",
+  [FileStatus.ERROR]: "i-solar-danger-circle-outline",
+  [FileStatus.PAUSED]: "i-solar-alt-arrow-right-bold",
+  [FileStatus.NOT_FOUND]: "i-solar-file-remove-line-duotone",
+  [FileStatus.DOWNLOADED]: "i-solar-check-circle-outline",
+};
 /**
  * https://segmentfault.com/a/1190000044342886
  * 下载文件
