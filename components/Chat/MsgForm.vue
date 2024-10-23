@@ -37,6 +37,7 @@ const formRef = ref();
 const isSending = ref(false);
 const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
+const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 
 // 读取@用户列表 hook
 const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
@@ -50,6 +51,23 @@ watch(() => chat.atUidListTemp, (val) => {
     chat.atUidListTemp.splice(0);
   }
 }, { deep: true });
+
+// 群广播消息
+const showLordMsg = ref(false);
+function onSubmitLordMsg(formData: ChatMessageDTO) {
+  if (!isLord.value) {
+    ElMessage.error("仅群主可发送广播消息！");
+    return;
+  }
+  form.value = {
+    roomId: chat.theContact.roomId,
+    msgType: MessageType.SYSTEM, // 默认
+    content: formData.content,
+    body: {
+    },
+  };
+  submit();
+}
 
 // 未读数
 const theRoomUnReadLength = computed(() => {
@@ -545,20 +563,24 @@ const { fileList: fileDropList } = await useLinterFileDrop();
             {{ second ? `${second}s` : '' }}
             <i :class="isPalyAudio ? 'i-solar:stop-bold' : 'i-solar:play-bold'" class="icon" ml-2 p-1 />
           </BtnElButton>
-          <span
-            ml-4 btn-danger
+          <i
+            i-solar:trash-bin-minimalistic-broken ml-3 p-2.4 btn-danger
             @click="handlePlayAudio('del')"
-          >
-            <i i-solar:trash-bin-minimalistic-broken p-2.4 />
-          </span>
+          />
         </div>
+        <i ml-a />
+        <!-- 群广播消息 -->
+        <div
+          v-if="isLord"
+          title="群广播消息"
+          class="i-solar-confetti-minimalistic-line-duotone w-fit p-3 transition-200 btn-primary"
+          @click="showLordMsg = true"
+        />
         <!-- 滚动底部 -->
         <div
-          class="ml-a w-fit flex-row-c-c transition-200 btn-primary"
+          class="i-solar:double-alt-arrow-down-line-duotone w-fit p-3 transition-200 btn-primary"
           @click="chat.scrollBottom()"
-        >
-          <i i-solar:double-alt-arrow-down-line-duotone p-3 />
-        </div>
+        />
       </div>
       <!-- 内容 -->
       <el-form-item
@@ -640,6 +662,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
       </span>
     </div>
   </el-form>
+  <ChatGroupNoticeMsgDialog v-model:show="showLordMsg" @submit="onSubmitLordMsg" />
 </template>
 
 <style lang="scss" scoped>

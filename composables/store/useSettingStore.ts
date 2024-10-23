@@ -91,7 +91,7 @@ export const useSettingStore = defineStore(
     // ---------------------- 下载管理 -----------------
     const showDownloadPanel = ref(false);
     const fileDownloadMap = ref<Record<string, FileItem>>({});
-    const fileDownloadList = computed(() => Object.values(fileDownloadMap.value).sort((a, b) => a.downloadTime - b.downloadTime));
+    const fileDownloadList = computed(() => Object.values(fileDownloadMap.value).sort((a, b) => b.downloadTime - a.downloadTime));
     // 下载文件回调
     function fileDownProgressCallback(url: string, currentSize: number = 0, totalSize: number = 0, status: FileStatus = FileStatus.DOWNLOADING) {
       const item = fileDownloadMap.value[url];
