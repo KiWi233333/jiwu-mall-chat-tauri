@@ -32,23 +32,15 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjREQTA3MkU1MzNEMzkKUldRNVBWTXVCOXIwVjlBVXhBY0J3WEVNZW5ZTWZSYXJNdlM4VmpoaXBrSDFiOU1QYk85RDBkYW0K",
-      "endpoints": [
-        "https://api.jiwu.kiwi2333.top/res/app/latest"
-      ]
+      "endpoints": ["https://api.jiwu.kiwi2333.top/res/app/latest"]
     }
   },
   "bundle": {
     "active": true,
     "category": "SocialNetworking",
     "copyright": "Kiwi2333",
-    "targets": "all", 
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/icon.icns",
-      "icons/icon.ico",
-      "icons/icon.png"
-    ],
+    "targets": "all",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.icns", "icons/icon.ico", "icons/icon.png"],
     "windows": {
       "nsis": {
         "installerIcon": "./icons/icon.ico"
