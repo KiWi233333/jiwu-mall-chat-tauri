@@ -26,7 +26,7 @@ export async function useSettingInit() {
   setting.appUploader.isUpload = false;
   setting.appUploader.version = "";
   setting.appUploader.newVersion = "";
-  setting.checkUpdates(true);
+  setting.checkUpdates();
 
   // 3、准备完成关闭加载动画
   const app = document.body;

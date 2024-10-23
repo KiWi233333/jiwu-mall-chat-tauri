@@ -3,6 +3,8 @@ import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { platform } from "@tauri-apps/plugin-os";
+import { appDataDir } from "@tauri-apps/api/path";
+import { exists } from "@tauri-apps/plugin-fs";
 import type { PayloadType } from "../types/tauri";
 
 /**
@@ -12,7 +14,7 @@ export async function userTauriInit() {
   const setting = useSettingStore();
   try {
     const appPlatform = platform();
-    if (appPlatform)
+    if (!appPlatform)
       return;
     setting.appPlatform = appPlatform;
   }
@@ -44,6 +46,10 @@ export async function userTauriInit() {
   else {
     setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
   }
+
+  // 3、获取文件路径
+  if (!await exists(setting.appDataDownloadDirUrl))
+    setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
 }
 
 /**

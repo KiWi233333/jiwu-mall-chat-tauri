@@ -37,12 +37,6 @@ useSeoMeta({
   description: "设置 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });
-
-// 更新
-onMounted(async () => {
-  const v = await getVersion();
-  setting.appUploader.version = v;
-});
 </script>
 
 <template>
