@@ -1,5 +1,4 @@
 import { invoke } from "@tauri-apps/api/core";
-import { mkdir } from "@tauri-apps/plugin-fs";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
@@ -30,7 +29,7 @@ export const FILE_TYPE_ICON_DEFAULT = "/images/icon/DEFAULT.png";
 // 定制fs实现任意路径 https://github.com/lencx/tauri-tutorial/discussions/13
 export const existsFile = (path: string) => invoke("exist_file", { path });
 export const removeFile = (path: string) => invoke("remove_file", { path });
-
+export const mkdirFile = (path: string) => invoke("mkdir_file", { path });
 /**
  * 格式化文件大小
  * @param size 字节大小
@@ -115,7 +114,7 @@ callback?: (progress: number) => void) {
   const dir = setting.appDataDownloadDirUrl;
   const existsDir = await existsFile(dir);
   if (!existsDir)
-    mkdir(dir);
+    mkdirFile(dir);
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
