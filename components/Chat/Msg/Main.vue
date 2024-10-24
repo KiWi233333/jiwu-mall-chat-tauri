@@ -81,26 +81,29 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
     items: [
       {
         label: "保存图片",
-        hidden: setting.isWeb || msgType !== MessageType.IMG,
+        hidden: msgType !== MessageType.IMG,
         customClass: "group",
         icon: "i-solar-download-minimalistic-broken group-btn-info",
         onClick: async () => {
-          const path = await save({
-            filters: [
-              {
-                name: "图片文件",
-                extensions: ["png", "jpeg", "jpg", "svg", "webp"],
-              },
-            ],
-          });
-          if (!path)
-            return;
-          const fileName = path.split("\\").pop() || "default.png";
+          let path: string | undefined | null = "";
+          if (!setting.isWeb) {
+            path = await save({
+              filters: [
+                {
+                  name: "图片文件",
+                  extensions: ["png", "jpeg", "jpg", "svg", "webp"],
+                },
+              ],
+            });
+            if (!path)
+              return;
+          }
+          const fileName = path.split("\\").pop() || `${Math.random().toString(36)}.png`;
           // 下载图片
           downloadFile(BaseUrlFile + item.message.body.url, fileName, {
             targetPath: path,
           }, () => {
-            ElMessage.success(`图片已保存到 ${path}`);
+            ElMessage.success(setting.isWeb ? "图片已保存" : `图片已保存到 ${path}`);
           });
         },
       },
