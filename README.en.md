@@ -1,4 +1,3 @@
-
 <div align=center>
  <div align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
 <img src="./.doc/jiwuchat-tauri.png" width="140px" height="140px" alt="Image Name" align=center />
@@ -7,7 +6,7 @@
 
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
-        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project%20Address-blueviolet.svg?style=plasticr">
+        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project%20Address-blueviolet.svg?style=plastic">
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
         <img class="disabled-img-view" alt="License"
@@ -24,21 +23,21 @@
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/master/LICENSE" target="_blank">
         <img class="disabled-img-view" alt="License: Apache-2.0"
-          src="https://img.shields.io/badge/License-Apache--2.0-blue.svg">
+          src="https://img.shields.io/badge/License-Apache%20-2.0-blue.svg">
       </a>
     </div>
 
-Language :  English | [中文](./README.md)
+Language: Simplified Chinese | [English](./README.en.md)
 </div>
 
 ### Introduction
 
-JiwuChat Tauri APP is a desktop chat application based on the Nuxt3 + Tauri + element-plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. It also supports AI shopping chat and global night mode. Users can use the app for real-time chat, share updates, and AI customer service Q&A.
+JiwuChat Tauri APP is a desktop chat application based on the Nuxt3 + Tauri + Element Plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. Additionally, it supports AI shopping chat and a global dark mode. Users can engage in real-time chatting, share updates, and interact with AI customer service through this app.
 
 ### Technology
 
 ```txt
-Based on the Nuxt3 + Tauri + element-plus framework
+Based on the Nuxt3 + Tauri + Element Plus framework
 ```
 
 ### Trends
@@ -47,24 +46,24 @@ Based on the Nuxt3 + Tauri + element-plus framework
 
 ### Default Account
 
-- Account: ikun233
+- Username: ikun233
 - Password: 123456
 
-Note: This account does not have permissions for uploading images, changing passwords, etc.
+Note: This account does not have permissions for uploading images or changing passwords.
 
 ### Feature List
 
-| Feature Module | Feature Description | Status |
+| Feature Module | Description | Status |
 | --- | --- | --- |
-| Login Registration Module | Supports login and registration with account, phone number, and email | ✔ |
-| Messaging Module | Supports real-time chat with various message types including text, images, files, voice, video, etc. | ✔ |
-| AI Shopping Module | AI shopping chat feature, providing product recommendations under "Jiwu Circle" | ✔ |
-| Group Chat Module | Supports group chat and private chat in various chat modes | ✔ |
+| User Module | Supports login and registration via account, phone number, and email | ✔ |
+| Messaging Module | Supports real-time chat with various message types including text, images, files, voice, @mentions, recall, and deletion | ✔ |
+| AI Shopping Module | AI shopping chat feature providing product recommendations under "Jiwu Circle" | ✔ |
+| Conversation Module | Supports group and private chats with roles such as group owner, admin, and regular user | ✔ |
 | Contact Module | Supports viewing, adding, and deleting contacts | ✔ |
-| System Update Module | Supports automatic application updates | ✔ |
-| Account and Security | Provides functions for account login, password change, account management, account online/offline, etc. | ✔ |
-| Multi-System Support | Supports various systems including Windows, MacOS, Linux, etc. | ✔ |
-| Other Features | Global night mode, font, customization settings, etc. | ✔ |
+| System Version Module | Supports automatic app updates and viewing version announcements | ✔ |
+| Account & Security Module | Offers features like account login, password change, account management, device security, and account online/offline status | ✔ |
+| File Download Management Module | Supports local file download, opening, and deletion | ✔ |
+| Other Features | Global dark mode, font customization, custom download paths, multi-system support, and customizable settings | ✔ |
 
 ### Project Screenshots
 
@@ -76,7 +75,7 @@ Note: This account does not have permissions for uploading images, changing pass
 
 ![Home](./.doc/chat.png)
 
-- Global Night Mode Light / Dark
+- Global Dark Mode Light / Dark
 
 ![Dark](./.doc/chat1.png)
 
@@ -88,16 +87,16 @@ Note: This account does not have permissions for uploading images, changing pass
 
 ![Dark](./.doc/chat3.png)
 
-- Account and Security
+- Account & Security
 
-![Account and Security](./.doc/chat4.png)
+![Account & Security](./.doc/chat4.png)
 
-![Account and Security](./.doc/chat5.png)
+![Account & Security](./.doc/chat5.png)
 
-- Responsive
+- Responsiveness
 
-<img src="./.doc/chat7.png" width = "200" alt="Responsive" align=center />
-<img src="./.doc/chat8.png" width = "200" alt="Responsive" align=center />
+<img src="./.doc/chat7.png" width="200" alt="Responsive" align=center />
+<img src="./.doc/chat8.png" width="200" alt="Responsive" align=center />
 
 ## ⏳ Getting Started | Project Setup
 
@@ -112,7 +111,7 @@ pnpm install
 
 ### ✨ Development
 
-Modify the `useBaseUrl.ts` file to change the `API address` to your local API address or modify the following.
+Modify the `useBaseUrl.ts` file to change the `API address` to your local API address or adjust the following.
 
 ```ts
 // useBaseUrl.ts
@@ -121,13 +120,13 @@ const isDev = !import.meta.env.DEV;
 
 ```sh
 # It is recommended to run separately
-# 1) Start nuxt
+# 1) Start Nuxt
 pnpm run dev:nuxt 
-# 2) Start tauri
+# 2) Start Tauri
 pnpm run dev:tauri 
 ```
 
-### 📦 Package
+### 📦 Build
 
 ```sh
 pnpm run build:tauri
@@ -161,16 +160,16 @@ pnpm config set registry https://registry.npmjs.org
 
 ### 🔧 Technology Stack | Tech Stack
 
-| Category        | Technology/Component | Version       |
-| --------------- | ------------------- | ------------ |
-| Framework       | Nuxt3               | ^3.12.2+       |
-|                 | Tauri               | ^2.0.0        |
-| UI Component Library | Element Plus       | 2.7.6        |
-| State Management | Pinia               | 2.1.7        |
-| Utility Library  | Vueuse              | 10.11.0      |
-| Build and Development Tools | Nuxi            | lts        |
-|                  | Vite                | lts         |
-| Code Quality    | ESLint              | 8.56.0       |
-|                  | Prettier            | 3.3.2        |
-| Type Checking   | TypeScript          | 5.3.2        |
-| Style Processing| Sass                | 1.77.6       |
+| Category | Technology/Component | Version |
+| ------------- | ------------------ | ------------ |
+| Framework | Nuxt3 | ^3.12.2+ |
+| Framework | Tauri | ^2.0.0 |
+| UI Component Library | Element Plus | 2.7.6 |
+| State Management | Pinia | 2.1.7 |
+| Utility Library | Vueuse | 10.11.0 |
+| Build & Development Tools | Nuxi | lts |
+| Build & Development Tools | Vite | lts |
+| Code Quality | ESLint | 8.56.0 |
+| Code Quality | Prettier | 3.3.2 |
+| Type Checking | TypeScript | 5.3.2 |
+| Style Processing | Sass | 1.77.6 |
