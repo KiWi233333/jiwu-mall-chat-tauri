@@ -52,23 +52,6 @@ watch(() => chat.atUidListTemp, (val) => {
   }
 }, { deep: true });
 
-// 群广播消息
-const showLordMsg = ref(false);
-function onSubmitLordMsg(formData: ChatMessageDTO) {
-  if (!isLord.value) {
-    ElMessage.error("仅群主可发送广播消息！");
-    return;
-  }
-  form.value = {
-    roomId: chat.theContact.roomId,
-    msgType: MessageType.SYSTEM, // 默认
-    content: formData.content,
-    body: {
-    },
-  };
-  submit();
-}
-
 // 未读数
 const theRoomUnReadLength = computed(() => {
   return chat.theContact.unReadLength;
@@ -258,21 +241,21 @@ async function onSubmit(e?: KeyboardEvent) {
         form.value.body.url = key;
         form.value.body.translation = audioTransfromText.value;
         form.value.body.second = second.value;
-        submit();
+        submit(form.value);
       });
       return;
     }
     // 普通消息
-    submit();
+    submit(form.value);
   });
 }
 
 /**
  * 发送消息
  */
-async function submit() {
+async function submit(formData: ChatMessageDTO = form.value) {
   const res = await addChatMessage({
-    ...form.value,
+    ...formData,
     roomId: chat.theContact.roomId,
   }, user.getToken);
   isSending.value = false;
@@ -280,9 +263,34 @@ async function submit() {
     emit("submit", res.data);
   else if (res.message === "您和对方已不是好友！")
     return;
-  form.value.content = "";
   resetForm();
 }
+
+/**
+ * 发送群广播消息
+ */
+const showLordMsg = ref(false);
+function onSubmitLordMsg(formData: ChatMessageDTO) {
+  if (!isLord.value) {
+    ElMessage.error("仅群主可发送广播消息！");
+    return;
+  }
+  form.value = {
+    roomId: chat.theContact.roomId,
+    msgType: MessageType.SYSTEM, // 默认
+    content: "",
+    body: {
+    },
+  };
+  submit({
+    roomId: chat.theContact.roomId,
+    msgType: MessageType.SYSTEM, // 默认
+    content: formData.content,
+    body: {
+    },
+  });
+}
+
 
 // 房间号变化
 let timer: any = 0;

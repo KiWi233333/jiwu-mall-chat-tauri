@@ -13,6 +13,7 @@ const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
   const setting = useSettingStore();
   enable(!setting.settingPage.isColseAllTransition);
+  reload();
 });
 
 // 会话store
@@ -89,7 +90,6 @@ async function loadData() {
   pageInfo.value.cursor = data.cursor;
   isLoading.value = false;
 }
-loadData();
 
 const getCheckList = computed(() => {
   const uidList = new Set(form.value.uidList);
@@ -118,7 +118,6 @@ function reload(uidList = []) {
   pageInfo.value.total = -1;
   loadData();
 }
-reload();
 
 // 下一步fn
 function next() {
@@ -128,7 +127,6 @@ function next() {
   else {
     if (form.value.uidList.length <= 0)
       return ElMessage.warning("请选择成员");
-
     showImg.value = true;
   }
 }

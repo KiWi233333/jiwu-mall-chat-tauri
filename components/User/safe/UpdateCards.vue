@@ -78,7 +78,7 @@ const form = ref({
       >
         <small>
           密&emsp;码：
-          <small opacity-80>*******</small>
+          <small opacity-80>************</small>
         </small>
         <small
           class="cursor-pointer transition-300 hover:text-[var(--el-color-primary)]"
@@ -109,8 +109,6 @@ const form = ref({
       </div>
       <!-- 邮箱 -->
       <div
-
-
         ml-1 mt-6 flex-row-bt-c
       >
         <small>

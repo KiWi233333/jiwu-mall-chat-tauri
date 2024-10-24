@@ -247,7 +247,7 @@ definePageMeta({
             <el-tooltip content="新对话" placement="top">
               <CardElImage
                 :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-                class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 border-default"
+                class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 shadow"
                 @click="handleNewChat"
               />
             </el-tooltip>

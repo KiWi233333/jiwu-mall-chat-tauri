@@ -287,6 +287,8 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
           // 删除会话
           if (u && u.roomId === p.roomId) {
             chat.contactList.splice(i, 1);// 删除会话
+            if (chat.theContact.roomId === u.roomId)
+              chat.setContact(chat.contactList?.[0]);
             break;
           }
         }

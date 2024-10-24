@@ -89,7 +89,6 @@ export const DownFileStatusIconMap: Record<FileStatus, string> = {
 };
 
 /**
- * https://segmentfault.com/a/1190000044342886
  * 下载文件
  * @param url 下载地址
  * @param fileName 下载后的文件名
@@ -150,6 +149,7 @@ callback?: (progress: number) => void) {
 
 /**
  * 下载文件 by streamSaver
+ * https://segmentfault.com/a/1190000044342886
  * @param url 下载地址
  * @param fileName 下载后的文件名
  * @param callback 下载进度回调函数

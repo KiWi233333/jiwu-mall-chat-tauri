@@ -252,10 +252,10 @@ async function openFileFolder() {
           <!-- 下载路径 -->
           <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
             下载
-            <div class="ml-a flex items-center" :title="setting.appDataDownloadDirUrl">
-              <small class="mr-4 max-w-50vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
-              <span class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-primary" @click="changeDownloadDir()">更改</span>
-              <span class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="openFileFolder()">打开目录</span>
+            <div class="ml-a flex items-center gap-3" :title="setting.appDataDownloadDirUrl">
+              <small class="mr-2 max-w-50vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
+              <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-warning" @click="changeDownloadDir()">更改</span>
+              <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="openFileFolder()">打开目录</span>
             </div>
           </div>
         </section>

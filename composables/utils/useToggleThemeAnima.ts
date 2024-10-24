@@ -12,8 +12,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   const colorMode = useColorMode();
   // @ts-expect-error
   const isAppearanceTransition = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  console.log(isAppearanceTransition);
-
   if (mode === "auto") {
     const hours = new Date().getHours();
     colorMode.preference = hours < 18 && hours > 6 ? "light" : "dark";
