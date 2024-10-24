@@ -3,6 +3,7 @@ const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
 const downloadUrl = ref();
+const latestVersion = ref<AppPlatformsJSON>();
 onMounted(async () => {
   const res = await getLatestVersion();
   if (res) {
@@ -14,6 +15,7 @@ onMounted(async () => {
       system = "darwin-aarch64";
     else if (ua.toLowerCase().includes("linux"))
       system = "linux-x86_64";
+    latestVersion.value = res;
     downloadUrl.value = res.platforms[system].url || "https://kiwi233.top/%E9%A1%B9%E7%9B%AE/%E6%9E%81%E7%89%A9%E8%81%8A%E5%A4%A9.html#%F0%9F%92%BB-%E4%B8%8B%E8%BD%BD";
   }
 });
@@ -37,15 +39,19 @@ onMounted(async () => {
     <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>
       <slot name="drag-content" />
     </div>
-    <div class="flex flex-shrink-0 items-center gap-4">
-      <a
-        v-if="setting.isWeb"
-        :href="downloadUrl"
-        class="block rounded-2rem py-1.5 pl-4 pr-6 text-xs btn-info-bg border-default card-default"
-      >
-        <i class="i-solar-download-minimalistic-broken mr-2 p-2" />
-        APP
-      </a>
+    <div class="relative z-1000 flex flex-shrink-0 items-center gap-4">
+      <el-tooltip :content="`v ${latestVersion?.version}`" placement="bottom">
+        <a
+          v-if="setting.isWeb"
+          :href="downloadUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block rounded-2rem py-1.5 pl-4 pr-6 text-xs btn-info-bg border-default card-default"
+        >
+          <i class="i-solar-download-minimalistic-broken mr-2 p-2" />
+          APP
+        </a>
+      </el-tooltip>
       <div class="flex items-center gap-3 rounded-2rem px-3 py-1 border-default card-default">
         <!-- 下载（部分端） -->
         <BtnDownload v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
