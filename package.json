@@ -28,7 +28,7 @@
     "@formkit/auto-animate": "0.8.2",
     "@iconify-json/carbon": "1.2.3",
     "@iconify-json/solar": "1.2.1",
-    "@iconify-json/tabler": "1.2.5",
+    "@iconify-json/tabler": "1.2.6",
     "@iconify/vue": "4.1.2",
     "@imengyu/vue3-context-menu": "1.4.3",
     "@nuxt/devtools": "1.6.0",
@@ -69,7 +69,7 @@
     "vue-tsc": "2.1.6"
   },
   "dependencies": {
-    "@nuxtjs/color-mode": "3.5.1",
+    "@nuxtjs/color-mode": "3.5.2",
     "@tauri-apps/plugin-autostart": "~2.0.0",
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2",
