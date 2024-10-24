@@ -56,8 +56,8 @@ const menuList = [
   {
     title: "设置",
     path: "/setting",
-    icon: "i-solar:settings-linear hover:animate-spin",
-    activeIcon: "i-solar:settings-bold-duotone hover:animate-spin",
+    icon: "i-solar:settings-linear hover:animate-spin block",
+    activeIcon: "i-solar:settings-bold-duotone hover:animate-spin block",
     class: "absolute bottom-3 diabled-bg",
     tipValue: computed(() => +setting.appUploader.isUpload),
     isDot: true,

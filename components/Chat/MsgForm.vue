@@ -492,7 +492,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
           <el-tag effect="dark" class="mr-2">
             回复
           </el-tag><ChatMsgContentCard class="w-4/5 truncate" :data="chat.replyMsg" />
-          <div class="i-solar:close-circle-bold h-6 w-6 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
+          <div class="i-solar:close-circle-bold ml-a h-6 w-6 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
         </div>
       </el-form-item>
     </div>
