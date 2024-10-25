@@ -1,6 +1,7 @@
 import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
+import { sendWebNotification } from "~/composables/utils/useWebToast";
 
 
 export async function useWsInit() {
@@ -37,12 +38,8 @@ export async function useWsInit() {
             if (chat.theContact.roomId === body.message.roomId)
               chat.setReadList(chat.theContact.roomId);
           }
-          else {
-            sendNotification({
-              icon: BaseUrlImg + body.fromUser.avatar,
-              title: body.fromUser.nickName,
-              body: `${body.message.content || "消息通知"}`,
-            });
+          else if (body.fromUser.userId !== user.userId) { // 非当前用户消息通知
+            notification(body);
           }
         }
       });
@@ -77,4 +74,23 @@ export function useWSUnmounted() {
 // 1、聊天模块
   const ws = useWs();
   ws?.close(false);
+}
+
+
+export function notification(msg: ChatMessageVO) {
+  const setting = useSettingStore();
+  // web 通知
+  if (setting.isWeb) {
+    sendWebNotification(msg.fromUser.nickName, `${msg.message.content || "消息通知"}`, {
+      icon: msg.fromUser.avatar ? BaseUrlImg + msg.fromUser.avatar : "/logo.png",
+    });
+    return;
+  }
+
+  // tauri 通知
+  sendNotification({
+    icon: BaseUrlImg + msg.fromUser.avatar,
+    title: msg.fromUser.nickName,
+    body: `${msg.message.content || "消息通知"}`,
+  });
 }
