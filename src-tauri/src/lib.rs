@@ -1,22 +1,10 @@
 // main.rs
-use tauri::{
-    AppHandle, Manager,
-};
+use crate::commands::{exist_file, mkdir_file, remove_file};
 use tauri_plugin_autostart::MacosLauncher;
-use crate::commands::{exist_file, remove_file, mkdir_file};
 
 mod commands;
 mod tray;
-
-fn show_window(app: &AppHandle) {
-    let windows = app.webview_windows();
-    windows
-        .values()
-        .next()
-        .expect("Sorry, no window found")
-        .set_focus()
-        .expect("Can't Bring Window to Focus");
-}
+mod window;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -27,7 +15,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
-            let _ = show_window(app);
+            let _ = window::show_window(app);
             println!("{:?}", args);
             println!("{:?}", cwd);
         }))
@@ -40,9 +28,14 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
             tray::setup_tray(app.handle())?;
+            window::setup_window(app.handle())?;
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![exist_file, remove_file, mkdir_file])
+        .invoke_handler(tauri::generate_handler![
+            exist_file,
+            remove_file,
+            mkdir_file
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
