@@ -6,7 +6,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { disable } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
-import type { Platform } from "@tauri-apps/plugin-os";
+import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
 
 // @unocss-include
@@ -30,6 +30,7 @@ export const useSettingStore = defineStore(
       ignoreVersion: [] as string[],
     });
     const appPlatform = ref<Platform | "web">("web");
+    const osType = ref<OsType | "web">("web");
     const isWeb = computed(() => appPlatform.value === "web");
     // 用户页折叠
     const isUserFold = ref(true);
@@ -360,6 +361,7 @@ export const useSettingStore = defineStore(
       appPlatform,
       appDataDownloadDirUrl,
       BaseDirCode,
+      osType,
       isWeb,
       // actions
       checkUpdates,

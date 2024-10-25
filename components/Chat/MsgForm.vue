@@ -419,6 +419,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
   <el-form
     ref="formRef"
     :model="form"
+    v-bind="$attrs"
     :disabled="isDisabled"
     class="w-full"
     style="position: relative;"

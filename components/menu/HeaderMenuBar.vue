@@ -4,7 +4,9 @@ const isTop = ref(false);
 const setting = useSettingStore();
 const downloadUrl = ref();
 const latestVersion = ref<AppPlatformsJSON>();
-onMounted(async () => {
+watch(() => setting.isWeb, async (isWeb) => {
+  if (!isWeb)
+    return;
   const res = await getLatestVersion();
   if (res) {
     const ua = navigator.userAgent;
@@ -18,7 +20,7 @@ onMounted(async () => {
     latestVersion.value = res;
     downloadUrl.value = res.platforms[system].url || "https://kiwi233.top/%E9%A1%B9%E7%9B%AE/%E6%9E%81%E7%89%A9%E8%81%8A%E5%A4%A9.html#%F0%9F%92%BB-%E4%B8%8B%E8%BD%BD";
   }
-});
+}, { immediate: true });
 // @unocss-include
 </script>
 
@@ -40,9 +42,8 @@ onMounted(async () => {
       <slot name="drag-content" />
     </div>
     <div class="relative z-1000 flex flex-shrink-0 items-center gap-4">
-      <el-tooltip :content="`v ${latestVersion?.version}`" placement="bottom">
+      <el-tooltip v-if="setting.isWeb" :content="`v ${latestVersion?.version}`" placement="bottom">
         <a
-          v-if="setting.isWeb"
           :href="downloadUrl"
           target="_blank"
           rel="noopener noreferrer"

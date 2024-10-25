@@ -2,7 +2,7 @@
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
-import { platform } from "@tauri-apps/plugin-os";
+import { type as osType, platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
 import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
 import type { PayloadType } from "../types/tauri";
@@ -21,6 +21,18 @@ export async function userTauriInit() {
   catch (error) {
     console.warn(error);
     setting.appPlatform = "web";
+    setting.osType = "web";
+  }
+  try {
+    const osTypeName = osType();
+    if (!osTypeName)
+      return;
+    setting.osType = osTypeName;
+  }
+  catch (error) {
+    console.warn(error);
+    setting.appPlatform = "web";
+    setting.osType = "web";
     return;
   }
   // 监听open_url事件
