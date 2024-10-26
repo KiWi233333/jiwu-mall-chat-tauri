@@ -9,7 +9,6 @@ node_modules
 dist
 .DS_Store
 
-# Electron
 electron-dist
 debug.log
 debug.log
