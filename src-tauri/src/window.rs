@@ -1,5 +1,5 @@
 // window.rs
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{utils::TitleBarStyle, AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     // {
