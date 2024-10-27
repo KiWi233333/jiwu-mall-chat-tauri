@@ -17,6 +17,7 @@ pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     //     "transparent": true
     //   }
     // 注册命令
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
     let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .title("极物聊天")
         .resizable(true)
