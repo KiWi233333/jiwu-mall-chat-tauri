@@ -23,32 +23,35 @@ pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         .center()
         .shadow(false)
         .decorations(false)
-        .transparent(true)
         .min_inner_size(375.0, 780.0)
         .max_inner_size(1920.0, 1080.0)
         .inner_size(1280.0, 860.0);
+    // 仅在 Windows 和 Linux 时设置透明背景
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    let win_builder = win_builder.transparent(true);
     // 仅在 macOS 时设置透明标题栏
-    // #[cfg(target_os = "macos")]
-    // let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
-    // // 仅在构建 macOS 时设置背景颜色
-    // #[cfg(target_os = "macos")]
-    // {
-    //     use cocoa::appkit::{NSColor, NSWindow};
-    //     use cocoa::base::{id, nil};
-
-    //     let ns_window = _window.ns_window().unwrap() as id;
-    //     unsafe {
-    //         let bg_color = NSColor::colorWithRed_green_blue_alpha_(
-    //             nil,
-    //             50.0 / 255.0,
-    //             158.0 / 255.0,
-    //             163.5 / 255.0,
-    //             1.0,
-    //         );
-    //         ns_window.setBackgroundColor_(bg_color);
-    //     }
-    // }
+    #[cfg(target_os = "macos")]
+    let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
     let _window = win_builder.build().unwrap();
+    
+    // 仅在构建 macOS 时设置背景颜色
+    #[cfg(target_os = "macos")]
+    {
+        use cocoa::appkit::{NSColor, NSWindow};
+        use cocoa::base::{id, nil};
+
+        let ns_window = _window.ns_window().unwrap() as id;
+        unsafe {
+            let bg_color = NSColor::colorWithRed_green_blue_alpha_(
+                nil,
+                50.0 / 255.0,
+                158.0 / 255.0,
+                163.5 / 255.0,
+                1.0,
+            );
+            ns_window.setBackgroundColor_(bg_color);
+        }
+    }
     Ok(())
 }
 
