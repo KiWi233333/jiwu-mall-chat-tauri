@@ -1,5 +1,5 @@
 // window.rs
-use tauri::{utils::TitleBarStyle, AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     // {
@@ -31,7 +31,8 @@ pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     let win_builder = win_builder.transparent(true);
     // 仅在 macOS 时设置透明标题栏
     #[cfg(target_os = "macos")]
-    let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
+    let win_builder = win_builder.title_bar_style(tauri::utils::TitleBarStyle::Transparent);
+    
     let _window = win_builder.build().unwrap();
     
     // 仅在构建 macOS 时设置背景颜色
