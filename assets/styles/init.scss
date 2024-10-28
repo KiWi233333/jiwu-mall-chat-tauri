@@ -10,6 +10,11 @@
   box-sizing: border-box;
   outline: none !important; // TODO:待定
 }
+.h-100dvh {
+  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+}
 
 a {
   text-decoration: none;

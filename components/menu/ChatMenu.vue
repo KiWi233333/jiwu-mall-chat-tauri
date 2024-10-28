@@ -25,7 +25,7 @@ onMounted(() => {
 });
 
 // @unocss-include
-const menuList = [
+const menuList: MenuItem[] = [
   {
     title: "聊天",
     path: "/",
@@ -63,6 +63,16 @@ const menuList = [
     isDot: true,
   },
 ];
+
+export interface MenuItem {
+  title: string
+  path: string
+  icon: string
+  activeIcon: string
+  tipValue?: any
+  isDot?: boolean
+  class?: string
+}
 </script>
 
 <template>

@@ -45,6 +45,7 @@ onMounted(() => {
   background-color: rgba(70, 70, 70, 0.3);
   backdrop-filter: blur(4px);
   width: 100vw;
+  height: 100vh;
   height: 100dvh;
   display: flex;
   justify-content: center;

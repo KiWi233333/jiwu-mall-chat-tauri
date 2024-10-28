@@ -32,9 +32,11 @@ const setting = useSettingStore();
           :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
         >
           <btn-el-button
-            icon-class="i-solar:arrow-left-outline mr-1"
+            icon-class="i-solar:map-arrow-left-linear mr-2"
             size="small"
-            class="absolute right-4 top-4 z-2 block sm:hidden"
+            type="info"
+            plain
+            class="absolute right-4 top-4 z-1000 block sm:hidden"
             @click="chat.showTheFriendPanel = false"
           >
             返回
@@ -43,7 +45,7 @@ const setting = useSettingStore();
           <ChatFriendMainType
             v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
             :data="chat.theFriendOpt"
-            class="mx-a h-full w-full flex-1 flex-shrink-0 bg-color"
+            class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 bg-color"
           />
           <div
             v-else
