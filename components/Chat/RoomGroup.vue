@@ -434,9 +434,13 @@ function exitGroup() {
           >
             <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
               <CardElImage
+                v-if="p.avatar"
                 :src="BaseUrlImg + p.avatar" fit="cover"
                 class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
               />
+              <small v-else class="h-2.4rem w-2.4rem rounded-1/2 text-center leading-2.4rem border-default">
+                <i class="i-solar-user-line-duotone p-2.5 op-80" />
+              </small>
               <span class="g-avatar" />
             </div>
             <small v-if="!isGrid" hidden truncate md:inline-block>{{ p.nickName || "未填写" }}</small>
@@ -527,7 +531,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

@@ -43,7 +43,7 @@ function onCopyMsg(msg?: string | null) {
     }"
   >
     <!-- 头像 -->
-    <CardElImage :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default" />
+    <CardElImage error-class="i-solar:user-broken" :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default" />
     <!-- 消息体 -->
     <div class="body">
       <p class="flex-res truncate">

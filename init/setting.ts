@@ -1,7 +1,5 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
-import { platform } from "@tauri-apps/plugin-os";
-import { StateFlags, restoreStateCurrent } from "@tauri-apps/plugin-window-state";
 
 
 export async function useSettingInit() {
@@ -72,10 +70,11 @@ export async function useSettingInit() {
   });
 
   // 7、页面加载完整后，滚动到底部
-  await nextTick();
   setTimeout(() => {
-    const chat = useChatStore();
-    chat.scrollBottom(false);
+    nextTick(() => {
+      const chat = useChatStore();
+      chat?.scrollBottom(false);
+    });
   }, 500);
 
   // 8、自动重启

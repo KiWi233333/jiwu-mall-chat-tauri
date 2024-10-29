@@ -119,7 +119,9 @@ onBeforeUnmount(() => {
       wrap-class="px-0  shadow-(sm inset) sm:px-2" view-class="msg-list pb-2rem"
     >
       <ChatMessageList
-        v-if="chat.theContact.roomId" ref="ChatMessageListRef" class="pt-2rem"
+        v-if="chat.theContact.roomId"
+        ref="ChatMessageListRef"
+        class="pt-2rem"
       />
       <div v-else class="h-full w-full flex items-center justify-center">
         开启聊天吧
