@@ -316,11 +316,11 @@ function exitGroup() {
               id: p.userId,
             })"
           >
-            <div relative h-3.2em w-3.2em>
+            <div relative h-3.2em w-3.2em flex-row-c-c>
               <CardElImage
                 v-if="p.avatar"
                 :src="BaseUrlImg + p.avatar" fit="cover"
-                class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+                class="h-2.6rem w-2.6rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
               />
               <small v-else class="h-2.4rem w-2.4rem rounded-1/2 text-center leading-2.4rem border-default">
                 <i class="i-solar-user-line-duotone p-2.5 op-80" />

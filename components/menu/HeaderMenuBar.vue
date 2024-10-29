@@ -30,11 +30,13 @@ watch(() => setting.isWeb, async (isWeb) => {
     class="group nav relative left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
   >
     <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
-      <CardElImage
-        src="/logo.png" class="h-1.8rem w-1.8rem" @click="() => {
-          setting.isOpenContact = !setting.isOpenContact
-        }"
-      />
+      <NuxtLink to="/">
+        <CardElImage
+          src="/logo.png" class="h-1.8rem w-1.8rem" @click="() => {
+            setting.isOpenContact = !setting.isOpenContact
+          }"
+        />
+      </NuxtLink>
       <strong hidden sm:block>极物圈</strong>
     </div>
     <!-- 拖拽区域 -->
@@ -67,7 +69,7 @@ watch(() => setting.isWeb, async (isWeb) => {
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">

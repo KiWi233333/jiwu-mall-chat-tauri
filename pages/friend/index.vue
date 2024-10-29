@@ -31,16 +31,10 @@ const setting = useSettingStore();
           class="z-1 h-full flex-1 flex-shrink-0 flex-col sm:w-3/4 card-default"
           :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
         >
-          <btn-el-button
-            icon-class="i-solar:map-arrow-left-linear mr-2"
-            size="small"
-            type="info"
-            plain
-            class="absolute right-4 top-4 z-1000 block sm:hidden"
-            @click="chat.showTheFriendPanel = false"
-          >
-            返回
-          </btn-el-button>
+          <div
+            class="i-carbon:close absolute right-4 top-4 z-1000 block p-3 sm:hidden btn-danger"
+            title="关闭" @click="chat.showTheFriendPanel = false"
+          />
           <!-- 面板 -->
           <ChatFriendMainType
             v-if="chat.theFriendOpt.type !== FriendOptType.Empty"

@@ -3,5 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },
-  "scm.experimental.showHistoryGraph": false
+  "scm.experimental.showHistoryGraph": false,
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

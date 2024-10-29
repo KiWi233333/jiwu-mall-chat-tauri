@@ -34,7 +34,7 @@ const colorMode = useColorMode();
       </small>
       <!-- 内容 -->
       <template v-if="data.fromUser.userId === user.userInfo.id">
-        <p class="msg-popper mt-2">
+        <p class="msg-popper mt-2 text-0.8rem">
           {{ data.message?.content }}
         </p>
       </template>
@@ -47,8 +47,8 @@ const colorMode = useColorMode();
         preview-theme="smart-blue"
         code-theme="a11y"
         :code-foldable="false"
-        class="msg-popper markdown mt-2 text-1em sm:max-w-40rem"
-        :model-value="data.message.content || ''"
+        class="msg-popper markdown mt-2 sm:max-w-40rem"
+        :model-value="data.message?.content || ''"
       />
     </div>
   </div>
