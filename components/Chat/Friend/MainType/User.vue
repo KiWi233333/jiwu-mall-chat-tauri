@@ -70,9 +70,9 @@ const userId = computed(() => {
 });
 
 // 执行最后一次
-watchDebounced(userId, (val: string) => {
+watch(userId, (val: string) => {
   loadData(val);
-}, { immediate: true, debounce: 300 });
+}, { immediate: true });
 
 // 去发消息
 async function toSend(uid: string) {
