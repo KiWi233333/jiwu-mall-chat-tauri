@@ -2,6 +2,7 @@
 import { useHotkeyInit, useSettingInit, useSettingUnmounted } from "./setting";
 import { useAuthInit, userTauriInit } from "./init";
 import { useWSUnmounted, useWsInit } from "./ws";
+import { useIframeInit } from "./iframe";
 
 
 export async function useInit() {
@@ -11,6 +12,8 @@ export async function useInit() {
   userTauriInit();
   // 设置配置
   useSettingInit();
+  // iframe通信
+  useIframeInit();
   // 会话
   useWsInit();
   // 初始化快捷键

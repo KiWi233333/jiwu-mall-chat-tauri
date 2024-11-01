@@ -38,6 +38,7 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   const x = event.clientX;
   const y = event.clientY;
   const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  // @ts-expect-error
   const transition = document.startViewTransition(() => {
     colorMode.preference = mode;
   });
