@@ -93,7 +93,7 @@ onMounted(() => {
                 :src="p.mimeType ? FILE_TYPE_ICON_MAP[p.mimeType] : FILE_TYPE_ICON_DEFAULT"
                 class="h-6 w-6 object-contain"
               >
-              <div class="flex flex-1 flex-col justify-between gap-1 px-1">
+              <div class="flex flex-1 flex-col justify-between gap-1 truncate px-1">
                 <p class="truncate text-sm">
                   {{ p.fileName }}
                 </p>
