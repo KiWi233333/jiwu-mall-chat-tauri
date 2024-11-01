@@ -54,9 +54,7 @@ onMounted(async () => {
     v-if="showMin"
     text size="small" style="font-size: 1.4rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('min')"
   >
-    <i
-      i-carbon:subtract btn-primary title="最小化"
-    />
+    <i class="i-carbon:subtract btn-primary" title="最小化" />
   </ElButton>
   <ElButton
     v-if="showMax" text
