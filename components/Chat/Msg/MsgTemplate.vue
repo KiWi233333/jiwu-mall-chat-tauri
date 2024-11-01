@@ -4,17 +4,17 @@ import { dayjs } from "element-plus";
 /**
  * 文本消息
  */
-const props = defineProps<{
+const { data } = defineProps<{
   data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO>
   lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
+defineEmits(["clickAvatar"]);
 
-const { data } = toRefs(props);
 const chat = useChatStore();
 const user = useUserStore();
 // 具体
-const body: Partial<TextBodyMsgVO> | undefined = props.data.message?.body || {};
+const body: Partial<TextBodyMsgVO> | undefined = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undefined);
 
 // @人
 const getAtText = computed(() => {
@@ -43,7 +43,11 @@ function onCopyMsg(msg?: string | null) {
     }"
   >
     <!-- 头像 -->
-    <CardElImage error-class="i-solar:user-broken" :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default" />
+    <CardElImage
+      error-class="i-solar:user-broken"
+      :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 cursor-pointer rounded-1/2 object-cover border-default"
+      @click="$emit('clickAvatar', data.fromUser.userId)"
+    />
     <!-- 消息体 -->
     <div class="body">
       <p class="flex-res truncate">

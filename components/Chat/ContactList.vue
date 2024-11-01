@@ -220,7 +220,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
       {
         customClass: "group",
         icon: "i-solar:user-outline group-btn-info group-hover:i-solar:user-bold-duotone",
-        label: "联系人",
+        label: "联系TA",
         onClick: () => {
           chat.setTheFriendOpt(FriendOptType.Empty);
           navigateTo("/friend");

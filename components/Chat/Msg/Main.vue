@@ -156,7 +156,7 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
         },
       },
       {
-        label: "联系人",
+        label: "联系TA",
         icon: "i-solar:user-broken group-btn-primary",
         customClass: "group",
         hidden: isSelf,
@@ -242,6 +242,17 @@ function formatDate(date: Date) {
     return `${year}年${month}月${day}日 ${hours}:${minutes}`;
 }
 const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
+
+function onClickAvatar() {
+  if (!data.fromUser.userId)
+    return;
+  chat.setTheFriendOpt(FriendOptType.User, {
+    id: data.fromUser.userId,
+  });
+  nextTick(() => {
+    navigateTo("/friend");
+  });
+}
 </script>
 
 <template>
@@ -256,6 +267,7 @@ const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?
     :index="index"
     :data="data"
     v-bind="$attrs"
+    @click-avatar="onClickAvatar"
     @contextmenu="onContextMenu($event, data)"
   />
 </template>
