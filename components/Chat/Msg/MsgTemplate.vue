@@ -14,15 +14,15 @@ defineEmits(["clickAvatar"]);
 const chat = useChatStore();
 const user = useUserStore();
 // 具体
-const body: Partial<TextBodyMsgVO> | undefined = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undefined);
+const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undefined);
 
 // @人
-const getAtText = computed(() => {
-  if (body?.atUidList && body?.atUidList.length > 0)
-    return chat.onOfflineList.filter(item => body?.atUidList?.includes(item.userId)).map(item => `@${item.nickName}`).join("、");
-  else
-    return "";
-});
+// const getAtText = computed(() => {
+//   if (body?.atUidList && body?.atUidList.length > 0)
+//     return chat.onOfflineList.filter(item => body?.atUidList?.includes(item.userId)).map(item => `@${item.nickName}`).join("、");
+//   else
+//     return "";
+// });
 
 function onCopyMsg(msg?: string | null) {
   if (!msg)
@@ -70,14 +70,14 @@ function onCopyMsg(msg?: string | null) {
       </slot>
       <!-- AT @ -->
       <small
-        v-if="body?.atUidList && body?.atUidList.length && getAtText"
-        :title="getAtText" class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 op-70 border-default card-default"
+        v-if="body?.atUidList?.length && body?.atUidList.includes(user?.userInfo?.id)"
+        class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default"
       >
-        {{ getAtText }}
+        有人@我
       </small>
       <!-- 回复 -->
       <small v-if="body?.reply" title="点击跳转" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
-        回复：{{ `${body.reply.nickName}:${body.reply?.body || ''}` }}
+        {{ `${body.reply.nickName} : ${body.reply?.body || ''}` }}
       </small>
     </div>
   </div>
