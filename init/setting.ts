@@ -40,7 +40,7 @@ export async function useSettingInit() {
     document.documentElement.style.setProperty("--font-family", font);
 
   // 5、流畅模式
-  if (setting.settingPage.isColseAllTransition)
+  if (setting.settingPage.isCloseAllTransition)
     document.documentElement.classList.add("stop-transition-all");
   else
     document.documentElement.classList.remove("stop-transition-all");
@@ -91,6 +91,7 @@ export async function useSettingInit() {
       await enableAutoStart();
     else
       await disableAutoStart();
+    console.log(await isAutoStartEnabled());
   });
 }
 

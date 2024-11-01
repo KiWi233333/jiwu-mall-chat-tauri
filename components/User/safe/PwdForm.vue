@@ -8,7 +8,7 @@ const [formAnimateRef, enter] = useAutoAnimate({
 
 const setting = useSettingStore();
 onMounted(() => {
-  enter(!setting.settingPage.isColseAllTransition);
+  enter(!setting.settingPage.isCloseAllTransition);
 });
 enum CheckTypeEnum {
   PHONE = DeviceType.PHONE,
@@ -193,7 +193,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
     <h3 mb-4 mt-2 text-center tracking-0.2em>
       密码修改
     </h3>
-    <transition-group :name="setting.settingPage.isColseAllTransition ? '' : 'group-list'" mode="ease-in-out" class="relative">
+    <transition-group :name="setting.settingPage.isCloseAllTransition ? '' : 'group-list'" mode="ease-in-out" class="relative">
       <!-- 二步验证 -->
       <el-form-item v-if="isSecondCheck" type="password" :label="`${chooseType === CheckTypeEnum.PHONE ? '手机号' : '邮箱'}`" prop="password" class="animated">
         <el-input

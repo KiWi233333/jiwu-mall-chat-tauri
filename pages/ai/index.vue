@@ -210,7 +210,7 @@ onMounted(() => {
   });
   // 切换页面时关闭动画
   const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 definePageMeta({
   key: route => route.fullPath,

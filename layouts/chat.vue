@@ -14,7 +14,7 @@ const ws = useWs();
       <MenuHeaderMenuBar>
         <template #drag-content>
           <div
-            v-if="ws.status !== WsStatusEnum.OPEN || (!user.isLogin && !user.getToken)"
+            v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin"
             class="group relative h-2/3 flex-row-c-c overflow-hidden rounded-8 px-2 text-center border-default card-default-br sm:px-4"
             w-10em animate-zoom-in-down shadow-md shadow-inset
           >

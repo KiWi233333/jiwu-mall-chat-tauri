@@ -40,7 +40,7 @@ watchDebounced(() => chat.delUserId, (val) => {
 const setting = useSettingStore();
 loadData();
 onMounted(() => {
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 </script>
 

@@ -181,12 +181,13 @@ async function onUpload(file: OssFile) {
 // 封装上传处理
 function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
   const observable = uploadOssFileSe(dist, key, token);
-  const theFile = fileList.value.find(p => p.key === key) || file;
   const subscribe = observable.subscribe({
     next(res) {
-      theFile.percent = +res.total.percent.toFixed(2);
+      const current = fileList.value.find(p => p.key === key) || file;
+      current.percent = +(res.total.percent?.toFixed?.(2) || 0);
     },
     error(e) {
+      const theFile = fileList.value.find(p => p.key === key) || file;
       theFile.status = "warning";
       const err = e as any;
       if (err?.code) {
@@ -194,16 +195,16 @@ function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
         emit("errorMsg", error.value);
       }
       else {
-        theFile.status = "success";
+        theFile.status = "exception";
         ElMessage.error("上传失败，稍后再试！");
       }
     },
     complete() {
-      const the = fileList.value.find(p => p.key === key) || file;
-      the.status = "success";
-      the.percent = 100;
+      const current = fileList.value.find(p => p.key === key) || file;
+      current.status = "success";
+      current.percent = 100;
       emit("update:modelValue", fileList.value);
-      emit("submit", theFile.key!, pathList.value, fileList.value);
+      emit("submit", current.key!, pathList.value, fileList.value);
     },
   });
   file.subscribe = subscribe;
@@ -215,6 +216,12 @@ async function removeItem(t: OssFile) {
     return;
   let flag = false;
   if (t.key) {
+    // 上传中
+    const file = fileList.value.find(item => item.key === t.key);
+    if (file && file.status !== "success") {
+      file.status = "warning";
+      file.subscribe?.unsubscribe();
+    }
     const res = await deleteOssFile(t.key, user.getToken);
     if (res.code === StatusCode.SUCCESS) {
       fileList.value.splice(
@@ -288,7 +295,7 @@ const [autoAnimateRef, enable] = useAutoAnimate({
 });
 onMounted(() => {
   const setting = useSettingStore();
-  enable(isAnimate && !setting.settingPage.isColseAllTransition);
+  enable(isAnimate && !setting.settingPage.isCloseAllTransition);
 });
 </script>
 
@@ -344,7 +351,7 @@ onMounted(() => {
             striped-flow
             type="circle"
             :percentage="p?.percent"
-            :status="p.status"
+            :status="p.status || ''"
           />
           <!-- 编辑 -->
           <div
@@ -385,15 +392,15 @@ onMounted(() => {
         <div class="absolute left-0 top-0 z-1 h-1/4 w-full flex-row-c-c">
           <!-- 加载中 -->
           <el-progress
-            v-if="p?.percent && p?.percent < 100"
+            v-if="p.percent < 100"
             style="width: 100%; height: 100%; padding: 16%"
             color="var(--el-color-primary)"
             class="backdrop-blur-12px"
             striped
             striped-flow
             type="circle"
-            :percentage="p?.percent"
-            :status="p?.status"
+            :percentage="p.percent"
+            :status="p.status"
           />
           <div
             v-if="!p?.percent && p?.percent < 100"

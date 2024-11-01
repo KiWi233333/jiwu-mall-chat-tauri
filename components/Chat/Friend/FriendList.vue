@@ -41,7 +41,7 @@ async function reloadData() {
   await loadData();
   setTimeout(() => {
     nextTick(() => {
-      enable(!setting.settingPage.isColseAllTransition);
+      enable(!setting.settingPage.isCloseAllTransition);
     });
   }, 40);
 }

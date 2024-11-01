@@ -3,11 +3,12 @@ import type { Update } from "@tauri-apps/plugin-updater";
 import { check } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { disable } from "@tauri-apps/plugin-autostart";
+import { disable as disableAutostart } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
 import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -55,7 +56,7 @@ export const useSettingStore = defineStore(
         ],
       },
       isAutoStart: false, // 开机自启
-      isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
+      isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
     });
     const contactBtnPosition = ref({
@@ -120,7 +121,8 @@ export const useSettingStore = defineStore(
     async function openFileByDefaultApp(item: FileItem) {
       if (!item.mimeType)
         return;
-
+      if (item.status === FileStatus.DOWNLOADING)
+        return;
       // 是否存在
       const isExists = await existsFile(item.localPath);
       if (!item.localPath || !isExists) {
@@ -138,6 +140,32 @@ export const useSettingStore = defineStore(
       }
     }
 
+    // 确认下载文件
+    async function checkDownloadPath() {
+      if (!appDataDownloadDirUrl.value) {
+        await changeDownloadDir();
+        return;
+      }
+      if (!await existsFile(appDataDownloadDirUrl.value))
+        await mkdirFile(appDataDownloadDirUrl.value);
+    }
+
+    // 切换下载目录
+    async function changeDownloadDir() {
+      const path = await openDialog({
+        multiple: false,
+        directory: true,
+      });
+      if (!path)
+        return;
+      if (!await existsFile(path)) {
+        ElMessage.error("选择路径不存在，请重新选择！");
+        return;
+      }
+      appDataDownloadDirUrl.value = path;
+      ElMessage.success("下载路径已更改！");
+    }
+
     // 打开文件所在文件夹
     async function openFileFolder(item: FileItem) {
       if (!item.localPath) {
@@ -152,7 +180,7 @@ export const useSettingStore = defineStore(
           ElMessage.error("文件夹不存在！");
           return;
         }
-        open(folderPath);
+        await open(folderPath);
       }
       catch (error) {
         console.warn(error);
@@ -181,7 +209,7 @@ export const useSettingStore = defineStore(
         // 检查是否忽略当前版本
         if (checkLog && appUploader.value.ignoreVersion.includes(update.version))
           return false;
-        ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.version}`, {
+        await ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.version}`, {
           confirmButtonText: "确定",
           cancelButtonText: "忽略此版本",
           center: true,
@@ -271,8 +299,7 @@ export const useSettingStore = defineStore(
               value: font.family,
             };
           });
-          const arr = [...settingPage.value.fontFamily.list, ...Object.values(fontsMap)];
-          settingPage.value.fontFamily.list = arr;
+          settingPage.value.fontFamily.list = [...settingPage.value.fontFamily.list, ...Object.values(fontsMap)];
         }
         catch (err) {
           console.error(err);
@@ -283,7 +310,7 @@ export const useSettingStore = defineStore(
     async function reset() {
       settingPage.value.fontFamily.value = "Alimama";
       settingPage.value.modeToggle.value = "auto";
-      settingPage.value.isColseAllTransition = false;
+      settingPage.value.isCloseAllTransition = false;
       settingPage.value.isEscMin = true;
       isChatFold.value = false;
       isOpenContact.value = true;
@@ -328,15 +355,18 @@ export const useSettingStore = defineStore(
           ],
         },
         isAutoStart: false, // 开机自启
-        isColseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
+        isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: true, // esc
       };
-
-      disable(); // 关闭自启动
       loadSystemFonts();
-
-      if (!isWeb.value)
+      if (!isWeb.value) {
         appDataDownloadDirUrl.value = `${await appDataDir()}\\downloads`;
+        if (appDataDownloadDirUrl.value && !await existsFile(appDataDownloadDirUrl.value))
+          await mkdirFile(appDataDownloadDirUrl.value);
+      }
+      else {
+        disableAutostart();
+      }
     }
     return {
       isMobile,
@@ -371,6 +401,8 @@ export const useSettingStore = defineStore(
       openFileByDefaultApp,
       deleteDownloadFile,
       openFileFolder,
+      changeDownloadDir,
+      checkDownloadPath,
       // getter
     };
   },

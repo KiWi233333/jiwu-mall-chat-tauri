@@ -8,7 +8,7 @@ const [autoAnimateRef, enable] = useAutoAnimate({
 });
 onMounted(() => {
   const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 const user = useUserStore();
 const isLoading = ref<boolean>(false);

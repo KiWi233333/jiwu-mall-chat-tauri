@@ -466,13 +466,13 @@ const { fileList: fileDropList } = await useLinterFileDrop();
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
           <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
-          <div class="ml-2 max-w-20vw min-w-8rem">
+          <div class="mx-2 max-w-16vw min-w-8rem">
             <p class="truncate text-sm">
               {{ file?.file?.name || file.key }}
             </p>
             <el-progress
               striped
-              striped-flow
+              :striped-flow="file.status !== 'success'"
               :duration="10"
               class="mt-2"
               :percentage="file.percent" :stroke-width="4" :status="file?.status as any || 'active'"

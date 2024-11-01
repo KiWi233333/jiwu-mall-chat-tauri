@@ -17,7 +17,7 @@ const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
   const setting = useSettingStore();
   user.showLoginForm = true;
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 </script>
 

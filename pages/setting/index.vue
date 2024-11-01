@@ -3,9 +3,8 @@ import { getVersion } from "@tauri-apps/api/app";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { open as openFile } from "@tauri-apps/plugin-shell";
-import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
-import { appKeywords } from "@/constants/index";
+import { appKeywords } from "~/constants";
 
 const isLoading = ref(false);
 const user = useUserStore();
@@ -96,21 +95,6 @@ function showVersionNotice(version: string) {
   });
 }
 
-// 更改下载文件夹路径
-async function changeDownloadDir() {
-  const path = await openDialog({
-    multiple: false,
-    directory: true,
-  });
-  if (!path)
-    return;
-  if (!await existsFile(path)) {
-    ElMessage.error("目标路径不存在！");
-    return;
-  }
-  setting.appDataDownloadDirUrl = path;
-  ElMessage.success("下载路径已更改！");
-}
 
 // 打开下载文件夹
 async function openFileFolder() {
@@ -171,11 +155,11 @@ async function openFileFolder() {
           <div class="group h-8 flex-row-bt-c">
             流畅模式
             <el-tooltip
-              :content="!setting.settingPage.isColseAllTransition ? '开启动画' : '关闭动画'" placement="left"
+              :content="!setting.settingPage.isCloseAllTransition ? '开启动画' : '关闭动画'" placement="left"
               popper-style="padding: 0 0.5em;"
             >
               <el-switch
-                v-model="setting.settingPage.isColseAllTransition" size="large" active-text="开启"
+                v-model="setting.settingPage.isCloseAllTransition" size="large" active-text="开启"
                 inactive-text="关闭" inline-prompt @change="isColseChange"
               />
             </el-tooltip>
@@ -254,7 +238,7 @@ async function openFileFolder() {
             下载
             <div class="ml-a flex items-center gap-3" :title="setting.appDataDownloadDirUrl">
               <small class="mr-2 max-w-50vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
-              <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-warning" @click="changeDownloadDir()">更改</span>
+              <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-warning" @click="setting.changeDownloadDir()">更改</span>
               <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="openFileFolder()">打开目录</span>
             </div>
           </div>

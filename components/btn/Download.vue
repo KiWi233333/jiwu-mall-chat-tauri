@@ -33,7 +33,7 @@ const FileStatusClassMap: Record<FileStatus, string> = {
   [FileStatus.DOWNLOADED]: "",
 };
 onMounted(() => {
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
   setting.fileDownloadList.filter(p => p.status === FileStatus.DOWNLOADING).forEach(async (p) => {
     const isExist = await existsFile(p.localPath);
     if (!isExist)
@@ -60,7 +60,7 @@ onMounted(() => {
         <div class="flex items-center gap-2 p-2 pt-0">
           <i class="i-solar-download-minimalistic-broken p-0.6em" />
           <span>下载</span>
-          <nuxt-link to="/setting#download" class="i-solar:settings-linear ml-a p-0.6em btn-primary" />
+          <nuxt-link to="/setting#download" title="设置下载路径" class="i-solar:settings-linear ml-a p-0.6em btn-primary" />
           <!-- 搜索框 -->
           <el-input
             ref="inputRef"
@@ -84,7 +84,7 @@ onMounted(() => {
             <div
               v-for="p in filterList"
               :key="p.downloadTime"
-              :title="`${p.fileName} 打开文件`"
+              :title="`“${p.fileName} “ 打开文件`"
               class="group mb-2 w-full flex cursor-pointer gap-2 rounded bg-white px-3 py-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:shadow"
               :class="FileStatusClassMap[p.status]"
               @click="setting.openFileByDefaultApp(p)"

@@ -15,7 +15,7 @@ onMounted(async () => {
   const setting = useSettingStore();
   enable(false);
   await loadData();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 // 加载数据
 async function loadData() {

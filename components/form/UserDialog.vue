@@ -8,7 +8,7 @@ function exitForm() {
 const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
   const setting = useSettingStore();
-  enable(!setting.settingPage.isColseAllTransition);
+  enable(!setting.settingPage.isCloseAllTransition);
 });
 </script>
 

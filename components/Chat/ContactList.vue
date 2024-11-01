@@ -119,7 +119,7 @@ async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolea
         theContactId.value = list?.[0]?.roomId;
     }
     await onChangeRoom(theContactId.value);
-    enable(!setting.settingPage.isColseAllTransition);
+    enable(!setting.settingPage.isCloseAllTransition);
   }
   else { // 刷新某一房间
     if (roomId)
