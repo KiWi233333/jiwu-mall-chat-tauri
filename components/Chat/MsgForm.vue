@@ -134,8 +134,8 @@ async function startChating(e: KeyboardEvent) {
   }
 }
 
-const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status !== "success")?.length);
-const isUploadFile = computed(() => form.value.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status !== "success")?.length);
+const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
+const isUploadFile = computed(() => form.value.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
 /**
  * 粘贴上传
  * @param e 事件对象
@@ -442,16 +442,24 @@ const { fileList: fileDropList } = await useLinterFileDrop();
         class="w-full cursor-pointer"
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
       >
-        <div v-for="(img, i) in imgList" :key="i" class="flex-row-c-c p-2 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg">
+        <div
+          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg"
+          @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
+        >
           <CardElImage
             preview-teleported
             loading="lazy"
             :preview-src-list="[img.id || BaseUrlImg + img.key]"
             :src="img.id || BaseUrlImg + img.key"
-            class="max-h-16rem max-w-9rem rounded"
+            class="max-h-19.2rem max-w-10.8rem rounded"
             title="左键放大 | 右键删除"
-            @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
           />
+          <div
+            v-if="img.status !== 'success'"
+            class="absolute right-0 top-0 h-full w-full flex-row-c-c p-4 backdrop-blur-4px"
+          >
+            {{ img.status === '' ? '上传中...' : '上传失败' }}
+          </div>
         </div>
       </el-form-item>
       <!-- 文件 -->
@@ -609,7 +617,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
           :options="userOpenOptions"
           :prefix="['@']"
           popper-class="at-select"
-          :check-is-whole="(pattern, value) => checkAtUserWhole(form.content, pattern, value)"
+          :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(form.content, pattern, value)"
           :rows="6"
           :maxlength="500"
           :autosize="false"
