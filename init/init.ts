@@ -70,6 +70,7 @@ export async function userTauriInit() {
   catch (error) { // web端兼容
     console.warn(error);
   }
+
   watch(() => [
     setting.isMobile,
   ], () => {

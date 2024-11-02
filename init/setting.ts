@@ -3,7 +3,6 @@ import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as is
 
 
 export async function useSettingInit() {
-  const timer = ref<any>(null);
   const setting = useSettingStore();
   // 1、主题切换
   setting.isThemeChangeLoad = true;
@@ -52,21 +51,21 @@ export async function useSettingInit() {
     setting.isThemeChangeLoad = false;
   }, 1000);
 
+  let timer: NodeJS.Timeout | null = null;
   // 6、优化动画性能
   window.addEventListener("resize", () => {
-    if (timer.value)
-      clearTimeout(timer.value); // 清除之前的定时器，避免重复触发
+    if (timer)
+      clearTimeout(timer); // 清除之前的定时器，避免重复触发
     const app = document.documentElement;
     if (app)
       app.classList.add("stop-transition");
-    timer.value = setTimeout(() => {
+
+    timer = setTimeout(() => {
       if (app)
         app.classList.remove("stop-transition");
-      timer.value = null;
-      // 页面大小
-      const setting = useSettingStore();
       setting.isMobile = window.innerWidth < 640;
-    }, 300);
+      timer = null;
+    }, 200);
   });
 
   // 7、页面加载完整后，滚动到底部

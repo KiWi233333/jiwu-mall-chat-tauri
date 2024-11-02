@@ -4,6 +4,7 @@ import { WsStatusEnum } from "~/composables/types/WsType";
 
 const user = useUserStore();
 const ws = useWs();
+const setting = useSettingStore();
 </script>
 
 <template>
@@ -52,11 +53,11 @@ const ws = useWs();
         class="main-box relative"
         v-bind="$attrs"
       >
-        <MenuChatMenu class="!hidden sm:!block" />
+        <MenuChatMenu v-if="!setting.isMobile" class="hidden sm:block" />
         <slot />
       </div>
     </div>
-    <LazyMenuBottomMenu class="block sm:hidden" />
+    <LazyMenuBottomMenu v-if="setting.isMobile" class="block sm:hidden" />
   </main>
 </template>
 
