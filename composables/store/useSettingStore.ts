@@ -207,7 +207,7 @@ export const useSettingStore = defineStore(
           return false;
         }
         // 检查是否忽略当前版本
-        if (checkLog && appUploader.value.ignoreVersion.includes(update.version))
+        if (!checkLog && appUploader.value.ignoreVersion.includes(update.version))
           return false;
         await ElMessageBox.confirm("检测到新版本，是否更新？", `版本 ${update.version}`, {
           confirmButtonText: "确定",
