@@ -163,12 +163,13 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     // 1）更新会话列表
     updateContact(p.message.roomId,
       {
-        text: `${p.fromUser.nickName}：${body}`,
+        // text: `${p.fromUser.nickName}：${body}`,
       }, false, (contact) => {
         if (contact.roomId !== chat.theContact.roomId) {
         // 添加未读数量
           contact.unreadCount += 1;
         }
+        contact.text = contact.type === RoomType.GROUP ? `${p.fromUser.nickName}: ${body}` : body;
         contact.activeTime = Date.now();
       });
     // 2）更新消息列表
