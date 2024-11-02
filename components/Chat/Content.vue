@@ -10,8 +10,9 @@ const timer = ref<any>(0);
  * 滚动到指定消息
  * @Param msgId 消息id
  * @Param gapCount 偏移消息量（用于翻页）
+ * @Param isAnimated 是否动画滚动
  */
-function scrollReplyMsg(msgId: number, gapCount: number = 0) {
+function scrollReplyMsg(msgId: number, gapCount: number = 0, isAnimated: boolean = true) {
   if (!msgId)
     return;
   const offset = -10;
@@ -20,49 +21,51 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0) {
   // || !ChatMessageListRef.value?.findMsg(msgId)
   if (!el) {
     timer.value = setTimeout(() => {
-      if (!chat.isChatScroll)
-        scrollbarRef?.value?.setScrollTop(0);
-
-      scrollReplyMsg(msgId, gapCount);
+      const el = document.querySelector(`#chat-msg-${msgId}`) as HTMLElement;
       if (el) {
         timer.value && clearTimeout(timer.value);
         timer.value = null;
+        scrollReplyMsg(msgId, gapCount); // 递归翻页
       }
-    }, 500);
-    return;
+      else {
+        scrollbarRef.value?.wrapRef?.scrollTo({ // 缓动
+          top: 0,
+          behavior: "smooth",
+        });
+        scrollReplyMsg(msgId, gapCount);
+        // // 是否缓动
+        // isAnimated
+        //   ?
+        //   : scrollbarRef?.value?.setScrollTop(0);// 静态
+      }
+    }, 120);
   }
   else {
     clearTimeout(timer.value);
     timer.value = null;
+    // 找到对应消息
+    nextTick(() => {
+      if (!el)
+        return;
+      clearTimeout(timer.value);
+      // 是否缓动
+      isAnimated
+        ? scrollbarRef.value?.wrapRef?.scrollTo({ // 缓动
+          top: (el?.offsetTop || 0) + offset,
+          behavior: "smooth",
+        })
+        : scrollbarRef?.value?.setScrollTop((el?.offsetTop || 0) + offset);// 静态
+      el.classList.add("reply-shaing");
+      timer.value = setTimeout(() => {
+        el.classList.remove("reply-shaing");
+        timer.value = null;
+      }, 2000);
+    });
   }
-  // 找到对应消息
-  nextTick(() => {
-    if (chat.isChatScroll || !el)
-      return;
-    clearTimeout(timer.value);
-    if (!chat.isChatScroll) {
-      scrollbarRef.value?.wrapRef?.scrollTo({
-        top: (el?.offsetTop || 0) + offset,
-        behavior: "smooth",
-      });
-    }
-    else {
-      scrollbarRef.value?.setScrollTop((el?.offsetTop || 0) + offset);
-    }
-
-    el.classList.add("reply-shaing");
-    timer.value = setTimeout(() => {
-      el.classList.remove("reply-shaing");
-      timer.value = null;
-    }, 1500);
-  });
 }
 
 // 滚动到底部
 function scrollBottom(animate = true) {
-  if (chat.isChatScroll)
-    return;
-  chat.isChatScroll = true;
   if (animate) {
     scrollbarRef.value?.wrapRef?.scrollTo({
       top: scrollbarRef?.value?.wrapRef?.scrollHeight || 0,
@@ -72,7 +75,6 @@ function scrollBottom(animate = true) {
   else {
     scrollbarRef.value?.setScrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight || 0);
   }
-  chat.isChatScroll = false;
 }
 
 // 保存上一个位置
@@ -80,11 +82,9 @@ function saveScrollTop() {
   chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight;
 }
 async function scrollTop(size: number) {
-  chat.isChatScroll = true;
   await scrollbarRef.value?.scrollTo({
     top: size || 0,
   });
-  chat.isChatScroll = false;
 }
 // 绑定事件
 chat.scrollBottom = scrollBottom;

@@ -3,6 +3,7 @@ import type { Result } from "@/types/result";
 
 /**
  * 获取会话列表（游标）
+ * @param dto 条件
  * @param pageSize 大小
  * @param cursor 游标
  * @param token token

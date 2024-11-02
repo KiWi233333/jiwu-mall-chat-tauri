@@ -59,13 +59,14 @@ async function loadData(call?: (data?: Message[]) => void) {
 const theRequest = ref<Promise<any> | null>(null);
 // 重新加载
 function reload(roomId: number) {
+  // 重置滚动位置
+  chat.scrollTopSize = 0;
   pageInfo.value = {
     cursor: null as null | string,
     isLast: false,
     size: 20,
   };
   chat.theContact.msgList.splice(0);
-  chat.scrollTopSize = 0;
   isReload.value = true;
   isLoading.value = true;
   theRequest.value = getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
@@ -78,8 +79,7 @@ function reload(roomId: number) {
     pageInfo.value.isLast = data.isLast;
     pageInfo.value.cursor = data.cursor;
     nextTick(() => {
-      setTimeout(() => {
-      // 更新滚动位置
+      setTimeout(() => { // 滚动到底部
         chat.saveScrollTop && chat.saveScrollTop();
         chat.scrollBottom(false);
         isLoading.value = false;

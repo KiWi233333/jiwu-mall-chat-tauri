@@ -64,7 +64,12 @@ function onCopyMsg(msg?: string | null) {
         有人@我
       </small>
       <!-- 回复 -->
-      <small v-if="body?.reply" title="点击跳转" class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default" @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount)">
+      <small
+        v-if="body?.reply"
+        title="点击跳转"
+        class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default"
+        @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
+      >
         {{ `${body.reply.nickName} : ${body.reply?.body || ''}` }}
       </small>
     </div>

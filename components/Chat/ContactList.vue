@@ -4,7 +4,7 @@ import { type ChatContactVO, RoomType } from "@/composables/api/chat/contact";
 import { WSMemberStatusEnum } from "~/composables/types/WsType";
 
 const props = defineProps<{
-  dto?: ChatContactPageDTO
+  dto?: ContactPageDTO
 }>();
 const [autoAnimateRef, enable] = useAutoAnimate();
 onMounted(() => {
@@ -19,14 +19,11 @@ const pageInfo = ref({
   size: 10,
 });
 
-export interface ChatContactPageDTO {
-  type: RoomType
-}
 
 /**
  * 加载会话列表
  */
-async function loadData(dto?: ChatContactPageDTO) {
+async function loadData(dto?: ContactPageDTO) {
   if (isLoading.value || pageInfo.value.isLast)
     return;
   isLoading.value = true;
@@ -103,7 +100,7 @@ async function onChangeRoom(newRoomId: number) {
 chat.onChangeRoom = onChangeRoom;
 const isReload = ref(false);
 // 刷新
-async function reload(size: number = 15, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) {
+async function reload(size: number = 15, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
     return;
   isReload.value = true;

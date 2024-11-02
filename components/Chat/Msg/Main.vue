@@ -227,7 +227,7 @@ function deleteMsg(roomId: number, msgId: number) {
   });
 }
 
-
+// 格式化时间
 function formatDate(date: Date) {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -241,8 +241,10 @@ function formatDate(date: Date) {
   else
     return `${year}年${month}月${day}日 ${hours}:${minutes}`;
 }
+// 是否显示时间
 const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 
+// 点击头像
 function onClickAvatar() {
   if (!data.fromUser.userId)
     return;

@@ -2,7 +2,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import type { ChatContactVO } from "../api/chat/contact";
 import type { ChatMemberVO } from "../api/chat/room";
-import type { ChatContactPageDTO } from "~/components/Chat/ContactList.vue";
 
 enum FriendOptType {
   Empty = -1,
@@ -125,13 +124,13 @@ export const useChatStore = defineStore(
 
     // 页面绑定
     // 重新获取会话列表
-    const onReloadContact = (size: number = 10, dto?: ChatContactPageDTO, isAll: boolean = true, roomId?: number) => {
+    const onReloadContact = (size: number = 10, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) => {
     };
     // 消息列表滚动
     const scrollBottom = (animate = true) => {
     };
     const scrollTopSize = ref(0);
-    const scrollReplyMsg = (msgId: number, gapCount: number = 0) => {};
+    const scrollReplyMsg = (msgId: number, gapCount: number = 0, isAnimated: boolean = true) => {};
     const saveScrollTop = () => {};
     const scrollTop = (size: number) => {};
     // 房间
