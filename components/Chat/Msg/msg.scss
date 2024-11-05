@@ -42,6 +42,11 @@
   gap: 0.5rem;
 }
 .self {
+  
+  ::selection  {
+    background-color: #f0f0f0 !important;
+    color: #010101 !important;
+  }
   &.msg {
     --at-apply: "pr-2 pl-4rem py-3 ";
   }
