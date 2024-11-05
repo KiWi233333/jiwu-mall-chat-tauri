@@ -55,24 +55,23 @@ jobs:
         id: pnpm-install
         with:
           version: 8
-          run_install: true
+          run_install: false
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
+      - name: Read release body content
+        id: read_release_body_content
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          echo "::set-output name=release_body::$(cat .github/releasemd/${{ github.ref_name }}.md)"
 
-      # - uses: actions/cache@v4
-      #   name: Setup pnpm cache
-      #   with:
-      #     path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pnpm-store-
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-      - name: build Tauri app dependencies
-        run: pnpm build:nuxt
+      - name: Install app dependencies and build it
+        run: pnpm i && pnpm build:nuxt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
