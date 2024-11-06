@@ -33,7 +33,7 @@ onUnmounted(useUmounted);
 </script>
 
 <template>
-  <NuxtPage class="h-100dvh border-default card-default bg-color" />
+  <NuxtPage keepalive class="h-100dvh border-default card-default bg-color" />
 </template>
 
 <style lang="scss">
