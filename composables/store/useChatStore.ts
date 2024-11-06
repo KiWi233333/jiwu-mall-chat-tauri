@@ -85,8 +85,6 @@ export const useChatStore = defineStore(
         return;
       if (vo?.roomId)
         vo.unreadCount = 0;
-
-
       theContact.value = {
         ...(vo || {
           activeTime: 0,

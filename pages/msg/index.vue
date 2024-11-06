@@ -2,15 +2,20 @@
 const unReadContactList = ref<ChatContactVO[]>([]);
 const channel = new BroadcastChannel("main_channel");
 onMounted(async () => {
-// 主动获取
-  unReadContactList.value = JSON.parse(
-    localStorage.getItem("unReadContactList") || "[]",
-  );
   // 监听locakStorage
   window.addEventListener("storage", (e) => {
     if (e.key === "unReadContactList")
       unReadContactList.value = JSON.parse(e.newValue || "[]");
+    if (e.key === "nuxt-color-mode")
+      useColorMode().value = e.newValue || "system" as any;
   });
+  // 主动获取
+  try {
+    unReadContactList.value = JSON.parse(localStorage.getItem("unReadContactList") || "[]");
+  }
+  catch (error) {
+    console.warn(error);
+  }
 });
 onBeforeUnmount(() => {
   channel.close();

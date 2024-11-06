@@ -23,6 +23,7 @@ useSeoMeta({
 
 // 初始化
 const route = useRoute();
+const user = useUserStore();
 onMounted(() => {
   if (route.path === "/msg") // 进入消息页面
     useDefaultInit();
@@ -30,12 +31,17 @@ onMounted(() => {
     useInit();
 });
 onUnmounted(useUmounted);
+watch(() => user.isLogin, (isLogin) => {
+
+});
 </script>
 
 <template>
   <NuxtPage
+    :key="user.userId"
     :keepalive="{
       max: 12,
+      exclude: ['/msg', '/login'],
     }"
     class="h-100dvh border-default card-default bg-color"
   />

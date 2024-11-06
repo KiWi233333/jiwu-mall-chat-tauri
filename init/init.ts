@@ -134,7 +134,7 @@ export async function useMsgBoxWebViewInit() {
 
   // 监听消息通知事件
   const channel = new BroadcastChannel("main_channel");
-  channel.onmessage = handleChannelMsg;
+  channel.addEventListener("message", handleChannelMsg);
   // 是否有新消息，控制图标闪烁
   const { start, stop, activeIcon } = useFlashTray();
   watchDebounced(isNewAllMsg, async (newVal, oldVal) => {
@@ -159,7 +159,6 @@ export async function useMsgBoxWebViewInit() {
   if (!webview)
     return;
 
-
   // 监听点击事件消息通知事件
   const trayClickUnlisten = await listen("tray_click", async (event) => {
     const win = await WebviewWindow.getByLabel("main");
@@ -167,8 +166,10 @@ export async function useMsgBoxWebViewInit() {
       return;
     if (isNewAllMsg.value) {
       // 消费第一个未读消息
-      const msg = chat.unReadContactList[0];
-      chat.setContact(msg);
+      const contact = chat.unReadContactList[0];
+      chat.setContact(contact);
+      if (chat.theContact.roomId === contact?.roomId)
+        chat.setReadList(contact.roomId);
       await nextTick();
       chat.scrollBottom(false);
     }
@@ -218,6 +219,7 @@ export async function useMsgBoxWebViewInit() {
 
   return () => {
     stop();
+    channel.removeEventListener("message", handleChannelMsg);
     trayMouseoverUnlisten?.();
     trayClickUnlisten?.();
   };
@@ -240,6 +242,8 @@ async function handleChannelMsg(event: MessageEvent) {
   const win = await WebviewWindow.getByLabel("main");
   if (type === "readContact") { // 读取单个
     chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
+    if (chat.theContact.roomId === data.roomId)
+      chat.setReadList(data.roomId);
     if (win) {
       await navigateTo("/");
       win?.setFocus();
