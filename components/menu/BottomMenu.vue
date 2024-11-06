@@ -87,24 +87,25 @@ interface MenuItem {
   children?: MenuItem[]
 }
 
-const contactShowBtnRef = ref();
-const isStart = ref(false);
-onMounted(() => {
-  if (contactShowBtnRef.value) {
-    // 设置按钮位置
-    contactShowBtnRef.value.style.left = `${setting.contactBtnPosition.x}px`;
-    contactShowBtnRef.value.style.top = `${setting.contactBtnPosition.y}px`;
-    moveDom(contactShowBtnRef.value, {
-      startCallback: () => {
-        isStart.value = true;
-      },
-      endCalllback: (x, y) => {
-        setting.contactBtnPosition = { x, y };
-        isStart.value = false;
-      },
-    });
-  }
-});
+// 会话按钮
+// const contactShowBtnRef = ref();
+// const isStart = ref(false);
+// onMounted(() => {
+// if (contactShowBtnRef.value) {
+//   // 设置按钮位置
+//   contactShowBtnRef.value.style.left = `${setting.contactBtnPosition.x}px`;
+//   contactShowBtnRef.value.style.top = `${setting.contactBtnPosition.y}px`;
+//   moveDom(contactShowBtnRef.value, {
+//     startCallback: () => {
+//       isStart.value = true;
+//     },
+//     endCalllback: (x, y) => {
+//       setting.contactBtnPosition = { x, y };
+//       isStart.value = false;
+//     },
+//   });
+// }
+// });
 const activeMenu = computed({
   get: () => route.path,
   set: (val) => {
@@ -114,7 +115,6 @@ const activeMenu = computed({
     }
     if (val === "/more")
       return;
-
     navigateTo(val);
   },
 });

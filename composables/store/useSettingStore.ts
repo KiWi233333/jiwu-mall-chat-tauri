@@ -61,10 +61,6 @@ export const useSettingStore = defineStore(
       isEscMin: false, // esc
       isTrayNotication: true, // 托盘通知
     });
-    const contactBtnPosition = ref({
-      x: 0,
-      y: 0,
-    });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
 
@@ -339,7 +335,6 @@ export const useSettingStore = defineStore(
         downloadedText: "",
         ignoreVersion: [] as string[],
       };
-      contactBtnPosition.value = { x: 0, y: 0 };
       isFold.value = true;
       isCollapse.value = true;
       isUserFold.value = true;
@@ -366,18 +361,21 @@ export const useSettingStore = defineStore(
         },
         isAutoStart: settingPage.value.isAutoStart, // 开机自启
         isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
-        isEscMin: true, // esc
+        isEscMin: false, // esc
         isTrayNotication: true, // 托盘通知
       };
       loadSystemFonts();
       if (!isWeb.value) {
+        await nextTick();
         appDataDownloadDirUrl.value = `${await appDataDir()}\\downloads`;
         if (appDataDownloadDirUrl.value && !await existsFile(appDataDownloadDirUrl.value))
           await mkdirFile(appDataDownloadDirUrl.value);
         if (await isAutostartEnabled())
           await disableAutostart();
         await resetAllWindowState();
-        await relaunch();
+        setTimeout(async () => {
+          await relaunch();
+        }, 300);
       }
     }
 
@@ -410,7 +408,6 @@ export const useSettingStore = defineStore(
       isThemeChangeLoad,
       appUploader,
       showChatMenu,
-      contactBtnPosition,
       downUpChangeContact,
       showDownloadPanel,
       fileDownloadMap,

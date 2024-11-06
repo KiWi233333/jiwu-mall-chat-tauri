@@ -19,7 +19,7 @@ watchDebounced(
       document.documentElement.style.setProperty("--font-family", val);
       setTimeout(() => {
         isLoading.value = false;
-      }, 500);
+      }, 300);
     }
   },
 );
