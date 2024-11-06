@@ -86,8 +86,8 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: '🔥 Release v__VERSION__'
-          # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-          releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
+          releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
+          # releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
