@@ -57,10 +57,16 @@ jobs:
           version: 8
           run_install: false
 
+      # - name: Read release body content
+      #   id: read_release_body_content
+      #   run: |
+      #     echo "::set-output name=release_body::$(cat .github/releasemd/${{ github.ref_name }}.md)"
+      # 读取更新文档内容 (保留换行符)
       - name: Read release body content
-        id: read_release_body_content
-        run: |
-          echo "::set-output name=release_body::$(cat .github/releasemd/${{ github.ref_name }}.md)"
+      id: read_release_body_content
+      run: |
+        release_body=$(cat .github/releasemd/${{ github.ref_name }}.md)
+        echo "::set-output name=release_body::$(echo "$release_body" | jq -Rs .)"
 
       - name: Install app dependencies and build it
         run: pnpm i && pnpm build:nuxt
