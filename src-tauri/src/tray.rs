@@ -10,6 +10,10 @@ struct Payload {
     message: String,
 }
 
+// msgbox宽高
+// const MSGBOX_WIDTH: f64 = 240.0;
+// const MSGBOX_HEIGHT: f64 = 300.0;
+
 pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     let setting = MenuItemBuilder::with_id("setting", "设置").build(app)?;
     let to_host = MenuItemBuilder::with_id("to_host", "官网").build(app)?;
@@ -20,7 +24,7 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
         .items(&[&restart, &setting, &to_host, &quit])
         .build()?;
 
-    TrayIconBuilder::new()
+    TrayIconBuilder::with_id("tray_icon")
         .menu(&menu)
         .icon(app.default_window_icon().unwrap().clone())
         .title("极物聊天")
@@ -60,22 +64,53 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
             }
             _ => (),
         })
-        .on_tray_icon_event(|tray, event| {
-            if let TrayIconEvent::Click {
-                button: MouseButton::Left,
+        .on_tray_icon_event(|tray, event| match event {
+            TrayIconEvent::Click {
+                id: _,
+                rect: _,
+                button,
                 button_state: MouseButtonState::Up,
                 ..
-            } = event
-            {
-                let app = tray.app_handle();
-                if let Some(webview_window) = app.get_webview_window("main") {
-                    let _ = webview_window.show();
-                    let _ = webview_window.unminimize();
-                    let _ = webview_window.set_focus();
-                } else {
-                    show_window(&app);
+            } => match button {
+                MouseButton::Left {} => {
+                    let app = tray.app_handle();
+                    if let Some(webview_window) = app.get_webview_window("main") {
+                        let _ = webview_window.show();
+                        let _ = webview_window.unminimize();
+                        let _ = webview_window.set_focus();
+                    } else {
+                        show_window(&app);
+                    }
+                    app.emit("tray_click", ()).unwrap();
                 }
+                MouseButton::Right {} => {}
+                _ => {}
+            },
+            TrayIconEvent::Enter {
+                id: _,
+                position,
+                rect: _,
+            } => {
+                let app = tray.app_handle();
+                app.emit("tray_mouseenter", position).unwrap();
+                let msgbox = app.get_webview_window("msgbox").unwrap();
+                msgbox.set_focus().unwrap();
             }
+            TrayIconEvent::Leave {
+                id: _,
+                position,
+                rect: _,
+            } => {
+                let app = tray.app_handle();
+                std::thread::sleep(std::time::Duration::from_millis(300));
+                if let Some(webview_window) = app.get_webview_window("msgbox") {
+                    if !webview_window.is_focused().unwrap() {
+                        webview_window.hide().unwrap();
+                    };
+                }
+                app.emit("tray_mouseleave", position).unwrap();
+            }
+            _ => {}
         })
         .build(app)?;
     Ok(())

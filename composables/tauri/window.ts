@@ -1,5 +1,5 @@
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
+import { TrayIcon } from "@tauri-apps/api/tray";
 
 export const windows_map = {
   login: {
@@ -12,22 +12,50 @@ export const windows_map = {
   },
 };
 
+
+export const TrayIconId = "tray_icon";
 /**
- * 跳转到指定的窗口。
- * @param windowsType "login" | "main" 窗口类型，用于区分登录窗口和主窗口。
+ * 显示或隐藏闪烁托盘图标。
  */
-export function useWindow(windowsType: "login" | "main", successCallback?: () => void, errorCallBack?: () => void) {
-  // const webview = new WebviewWindow(windowsType, {
-  //   url: windows_map[windowsType].url, // 设置窗口的URL，这里应该根据实际情况进行修改。
-  // });
-  // webview.once("tauri://created", () => {
-  //   // webview window successfully created
-  //   windows_map[windowsType].isOpen = true; // 设置窗口打开状态为true。
-  //   successCallback?.(); // 执行成功回调函数。
-  // });
-  // webview.once("tauri://error", (e) => {
-  //   // an error occurred during webview window creation
-  //   windows_map[windowsType].isOpen = false; // 设置窗口打开状态为true。
-  //   errorCallBack?.(); // 执行错误回调函数。
-  // });
+export function useFlashTray() {
+  const flashTimer = ref<NodeJS.Timeout | null>(null);
+  const open = ref(false);
+  const activeIcon = ref("icons/icon.png");
+
+  const stop = async () => {
+    if (flashTimer.value) {
+      clearInterval(flashTimer.value);
+      flashTimer.value = null; // 清空定时器引用
+    }
+    const tray = await TrayIcon.getById(TrayIconId).catch((err) => {
+      console.error("获取托盘图标失败", err);
+    });
+    tray?.setIcon(activeIcon.value);
+  };
+
+  const start = async (bool: boolean = false, duration: number = 500) => {
+    const tray = await TrayIcon.getById(TrayIconId).catch((err) => {
+      console.error("获取托盘图标失败", err);
+    });
+
+    if (bool && tray) {
+      if (flashTimer.value)
+        clearInterval(flashTimer.value);
+
+      flashTimer.value = setInterval(() => {
+        tray.setIcon(open.value ? null : "icons/msg.png");
+        open.value = !open.value;
+      }, duration);
+    }
+    else {
+      stop();
+    }
+  };
+
+  return {
+    activeIcon,
+    open,
+    start,
+    stop,
+  };
 }

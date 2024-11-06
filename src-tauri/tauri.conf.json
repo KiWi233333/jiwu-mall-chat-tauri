@@ -35,7 +35,8 @@
     "longDescription": "",
     "licenseFile": "./LICENSE/LICENSE.txt",
     "createUpdaterArtifacts": "v1Compatible",
-    "resources": [],
+    "resources": [
+    ],
     "shortDescription": "",
     "windows": {
       "nsis": {
@@ -60,8 +61,9 @@
       "minimumSystemVersion": "10.13"
     },
     "linux": {
-      "deb": {
-        "depends": []
+      "appimage": {
+        "bundleMediaFramework": true,
+        "files": {}
       }
     }
   }

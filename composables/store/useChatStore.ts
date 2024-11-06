@@ -1,5 +1,6 @@
 /* eslint-disable @stylistic/js/spaced-comment */
 import { acceptHMRUpdate, defineStore } from "pinia";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import type { ChatContactVO } from "../api/chat/contact";
 import type { ChatMemberVO } from "../api/chat/room";
 
@@ -9,6 +10,7 @@ enum FriendOptType {
   NewFriend = 1,
   GroupFriend = 2,
 }
+
 export interface PlaySounder {
   state?: "play" | "pause" | "stop" | "loading" | "error"
   url?: string
@@ -43,8 +45,15 @@ export const useChatStore = defineStore(
       else
         return contactList.value.sort((a, b) => b.activeTime - a.activeTime);
     });
+    const unReadContactList = computed(() => {
+      const list = contactList.value.filter(p => p.unreadCount);
+      localStorage.setItem("unReadContactList", JSON.stringify(list));
+      return list;
+    });
+    const isNewMsg = computed(() => unReadContactList.value.length > 0);
     const contactIdsSet = computed(() => new Set(getContactList.value.map(p => p.roomId)));
     const isChatScroll = ref<boolean>(false);
+    const isVisible = ref(false); // 是否可见
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
       avatar: "",
@@ -69,10 +78,15 @@ export const useChatStore = defineStore(
       duration: 0,
       audio: undefined,
     });
+
     // 改变会话
     function setContact(vo?: ChatContactVO) {
+      if (!vo)
+        return;
       if (vo?.roomId)
         vo.unreadCount = 0;
+
+
       theContact.value = {
         ...(vo || {
           activeTime: 0,
@@ -89,6 +103,7 @@ export const useChatStore = defineStore(
         unreadMsgList: theContact.value.unreadMsgList || [],
       };
     }
+
     /******************************* 群聊成员 *********************************/
     const onOfflineList = ref<ChatMemberVO[]>([]);
     const roomGroupPageInfo = ref({
@@ -96,18 +111,40 @@ export const useChatStore = defineStore(
       isLast: false,
       size: 15,
     });
+
     function setGroupMember(list: ChatMemberVO[]) {
       onOfflineList.value = list;
+    }
+
+
+    /******************************* 页面状态 **********/
+    async function isActiveWindow(): Promise<boolean> {
+      const setting = useSettingStore();
+      if (setting.isWeb) { // web端
+        if (!isVisible.value)
+          return false;
+      }
+      else {
+        const win = await WebviewWindow.getByLabel("main");
+        if (!await win?.isFocused()) // 窗口未激活
+          return false;
+      }
+      return true;
     }
 
     /**
      * 设置消息已读
      */
-    function setReadList(roomId: number, lastMsg = "") {
+    async function setReadList(roomId: number, lastMsg = "") {
+      if (!roomId)
+        return false;
+      if (!await isActiveWindow()) // 窗口未激活
+        return false;
       const user = useUserStore();
       setMsgReadByRoomId(roomId, user.getToken).then((res) => {
         if (res.code !== StatusCode.SUCCESS)
           return false;
+
         // 标记已读
         const ctx = contactList.value.find(p => p.roomId === roomId);
         if (ctx) {
@@ -115,25 +152,43 @@ export const useChatStore = defineStore(
           if (lastMsg)
             ctx.text = lastMsg;
         }
+        // 更新会话
+        if (roomId === theContact.value.roomId) {
+          theContact.value = {
+            ...theContact.value,
+            ...ctx,
+            unreadCount: 0,
+            text: lastMsg,
+          };
+        }
         // 消费消息
         const ws = useWs();
         ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== roomId);
       }).catch(() => {
-      }); ;
+      });
     }
+
+    const clearAllUnread = () => {
+      contactList.value.forEach((p) => {
+        setReadList(p.roomId);
+      });
+    };
 
     // 页面绑定
     // 重新获取会话列表
     const onReloadContact = (size: number = 10, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) => {
     };
-    // 消息列表滚动
+      // 消息列表滚动
     const scrollBottom = (animate = true) => {
     };
     const scrollTopSize = ref(0);
-    const scrollReplyMsg = (msgId: number, gapCount: number = 0, isAnimated: boolean = true) => {};
-    const saveScrollTop = () => {};
-    const scrollTop = (size: number) => {};
-    // 房间
+    const scrollReplyMsg = (msgId: number, gapCount: number = 0, isAnimated: boolean = true) => {
+    };
+    const saveScrollTop = () => {
+    };
+    const scrollTop = (size: number) => {
+    };
+      // 房间
     const onChangeRoom = async (newRoomId: number) => {
     };
     const onDownUpChangeRoomLoading = ref(false);
@@ -165,22 +220,29 @@ export const useChatStore = defineStore(
     /******************************* 艾特AT人 *********************************/
     const atUserList = ref<Partial<AtChatMemberOption>[]>([]);
     const atUidListTemp = ref<string[]>([]);
+
     // 设置@AT人
     function setAtUid(userId: string) {
       if (!userId)
         return;
+
+
       if (!atUidListTemp.value.includes(userId))
         atUidListTemp.value.push(userId);
     }
+
     // 移除@人
     function removeAtByUsername(username?: string) {
       if (!username)
         return;
+
+
       atUserList.value = atUserList.value.filter(p => p.username !== username);
     }
 
     /******************************* 回复消息 *********************************/
     const replyMsg = ref<Partial<ChatMessageVO>>();
+
     // 回复消息
     function setReplyMsg(item: ChatMemberVO | Partial<ChatMessageVO>) {
       replyMsg.value = item;
@@ -197,15 +259,19 @@ export const useChatStore = defineStore(
       theFriendOpt.value.type = type;
       theFriendOpt.value.data = data;
     }
+
     const delUserId = ref("");
+
     function setDelUserId(userId: string) {
       delUserId.value = userId;
     }
 
     const isAddNewFriend = ref(false);
+
     function setIsAddNewFriend(val: boolean) {
       isAddNewFriend.value = val;
     }
+
     const showTheFriendPanel = computed({
       get: () => theFriendOpt.value.type !== FriendOptType.Empty,
       set: (val) => {
@@ -218,6 +284,8 @@ export const useChatStore = defineStore(
     return {
       // state
       contactList,
+      isNewMsg,
+      unReadContactList,
       searchKeyWords,
       contactIdsSet,
       getContactList,
@@ -234,9 +302,11 @@ export const useChatStore = defineStore(
       onOfflineList,
       isChatScroll,
       playSounder,
+      isVisible,
       // 方法
       setContact,
       setReadList,
+      clearAllUnread,
       setGroupMember,
       setIsAddNewFriend,
       setAtUid,
@@ -258,8 +328,12 @@ export const useChatStore = defineStore(
   {
     // https://prazdevs.github.io/pinia-plugin-persistedstate/frameworks/nuxt-3.html
     persist: false,
+    // persist: {
+    //   storage: persistedState.localStorage,
+    // },
   },
 );
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useChatStore, import.meta.hot));
+
 

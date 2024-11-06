@@ -1,5 +1,4 @@
 import { sendNotification } from "@tauri-apps/plugin-notification";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 import { sendWebNotification } from "~/composables/utils/useWebToast";
 
@@ -8,6 +7,7 @@ export async function useWsInit() {
 // 1、聊天模块
   const ws = useWs();
   const user = useUserStore();
+  const setting = useSettingStore();
   // 通知消息类型  WsMsgBodyType
   const noticeType = [
     WsMsgBodyType.MESSAGE, // 普通消息
@@ -29,17 +29,18 @@ export async function useWsInit() {
       });
       ws.sendHeart();
       ws.onMessage(async (msg) => {
-      // 消息通知
+        // 消息通知
         if (noticeType.includes(msg.type)) {
           const body = msg.data as ChatMessageVO;
-          const appWindow = getCurrentWebviewWindow();
-          const isFocused = await appWindow.isFocused();
-          if (isFocused) {
-            if (chat.theContact.roomId === body.message.roomId)
-              chat.setReadList(chat.theContact.roomId);
+          if (!setting.isWeb) {
+            // const appWindow = getCurrentWebviewWindow();
+            // const isFocused = await appWindow.isFocused();
+            // if (isFocused && chat.theContact.roomId === body.message.roomId)
+            //   chat.setReadList(chat.theContact.roomId);
           }
-          else if (body.fromUser.userId !== user.userId) { // 非当前用户消息通知
-            notification(body);
+          else if (body.fromUser.userId !== user.userId) { // 非聚焦 非当前用户消息通知
+            if (!setting.settingPage.isTrayNotication && !chat.isVisible) // 非托盘通知且聊天显示
+              notification(body);
           }
         }
       });
@@ -70,27 +71,35 @@ export async function useWsInit() {
 }
 
 
-export function useWSUnmounted() {
-// 1、聊天模块
-  const ws = useWs();
-  ws?.close(false);
-}
-
-
+/**
+ * 发送系统通知
+ */
 export function notification(msg: ChatMessageVO) {
   const setting = useSettingStore();
   // web 通知
   if (setting.isWeb) {
+    const chat = useChatStore();
     sendWebNotification(msg.fromUser.nickName, `${msg.message.content || "消息通知"}`, {
       icon: msg.fromUser.avatar ? BaseUrlImg + msg.fromUser.avatar : "/logo.png",
+      onClick: () => {
+        chat.setContact(chat.contactList.find(item => item.roomId === msg.message.roomId));
+      },
     });
     return;
   }
 
   // tauri 通知
   sendNotification({
-    icon: BaseUrlImg + msg.fromUser.avatar,
+    icon: ["android", "ios"].includes(setting.appPlatform) ? "/logo.png" : BaseUrlImg + msg.fromUser.avatar,
     title: msg.fromUser.nickName,
     body: `${msg.message.content || "消息通知"}`,
+    largeBody: `${msg.message.content || "消息通知"}`,
+    number: 1,
   });
+}
+
+
+export function useWSUnmounted() {
+  const ws = useWs();
+  ws?.close(false);
 }

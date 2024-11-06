@@ -2,7 +2,6 @@
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { FILE_MAX_SIZE, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
 import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
-import { useLinterFileDrop } from "~/composables/hooks/useFileDrop";
 
 
 const emit = defineEmits<{
@@ -52,10 +51,6 @@ watch(() => chat.atUidListTemp, (val) => {
   }
 }, { deep: true });
 
-// 未读数
-const theRoomUnReadLength = computed(() => {
-  return chat.theContact.unReadLength;
-});
 const SelfExistTextMap = {
   [RoomType.SELFT]: "已经不是好友",
   [RoomType.GROUP]: "已经不是群成员",
@@ -315,7 +310,7 @@ watch(() => chat.replyMsg?.message?.id, (val) => {
 });
 
 // 到底部并消费消息
-function setReadAll() {
+function setReadAndScrollBottom() {
   if (chat.theContact.roomId) {
     chat.setReadList(chat.theContact.roomId);
     chat.scrollBottom();
@@ -394,6 +389,11 @@ function resetForm() {
   chat.setReplyMsg({});
   resetAudio();
 }
+
+/**
+ * 发送语音
+ * @param callback 上传成功回调
+ */
 async function onSubmitSound(callback: (key: string) => void) {
   if (!theAudioFile.value || !theAudioFile.value.id)
     return ElMessage.error("请先录制语音");
@@ -412,7 +412,7 @@ watch(() => chat.theContact.roomId, () => {
 });
 
 // 监听文件拖拽事件
-const { fileList: fileDropList } = await useLinterFileDrop();
+// const { fileList: fileDropList } = await useLinterFileDrop();
 </script>
 
 <template>
@@ -426,16 +426,16 @@ const { fileList: fileDropList } = await useLinterFileDrop();
   >
     <div class="top absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
       <!-- 新消息 -->
-      <el-form-item
-        v-show="theRoomUnReadLength"
+      <div
+        v-show="chat.theContact.unreadCount"
         class="w-full cursor-pointer"
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;justify-content: right;"
-        @click="setReadAll"
+        @click="setReadAndScrollBottom"
       >
         <el-tag type="warning" effect="light" round class="ml-a">
-          有{{ theRoomUnReadLength }}条新消息
+          有 {{ chat.theContact.unreadCount }} 条新消息
         </el-tag>
-      </el-form-item>
+      </div>
       <!-- 图片 -->
       <el-form-item
         v-if="imgList.length > 0"
@@ -598,7 +598,7 @@ const { fileList: fileDropList } = await useLinterFileDrop();
         <!-- 滚动底部 -->
         <div
           class="i-solar:double-alt-arrow-down-line-duotone w-fit p-3 transition-200 btn-primary"
-          @click="chat.scrollBottom()"
+          @click="setReadAndScrollBottom"
         />
       </div>
       <!-- 内容 -->

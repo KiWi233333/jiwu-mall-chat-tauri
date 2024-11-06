@@ -80,10 +80,10 @@ function reload(roomId: number) {
     pageInfo.value.cursor = data.cursor;
     nextTick(() => {
       setTimeout(() => { // 滚动到底部
-        chat.saveScrollTop && chat.saveScrollTop();
         chat.scrollBottom(false);
         isLoading.value = false;
         isReload.value = false;
+        chat.saveScrollTop && chat.saveScrollTop();
       }, 0);
     });
   });
@@ -111,14 +111,21 @@ function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => vo
 }
 
 // 监听房间
-watch(() => chat.theContact.roomId, (val) => {
+watch(() => chat.theContact.roomId, (val, oldVal) => {
   if (val) {
     reload(val);
     // 消息阅读上报
     chat.setReadList(val);
   }
+  if (oldVal) { // 旧会话消息上报
+    chat.setReadList(oldVal);
+  }
 }, {
   immediate: true,
+});
+onBeforeMount(() => {
+  // 监听消息
+  chat.setReadList(chat.theContact.roomId);
 });
 
 /**
@@ -164,29 +171,29 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     updateContact(p.message.roomId,
       {
         // text: `${p.fromUser.nickName}：${body}`,
-      }, false, (contact) => {
-        if (contact.roomId !== chat.theContact.roomId) {
+      }, (contact) => {
         // 添加未读数量
+        if (p.fromUser.userId !== user.userInfo.id)
           contact.unreadCount += 1;
-        }
         contact.text = contact.type === RoomType.GROUP ? `${p.fromUser.nickName}: ${body}` : body;
         contact.activeTime = Date.now();
+        if (p.message.roomId === chat.theContact.roomId && p.fromUser.userId !== user.userInfo.id)
+          chat.theContact.unreadCount += 1;
       });
     // 2）更新消息列表
-    if (p.message.roomId !== chat.theContact.roomId) {
-      // 消费消息
-      ws.wsMsgList.newMsg.splice(i, 1);
+    if (p.message.roomId !== chat.theContact.roomId)
       continue;
-    }
 
     chat.setReadList(chat.theContact.roomId);
-    // 本房间追加消息
+    // 3）本房间追加消息
     const msg = findMsg(p.message.id);
     if (!msg)
       chat.theContact.msgList.push(p);
   }
+  ws.wsMsgList.newMsg.splice(0);
 }
 
+// 计算消息内容
 function getBody(msg: ChatMessageVO) {
   if (msg.message.type === MessageType.SOUND) {
     const _msg = msg as ChatMessageVO<SoundBodyMsgVO>;
@@ -194,6 +201,7 @@ function getBody(msg: ChatMessageVO) {
   }
   return msg.message.content;
 }
+
 // 计算语音消息文本
 function getSecondsText(second?: number) {
   if (!second)
@@ -219,13 +227,11 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
       return;
     if (p.roomId !== chat.theContact.roomId) {
       reloadContact(p.roomId);
-      // 消费消息
-      ws.wsMsgList.deleteMsg.splice(i, 1);
       continue;
     }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = `${chat.theContact.type === RoomType.GROUP ? `${msg?.fromUser.nickName}:` : msg.fromUser.userId === user.userInfo.id ? `"${user.userInfo.nickname || "我"}"` : "\"对方\""}撤回了一条消息`;
+    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${user.userInfo.nickname}"`}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.getContactList.length; k++) {
       const r = chat.getContactList[k];
@@ -234,8 +240,6 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
         break;
       }
     }
-    // 消费消息
-    ws.wsMsgList.recallMsg.splice(i, 1);
     if (msg) {
       msg.message.type = MessageType.RECALL;
       msg.message.content = msgContent;
@@ -243,6 +247,8 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
       ws.wsMsgList.recallMsg = ws.wsMsgList.recallMsg.filter(k => k.msgId !== p.msgId);
     }
   }
+  // 消费消息
+  ws.wsMsgList.deleteMsg.splice(0);
 }
 
 /**
@@ -256,13 +262,11 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
       return;
     if (p.roomId !== chat.theContact.roomId) {
       reloadContact(p.roomId);
-      // 消费消息
-      ws.wsMsgList.deleteMsg.splice(i, 1);
       continue;
     }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = "删除了一条消息";
+    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${user.userInfo.nickname}"`}删除了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.getContactList.length; k++) {
       const r = chat.getContactList[k];
@@ -271,8 +275,6 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
         break;
       }
     }
-    // 消费消息
-    ws.wsMsgList.deleteMsg.splice(i, 1);
     if (msg) {
       msg.message.type = MessageType.DELETE;
       msg.message.content = msgContent;
@@ -280,10 +282,12 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
       ws.wsMsgList.deleteMsg = ws.wsMsgList.deleteMsg.filter(k => k.msgId !== p.msgId);
     }
   }
+  // 消费消息
+  ws.wsMsgList.deleteMsg.splice(0);
 }
 
 // 更新会话
-function updateContact(roomId: number, data: Partial<ChatContactVO>, isReload = false, callBack?: (contact: ChatContactVO) => void) {
+function updateContact(roomId: number, data: Partial<ChatContactVO>, callBack?: (contact: ChatContactVO) => void) {
   let isExist = false;
   if (updateContactList[roomId])
     return;
@@ -291,10 +295,10 @@ function updateContact(roomId: number, data: Partial<ChatContactVO>, isReload = 
   for (let i = 0; i < chat.getContactList.length; i++) {
     const p = chat.getContactList[i];
     if (p && p.roomId === roomId) {
-      p.text = data.text || p.text;
-      p.unreadCount = data.unreadCount || p.unreadCount;
-      p.activeTime = data.activeTime || p.activeTime;
-      p.avatar = data.avatar || p.avatar;
+      p.text = data.text !== undefined ? data.text : p.text;
+      p.unreadCount = data.unreadCount !== undefined ? data.unreadCount : p.unreadCount;
+      p.activeTime = data.activeTime !== undefined ? data.activeTime : p.activeTime;
+      p.avatar = data.avatar !== undefined ? data.avatar : p.avatar;
       callBack && callBack(p);
       isExist = true;
       delete updateContactList[roomId];

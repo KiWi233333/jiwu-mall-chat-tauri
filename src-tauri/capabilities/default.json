@@ -3,7 +3,8 @@
   "identifier": "default-capability",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "msgbox"
   ],
   "permissions": [
     "core:default",

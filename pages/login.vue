@@ -12,10 +12,10 @@ definePageMeta({
   layout: false,
 });
 
+const setting = useSettingStore();
 
 const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
-  const setting = useSettingStore();
   user.showLoginForm = true;
   enable(!setting.settingPage.isCloseAllTransition);
 });

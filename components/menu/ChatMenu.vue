@@ -77,7 +77,7 @@ export interface MenuItem {
 
 <template>
   <div
-    class="menu relative z-998 flex flex-col items-center border-l-0 bg-light px-2 md:block border-default dark:bg-[#121212] md:shadow-none"
+    class="relative z-998 h-full flex flex-col items-center border-l-0 bg-light px-2 md:block border-default dark:bg-[#121212] md:shadow-none"
     style="border: 0;border-right: 1px;"
   >
     <!-- 顶部 -->
@@ -123,9 +123,6 @@ export interface MenuItem {
 </template>
 
 <style lang="scss" scoped>
-.menu {
-  height: calc(100dvh - $top-nav-height);
-}
 .icon-tip {
   position: absolute;
   right: 0;

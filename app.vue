@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useInit, useUmounted } from "@/init/index";
+import { useDefaultInit, useInit, useUmounted } from "@/init/index";
 import { appKeywords, appName } from "@/constants/index";
 
 // https://nuxt.com.cn/docs/guide/directory-structure/app
@@ -21,13 +21,15 @@ useSeoMeta({
   keywords: appKeywords,
 });
 
+// 初始化
+const route = useRoute();
 onMounted(() => {
-  useInit();
+  if (route.path === "/msg") // 进入消息页面
+    useDefaultInit();
+  else
+    useInit();
 });
-
-onUnmounted(() => {
-  useUmounted();
-});
+onUnmounted(useUmounted);
 </script>
 
 <template>

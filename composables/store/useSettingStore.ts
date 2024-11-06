@@ -3,12 +3,13 @@ import type { Update } from "@tauri-apps/plugin-updater";
 import { check } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { disable as disableAutostart } from "@tauri-apps/plugin-autostart";
+import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-shell";
 import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
+import { filename as windowStateFilename } from "@tauri-apps/plugin-window-state";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -58,6 +59,7 @@ export const useSettingStore = defineStore(
       isAutoStart: false, // 开机自启
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
+      isTrayNotication: true, // 托盘通知
     });
     const contactBtnPosition = ref({
       x: 0,
@@ -65,6 +67,7 @@ export const useSettingStore = defineStore(
     });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
+
     // --------------------- 聊天设置 -----------------
     const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
     const isOpenContact = ref(true); // 是否打开会话列表
@@ -269,7 +272,7 @@ export const useSettingStore = defineStore(
         });
       }
       catch (error) {
-        console.warn(error);
+        // console.warn(error);
         appUploader.value.isCheckUpdatateLoad = false;
         appUploader.value.isUpdating = false;
         appUploader.value.isUpload = false;
@@ -329,7 +332,6 @@ export const useSettingStore = defineStore(
         ignoreVersion: [] as string[],
       };
       contactBtnPosition.value = { x: 0, y: 0 };
-      isMobile.value = false;
       isFold.value = true;
       isCollapse.value = true;
       isUserFold.value = true;
@@ -354,20 +356,37 @@ export const useSettingStore = defineStore(
             { name: "夜间", value: "dark" },
           ],
         },
-        isAutoStart: false, // 开机自启
+        isAutoStart: settingPage.value.isAutoStart, // 开机自启
         isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: true, // esc
+        isTrayNotication: true, // 托盘通知
       };
       loadSystemFonts();
       if (!isWeb.value) {
         appDataDownloadDirUrl.value = `${await appDataDir()}\\downloads`;
         if (appDataDownloadDirUrl.value && !await existsFile(appDataDownloadDirUrl.value))
           await mkdirFile(appDataDownloadDirUrl.value);
-      }
-      else {
-        disableAutostart();
+        if (await isAutostartEnabled())
+          await disableAutostart();
+        await resetAllWindowState();
+        await relaunch();
       }
     }
+
+    // 重置所有窗口状态
+    async function resetAllWindowState() {
+      try {
+        const file = await windowStateFilename();
+        if (file)
+          await removeFile(`${await appDataDir()}\\${file}`);
+        return true;
+      }
+      catch (error) {
+        console.error(error);
+        return false;
+      }
+    }
+
     return {
       isMobile,
       isChatFold,

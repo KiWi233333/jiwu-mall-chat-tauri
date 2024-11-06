@@ -70,7 +70,7 @@ onMounted(async () => {
     getVersionNotice(v).then((res) => {
       if (res.code !== StatusCode.SUCCESS)
         ElMessage.closeAll("error");
-      if (res.data.notice)
+      if (res?.data?.notice)
         notice.value = (res.data.notice || "");
     });
   }
@@ -176,6 +176,14 @@ async function openFileFolder() {
                 inactive-text="关闭" inline-prompt
               />
             </el-tooltip>
+          </div>
+          <!-- 托盘消息窗口 -->
+          <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
+            托盘消息窗口
+            <el-switch
+              v-model="setting.settingPage.isTrayNotication" size="large" active-text="托盘消息" inactive-text="系统通知"
+              inline-prompt @change="(val) => setting.settingPage.isTrayNotication = !!val"
+            />
           </div>
           <!-- Esc -->
           <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">

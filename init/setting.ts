@@ -83,14 +83,13 @@ export async function useSettingInit() {
   }
   catch (error) {
     setting.settingPage.isAutoStart = false;
-    console.warn(error);
+    // console.warn(error);
   }
   watch(() => setting.settingPage.isAutoStart, async (val) => {
     if (val)
       await enableAutoStart();
     else
       await disableAutoStart();
-    console.log(await isAutoStartEnabled());
   });
 }
 
@@ -152,9 +151,29 @@ export async function useHotkeyInit() {
       e.preventDefault();
     // esc 最小化窗口
     if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {
-      e.preventDefault();
-      const appWindow = getCurrentWebviewWindow();
-      appWindow.minimize();
+      if (!setting.isWeb) {
+        e.preventDefault();
+        const appWindow = getCurrentWebviewWindow();
+        appWindow.minimize();
+      }
     }
   });
+}
+
+
+/**
+ * 初始化窗口监听可见性
+ */
+export function useWindowVisibilityInit() {
+  const chat = useChatStore();
+  chat.isVisible = true;
+  document.addEventListener("visibilitychange", () => {
+    chat.isVisible = !document.hidden;
+  });
+}
+
+export function useWindowVisibilityInitUnmounted() {
+  const chat = useChatStore();
+  chat.isVisible = true;
+  document.removeEventListener("visibilitychange", () => {});
 }

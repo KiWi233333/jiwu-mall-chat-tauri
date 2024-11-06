@@ -50,6 +50,7 @@ export const useWs = defineStore(
       other: [] as object[],
     });
     const reload = () => { };
+    const isNewMsg = computed(() => wsMsgList.value.newMsg.length > 0);
 
     // 初始化
     function initDefault(call: (event: Event) => any) {
@@ -187,6 +188,7 @@ export const useWs = defineStore(
 
     return {
       // state
+      isNewMsg,
       webSocketHandler,
       status,
       isWindBlur,

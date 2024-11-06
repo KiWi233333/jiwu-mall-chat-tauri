@@ -1,11 +1,13 @@
-
+import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { listen } from "@tauri-apps/api/event";
-import { open } from "@tauri-apps/plugin-shell";
-import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
-import { type as osType, platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
+import { type as osType, platform, type } from "@tauri-apps/plugin-os";
+import { open } from "@tauri-apps/plugin-shell";
 import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
-import type { PayloadType } from "../types/tauri";
+import { useFlashTray } from "~/composables/tauri/window";
+import type { PayloadType } from "~/types/tauri";
 
 /**
  * Tauri事件
@@ -19,9 +21,10 @@ export async function userTauriInit() {
     setting.appPlatform = appPlatform;
   }
   catch (error) {
-    console.warn(error);
+    // console.warn(error);
     setting.appPlatform = "web";
     setting.osType = "web";
+    return;
   }
   try {
     const osTypeName = osType();
@@ -30,7 +33,7 @@ export async function userTauriInit() {
     setting.osType = osTypeName;
   }
   catch (error) {
-    console.warn(error);
+    // console.warn(error);
     setting.appPlatform = "web";
     setting.osType = "web";
     return;
@@ -62,13 +65,15 @@ export async function userTauriInit() {
   // 3、获取文件路径
   if (!await existsFile(setting.appDataDownloadDirUrl))
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
+
+
   // 4、初始化窗口
   try {
     platform();
     restoreStateCurrent(StateFlags.ALL);
   }
   catch (error) { // web端兼容
-    console.warn(error);
+    // console.warn(error);
   }
 
   watch(() => [
@@ -100,5 +105,166 @@ export async function useAuthInit() {
   else {
     // 确认是否登录
     user.onCheckLogin();
+  }
+}
+
+
+export const MSG_WEBVIEW_NAME = "msgbox";
+export const MSG_WEBVIEW_WIDTH = 240;
+export const MSG_WEBVIEW_HEIGHT = 300;
+
+/**
+ * 初始化消息通知窗口
+ */
+export async function useMsgBoxWebViewInit() {
+  let platformName = "web";
+  try {
+    platformName = platform();
+  }
+  catch (error) {
+    return;
+  }
+  if (!["windows", "linux", "macos"].includes(platformName))
+    return;
+
+  const chat = useChatStore();
+  const user = useUserStore();
+  const ws = useWs();
+  const isNewAllMsg = computed(() => chat.isNewMsg || ws.isNewMsg);
+
+  // 监听消息通知事件
+  const channel = new BroadcastChannel("main_channel");
+  channel.onmessage = handleChannelMsg;
+  // 是否有新消息，控制图标闪烁
+  const { start, stop, activeIcon } = useFlashTray();
+  watchDebounced(isNewAllMsg, async (newVal, oldVal) => {
+    if (newVal)
+      start(true);
+
+    else
+      stop();
+  }, {
+    immediate: true,
+    debounce: 300,
+  });
+  watch(() => user.isLogin, async (newVal, oldVal) => {
+    activeIcon.value = newVal ? "icons/online.png" : "icons/offline.png";
+  }, {
+    immediate: true,
+  });
+
+
+  // 判断是否已存在消息通知窗口
+  const webview = await WebviewWindow.getByLabel(MSG_WEBVIEW_NAME);
+  if (!webview)
+    return;
+
+
+  // 监听点击事件消息通知事件
+  const trayClickUnlisten = await listen("tray_click", async (event) => {
+    const win = await WebviewWindow.getByLabel("main");
+    if (!win)
+      return;
+    if (isNewAllMsg.value) {
+      // 消费第一个未读消息
+      const msg = chat.unReadContactList[0];
+      chat.setContact(msg);
+      await nextTick();
+      chat.scrollBottom(false);
+    }
+    else {
+      stop();
+    }
+  });
+
+  // 鼠标移入托盘
+  const trayMouseoverUnlisten = await listen("tray_mouseenter", async (event) => {
+    if (!isNewAllMsg.value)
+      return;
+    const win = await WebviewWindow.getByLabel("msgbox");
+    if (!win)
+      return;
+    const position = event.payload as LogicalPosition;
+    const types = type();
+    const screenSize = window.screen;
+    const taskWidth = screenSize.width - screenSize.availWidth;
+    const taskHeight = screenSize.height - screenSize.availHeight;
+    if (types === "windows") {
+      // 任务栏 上下左右四个位置
+      let x = position.x - MSG_WEBVIEW_WIDTH / 2;
+      let y = position.y - MSG_WEBVIEW_HEIGHT;
+      if (x < 0) {
+        x = taskWidth;
+        y = position.y - MSG_WEBVIEW_HEIGHT / 2;
+      }
+      if (y < 0) {
+        x = position.x - MSG_WEBVIEW_WIDTH / 2;
+        y = taskHeight;
+      }
+      if (x + MSG_WEBVIEW_WIDTH > screenSize.availWidth) {
+        x = screenSize.availWidth - MSG_WEBVIEW_WIDTH;
+        y = position.y - MSG_WEBVIEW_HEIGHT / 2;
+      }
+      if (y + MSG_WEBVIEW_HEIGHT > screenSize.availHeight)
+        y = screenSize.availHeight - MSG_WEBVIEW_HEIGHT;
+      await win.setPosition(new LogicalPosition(x, y));
+    }
+    else if (types === "macos") {
+      await win.setPosition(new LogicalPosition(position.x - MSG_WEBVIEW_WIDTH / 2, position.y));
+    }
+    await win.show();
+    await win.setFocus();
+  });
+
+  return () => {
+    stop();
+    trayMouseoverUnlisten?.();
+    trayClickUnlisten?.();
+  };
+}
+
+
+/**
+ * 处理消息通知事件
+ * @param event 事件
+ * @returns void
+ */
+async function handleChannelMsg(event: MessageEvent) {
+  const payload = event.data;
+  const ws = useWs();
+  const user = useUserStore();
+  const chat = useChatStore();
+  if (!payload)
+    return;
+  // console.log("channel msg", payload);
+  const { type, data } = payload;
+  const win = await WebviewWindow.getByLabel("main");
+  switch (type) {
+    case "getUnReadContactList":
+      break;
+    case "readContact":
+      chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
+      if (win) {
+        win?.setFocus();
+        win?.show();
+      }
+      break;
+    case "readAllContact":
+      chat.unReadContactList.forEach((p) => {
+        setMsgReadByRoomId(p.roomId, user.getToken).then((res) => {
+          if (res.code !== StatusCode.SUCCESS)
+            return false;
+          p.unreadCount = 0;
+          ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== p.roomId);
+          if (p.roomId === chat.theContact.roomId)
+            chat.theContact.unreadCount = 0;
+        }).catch(() => {
+          console.log("readAllContact error");
+        });
+        return p;
+      });
+      break;
+    default:
+      break;
   }
 }

@@ -1,7 +1,10 @@
 {
   "$schema": "../gen/schemas/mobile-schema.json",
   "identifier": "mobile-capability",
-  "windows": ["main"],
+  "windows": [
+    "main",
+    "msgbox"
+  ],
   "platforms": ["iOS", "android"],
   "permissions": [
   ]
