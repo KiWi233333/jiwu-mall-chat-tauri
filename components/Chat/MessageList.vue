@@ -73,7 +73,7 @@ function reload(roomId: number) {
     if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
-    if (!data.list?.length)
+    if (!data?.list?.length)
       return;
     chat.theContact.msgList = data.list;
     pageInfo.value.isLast = data.isLast;

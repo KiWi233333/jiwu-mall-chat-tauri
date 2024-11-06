@@ -65,7 +65,7 @@ export async function useSettingInit() {
         app.classList.remove("stop-transition");
       setting.isMobile = window.innerWidth < 640;
       timer = null;
-    }, 200);
+    }, 150);
   });
 
   // 7、页面加载完整后，滚动到底部
@@ -74,7 +74,7 @@ export async function useSettingInit() {
       const chat = useChatStore();
       chat?.scrollBottom(false);
     });
-  }, 500);
+  }, 0);
 
   // 8、自动重启
   try {

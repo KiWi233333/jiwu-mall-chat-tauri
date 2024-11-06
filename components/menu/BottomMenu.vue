@@ -21,7 +21,8 @@ async function getApplyCount() {
 }
 
 onMounted(() => {
-  getApplyCount();
+  if (user.isLogin)
+    getApplyCount();
 });
 
 // @unocss-include

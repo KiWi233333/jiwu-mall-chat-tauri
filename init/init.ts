@@ -76,12 +76,11 @@ export async function userTauriInit() {
     // console.warn(error);
   }
 
-  watch(() => [
-    setting.isMobile,
-  ], () => {
+  setting.isMobile = window.innerWidth <= 768; // 判断是否为移动端
+  watchDebounced(() => setting.isMobile, () => {
     saveWindowState(StateFlags.ALL);
   }, {
-    immediate: true,
+    debounce: 300,
   });
 }
 
@@ -168,8 +167,8 @@ export async function useMsgBoxWebViewInit() {
       // 消费第一个未读消息
       const contact = chat.unReadContactList[0];
       chat.setContact(contact);
-      if (chat.theContact.roomId === contact?.roomId)
-        chat.setReadList(contact.roomId);
+      if (contact && chat.theContact.roomId === contact?.roomId)
+        chat.setReadList(contact?.roomId);
       await nextTick();
       chat.scrollBottom(false);
     }

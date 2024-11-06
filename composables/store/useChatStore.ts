@@ -133,7 +133,7 @@ export const useChatStore = defineStore(
     /**
      * 设置消息已读
      */
-    async function setReadList(roomId: number, lastMsg = "") {
+    async function setReadList(roomId?: number, lastMsg = "") {
       if (!roomId)
         return false;
       if (!await isActiveWindow()) // 窗口未激活

@@ -43,17 +43,12 @@ const setting = useSettingStore();
           />
           <div
             v-else
-            class="flex-row-c-c flex-1 flex-shrink-0 bg-color"
+            class="flex-row-c-c flex-1 flex-shrink-0 card-default"
           >
-            <ElEmpty
-              mt-10
-              :image-size="80"
-              description="找到你想要聊天的朋友吧"
-            >
-              <template #image>
-                <i i-solar:users-group-two-rounded-bold-duotone p-2rem op-40 />
-              </template>
-            </ElEmpty>
+            <div data-fades class="h-full w-full flex flex-col items-center justify-center text-gray-600 op-80 dark:(text-gray-300 op-50)">
+              <i i-solar:users-group-two-rounded-bold-duotone class="mb-2 h-12 w-12" />
+              <small>找到你想要聊天的朋友吧 ☕</small>
+            </div>
           </div>
         </div>
       </div>

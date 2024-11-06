@@ -7,9 +7,6 @@ const props = defineProps<{
   dto?: ContactPageDTO
 }>();
 const [autoAnimateRef, enable] = useAutoAnimate();
-onMounted(() => {
-  enable(false);
-});
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
 const chat = useChatStore();
@@ -72,7 +69,9 @@ const theContactId = computed({
   },
 });
 // 切换房间
-async function onChangeRoom(newRoomId: number) {
+async function onChangeRoom(newRoomId?: number) {
+  if (!newRoomId)
+    return;
   const item = chat.contactList.find(p => p.roomId === newRoomId);
   if (!item)
     return;
@@ -99,7 +98,7 @@ async function onChangeRoom(newRoomId: number) {
 chat.onChangeRoom = onChangeRoom;
 const isReload = ref(false);
 // 刷新
-async function reload(size: number = 15, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
+async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
     return;
   isReload.value = true;
@@ -110,11 +109,10 @@ async function reload(size: number = 15, dto?: ContactPageDTO, isAll: boolean = 
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
     const list = await loadData(dto || props.dto);
-    if (!chat.theContact.roomId && list?.length) {
-      if (!theContactId.value && list?.[0]?.roomId)
-        theContactId.value = list?.[0]?.roomId;
-    }
+    if (list?.[0]?.roomId)
+      theContactId.value = list?.[0]?.roomId;
     await onChangeRoom(theContactId.value);
+    await nextTick();
     enable(!setting.settingPage.isCloseAllTransition);
   }
   else { // 刷新某一房间
@@ -123,8 +121,6 @@ async function reload(size: number = 15, dto?: ContactPageDTO, isAll: boolean = 
   }
   isReload.value = false;
 }
-// 初始化
-reload();
 
 const isLoadRoomMap: Record<number, boolean> = {};
 // 刷新某一房间
@@ -294,6 +290,12 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   }
 }, {
   immediate: false,
+});
+
+// 初始化
+reload();
+onMounted(() => {
+  enable(false);
 });
 </script>
 
