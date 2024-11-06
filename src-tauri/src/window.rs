@@ -41,7 +41,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
     }
 
     // 构建主窗口和消息窗口
-    let main_window = main_builder.build()?;
+    let _main_window = main_builder.build()?;
     #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
     let msgbox_window = msgbox_builder.build()?;
 
@@ -66,7 +66,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         use cocoa::appkit::{NSColor, NSWindow};
         use cocoa::base::{id, nil};
 
-        let ns_window = _window.ns_window().unwrap() as id;
+        let ns_window = _main_window.ns_window().unwrap() as id;
         unsafe {
             let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                 nil,
