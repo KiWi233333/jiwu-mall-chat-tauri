@@ -22,7 +22,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         .resizable(false)
         .always_on_top(true)
         .shadow(false)
-        .position(0.0, 0.0)
+        .position(-240.0,-300.0)
         .visible(false);
 
     // Windows 和 Linux 平台特定配置
