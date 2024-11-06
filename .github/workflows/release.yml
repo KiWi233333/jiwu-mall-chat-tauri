@@ -58,10 +58,16 @@ jobs:
           run_install: false
 
       # 读取更新文档内容 (保留换行符)
-      - name: Read release body content
-        id: read_release_body_content
-        run: |
-          echo "release_body=$(cat .github/releasemd/${{ github.ref_name }}.md)" >> $GITHUB_OUTPUT
+      # - name: Read release body content
+      #   id: read_release_body_content
+      #   run: |
+      #     echo "release_body=$(cat .github/releasemd/${{ github.ref_name }}.md)" >> $GITHUB_OUTPUT
+        # run: |
+        #   {
+        #     echo 'JSON_RESPONSE<<EOF'
+        #     curl https://example.com
+        #     echo EOF
+        #   } >> "$GITHUB_OUTPUT"
           
       - name: Install app dependencies and build it
         run: pnpm i && pnpm build:nuxt
@@ -79,8 +85,8 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: '🔥 Release v__VERSION__'
-          releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-          # releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
+          releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
+          # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
