@@ -9,6 +9,7 @@ const route = useRoute();
 const user = useUserStore();
 const ws = useWs();
 const setting = useSettingStore();
+const chat = useChatStore();
 
 const applyUnRead = ref(0);
 /**
@@ -31,7 +32,7 @@ const menuList: MenuItem[] = [
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold-duotone",
-    tipValue: computed(() => ws.wsMsgList.newMsg.length),
+    tipValue: computed(() => chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0)),
   },
   {
     title: "好友",
