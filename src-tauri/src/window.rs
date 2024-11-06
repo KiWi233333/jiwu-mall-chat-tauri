@@ -9,7 +9,6 @@ pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         .center()
         .shadow(false)
         .decorations(false)
-        .drag_and_drop(true)
         .min_inner_size(375.0, 780.0)
         .max_inner_size(1920.0, 1080.0)
         .inner_size(1280.0, 860.0);
@@ -61,7 +60,7 @@ pub fn setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     // 仅在构建 macOS 时设置背景颜色
     #[cfg(target_os = "macos")]
     {
-        use cocoa::appkit::{NSColor, NSWindow};
+        use cocoa::appkit::{NSColor};
         use cocoa::base::{id, nil};
 
         let ns_window = _main_window.ns_window().unwrap() as id;
