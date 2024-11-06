@@ -31,11 +31,12 @@
     "category": "SocialNetworking",
     "copyright": "Kiwi2333",
     "targets": "all",
-    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.icns", "icons/icon.ico", "icons/icon.png"],
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.icns", "icons/icon.ico", "icons/icon.png", "icons/offline.png", "icons/online.png", "icons/msg.png"],
     "longDescription": "",
     "licenseFile": "./LICENSE/LICENSE.txt",
     "createUpdaterArtifacts": "v1Compatible",
     "resources": [
+      "icons/**/*"
     ],
     "shortDescription": "",
     "windows": {

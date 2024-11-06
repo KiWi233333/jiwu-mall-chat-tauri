@@ -197,6 +197,12 @@ export const useSettingStore = defineStore(
     async function checkUpdates(checkLog = false) {
       appUploader.value.isCheckUpdatateLoad = true;
       try {
+        if (isWeb.value)
+          return false;
+        if (appUploader.value.isUpdating) {
+          ElMessage.warning("正在更新，请稍等...");
+          return;
+        }
         const update = (await check()) as Update;
         appUploader.value.isUpload = !!update?.available;
         appUploader.value.isCheckUpdatateLoad = false;
@@ -226,6 +232,8 @@ export const useSettingStore = defineStore(
                     case "Started":
                       console.log(e.data.contentLength);
                       appUploader.value.contentLength = e.data.contentLength || 0;
+                      appUploader.value.downloaded = 0;
+                      appUploader.value.downloadedText = "";
                       console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
                       break;
                     case "Progress":

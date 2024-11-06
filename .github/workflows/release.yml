@@ -24,7 +24,6 @@ jobs:
           - platform: 'windows-latest'
             args: ''
 
-
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
@@ -62,13 +61,13 @@ jobs:
       #   id: read_release_body_content
       #   run: |
       #     echo "release_body=$(cat .github/releasemd/${{ github.ref_name }}.md)" >> $GITHUB_OUTPUT
-        # run: |
-        #   {
-        #     echo 'JSON_RESPONSE<<EOF'
-        #     curl https://example.com
-        #     echo EOF
-        #   } >> "$GITHUB_OUTPUT"
-          
+      # run: |
+      #   {
+      #     echo 'JSON_RESPONSE<<EOF'
+      #     curl https://example.com
+      #     echo EOF
+      #   } >> "$GITHUB_OUTPUT"
+
       - name: Install app dependencies and build it
         run: pnpm i && pnpm build:nuxt
         env:
