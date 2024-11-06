@@ -62,14 +62,6 @@ jobs:
         run: |
           echo "::set-output name=release_body::$(cat .github/releasemd/${{ github.ref_name }}.md)"
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install app dependencies and build it
         run: pnpm i && pnpm build:nuxt
         env:
