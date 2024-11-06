@@ -13,6 +13,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         .inner_size(1280.0, 860.0);
 
     // 消息窗口配置
+    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
     let mut msgbox_builder = WebviewWindowBuilder::new(app, "msgbox", WebviewUrl::App("/msg".into()))
         .title("消息通知")
         .inner_size(240.0, 300.0)
