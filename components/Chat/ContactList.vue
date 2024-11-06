@@ -16,9 +16,8 @@ const chat = useChatStore();
 const pageInfo = ref({
   cursor: null as null | string,
   isLast: false,
-  size: 10,
+  size: 20,
 });
-
 
 /**
  * 加载会话列表

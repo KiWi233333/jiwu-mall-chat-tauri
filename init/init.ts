@@ -236,35 +236,31 @@ async function handleChannelMsg(event: MessageEvent) {
   const chat = useChatStore();
   if (!payload)
     return;
-  // console.log("channel msg", payload);
   const { type, data } = payload;
   const win = await WebviewWindow.getByLabel("main");
-  switch (type) {
-    case "getUnReadContactList":
-      break;
-    case "readContact":
-      chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
-      if (win) {
-        win?.setFocus();
-        win?.show();
-      }
-      break;
-    case "readAllContact":
-      chat.unReadContactList.forEach((p) => {
-        setMsgReadByRoomId(p.roomId, user.getToken).then((res) => {
-          if (res.code !== StatusCode.SUCCESS)
-            return false;
-          p.unreadCount = 0;
-          ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== p.roomId);
-          if (p.roomId === chat.theContact.roomId)
-            chat.theContact.unreadCount = 0;
-        }).catch(() => {
-          console.log("readAllContact error");
-        });
-        return p;
+  if (type === "readContact") { // 读取单个
+    chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
+    if (win) {
+      await navigateTo("/");
+      win?.setFocus();
+      win?.show();
+      chat.scrollBottom(false);
+    }
+  }
+  else if (type === "readAllContact") { // 读取全部
+    await navigateTo("/");
+    chat.unReadContactList.forEach((p) => {
+      setMsgReadByRoomId(p.roomId, user.getToken).then((res) => {
+        if (res.code !== StatusCode.SUCCESS)
+          return false;
+        p.unreadCount = 0;
+        ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== p.roomId);
+        if (p.roomId === chat.theContact.roomId)
+          chat.theContact.unreadCount = 0;
+      }).catch(() => {
+        console.log("readAllContact error");
       });
-      break;
-    default:
-      break;
+      return p;
+    });
   }
 }

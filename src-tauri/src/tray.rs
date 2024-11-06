@@ -102,7 +102,7 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
                 rect: _,
             } => {
                 let app = tray.app_handle();
-                std::thread::sleep(std::time::Duration::from_millis(300));
+                std::thread::sleep(std::time::Duration::from_millis(200));
                 if let Some(webview_window) = app.get_webview_window("msgbox") {
                     if !webview_window.is_focused().unwrap() {
                         webview_window.hide().unwrap();

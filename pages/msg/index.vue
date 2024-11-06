@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { MSG_WEBVIEW_NAME } from "~/init/init";
-
 const unReadContactList = ref<ChatContactVO[]>([]);
 const channel = new BroadcastChannel("main_channel");
 onMounted(async () => {
@@ -14,16 +11,6 @@ onMounted(async () => {
     if (e.key === "unReadContactList")
       unReadContactList.value = JSON.parse(e.newValue || "[]");
   });
-
-  // 设置高度
-  // const webview = await WebviewWindow.getByLabel(MSG_WEBVIEW_NAME);
-  // if (!webview)
-  //   return;
-  // const position = await webview.position();
-  // await webview.setPosition(new LogicalPosition(
-  //   position.x - MSG_WEBVIEW_WIDTH / 2,
-  //   window.screen.availHeight - MSG_WEBVIEW_HEIGHT,
-  // ));
 });
 onBeforeUnmount(() => {
   channel.close();
@@ -53,7 +40,7 @@ definePageMeta({
   <div class="h-100vh overflow-hidden">
     <NuxtLayout name="default">
       <main class="h-100vh flex flex-col justify-between gap-3 truncate p-3">
-        <div class="border-0 border-b-1px pb-2 border-default" @click="channel.postMessage({ type: 'getUnReadContactList' })">
+        <div class="border-0 border-b-1px pb-2 border-default">
           新消息 ({{ unreadCount }})
         </div>
         <el-scrollbar
