@@ -212,8 +212,8 @@ function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
 
 
 function resetInput() {
-  if (inputRef?.value)
-    inputRef?.value?.value = "";
+  if (inputRef?.value?.value)
+    inputRef.value.value = "";
 }
 // 删除文件
 async function removeItem(t: OssFile) {
