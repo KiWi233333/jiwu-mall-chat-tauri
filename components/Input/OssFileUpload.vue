@@ -210,6 +210,11 @@ function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
   file.subscribe = subscribe;
 }
 
+
+function resetInput() {
+  if (inputRef?.value)
+    inputRef?.value?.value = "";
+}
 // 删除文件
 async function removeItem(t: OssFile) {
   if (!t.key)
@@ -247,11 +252,6 @@ async function removeItem(t: OssFile) {
   emit("update:modelValue", fileList.value);
   emit("submit", "", pathList.value, fileList.value);
   return flag;
-}
-
-function resetInput() {
-  if (inputRef?.value)
-    inputRef.value.value = "";
 }
 
 /**

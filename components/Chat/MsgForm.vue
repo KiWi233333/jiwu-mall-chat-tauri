@@ -150,8 +150,8 @@ async function onPaste(e: ClipboardEvent) {
       ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
-    inputOssImgUploadRef.value.resetInput?.();
-    inputOssFileUploadRef.value.resetInput?.();
+    inputOssImgUploadRef.value?.resetInput?.();
+    inputOssFileUploadRef.value?.resetInput?.();
     fileList.value = [];
     await inputOssFileUploadRef.value?.onUpload({
       id: URL.createObjectURL(file),
@@ -167,8 +167,8 @@ async function onPaste(e: ClipboardEvent) {
       ElMessage.warning("图片正在上传中，请稍后再试！");
       return;
     }
-    inputOssImgUploadRef.value.resetInput?.();
-    inputOssFileUploadRef.value.resetInput?.();
+    inputOssImgUploadRef.value?.resetInput?.();
+    inputOssFileUploadRef.value?.resetInput?.();
     imgList.value = [];
     await inputOssImgUploadRef.value?.onUpload({
       id: URL.createObjectURL(img),
@@ -352,14 +352,14 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
               index,
               1,
             );
-            inputOssImgUploadRef?.value.resetInput?.();
+            inputOssImgUploadRef?.value?.resetInput?.();
           }
           if (type === OssFileType.FILE) {
             fileList.value.splice(
               index,
               1,
             );
-            inputOssFileUploadRef?.value.resetInput?.();
+            inputOssFileUploadRef?.value?.resetInput?.();
           }
         },
       },
@@ -384,8 +384,8 @@ function resetForm() {
   chat.atUserList.splice(0);
 
   // 重置上传
-  inputOssImgUploadRef.value.resetInput?.();
-  inputOssFileUploadRef.value.resetInput?.();
+  inputOssImgUploadRef.value?.resetInput?.();
+  inputOssFileUploadRef.value?.resetInput?.();
   chat.setReplyMsg({});
   resetAudio();
 }
