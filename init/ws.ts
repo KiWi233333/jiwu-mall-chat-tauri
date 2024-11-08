@@ -9,10 +9,10 @@ export async function useWsInit() {
   const user = useUserStore();
   const setting = useSettingStore();
   // 通知消息类型  WsMsgBodyType
-  const noticeType = [
-    WsMsgBodyType.MESSAGE, // 普通消息
-    WsMsgBodyType.APPLY, // 好友消息
-  ];
+  const noticeType = {
+    [WsMsgBodyType.MESSAGE]: true, // 普通消息
+    [WsMsgBodyType.APPLY]: true, // 好友消息
+  } as Record<WsMsgBodyType, boolean>;
   const chat = useChatStore();
   // 创建 Web Worker
   let worker: Worker;
@@ -30,18 +30,13 @@ export async function useWsInit() {
       ws.sendHeart();
       ws.onMessage(async (msg) => {
         // 消息通知
-        if (noticeType.includes(msg.type)) {
+        if (noticeType[msg.type]) {
           const body = msg.data as ChatMessageVO;
-          if (!setting.isWeb) {
-            // const appWindow = getCurrentWebviewWindow();
-            // const isFocused = await appWindow.isFocused();
-            // if (isFocused && chat.theContact.roomId === body.message.roomId)
-            //   chat.setReadList(chat.theContact.roomId);
+          if (body.fromUser.userId === user.userId) { // 非当前用户消息通知
+            return;
           }
-          else if (body.fromUser.userId !== user.userId) { // 非聚焦 非当前用户消息通知
-            if (!setting.settingPage.isTrayNotication && !chat.isVisible) // 非托盘通知且聊天显示
-              notification(body);
-          }
+          if (!setting.settingPage.isTrayNotication || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
+            notification(body);
         }
       });
     });
@@ -61,7 +56,7 @@ export async function useWsInit() {
       reload();
     else if (!val[1])
       ws.webSocketHandler?.close();
-  }, { debounce: 500, immediate: true });
+  }, { debounce: 1000, immediate: true });
 
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
   return {
