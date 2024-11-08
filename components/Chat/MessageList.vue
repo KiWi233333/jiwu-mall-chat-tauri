@@ -266,7 +266,8 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
     }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${user.userInfo.nickname}"`}删除了一条消息`;
+    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我删除了一条消息" : `"${msg.fromUser.nickName}删除了一条成员消息"`}`;
+
     // 更新会话列表
     for (let k = 0; k < chat.getContactList.length; k++) {
       const r = chat.getContactList[k];
