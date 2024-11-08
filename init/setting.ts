@@ -172,7 +172,11 @@ export function useWindowVisibilityInit() {
   const chat = useChatStore();
   chat.isVisible = true;
   document.addEventListener("visibilitychange", () => {
-    chat.isVisible = !document.hidden;
+    const route = useRoute();
+    if (route.path === "/")
+      chat.isVisible = !document.hidden;
+    else
+      chat.isVisible = false;
   });
 }
 
