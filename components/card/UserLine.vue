@@ -161,7 +161,7 @@ const menuList = ref([
                   >
                     ID:{{ user.userInfo.id }}
                     <span
-                      class="p2 opacity-0 transition-300 group-hover:opacity-80"
+                      class="p2 opacity-0 transition-200 group-hover:opacity-80"
                       i-solar:copy-bold-duotone
                     />
                   </small>

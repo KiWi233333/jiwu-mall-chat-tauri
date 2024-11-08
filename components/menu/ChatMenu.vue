@@ -92,7 +92,7 @@ export interface MenuItem {
       </NuxtLink>
       <!-- 会话 -->
       <span
-        block sm:hidden class="mx-a my-2 transition-300 sm:(ml-a mr-0) hover:scale-120 btn-primary"
+        block sm:hidden class="mx-a my-2 transition-200 sm:(ml-a mr-0) hover:scale-120 btn-primary"
         @click="setting.isOpenContact = !setting.isOpenContact"
       >
         <i class="i-solar:chat-square-bold-duotone" cursor-pointer p-3 />

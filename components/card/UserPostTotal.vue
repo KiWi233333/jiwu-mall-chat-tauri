@@ -66,7 +66,7 @@ loadData();
     >
       <CardElImage
         loading="lazy"
-        transition-300
+        transition-200
         hover:transform-scale-110
         class="mx-a h-5rem w-5rem rounded-1/2"
         :src="BaseUrlImg + user?.avatar"
