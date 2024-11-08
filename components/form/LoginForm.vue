@@ -164,10 +164,19 @@ async function onLogin(formEl: any | undefined) {
       return;
     isLoading.value = true;
     let res = { code: 20001, data: "", message: "登录失败！" };
+    const loadingRef = ElLoading.service({
+      lock: true,
+      text: "登录中...",
+      fullscreen: true,
+      spinner: " ",
+      target: "body",
+      background: "rgba(0, 0, 0, 0.4)",
+    });
     try {
       switch (loginType.value) {
         case LoginType.PWD:
           res = await toLoginByPwd(userForm.value.username, userForm.value.password);
+
           break;
         case LoginType.PHONE:
           res = await toLoginByPhone(userForm.value.phone, userForm.value.code);
@@ -197,8 +206,8 @@ async function onLogin(formEl: any | undefined) {
           showRegisterForm: false,
         });
         await store.onUserLogin(res.data, autoLogin.value);
-        navigateTo("/", { replace: true });
-        return;
+        await navigateTo("/", { replace: true });
+        loadingRef?.close();
       }
       // 登录失败
       else {
@@ -211,11 +220,9 @@ async function onLogin(formEl: any | undefined) {
           token: "",
           isLogin: false,
         });
+        loadingRef?.close();
       }
     }
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 300);
   });
 }
 </script>

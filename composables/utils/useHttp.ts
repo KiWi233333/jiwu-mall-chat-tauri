@@ -33,11 +33,11 @@ export function httpRequest<T = unknown>(
       if (data.code !== StatusCode.SUCCESS)
         msg = StatusCodeText[code] || "";
       if (data.code === StatusCode.TOKEN_ERR || data.code === StatusCode.TOKEN_EXPIRED_ERR || data.code === StatusCode.TOKEN_DEVICE_ERR) {
+        ElMessage.closeAll();
         // 登录失效，清除用户信息，跳转登录页
         user.clearUserStore();
         if (useRoute().path !== "/msg")
           navigateTo("/login", { replace: true });
-        ElMessage.closeAll();
         return;
       }
       else if (data.code === StatusCode.STATUS_OFF_ERR) {
