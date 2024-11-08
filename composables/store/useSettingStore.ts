@@ -218,11 +218,12 @@ export const useSettingStore = defineStore(
             if (action === "confirm") {
               appUploader.value.isUpdating = true;
               try {
+                appUploader.value.contentLength = 0;
+                appUploader.value.downloaded = 0;
                 await update
                   .download((e) => {
                     switch (e.event) {
                       case "Started":
-                        console.log(e.data.contentLength);
                         appUploader.value.contentLength = e.data.contentLength || 0;
                         appUploader.value.downloaded = 0;
                         appUploader.value.downloadedText = "";
@@ -234,29 +235,29 @@ export const useSettingStore = defineStore(
                         console.log(`下载中 ${appUploader.value.downloadedText}`);
                         break;
                       case "Finished":
-                        console.log("下载完成");
-                        appUploader.value.isUpload = false;
-                        appUploader.value.isCheckUpdatateLoad = false;
-                        appUploader.value.isUpdating = false;
-                        appUploader.value.downloaded = 0;
-                        appUploader.value.downloadedText = "";
-                        appUploader.value.contentLength = 0;
-                        appUploader.value.newVersion = "";
+                        appUploader.value.downloadedText = "安装中...";
                         break;
                     }
                   })
                   .finally(() => {
-                    appUploader.value.isCheckUpdatateLoad = false;
                     appUploader.value.isUpload = false;
                     appUploader.value.isCheckUpdatateLoad = false;
-                    appUploader.value.isUpdating = false;
-                    appUploader.value.downloaded = 0;
-                    appUploader.value.downloadedText = "安装中...";
-                    appUploader.value.contentLength = 0;
                     appUploader.value.newVersion = "";
                   });
+                // 安装中
                 appUploader.value.downloadedText = "安装中...";
-                await update.install();
+                setTimeout(() => {
+                  update.install().catch((err) => {
+                    appUploader.value.isUpdating = false;
+                    console.warn(err);
+                    ElMessage.error("安装失败，请稍后再试！");
+                    appUploader.value.isCheckUpdatateLoad = false;
+                  }).finally(() => {
+                    appUploader.value.downloaded = 0;
+                    appUploader.value.contentLength = 0;
+                    appUploader.value.isUpdating = false;
+                  });
+                }, 1000);
               }
               catch (error) {
                 console.log(error);
@@ -270,51 +271,6 @@ export const useSettingStore = defineStore(
                 appUploader.value.contentLength = 0;
                 appUploader.value.newVersion = "";
               }
-              // .downloadAndInstall(async (e) => {
-              //   switch (e.event) {
-              //     case "Started":
-              //       console.log(e.data.contentLength);
-              //       appUploader.value.contentLength = e.data.contentLength || 0;
-              //       appUploader.value.downloaded = 0;
-              //       appUploader.value.downloadedText = "";
-              //       console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
-              //       break;
-              //     case "Progress":
-              //       appUploader.value.downloaded += e.data.chunkLength || 0;
-              //       appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
-              //       console.log(`下载中 ${appUploader.value.downloadedText}`);
-              //       break;
-              //     case "Finished":
-              //       console.log("下载完成");
-              //       appUploader.value.isUpload = false;
-              //       appUploader.value.isCheckUpdatateLoad = false;
-              //       appUploader.value.isUpdating = false;
-              //       appUploader.value.downloaded = 0;
-              //       appUploader.value.downloadedText = "";
-              //       appUploader.value.contentLength = 0;
-              //       appUploader.value.newVersion = "";
-              //       await nextTick();
-              //       break;
-              //   }
-              // })
-              // .then(async (val) => {
-              //   console.log(val);
-              //   await relaunch();
-              // })
-              // .catch((error) => {
-              //   console.error(error);
-              //   ElMessage.error("更新失败！请检查网络或稍后再试！");
-              // })
-              // .finally(() => {
-              //   appUploader.value.isCheckUpdatateLoad = false;
-              //   appUploader.value.isUpload = false;
-              //   appUploader.value.isCheckUpdatateLoad = false;
-              //   appUploader.value.isUpdating = false;
-              //   appUploader.value.downloaded = 0;
-              //   appUploader.value.downloadedText = "";
-              //   appUploader.value.contentLength = 0;
-              //   appUploader.value.newVersion = "";
-              // });
             }
             else if (action === "cancel") {
               if (!appUploader.value.ignoreVersion.includes(update.version))
@@ -334,6 +290,7 @@ export const useSettingStore = defineStore(
         appUploader.value.contentLength = 0;
       }
     }
+
 
     async function loadSystemFonts() {
       settingPage.value.fontFamily.list = [

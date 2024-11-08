@@ -51,12 +51,17 @@ export async function useWsInit() {
     });
   }
   // 自动重连
+  if (ws.status !== WsStatusEnum.OPEN && user.isLogin)
+    reload();
   watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
     if (val[0] !== WsStatusEnum.OPEN && val[1])
       reload();
     else if (!val[1])
       ws.webSocketHandler?.close();
-  }, { debounce: 1000, immediate: true });
+  }, {
+    debounce: 1000,
+    immediate: false,
+  });
 
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
   return {
