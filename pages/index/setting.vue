@@ -178,8 +178,8 @@ async function openFileFolder() {
       <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
         托盘消息窗口
         <el-switch
-          v-model="setting.settingPage.isTrayNotication" size="large" active-text="托盘消息" inactive-text="系统通知"
-          inline-prompt @change="(val) => setting.settingPage.isTrayNotication = !!val"
+          v-model="setting.settingPage.isTrayNotification" size="large" active-text="托盘消息" inactive-text="系统通知"
+          inline-prompt @change="(val) => setting.settingPage.isTrayNotification = !!val"
         />
       </div>
       <!-- Esc -->

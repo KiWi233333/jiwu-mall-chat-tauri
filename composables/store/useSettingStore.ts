@@ -59,7 +59,7 @@ export const useSettingStore = defineStore(
       isAutoStart: false, // 开机自启
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
-      isTrayNotication: true, // 托盘通知
+      isTrayNotification: true, // 托盘通知
     });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
@@ -371,7 +371,7 @@ export const useSettingStore = defineStore(
         isAutoStart: settingPage.value.isAutoStart, // 开机自启
         isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: false, // esc
-        isTrayNotication: true, // 托盘通知
+        isTrayNotification: true, // 托盘通知
       };
       loadSystemFonts();
       if (!isWeb.value) {

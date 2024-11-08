@@ -1,5 +1,8 @@
 // 路由中间件
 export default defineNuxtRouteMiddleware((to, from) => {
+  if (from.path === "/msg")
+    abortNavigation();
+
   if (to.path !== "/msg") {
     const user = useUserStore();
     if (to.path !== "/login") {

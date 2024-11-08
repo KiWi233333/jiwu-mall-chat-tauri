@@ -35,7 +35,7 @@ export async function useWsInit() {
           if (body.fromUser.userId === user.userId) { // 非当前用户消息通知
             return;
           }
-          if (!setting.settingPage.isTrayNotication || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
+          if (!setting.settingPage.isTrayNotification || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
             notification(body);
         }
       });

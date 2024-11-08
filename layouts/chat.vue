@@ -58,7 +58,8 @@ const setting = useSettingStore();
         <ChatContactList v-show="$route.path === '/'" />
         <!-- 聊天框 -->
         <ChatContent v-show="$route.path === '/'" class="flex-1 border-0 border-l-1px border-default" />
-        <NuxtPage />
+        <!-- 缓存内容 -->
+        <NuxtPage keepalive />
       </div>
     </div>
     <LazyMenuBottomMenu v-if="setting.isMobile" class="block sm:hidden" />
