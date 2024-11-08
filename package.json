@@ -2,7 +2,7 @@
   "name": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "description": "jiwu-mall-chat",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "private": true,
   "scripts": {
     "prepare": "husky install",
