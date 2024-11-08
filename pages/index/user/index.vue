@@ -44,38 +44,34 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    <NuxtLayout name="chat">
-      <div w-full flex flex-col>
-        <!-- 壁纸 -->
-        <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
-        <div class="mains">
-          <!-- 用户头像 -->
-          <div v-if="user" class="avatars relative flex-1 -top-5em md:pr-4">
-            <UserInfoLine
-              :data="user"
-              :is-edit="isSelf"
-            />
-          </div>
-          <!-- 右侧 -->
-          <div class="hidden flex-col gap-6 -mt-6 sm:flex">
-            <!-- 帖子 -->
-            <CardUserPostTotal
-              v-if="user?.id"
-              :dto="{
-                userId: user?.id,
-              }"
-              :user="user"
-              grid-class="grid grid-cols-4 gap-4"
-              card-class="truncate word-nowrap text-0.85rem"
-              class="p-4 border-default card-default-br"
-            />
-            <!-- 签到 -->
-            <UserInfoSigninCard class="border-default card-default-br" />
-          </div>
-        </div>
+  <div w-full flex flex-col>
+    <!-- 壁纸 -->
+    <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
+    <div class="mains">
+      <!-- 用户头像 -->
+      <div v-if="user" class="avatars relative flex-1 -top-5em md:pr-4">
+        <UserInfoLine
+          :data="user"
+          :is-edit="isSelf"
+        />
       </div>
-    </NuxtLayout>
+      <!-- 右侧 -->
+      <div class="hidden flex-col gap-6 -mt-6 sm:flex">
+        <!-- 帖子 -->
+        <CardUserPostTotal
+          v-if="user?.id"
+          :dto="{
+            userId: user?.id,
+          }"
+          :user="user"
+          grid-class="grid grid-cols-4 gap-4"
+          card-class="truncate word-nowrap text-0.85rem"
+          class="p-4 border-default card-default-br"
+        />
+        <!-- 签到 -->
+        <UserInfoSigninCard class="border-default card-default-br" />
+      </div>
+    </div>
   </div>
 </template>
 

@@ -212,72 +212,64 @@ onMounted(() => {
   const setting = useSettingStore();
   enable(!setting.settingPage.isCloseAllTransition);
 });
-definePageMeta({
-  key: route => route.fullPath,
-  layout: false,
-});
 </script>
 
 <template>
-  <div>
-    <NuxtLayout name="chat">
-      <section class="w-full flex flex-col p-4">
-        <!-- header -->
-        <p class="mb-4 text-[var(--el-color-primary)] font-600 tracking-0.2em">
-          <i class="i-solar:ghost-bold mr-2 p-0.8em" />
-          极物AI
-        </p>
-        <!-- 内容 -->
-        <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="bg-light card-default dark:bg-dark-9">
-          <div ref="autoAnimateRef" relative flex flex-col>
-            <!-- 消息适配器 -->
-            <ChatMsgMain
-              v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
-              :data="msg"
-              :last-msg="i > 0 ? msgList[i - 1] : undefined"
-            />
-          </div>
-        </el-scrollbar>
-        <el-form
-          ref="formRef" v-auth :model="form"
-          class="mt-2 flex items-center gap-3 p-2 bg-color sm:p-4"
-          @submit.prevent="onSubmit"
-        >
-          <div>
-            <el-tooltip content="新对话" placement="top">
-              <CardElImage
-                :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-                class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 shadow"
-                @click="handleNewChat"
-              />
-            </el-tooltip>
-          </div>
-          <el-form-item
-            prop="content" class="w-full" :rules="[{
-              required: true,
-              message: '',
-              trigger: 'change',
-            }]"
-          >
-            <el-input
-              ref="inputRef"
-              v-model.lazy="form.content"
-              :disabled="isChat" placeholder="快开始对话吧 ✨"
-              class="content border-0 border-b-1px pt-4 border-default"
-            />
-          </el-form-item>
-          <BtnElButton
-            class="group ml-a"
-            :class="isChat ? 'animate-pulse' : ''"
-            :icon-class="` block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`" round
-            :type="isChat ? 'danger' : 'info'"
-            @click="isChat ? onStop() : onSubmit()"
-          >
-            {{ isChat ? "结束" : "发送" }}&nbsp;
-          </BtnElButton>
-        </el-form>
-      </section>
-    </NuxtLayout>
+  <div class="w-full flex flex-col p-4">
+    <!-- header -->
+    <p class="mb-4 text-[var(--el-color-primary)] font-600 tracking-0.2em">
+      <i class="i-solar:ghost-bold mr-2 p-0.8em" />
+      极物AI
+    </p>
+    <!-- 内容 -->
+    <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="bg-light card-default dark:bg-dark-9">
+      <div ref="autoAnimateRef" relative flex flex-col>
+        <!-- 消息适配器 -->
+        <ChatMsgMain
+          v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
+          :data="msg"
+          :last-msg="i > 0 ? msgList[i - 1] : undefined"
+        />
+      </div>
+    </el-scrollbar>
+    <el-form
+      ref="formRef" v-auth :model="form"
+      class="mt-2 flex items-center gap-3 p-2 bg-color sm:p-4"
+      @submit.prevent="onSubmit"
+    >
+      <div>
+        <el-tooltip content="新对话" placement="top">
+          <CardElImage
+            :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
+            class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 shadow"
+            @click="handleNewChat"
+          />
+        </el-tooltip>
+      </div>
+      <el-form-item
+        prop="content" class="w-full" :rules="[{
+          required: true,
+          message: '',
+          trigger: 'change',
+        }]"
+      >
+        <el-input
+          ref="inputRef"
+          v-model.lazy="form.content"
+          :disabled="isChat" placeholder="快开始对话吧 ✨"
+          class="content border-0 border-b-1px pt-4 border-default"
+        />
+      </el-form-item>
+      <BtnElButton
+        class="group ml-a"
+        :class="isChat ? 'animate-pulse' : ''"
+        :icon-class="` block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`" round
+        :type="isChat ? 'danger' : 'info'"
+        @click="isChat ? onStop() : onSubmit()"
+      >
+        {{ isChat ? "结束" : "发送" }}&nbsp;
+      </BtnElButton>
+    </el-form>
   </div>
 </template>
 

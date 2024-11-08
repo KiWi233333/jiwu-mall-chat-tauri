@@ -31,18 +31,11 @@ onMounted(() => {
     useInit();
 });
 onUnmounted(useUmounted);
-watch(() => user.isLogin, (isLogin) => {
-
-});
 </script>
 
 <template>
   <NuxtPage
     :key="user.userId"
-    :keepalive="{
-      max: 12,
-      exclude: ['/msg', '/login'],
-    }"
     class="h-100dvh border-default card-default bg-color"
   />
 </template>

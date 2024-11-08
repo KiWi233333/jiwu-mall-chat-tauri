@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { getVersion } from "@tauri-apps/api/app";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "@/constants/index";
 
@@ -40,28 +39,24 @@ useSeoMeta({
 </script>
 
 <template>
-  <div>
-    <NuxtLayout name="chat">
-      <main v-loading.fullscreen.lock="isLoading" class="my-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
-        <h3 flex items-center>
-          账户与安全
-          <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
-        </h3>
-        <el-tabs
-          model-value="security"
-          tab-position="top"
-          class="mt-6 flex-1 overflow-hidden rounded-2 bg-transparent"
-        >
-          <el-tab-pane name="security" style="max-height: 100%;height: 100%;" label="账号" lazy>
-            <UserSafeUpdateCards data-fade />
-          </el-tab-pane>
-          <el-tab-pane name="account" label="安全管理" lazy>
-            <UserSafeDeviceList data-fade />
-          </el-tab-pane>
-        </el-tabs>
-      </main>
-    </NuxtLayout>
-  </div>
+  <main v-loading.fullscreen.lock="isLoading" class="my-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
+    <h3 flex items-center>
+      账户与安全
+      <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
+    </h3>
+    <el-tabs
+      model-value="security"
+      tab-position="top"
+      class="mt-6 flex-1 overflow-hidden rounded-2 bg-transparent"
+    >
+      <el-tab-pane name="security" style="max-height: 100%;height: 100%;" label="账号" lazy>
+        <UserSafeUpdateCards data-fade />
+      </el-tab-pane>
+      <el-tab-pane name="account" label="安全管理" lazy>
+        <UserSafeDeviceList data-fade />
+      </el-tab-pane>
+    </el-tabs>
+  </main>
 </template>
 
 <style scoped lang="scss">

@@ -12,6 +12,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
   else {
     if (user.isLogin)
-      return "/";
+      return from.path || "/";
   }
 });

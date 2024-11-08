@@ -54,7 +54,9 @@ const setting = useSettingStore();
         v-bind="$attrs"
       >
         <MenuChatMenu v-if="!setting.isMobile" class="hidden sm:block" />
-        <slot />
+        <!-- 会话列表 -->
+        <ChatContactList v-show="$route.path === '/'" />
+        <NuxtPage />
       </div>
     </div>
     <LazyMenuBottomMenu v-if="setting.isMobile" class="block sm:hidden" />

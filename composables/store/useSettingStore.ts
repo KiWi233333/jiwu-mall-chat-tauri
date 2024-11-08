@@ -195,10 +195,6 @@ export const useSettingStore = defineStore(
       try {
         if (isWeb.value)
           return false;
-        if (appUploader.value.isUpdating) {
-          ElMessage.warning("正在更新，请稍等...");
-          return;
-        }
         const update = (await check()) as Update;
         appUploader.value.isUpload = !!update?.available;
         appUploader.value.isCheckUpdatateLoad = false;
@@ -220,53 +216,105 @@ export const useSettingStore = defineStore(
           center: true,
           callback: async (action: Action) => {
             if (action === "confirm") {
-              // ElLoading.service({ fullscreen: true, text: "正在更新，请稍等..." });
               appUploader.value.isUpdating = true;
-              update
-                .downloadAndInstall((e) => {
-                  switch (e.event) {
-                    case "Started":
-                      console.log(e.data.contentLength);
-                      appUploader.value.contentLength = e.data.contentLength || 0;
-                      appUploader.value.downloaded = 0;
-                      appUploader.value.downloadedText = "";
-                      console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
-                      break;
-                    case "Progress":
-                      appUploader.value.downloaded += e.data.chunkLength || 0;
-                      appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
-                      console.log(`下载中 ${appUploader.value.downloadedText}`);
-                      break;
-                    case "Finished":
-                      console.log("下载完成");
-                      appUploader.value.isUpload = false;
-                      appUploader.value.isCheckUpdatateLoad = false;
-                      appUploader.value.isUpdating = false;
-                      appUploader.value.downloaded = 0;
-                      appUploader.value.downloadedText = "";
-                      appUploader.value.contentLength = 0;
-                      appUploader.value.newVersion = "";
-                      break;
-                  }
-                })
-                .then(async (val) => {
-                  console.log(val);
-                  await relaunch();
-                })
-                .catch((error) => {
-                  console.error(error);
-                  ElMessage.error("更新失败！请检查网络或稍后再试！");
-                })
-                .finally(() => {
-                  appUploader.value.isCheckUpdatateLoad = false;
-                  appUploader.value.isUpload = false;
-                  appUploader.value.isCheckUpdatateLoad = false;
-                  appUploader.value.isUpdating = false;
-                  appUploader.value.downloaded = 0;
-                  appUploader.value.downloadedText = "";
-                  appUploader.value.contentLength = 0;
-                  appUploader.value.newVersion = "";
-                });
+              try {
+                await update
+                  .download((e) => {
+                    switch (e.event) {
+                      case "Started":
+                        console.log(e.data.contentLength);
+                        appUploader.value.contentLength = e.data.contentLength || 0;
+                        appUploader.value.downloaded = 0;
+                        appUploader.value.downloadedText = "";
+                        console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
+                        break;
+                      case "Progress":
+                        appUploader.value.downloaded += e.data.chunkLength || 0;
+                        appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
+                        console.log(`下载中 ${appUploader.value.downloadedText}`);
+                        break;
+                      case "Finished":
+                        console.log("下载完成");
+                        appUploader.value.isUpload = false;
+                        appUploader.value.isCheckUpdatateLoad = false;
+                        appUploader.value.isUpdating = false;
+                        appUploader.value.downloaded = 0;
+                        appUploader.value.downloadedText = "";
+                        appUploader.value.contentLength = 0;
+                        appUploader.value.newVersion = "";
+                        break;
+                    }
+                  })
+                  .finally(() => {
+                    appUploader.value.isCheckUpdatateLoad = false;
+                    appUploader.value.isUpload = false;
+                    appUploader.value.isCheckUpdatateLoad = false;
+                    appUploader.value.isUpdating = false;
+                    appUploader.value.downloaded = 0;
+                    appUploader.value.downloadedText = "安装中...";
+                    appUploader.value.contentLength = 0;
+                    appUploader.value.newVersion = "";
+                  });
+                appUploader.value.downloadedText = "安装中...";
+                await update.install();
+              }
+              catch (error) {
+                console.log(error);
+                ElMessage.error("更新失败！请检查网络或稍后再试！");
+                appUploader.value.isCheckUpdatateLoad = false;
+                appUploader.value.isUpload = false;
+                appUploader.value.isCheckUpdatateLoad = false;
+                appUploader.value.isUpdating = false;
+                appUploader.value.downloaded = 0;
+                appUploader.value.downloadedText = "";
+                appUploader.value.contentLength = 0;
+                appUploader.value.newVersion = "";
+              }
+              // .downloadAndInstall(async (e) => {
+              //   switch (e.event) {
+              //     case "Started":
+              //       console.log(e.data.contentLength);
+              //       appUploader.value.contentLength = e.data.contentLength || 0;
+              //       appUploader.value.downloaded = 0;
+              //       appUploader.value.downloadedText = "";
+              //       console.log(`开始下载，长度 ${e.data.contentLength} bytes`);
+              //       break;
+              //     case "Progress":
+              //       appUploader.value.downloaded += e.data.chunkLength || 0;
+              //       appUploader.value.downloadedText = `${((appUploader.value.downloaded || 0) / 1024 / 1024).toFixed(2)}MB / ${((appUploader.value.contentLength || 0) / 1024 / 1024).toFixed(2)}MB`;
+              //       console.log(`下载中 ${appUploader.value.downloadedText}`);
+              //       break;
+              //     case "Finished":
+              //       console.log("下载完成");
+              //       appUploader.value.isUpload = false;
+              //       appUploader.value.isCheckUpdatateLoad = false;
+              //       appUploader.value.isUpdating = false;
+              //       appUploader.value.downloaded = 0;
+              //       appUploader.value.downloadedText = "";
+              //       appUploader.value.contentLength = 0;
+              //       appUploader.value.newVersion = "";
+              //       await nextTick();
+              //       break;
+              //   }
+              // })
+              // .then(async (val) => {
+              //   console.log(val);
+              //   await relaunch();
+              // })
+              // .catch((error) => {
+              //   console.error(error);
+              //   ElMessage.error("更新失败！请检查网络或稍后再试！");
+              // })
+              // .finally(() => {
+              //   appUploader.value.isCheckUpdatateLoad = false;
+              //   appUploader.value.isUpload = false;
+              //   appUploader.value.isCheckUpdatateLoad = false;
+              //   appUploader.value.isUpdating = false;
+              //   appUploader.value.downloaded = 0;
+              //   appUploader.value.downloadedText = "";
+              //   appUploader.value.contentLength = 0;
+              //   appUploader.value.newVersion = "";
+              // });
             }
             else if (action === "cancel") {
               if (!appUploader.value.ignoreVersion.includes(update.version))
@@ -278,8 +326,12 @@ export const useSettingStore = defineStore(
       catch (error) {
         // console.warn(error);
         appUploader.value.isCheckUpdatateLoad = false;
-        appUploader.value.isUpdating = false;
         appUploader.value.isUpload = false;
+        appUploader.value.isCheckUpdatateLoad = false;
+        appUploader.value.isUpdating = false;
+        appUploader.value.downloaded = 0;
+        appUploader.value.downloadedText = "";
+        appUploader.value.contentLength = 0;
       }
     }
 
