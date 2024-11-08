@@ -10,6 +10,7 @@ const setting = useSettingStore();
 <template>
   <main class="h-full flex flex-col !overflow-hidden card-default">
     <div
+      v-if=" user.isLogin"
       class="relative h-full flex flex-col overflow-hidden"
     >
       <MenuHeaderMenuBar>

@@ -168,9 +168,10 @@ async function onLogin(formEl: any | undefined) {
       lock: true,
       text: "登录中...",
       fullscreen: true,
+      customClass: "backdrop-blur-4px",
       spinner: " ",
       target: "body",
-      background: "rgba(0, 0, 0, 0.4)",
+      background: "rgba(0, 0, 0, 0.2)",
     });
     try {
       switch (loginType.value) {
@@ -189,16 +190,15 @@ async function onLogin(formEl: any | undefined) {
           break;
       }
     }
+    catch (error) {
+      loadingRef.close();
+    }
     finally {
       isLoading.value = false;
     }
     if (res.code === 20000) {
       // 登录成功
       if (res.data !== "") {
-        // ElMessage.success({
-        //   message: "登录成功！",
-        //   duration: 2000,
-        // });
         store.$patch({
           token: res.data,
           isLogin: true,
@@ -207,10 +207,11 @@ async function onLogin(formEl: any | undefined) {
         });
         await store.onUserLogin(res.data, autoLogin.value);
         await navigateTo("/", { replace: true });
-        loadingRef?.close();
+        loadingRef.close();
       }
       // 登录失败
       else {
+        loadingRef.close();
         ElMessage.error({
           message: res.message,
           duration: 5000,
@@ -220,7 +221,6 @@ async function onLogin(formEl: any | undefined) {
           token: "",
           isLogin: false,
         });
-        loadingRef?.close();
       }
     }
   });
