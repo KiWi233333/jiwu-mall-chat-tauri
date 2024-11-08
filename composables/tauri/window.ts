@@ -43,7 +43,7 @@ export function useFlashTray() {
         clearInterval(flashTimer.value);
 
       flashTimer.value = setInterval(() => {
-        tray.setIcon(open.value ? null : "icons/msg.png");
+        tray.setIcon(open.value ? null : "res/msg.png");
         open.value = !open.value;
       }, duration);
     }

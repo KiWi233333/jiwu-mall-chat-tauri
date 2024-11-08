@@ -147,7 +147,7 @@ export async function useMsgBoxWebViewInit() {
     debounce: 300,
   });
   watch(() => user.isLogin, async (newVal, oldVal) => {
-    activeIcon.value = newVal ? "icons/online.png" : "icons/offline.png";
+    activeIcon.value = newVal ? "res/online.png" : "res/offline.png";
   }, {
     immediate: true,
   });

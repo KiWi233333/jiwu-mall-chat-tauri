@@ -11,7 +11,7 @@ const setting = useSettingStore();
     class="group nav relative left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-4 border-default bg-color"
   >
     <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
-      <NuxtLink to="/">
+      <NuxtLink to="/" class="flex-row-c-c">
         <CardElImage
           src="/logo.png" class="h-1.8rem w-1.8rem" @click="() => {
             setting.isOpenContact = !setting.isOpenContact
