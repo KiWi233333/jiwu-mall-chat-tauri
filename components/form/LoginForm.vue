@@ -177,7 +177,6 @@ async function onLogin(formEl: any | undefined) {
       switch (loginType.value) {
         case LoginType.PWD:
           res = await toLoginByPwd(userForm.value.username, userForm.value.password);
-
           break;
         case LoginType.PHONE:
           res = await toLoginByPhone(userForm.value.phone, userForm.value.code);
@@ -205,9 +204,11 @@ async function onLogin(formEl: any | undefined) {
           showLoginForm: true,
           showRegisterForm: false,
         });
-        await store.onUserLogin(res.data, autoLogin.value);
-        await navigateTo("/", { replace: true });
-        loadingRef.close();
+        setTimeout(async () => {
+          await store.onUserLogin(res.data, autoLogin.value);
+          await navigateTo("/", { replace: true });
+          loadingRef.close();
+        }, 300);
       }
       // 登录失败
       else {
@@ -222,6 +223,9 @@ async function onLogin(formEl: any | undefined) {
           isLogin: false,
         });
       }
+    }
+    else {
+      loadingRef.close();
     }
   });
 }
