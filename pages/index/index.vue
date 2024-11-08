@@ -6,8 +6,6 @@ const chat = useChatStore();
 <template>
   <!-- 主内容 -->
   <template v-if="chat.theContact.roomId">
-    <!-- 聊天框 -->
-    <ChatContent class="flex-1 truncate border-0 border-l-1px border-default" />
     <!-- 在线人数 -->
     <ChatRoomGroup />
   </template>
