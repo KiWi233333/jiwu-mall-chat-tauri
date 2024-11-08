@@ -55,7 +55,7 @@ const setting = useSettingStore();
       >
         <MenuChatMenu v-if="!setting.isMobile" class="hidden sm:block" />
         <!-- 会话列表 -->
-        <ChatContactList v-show="$route.path === '/'" />
+        <ChatContactList :class="{ '!w-0': $route.path !== '/' }" />
         <!-- 聊天框 -->
         <ChatContent v-show="$route.path === '/'" class="flex-1 border-0 border-l-1px border-default" />
         <!-- 缓存内容 -->

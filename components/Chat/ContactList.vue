@@ -301,8 +301,8 @@ onMounted(() => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 transition-300 transition-property-all sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
-    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4' : 'w-0') : ''"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
+    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4 transition-300 transition-property-all' : 'w-0') : ''"
   >
     <!-- 搜索群聊 -->
     <div
@@ -329,16 +329,16 @@ onMounted(() => {
       </BtnElButton>
     </div>
     <!-- 会话列表 -->
-    <el-scrollbar wrap-class="w-full h-full" class="flex-1">
-      <el-radio-group v-model="theContactId" class="contact-list w-full">
-        <div ref="autoAnimateRef" w-full flex flex-col>
-          <ListAutoIncre
-            :immediate="true"
-            :auto-stop="false"
-            loading-class="op-0"
-            :no-more="pageInfo.isLast"
-            @load="loadData(dto)"
-          >
+    <el-scrollbar wrap-class="w-full h-full" class="contact-list">
+      <el-radio-group v-model="theContactId" class="w-full">
+        <ListAutoIncre
+          :immediate="true"
+          :auto-stop="false"
+          loading-class="op-0"
+          :no-more="pageInfo.isLast"
+          @load="loadData(dto)"
+        >
+          <div ref="autoAnimateRef" class="relative w-full flex flex-col">
             <el-radio
               v-for="room in chat.getContactList"
               :key="room.roomId"
@@ -369,15 +369,15 @@ onMounted(() => {
                 </div>
               </div>
             </el-radio>
-            <template #done>
-              <small
-                class="mb-6 block w-full truncate text-center text-0.8rem opacity-60"
-              >
-                暂无更多
-              </small>
-            </template>
-          </ListAutoIncre>
-        </div>
+          </div>
+          <template #done>
+            <div
+              class="mb-6 w-full text-center text-0.8rem opacity-60"
+            >
+              暂无更多
+            </div>
+          </template>
+        </ListAutoIncre>
       </el-radio-group>
     </el-scrollbar>
     <!-- 新建群聊 -->

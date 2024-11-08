@@ -20,8 +20,14 @@ function onCopyMsg(msg?: string | null) {
   if (!msg)
     return;
   const res = useCopyText(msg);
-  if (res)
-    ElMessage.success("复制成功");
+  if (res) {
+    ElMessage.success({
+      message: "复制成功",
+      type: "success",
+      grouping: true,
+      duration: 500,
+    });
+  }
 }
 </script>
 
