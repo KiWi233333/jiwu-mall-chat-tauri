@@ -135,11 +135,10 @@ export async function useMsgBoxWebViewInit() {
   const channel = new BroadcastChannel("main_channel");
   channel.addEventListener("message", handleChannelMsg);
   // 是否有新消息，控制图标闪烁
-  const { start, stop, activeIcon } = useFlashTray();
+  const { start, stop, activeIcon, onlineUrl, offlineUrl } = await useFlashTray();
   watchDebounced(isNewAllMsg, async (newVal, oldVal) => {
     if (newVal)
       start(true);
-
     else
       stop();
   }, {
@@ -147,7 +146,7 @@ export async function useMsgBoxWebViewInit() {
     debounce: 300,
   });
   watch(() => user.isLogin, async (newVal, oldVal) => {
-    activeIcon.value = newVal ? "res/online.png" : "res/offline.png";
+    activeIcon.value = newVal ? onlineUrl : offlineUrl;
   }, {
     immediate: true,
   });
