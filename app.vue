@@ -23,8 +23,12 @@ useSeoMeta({
 
 // 初始化
 const route = useRoute();
+const setting = useSettingStore();
+const isIframe = ref(false);
 const user = useUserStore();
 onMounted(() => {
+  isIframe.value = window?.self !== undefined && window?.self !== window?.top;
+
   if (route.path === "/msg") // 进入消息页面
     useDefaultInit();
   else
@@ -34,10 +38,13 @@ onUnmounted(useUmounted);
 </script>
 
 <template>
-  <NuxtPage
-    :key="user.userId"
-    class="h-100dvh border-default card-default bg-color"
-  />
+  <main class="h-100dvh flex-row-c-c">
+    <NuxtPage
+      :key="user.userId"
+      class="h-full w-full border-default card-default bg-color"
+      :class="{ 'sm:(w-1200px mx-a h-960px) md:(w-1200px mx-a h-860px)': !isIframe && setting.isWeb }"
+    />
+  </main>
 </template>
 
 <style lang="scss">

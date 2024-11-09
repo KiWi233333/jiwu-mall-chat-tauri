@@ -27,7 +27,7 @@ onMounted(() => {
     grid="~ cols-1 md:cols-2"
   >
     <div data-tauri-drag-region fixed right-4 top-4 flex items-center gap-2>
-      <MenuController key="header" :show-max="false" />
+      <MenuController v-if="!setting.isWeb" key="header" :show-max="false" />
     </div>
     <!-- bg -->
     <div hidden h-full w-full select-none border-0 border-r-1px shadow-md shadow-inset md:block border-default>

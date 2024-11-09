@@ -6,9 +6,10 @@ import { open as openFile } from "@tauri-apps/plugin-shell";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { appKeywords } from "~/constants";
 
+
 useSeoMeta({
-  title: "设置",
-  description: "设置 - 极物圈 开启你的极物之旅！",
+  title: "设置 | 极物聊天",
+  description: "极物聊天 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });
 
