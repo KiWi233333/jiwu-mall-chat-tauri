@@ -549,7 +549,7 @@ watch(() => chat.theContact.roomId, () => {
             pre-class="hidden"
             :upload-type="OssFileType.FILE"
             input-class="op-0 h-5 w-5 cursor-pointer "
-            accept="text/plain,application/vnd.ms-excel,application/vnd.-openxmlformats-officedocument.-spreadsheetml.-sheet,application/vnd.ms-powerpoint,application/pdf, application/x-pdf, application/x-bzpdf, application/x-gzpdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            :accept="FILE_UPLOAD_ACCEPT"
             @error-msg="(msg:string) => {
               ElMessage.error(msg)
             }"

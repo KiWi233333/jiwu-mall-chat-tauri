@@ -20,6 +20,7 @@ export const FILE_TYPE_ICON_MAP = {
   "application/x-bzpdf": "/images/icon/PDF.png",
   "application/x-gzpdf": "/images/icon/PDF.png",
 } as Record<string, string>;
+export const FILE_UPLOAD_ACCEPT = Object.keys(FILE_TYPE_ICON_MAP).join(",");
 /**
  * 默认文件图标
  */
