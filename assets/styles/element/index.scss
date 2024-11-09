@@ -1,6 +1,10 @@
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   //  node_modules/element-plus/theme-chalk/src/common/var.scss"
   $border-radius: ("base": 6px, "small": 12px, "round": 20px, "circle": 100%),
+  $loading: (
+    'spinner-size': 2.4rem,
+    'fullscreen-spinner-size': 2.6rem,
+  ),
   $colors: (
     "white": #f9fafb,
     "black": #1d1d1d,

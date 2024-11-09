@@ -169,7 +169,6 @@ async function onLogin(formEl: any | undefined) {
       text: "登录中...",
       fullscreen: true,
       customClass: "backdrop-blur-4px",
-      spinner: " ",
       target: "body",
       background: "rgba(0, 0, 0, 0.2)",
     });
@@ -215,7 +214,7 @@ async function onLogin(formEl: any | undefined) {
         loadingRef.close();
         ElMessage.error({
           message: res.message,
-          duration: 5000,
+          duration: 3000,
         });
         // store
         store.$patch({

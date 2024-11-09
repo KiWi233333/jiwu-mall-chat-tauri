@@ -93,37 +93,7 @@ body {
   html {
     font-size: 16px; /* 当前屏幕尺寸除以划分的等份:720/15 */
   }
-}
-
-/* 屏幕分辨率放大为 150 */
-// @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 120dpi) {
-//   .layout-default,
-//   .layout-default-se {
-//     transform: scale(0.665, 0.665) !important; /* 缩放数值需要根据效果调试 */
-//     transform-origin: left top !important;
-//   }
-// }
-
-/* 屏幕分辨率放大为 125 */
-// @media (-webkit-min-device-pixel-ratio: 1.25) {
-//   .layout-default,
-//   .layout-default-se {
-//     transform: scale(0.78, 0.78) !important;
-//     transform-origin: center top !important;
-//   }
-// }
-
-// 主题
-// html {
-//   background: radial-gradient(ellipse 80% 50% at 50% -22%, rgb(98 97 202 / 20%), #f1f2f5);
-//   // background-color: #f1f2f5;
-//   // background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(149, 148, 255, 0.4), #ffffff) no-repeat;
-// }
-
-// html.dark {
-//   background: radial-gradient(ellipse 80% 50% at 50% -22%, rgb(98 97 202 / 20%), transparent);
-// }
-
+} 
 *,
 .cursor-pointer {
   // 移动端点击有蓝色底

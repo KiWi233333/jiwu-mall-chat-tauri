@@ -29,8 +29,8 @@ export default defineNuxtConfig({
   },
   // spa情况下loading状态
   // spaLoadingTemplate: "./app/spa-loading-template.html",
-  // pageTransition: { name: "page", mode: "out-in" },
-  // layoutTransition: { name: "layout", mode: "out-in" },
+  pageTransition: { name: "page", mode: "out-in" },
+  layoutTransition: { name: "layout", mode: "out-in" },
   // 模块
   modules: [
     // 工具
@@ -51,7 +51,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: `${appName} - 开启你的购物社区之旅 ✨`,
+      title: `${appName}✨`,
       viewport: "width=device-width,initial-scale=1",
       // 网站头部信息
       link: [

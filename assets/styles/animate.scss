@@ -53,22 +53,22 @@
 
 // fade-in-out
 .fadeInOut-enter-active {
-  animation: 0.2s fadeIn;
+  animation: 0.2s fade-in-out;
 }
 .fadeInOut-leave-active {
-  animation: 0.2s fadeIn reverse;
+  animation: 0.2s fade-in-out reverse;
 }
 
 @keyframes fade-in-out {
   0% {
     position: absolute;
-    transition: 0.3s;
+    transition: 0.2s;
     width: 100%;
     opacity: 0;
   }
   100% {
     position: absolute;
-    transition: 0.3s;
+    transition: 0.2s;
     width: 100%;
     opacity: 1;
   }
@@ -254,6 +254,25 @@ html.stop-transition-all {
   position: absolute;
   z-index: -1;
 }
+
+
+// item动画
+.fade-list-move,
+.fade-list-enter-active,
+.fade-list-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-list-enter-from,
+.fade-list-leave-to {
+  opacity: 0;
+}
+
+.fade-list-leave-active {
+  position: absolute;
+  z-index: -1;
+}
+
 
 
 // group动画
