@@ -27,8 +27,6 @@ export async function useFlashTray() {
   const onlineUrl = await resolveResource("./res/online.png");
   const offlineUrl = await resolveResource("./res/offline.png");
   const msgUrl = await resolveResource("./res/msg.png");
-  console.log("tray icon urls", onlineUrl, offlineUrl, msgUrl);
-
   async function setTrayIcon(icon: string | null) {
     const tray = await TrayIcon.getById(TrayIconId).catch((err) => {
       console.error("获取托盘图标失败", err);
@@ -72,6 +70,12 @@ export async function useFlashTray() {
       stop();
     }
   };
+
+  watch(activeIcon, (newVal, oldVal) => {
+    if (newVal === oldVal)
+      return;
+    setTrayIcon(newVal);
+  }, { immediate: true });
 
   return {
     iconUrl,

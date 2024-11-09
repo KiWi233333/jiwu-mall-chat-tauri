@@ -145,7 +145,7 @@ export async function useMsgBoxWebViewInit() {
     immediate: true,
     debounce: 300,
   });
-  watch(() => user.isLogin, async (newVal, oldVal) => {
+  watch(() => user.isLogin, (newVal, oldVal) => {
     activeIcon.value = newVal ? onlineUrl : offlineUrl;
   }, {
     immediate: true,
