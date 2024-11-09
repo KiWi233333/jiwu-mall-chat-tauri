@@ -8,6 +8,7 @@ import {
 } from "~/composables/api/user";
 import { LoginType } from "~/types/user/index.js";
 
+const user = useUserStore();
 const loginType = ref<LoginType>(LoginType.EMAIL);
 const isLoading = ref<boolean>(false);
 const autoLogin = ref<boolean>(true);
@@ -242,66 +243,66 @@ async function onLogin(formEl: any | undefined) {
     style="border: none;"
     class="form"
   >
-    <h2
-      mb-5
-      mt-4
-      tracking-0.2em
-    >
-      极物圈社区聊天✨
-    </h2>
-    <p
-      mb-10 text-0.8em tracking-0.1em
-    >
-      没有账户？
-      <span
-        cursor-pointer color-emerald transition-300 hover:font-700
-        @click="toRegister"
-      >
-        立即注册
-      </span>
-
-      <span
-        flex-1
-        class="transition-all btn-info"
-        @click="loginType = loginType === LoginType.ADMIN ? LoginType.PHONE : LoginType.ADMIN"
-      >
-        {{ loginType !== LoginType.ADMIN ? "管理员" : "用户" }}
-      </span>
-    </p>
-    <!-- 切换登录 -->
-    <div
-      v-show="loginType !== LoginType.ADMIN"
-      class="toggle-login"
-      my-1em
-    >
-      <el-button
-        flex-1
-        :class="{ active: loginType === LoginType.EMAIL }"
-        tracking-0.1em
-        @click="loginType = LoginType.EMAIL"
-      >
-        邮箱登录
-      </el-button>
-      <el-button
-        flex-1
-        :class="{ active: loginType === LoginType.PHONE }"
-        tracking-0.1em
-        @click="loginType = LoginType.PHONE"
-      >
-        手机登录
-      </el-button>
-      <el-button
-        flex-1
-        :class="{ active: loginType === LoginType.PWD }"
-        tracking-0.1em
+    <template v-if="!user.isLogin">
+      <h2
+        mb-5
+        mt-4
         tracking-0.2em
-        @click="loginType = LoginType.PWD"
       >
-        密码登录
-      </el-button>
-    </div>
-    <!-- 验证码登录(客户端 ) -->
-    <ClientOnly>
+        极物圈社区聊天✨
+      </h2>
+      <p
+        mb-10 text-0.8em tracking-0.1em
+      >
+        没有账户？
+        <span
+          cursor-pointer color-emerald transition-300 hover:font-700
+          @click="toRegister"
+        >
+          立即注册
+        </span>
+
+        <span
+          flex-1
+          class="transition-all btn-info"
+          @click="loginType = loginType === LoginType.ADMIN ? LoginType.PHONE : LoginType.ADMIN"
+        >
+          {{ loginType !== LoginType.ADMIN ? "管理员" : "用户" }}
+        </span>
+      </p>
+      <!-- 切换登录 -->
+      <div
+        v-show="loginType !== LoginType.ADMIN"
+        class="toggle-login"
+        my-1em
+      >
+        <el-button
+          flex-1
+          :class="{ active: loginType === LoginType.EMAIL }"
+          tracking-0.1em
+          @click="loginType = LoginType.EMAIL"
+        >
+          邮箱登录
+        </el-button>
+        <el-button
+          flex-1
+          :class="{ active: loginType === LoginType.PHONE }"
+          tracking-0.1em
+          @click="loginType = LoginType.PHONE"
+        >
+          手机登录
+        </el-button>
+        <el-button
+          flex-1
+          :class="{ active: loginType === LoginType.PWD }"
+          tracking-0.1em
+          tracking-0.2em
+          @click="loginType = LoginType.PWD"
+        >
+          密码登录
+        </el-button>
+      </div>
+      <!-- 验证码登录(客户端 ) -->
       <!-- 邮箱登录 -->
       <el-form-item
         v-if="loginType === LoginType.EMAIL"
@@ -354,67 +355,91 @@ async function onLogin(formEl: any | undefined) {
           </template>
         </el-input>
       </el-form-item>
-    </ClientOnly>
-    <el-form-item
-      v-if="loginType === LoginType.EMAIL || loginType === LoginType.PHONE"
-      prop="code"
-      class="animated"
-    >
-      <el-input
-        v-model.trim="userForm.code"
-        prefix-icon="ChatDotSquare"
-        autocomplete="off"
-        size="large"
-        placeholder="请输入验证码"
-        @keyup.enter="onLogin(formRef)"
-      />
-    </el-form-item>
-    <!-- 密码登录 -->
-    <el-form-item
-      v-if="loginType === LoginType.PWD || loginType === LoginType.ADMIN "
-      label=""
-      prop="username"
-      class="animated"
-    >
-      <el-input
-        v-model.trim="userForm.username"
-        autocomplete="off"
-        prefix-icon="user"
-        size="large"
-        placeholder="请输入用户名、手机号或邮箱"
-        @keyup.enter="onLogin(formRef)"
-      />
-    </el-form-item>
-    <el-form-item
-      v-if="loginType === LoginType.PWD || loginType === LoginType.ADMIN"
-      type="password"
-      show-password
-      label=""
-      prop="password"
-      class="animated"
-    >
-      <el-input
-        v-model.trim="userForm.password"
-        prefix-icon="Lock"
-        autocomplete="off"
-        size="large"
-        placeholder="请输入密码"
-        show-password
-        type="password"
-        @keyup.enter="onLogin(formRef)"
-      />
-    </el-form-item>
-    <el-form-item mt-5>
-      <el-button
-        type="primary"
-        class="submit w-full tracking-0.2em shadow"
-        style="padding: 20px"
-        @keyup.enter="onLogin(formRef)"
-        @click="onLogin(formRef)"
+      <el-form-item
+        v-if="loginType === LoginType.EMAIL || loginType === LoginType.PHONE"
+        prop="code"
+        class="animated"
       >
-        登录
-      </el-button>
-    </el-form-item>
+        <el-input
+          v-model.trim="userForm.code"
+          prefix-icon="ChatDotSquare"
+          autocomplete="off"
+          size="large"
+          placeholder="请输入验证码"
+          @keyup.enter="onLogin(formRef)"
+        />
+      </el-form-item>
+      <!-- 密码登录 -->
+      <el-form-item
+        v-if="loginType === LoginType.PWD || loginType === LoginType.ADMIN "
+        label=""
+        prop="username"
+        class="animated"
+      >
+        <el-input
+          v-model.trim="userForm.username"
+          autocomplete="off"
+          prefix-icon="user"
+          size="large"
+          placeholder="请输入用户名、手机号或邮箱"
+          @keyup.enter="onLogin(formRef)"
+        />
+      </el-form-item>
+      <el-form-item
+        v-if="loginType === LoginType.PWD || loginType === LoginType.ADMIN"
+        type="password"
+        show-password
+        label=""
+        prop="password"
+        class="animated"
+      >
+        <el-input
+          v-model.trim="userForm.password"
+          prefix-icon="Lock"
+          autocomplete="off"
+          size="large"
+          placeholder="请输入密码"
+          show-password
+          type="password"
+          @keyup.enter="onLogin(formRef)"
+        />
+      </el-form-item>
+      <el-form-item mt-5>
+        <el-button
+          type="primary"
+          class="submit w-full tracking-0.2em shadow"
+          style="padding: 20px"
+          @keyup.enter="onLogin(formRef)"
+          @click="onLogin(formRef)"
+        >
+          登录
+        </el-button>
+      </el-form-item>
+    </template>
+    <template v-else>
+      <div class="mt-16 flex-row-c-c flex-col gap-8">
+        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="h-8rem w-8rem border-default card-default" />
+        <span>{{ user.userInfo.username || "未登录" }}</span>
+        <div>
+          <BtnElButton
+            type="primary"
+            transition-icon
+            icon-class="i-solar-alt-arrow-left-bold"
+            @click="navigateTo('/')"
+          >
+            继续
+          </BtnElButton>
+          <BtnElButton
+            type="danger"
+            transition-icon plain
+            icon-class="i-solar:logout-3-broken"
+            @click="user.exitLogin"
+          >
+            注销
+          </BtnElButton>
+        </div>
+      </div>
+    </template>
   </el-form>
 </template>
 

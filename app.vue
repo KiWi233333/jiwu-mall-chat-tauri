@@ -42,7 +42,7 @@ onUnmounted(useUmounted);
     <NuxtPage
       :key="user.userId"
       class="h-full w-full border-default card-default bg-color"
-      :class="{ 'sm:(w-1200px mx-a h-960px) md:(w-1200px mx-a h-860px)': !isIframe && setting.isWeb }"
+      :class="{ 'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px)': !isIframe && setting.isWeb }"
     />
   </main>
 </template>

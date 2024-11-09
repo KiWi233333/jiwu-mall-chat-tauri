@@ -23,7 +23,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="relative min-h-100dvh flex-1 overflow-hidden overflow-hidden shadow border-default card-default bg-color"
+    class="relative overflow-hidden overflow-hidden shadow border-default card-default bg-color"
     grid="~ cols-1 md:cols-2"
   >
     <div data-tauri-drag-region fixed right-4 top-4 flex items-center gap-2>
