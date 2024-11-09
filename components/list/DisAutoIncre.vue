@@ -108,7 +108,7 @@ defineExpose({
     </div>
   </div>
   <!-- 完成 -->
-  <div v-else class="animate-fade-in">
+  <div v-else>
     <slot name="done">
       <div v-if="!noMore && !loading " key="done" mim-h-4 w-full text-center text-bluegray @click="!isSupported && $emit('load')">
         <!-- 暂无更多 -->

@@ -79,7 +79,7 @@ defineExpose({
     </slot>
   </div>
   <!-- 完成 -->
-  <div v-else class="animate-fade-in">
+  <div v-else>
     <slot name="done">
       <div v-if="!noMore " key="done" h-2 w-full text-center text-bluegray @click="!isSupported && $emit('load')" />
     </slot>
