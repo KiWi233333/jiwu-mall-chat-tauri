@@ -419,7 +419,13 @@ async function onLogin(formEl: any | undefined) {
     <template v-else>
       <div class="mt-16 flex-row-c-c flex-col gap-8">
         <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="h-8rem w-8rem border-default card-default" />
-        <span>{{ user.userInfo.username || "未登录" }}</span>
+        <div text-center>
+          <span>
+            {{ user.userInfo.username || "未登录" }}
+          </span>
+          <br>
+          <small op-80 el-color-info>（{{ user.userInfo.username ? "已登录" : "请登录" }}）</small>
+        </div>
         <div>
           <BtnElButton
             type="primary"
