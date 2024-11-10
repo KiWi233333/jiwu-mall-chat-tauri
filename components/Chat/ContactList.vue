@@ -62,14 +62,14 @@ const contact = useChatStore();
 // 改变当前会话
 const theContactId = computed({
   get() {
-    return contact.theContact.roomId;
+    return contact.theContact.roomId || localStorage.getItem("theContactId") || "";
   },
   set(contactId: number) {
-    onChangeRoom(contactId);
+    onChangeRoom(contactId, () => localStorage.setItem("theContactId", contactId.toString()));
   },
 });
 // 切换房间
-async function onChangeRoom(newRoomId?: number) {
+async function onChangeRoom(newRoomId?: number, done?: () => void) {
   if (!newRoomId)
     return;
   const item = chat.contactList.find(p => p.roomId === newRoomId);
@@ -77,9 +77,11 @@ async function onChangeRoom(newRoomId?: number) {
     return;
   if (item.type === RoomType.SELFT)
     contact.setContact(item);
+
   try {
     const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
     if (res && res.code === StatusCode.SUCCESS) {
+      done && done();
       contact.setContact(res?.data);
       if (item) {
         item.roomGroup = res?.data?.roomGroup;
@@ -109,9 +111,9 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
     const list = await loadData(dto || props.dto);
-    if (list?.[0]?.roomId)
-      theContactId.value = list?.[0]?.roomId;
-    await onChangeRoom(theContactId.value);
+    // if (list?.[0]?.roomId)
+    //   theContactId.value = list?.[0]?.roomId;
+    // await onChangeRoom(theContactId.value);
     await nextTick();
     enable(!setting.settingPage.isCloseAllTransition);
   }

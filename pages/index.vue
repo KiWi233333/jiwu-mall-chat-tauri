@@ -1,5 +1,9 @@
 
 <script lang="ts" setup>
+definePageMeta({
+  key: route => route.path,
+  layout: false,
+});
 </script>
 
 <template>

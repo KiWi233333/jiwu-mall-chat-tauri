@@ -23,8 +23,12 @@ export default defineConfig({
     // 颜色
     ["text-color", "text-dark dark:text-white"],
     ["bg-color", "bg-white dark:bg-dark"],
+    ["bg-color-second", "bg-light-5 dark:bg-dark"],
     // 边框
     ["border-default", "border-1px border-solid border-gray-200 dark:border-dark-300"],
+    ["border-default-r", "border-solid border-gray-200 border-0 border-r-1px  dark:border-dark-300"],
+    ["border-default-l", "border-solid border-gray-200 border-0 border-l-1px  dark:border-dark-300"],
+    ["border-default-t", "border-solid border-gray-200 border-0 border-t-1px  dark:border-dark-300"],
     ["border-default-b", "border-solid border-gray-200 border-0 border-b-1px  dark:border-dark-300"],
     ["border-default-dashed", "hover:shadow-sm border-2px  border-default border-dashed"],
     ["border-default-hover", `transition-200 hover:shadow hover:border-solid hover:border-[var(--el-color-primary)]  border-default-dashed

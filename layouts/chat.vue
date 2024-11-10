@@ -5,6 +5,7 @@ import { WsStatusEnum } from "~/composables/types/WsType";
 const user = useUserStore();
 const ws = useWs();
 const setting = useSettingStore();
+const chat = useChatStore();
 </script>
 
 <template>
@@ -58,7 +59,7 @@ const setting = useSettingStore();
         <!-- 会话列表 -->
         <ChatContactList :class="{ '!w-0': $route.path !== '/' }" />
         <!-- 聊天框 -->
-        <ChatContent v-show="$route.path === '/'" class="flex-1 border-0 border-l-1px border-default" />
+        <ChatContent v-show="$route.path === '/' && chat.theContact.roomId" class="flex-1 border-0 border-l-1px border-default" />
         <!-- 缓存内容 -->
         <NuxtPage keepalive />
       </div>

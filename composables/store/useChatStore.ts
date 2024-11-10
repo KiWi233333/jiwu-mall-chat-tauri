@@ -57,7 +57,7 @@ export const useChatStore = defineStore(
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
       avatar: "",
-      roomId: 1,
+      roomId: undefined,
       hotFlag: 1,
       name: "",
       text: "",
@@ -89,7 +89,7 @@ export const useChatStore = defineStore(
         ...(vo || {
           activeTime: 0,
           avatar: "",
-          roomId: 1,
+          roomId: undefined,
           hotFlag: 1,
           name: "",
           text: "",
