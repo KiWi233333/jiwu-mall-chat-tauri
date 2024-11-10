@@ -1,4 +1,5 @@
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+
 pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
     // 主窗口配置
     let mut main_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
@@ -40,50 +41,41 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
     }
 
     // 构建主窗口和消息窗口
-    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     let main_window = main_builder.build()?;
-    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
     let msgbox_window = msgbox_builder.build()?;
 
     // 监听窗口事件
-    #[cfg(any(target_os = "windows", target_os = "linux"))]
-    {
-        let msgbox_window_clone = msgbox_window.clone();
-        msgbox_window_clone.on_window_event(move |event| match event {
-            WindowEvent::CloseRequested { api, .. } => {
-                println!("关闭请求，窗口将最小化而不是关闭。");
-                api.prevent_close();
-                msgbox_window.hide().unwrap();
+    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+    msgbox_window.clone().on_window_event(move |event| match event {
+        WindowEvent::CloseRequested { api, .. } => {
+            println!("关闭请求，窗口将最小化而不是关闭。");
+            api.prevent_close();
+        }
+        WindowEvent::Focused(focused) => {
+            if !*focused {
+                msgbox_window.hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
             }
-            WindowEvent::Focused(focused) => {
-                if !*focused {
-                    msgbox_window.hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
-                }
-            }
-            _ => {}
-        });
-    }
+        }
+        _ => {}
+    });
     // 监听窗口事件
     #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
-    {
-        let main_window_clone = main_window.clone();
-        main_window_clone.on_window_event(move |event| match event {
-            WindowEvent::CloseRequested { api, .. } => {
-                println!("关闭请求，窗口将最小化而不是关闭。");
-                api.prevent_close();
-                main_window.hide().unwrap();
-            }
-            _ => {}
-        });
-    }
-
+    main_window.clone().on_window_event(move |event| match event {
+        WindowEvent::CloseRequested { api, .. } => {
+            println!("关闭请求，窗口将最小化而不是关闭。");
+            api.prevent_close();
+        }
+        _ => {}
+    });
+    
     // 仅在构建 macOS 时设置背景颜色
     #[cfg(target_os = "macos")]
     {
         use cocoa::appkit::{NSColor, NSWindow};
         use cocoa::base::{id, nil};
 
-        let ns_window = main_window.ns_window().unwrap() as id;
+        let ns_window = main_window.clone().ns_window().unwrap() as id;
         unsafe {
             let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                 nil,
