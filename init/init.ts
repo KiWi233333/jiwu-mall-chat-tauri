@@ -162,6 +162,7 @@ export async function useMsgBoxWebViewInit() {
     const win = await WebviewWindow.getByLabel("main");
     if (!win)
       return;
+
     if (isNewAllMsg.value) {
       // 消费第一个未读消息
       const contact = chat.unReadContactList[0];
@@ -244,8 +245,9 @@ async function handleChannelMsg(event: MessageEvent) {
       chat.setReadList(data.roomId);
     if (win) {
       await navigateTo("/");
-      win?.setFocus();
-      win?.show();
+      await win?.show();
+      await win.isMinimized() && await win.unminimize();
+      await win?.setFocus();
       chat.scrollBottom(false);
     }
   }
