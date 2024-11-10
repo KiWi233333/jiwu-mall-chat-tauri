@@ -41,7 +41,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
     }
 
     // 构建主窗口和消息窗口
-    let _main_window = main_builder.build()?;
+    let main_window = main_builder.build()?;
     #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
     let msgbox_window = msgbox_builder.build()?;
 
@@ -51,11 +51,22 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         WindowEvent::CloseRequested { api, .. } => {
             println!("关闭请求，窗口将最小化而不是关闭。");
             api.prevent_close();
+            msgbox_window.hide().unwrap();
         }
         WindowEvent::Focused(focused) => {
             if !*focused {
                 msgbox_window.hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
             }
+        }
+        _ => {}
+    });
+    // 监听窗口事件
+    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+    main_window.clone().on_window_event(move |event| match event {
+        WindowEvent::CloseRequested { api, .. } => {
+            println!("关闭请求，窗口将最小化而不是关闭。");
+            api.prevent_close();
+            main_window.hide().unwrap();
         }
         _ => {}
     });
@@ -66,7 +77,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         use cocoa::appkit::{NSColor, NSWindow};
         use cocoa::base::{id, nil};
 
-        let ns_window = _main_window.ns_window().unwrap() as id;
+        let ns_window = main_window.ns_window().unwrap() as id;
         unsafe {
             let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                 nil,

@@ -75,8 +75,8 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
                 MouseButton::Left {} => {
                     let app = tray.app_handle();
                     if let Some(webview_window) = app.get_webview_window("main") {
-                        let _ = webview_window.show();
                         let _ = webview_window.unminimize();
+                        let _ = webview_window.show();
                         let _ = webview_window.set_focus();
                     } else {
                         show_window(&app);

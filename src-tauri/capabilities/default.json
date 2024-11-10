@@ -34,6 +34,8 @@
     "core:window:allow-get-all-windows",
     "core:window:allow-set-always-on-top",
     "core:window:allow-start-dragging",
+    "core:window:allow-unmaximize",
+    "core:window:allow-unminimize",
     "core:app:allow-version",
     "core:event:allow-emit",
     "core:event:allow-emit-to",
