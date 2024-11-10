@@ -279,7 +279,7 @@ onMounted(() => {
           <el-date-picker
             v-model.lazy="userCopy.birthday"
             type="date"
-            placeholder="Pick a day"
+            placeholder="选择生日"
             size="small"
             @change="submitUpdateUser('birthday')"
           />
@@ -309,13 +309,17 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+:deep(.el-loading-mask) {
+  border-radius: 50%;
+  overflow: hidden !important;
+}
 .avatar {
   width: 6em;
   height: 6em;
   border-radius: 50%;
   overflow: hidden;
 
-  :deep(.el-upload) {
+    :deep(.el-upload) {
     overflow: hidden;
     width: 6em;
     height: 6em;

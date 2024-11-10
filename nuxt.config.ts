@@ -3,6 +3,7 @@
 // import { prismjsPlugin } from "vite-plugin-prismjs";
 // import { pwa } from "./config/pwa";
 import { appDescription, appName } from "./constants/index";
+import "dayjs/locale/zh-cn";
 
 const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
 const isSSR = process.env.NUXT_PUBLIC_SPA;
@@ -142,6 +143,7 @@ export default defineNuxtConfig({
     icon: "ElIcon",
     importStyle: "scss",
     themes: ["dark"],
+    defaultLocale: "zh-cn",
   },
   // pwa
   // pwa,
