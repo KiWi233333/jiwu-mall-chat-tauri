@@ -1,10 +1,4 @@
 <script lang="ts" setup>
-// 定义页面元数据
-definePageMeta({
-  key: route => route.path,
-  layout: false,
-});
-
 const error = useError();
 </script>
 

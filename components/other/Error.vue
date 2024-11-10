@@ -24,8 +24,8 @@ function onBack(rollback?: string) {
 </script>
 
 <template>
-  <div>
-    <i class="mx-a mb-2 block h-10rem w-10rem animate-shake-y opacity-60" :class="icon" />
+  <div data-fades>
+    <i class="mx-a mb-2 block h-10rem w-10rem opacity-60" :class="icon" />
     <div
       flex-row-c-c
       flex-col
@@ -36,9 +36,9 @@ function onBack(rollback?: string) {
       <div class="mx-a flex-row-c-c opacity-90">
         <slot name="footer">
           <BtnElButton
-            plain
+
             type="danger"
-            transition-icon
+            transition-icon plain
             icon-class="i-solar:alt-arrow-left-line-duotone mr-2"
             @click="onBack($route.query?.rollback ? String($route.query?.rollback) : '')"
           >
