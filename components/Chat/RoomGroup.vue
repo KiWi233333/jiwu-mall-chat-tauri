@@ -404,7 +404,7 @@ function exitGroup() {
 <template>
   <div
     v-bind="$attrs"
-    class="group w-16vw flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 px-0 transition-200 transition-width sm:(relative w-16vw flex-col p-4)"
+    class="group w-16vw flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 px-0 transition-200 transition-width sm:(relative max-w-320px w-20vw flex-col p-4)"
   >
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
       <div hidden sm:flex class="p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">

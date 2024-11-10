@@ -254,10 +254,14 @@ async function submit(formData: ChatMessageDTO = form.value) {
     roomId: chat.theContact.roomId,
   }, user.getToken);
   isSending.value = false;
-  if (res.code === StatusCode.SUCCESS)
+  if (res.code === StatusCode.SUCCESS) {
     emit("submit", res.data);
-  else if (res.message === "您和对方已不是好友！")
+    // 消息阅读上报
+    res.data.message.roomId && chat.setReadList(res.data.message.roomId);
+  }
+  else if (res.message === "您和对方已不是好友！") {
     return;
+  }
   resetForm();
 }
 

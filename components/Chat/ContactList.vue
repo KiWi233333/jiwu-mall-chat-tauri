@@ -62,14 +62,14 @@ const contact = useChatStore();
 // 改变当前会话
 const theContactId = computed({
   get() {
-    return contact.theContact.roomId || localStorage.getItem("theContactId") || "";
+    return contact.theContact.roomId;
   },
   set(contactId: number) {
-    onChangeRoom(contactId, () => localStorage.setItem("theContactId", contactId.toString()));
+    onChangeRoom(contactId);
   },
 });
 // 切换房间
-async function onChangeRoom(newRoomId?: number, done?: () => void) {
+async function onChangeRoom(newRoomId?: number) {
   if (!newRoomId)
     return;
   const item = chat.contactList.find(p => p.roomId === newRoomId);
@@ -77,11 +77,9 @@ async function onChangeRoom(newRoomId?: number, done?: () => void) {
     return;
   if (item.type === RoomType.SELFT)
     contact.setContact(item);
-
   try {
     const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
     if (res && res.code === StatusCode.SUCCESS) {
-      done && done();
       contact.setContact(res?.data);
       if (item) {
         item.roomGroup = res?.data?.roomGroup;
@@ -303,8 +301,8 @@ onMounted(() => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
-    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4 transition-300 transition-property-all' : 'w-0') : ''"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 max-w-360px w-1/4 pl-0) bg-color"
+    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4  transition-300 transition-property-all' : 'w-0') : ''"
   >
     <!-- 搜索群聊 -->
     <div
