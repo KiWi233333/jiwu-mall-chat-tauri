@@ -57,7 +57,7 @@ export const useChatStore = defineStore(
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
       avatar: "",
-      roomId: undefined,
+      roomId: 0,
       hotFlag: 1,
       name: "",
       text: "",
@@ -277,8 +277,50 @@ export const useChatStore = defineStore(
       },
     }) as Ref<boolean>;
 
-    /******************************* 消息相关 *********************************/
-
+    /******************************* 重置 *********************************/
+    function resetStore() {
+      contactList.value = [];
+      theContact.value = {
+        activeTime: 0,
+        avatar: "",
+        roomId: 0,
+        hotFlag: 1,
+        name: "",
+        text: "",
+        type: 1,
+        unreadCount: 0,
+        // 消息列表
+        msgList: [],
+        unreadMsgList: [],
+      };
+      atUserList.value = [];
+      atUidListTemp.value = [];
+      theFriendOpt.value = {
+        type: -1,
+        data: {},
+      };
+      delUserId.value = "";
+      isAddNewFriend.value = false;
+      isOpenContact.value = true;
+      roomGroupPageInfo.value = {
+        cursor: null,
+        isLast: false,
+        size: 15,
+      };
+      onOfflineList.value = [];
+      isChatScroll.value = false;
+      playSounder.value = {
+        state: "stop",
+        url: "",
+        msgId: 0,
+        currentSecond: 0,
+        duration: 0,
+        audio: undefined,
+      };
+      isVisible.value = false;
+      scrollTopSize.value = 0;
+      saveScrollTop();
+    }
     return {
       // state
       contactList,
@@ -313,6 +355,7 @@ export const useChatStore = defineStore(
       setDelUserId,
       setTheFriendOpt,
       onReloadContact,
+      resetStore,
       // dom
       scrollTopSize,
       saveScrollTop,

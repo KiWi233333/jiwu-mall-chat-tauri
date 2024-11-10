@@ -12,7 +12,7 @@ async function toExistLogin() {
 
   }).then(async (action) => {
     if (action === "confirm") {
-      await user.onUserExit(user.getToken);
+      await user.callbackUserExit(user.getToken);
       setTimeout(() => {
         user.$reset();
       }, 50);

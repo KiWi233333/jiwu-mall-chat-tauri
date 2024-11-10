@@ -185,6 +185,25 @@ export const useWs = defineStore(
         webSocketHandler.value?.send(JSON.stringify(dto));
     }
 
+    // 清除
+    function resetStore() {
+      webSocketHandler?.value?.close();
+      wsMsgList.value = {
+        newMsg: [],
+        onlineNotice: [],
+        recallMsg: [],
+        deleteMsg: [],
+        applyMsg: [],
+        memberMsg: [],
+        tokenMsg: [],
+        other: [],
+      };
+      status.value = WsStatusEnum.SAFE_CLOSE;
+      fullWsUrl.value = "";
+      isWindBlur.value = false;
+      webSocketHandler.value = null;
+    }
+
 
     return {
       // state
@@ -194,6 +213,7 @@ export const useWs = defineStore(
       isWindBlur,
       wsMsgList,
       // 方法
+      resetStore,
       reload,
       onerror,
       initDefault,

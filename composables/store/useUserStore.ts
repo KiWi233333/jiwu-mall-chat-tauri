@@ -99,7 +99,7 @@ export const useUserStore = defineStore(
           await navigateTo(redirectTo);
       }
       else {
-        onUserExit(t);
+        callbackUserExit(t);
       }
     };
 
@@ -114,8 +114,7 @@ export const useUserStore = defineStore(
         type: "warning",
       })
         .then(() => {
-          // 退出登录
-          onUserExit(token.value);
+          callbackUserExit(token.value);
           if (document)
             ElMessage.success("退出成功！");
         })
@@ -148,9 +147,12 @@ export const useUserStore = defineStore(
      * 退出登录
      * @param t token
      */
-    async function onUserExit(t?: string) {
+    async function callbackUserExit(t?: string) {
+      // 退出登录
+      clearUserStore();
+      useChatStore().resetStore();
+      useWs().resetStore();
       if (t) {
-        clearUserStore();
         await navigateTo("/login");
         return await toLogout(t);
       }
@@ -205,7 +207,7 @@ export const useUserStore = defineStore(
       // actions
       onUserLogin,
       onCheckLogin,
-      onUserExit,
+      callbackUserExit,
       exitLogin,
       clearUserStore,
       loadUserWallet,
