@@ -404,7 +404,7 @@ function exitGroup() {
 <template>
   <div
     v-bind="$attrs"
-    class="group w-16vw flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 px-0 transition-200 transition-width sm:(relative max-w-320px w-20vw flex-col p-4)"
+    class="group h-full w-16vw flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 px-0 transition-200 transition-width sm:(relative max-w-320px w-20vw flex-col p-4)"
   >
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
       <div hidden sm:flex class="p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
@@ -529,7 +529,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
