@@ -47,7 +47,6 @@ function deleteFriend(userId: string) {
     center: true,
     cancelButtonText: "取消",
     lockScroll: false,
-    type: "warning",
     callback: async (action: string) => {
       if (action === "confirm") {
         const res = await deleteFriendById(userId, store.getToken);

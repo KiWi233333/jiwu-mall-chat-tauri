@@ -9,7 +9,7 @@ useSeoMeta({
 const user = useUserStore();
 definePageMeta({
   key: route => route.fullPath,
-  layout: false,
+  layout: "default",
 });
 
 const setting = useSettingStore();

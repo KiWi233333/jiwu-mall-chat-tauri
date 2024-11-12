@@ -9,7 +9,7 @@ import {
 import { LoginType } from "~/types/user/index.js";
 
 const user = useUserStore();
-const loginType = ref<LoginType>(LoginType.EMAIL);
+const loginType = useLocalStorage<LoginType>("loginType", LoginType.EMAIL);
 const isLoading = ref<boolean>(false);
 const autoLogin = ref<boolean>(true);
 // 表单
@@ -70,52 +70,57 @@ const phoneCodeStorage = ref<number>(0);
  */
 async function getLoginCode(type: LoginType) {
   let data;
-  // 获取邮箱验证码
-  if (type === LoginType.EMAIL) {
+  try {
+    // 获取邮箱验证码
+    if (type === LoginType.EMAIL) {
     // 简单校验
-    if (userForm.value.email.trim() === "")
-      return;
-    if (!checkEmail(userForm.value.email)) {
-      isLoading.value = false;
-      return ElMessage.error("邮箱格式不正确！");
+      if (userForm.value.email.trim() === "")
+        return;
+      if (!checkEmail(userForm.value.email)) {
+        isLoading.value = false;
+        return ElMessage.error("邮箱格式不正确！");
+      }
+      // 开启
+      isLoading.value = true;
+      // 请求验证码
+      data = await getLoginCodeByType(userForm.value.email, DeviceType.EMAIL);
+      // 成功
+      if (data.code === StatusCode.SUCCESS) {
+        ElMessage.success({
+          message: "验证码已发送至您的邮箱，5分钟有效！",
+          duration: 3000,
+        });
+        useInterval(emailTimer, emailCodeStorage, 60, -1);
+      }
     }
-    // 开启
-    isLoading.value = true;
-    // 请求验证码
-    data = await getLoginCodeByType(userForm.value.email, DeviceType.EMAIL);
-    // 成功
-    if (data.code === StatusCode.SUCCESS) {
-      ElMessage.success({
-        message: "验证码已发送至您的邮箱，5分钟有效！",
-        duration: 5000,
-      });
-      useInterval(emailTimer, emailCodeStorage, 60, -1);
+    // 获取手机号验证码
+    else if (type === LoginType.PHONE) {
+      if (userForm.value.phone.trim() === "")
+        return;
+      if (!checkPhone(userForm.value.phone)) {
+        isLoading.value = false;
+        ElMessage.closeAll("error");
+        return ElMessage.error("手机号格式不正确！");
+      }
+      isLoading.value = true;
+      data = await getLoginCodeByType(userForm.value.phone, DeviceType.PHONE);
+      if (data.code === 20000) {
+      // 开启定时器
+        useInterval(phoneTimer, phoneCodeStorage, 60, -1);
+        ElMessage.success({
+          message: data.message,
+          duration: 5000,
+        });
+      // userForm.value.code = data.data;
+      }
+      else {
+        ElMessage.closeAll("error");
+        ElMessage.error(data.message);
+      }
     }
   }
-  // 获取手机号验证码
-  else if (type === LoginType.PHONE) {
-    if (userForm.value.phone.trim() === "")
-      return;
-    if (!checkPhone(userForm.value.phone)) {
-      isLoading.value = false;
-      ElMessage.closeAll("error");
-      return ElMessage.error("手机号格式不正确！");
-    }
-    isLoading.value = true;
-    data = await getLoginCodeByType(userForm.value.phone, DeviceType.PHONE);
-    if (data.code === 20000) {
-      // 开启定时器
-      useInterval(phoneTimer, phoneCodeStorage, 60, -1);
-      ElMessage.success({
-        message: data.message,
-        duration: 5000,
-      });
-      // userForm.value.code = data.data;
-    }
-    else {
-      ElMessage.closeAll("error");
-      ElMessage.error(data.message);
-    }
+  catch (error) {
+    isLoading.value = false;
   }
   // 关闭加载
   isLoading.value = false;
@@ -146,6 +151,26 @@ function useInterval(timer: any,
   }, 1000);
 }
 
+// 关闭定时器
+onUnmounted(() => {
+  onCloseTimer();
+});
+onDeactivated(() => {
+  onCloseTimer();
+});
+// 关闭定时器
+function onCloseTimer() {
+  if (emailTimer.value !== -1) {
+    clearInterval(emailTimer.value);
+    emailTimer.value = -1;
+  }
+  if (phoneTimer.value !== -1) {
+    clearInterval(phoneTimer.value);
+    phoneTimer.value = -1;
+  }
+}
+
+
 const store = useUserStore();
 function toRegister() {
   store.showLoginForm = false;
@@ -153,6 +178,10 @@ function toRegister() {
 }
 
 const formRef = ref();
+function done() {
+  isLoading.value = false;
+  user.isOnLogining = false;
+}
 /**
  * 登录
  * @param formEl 表单示例
@@ -164,15 +193,8 @@ async function onLogin(formEl: any | undefined) {
     if (!valid)
       return;
     isLoading.value = true;
+    user.isOnLogining = true;
     let res = { code: 20001, data: "", message: "登录失败！" };
-    const loadingRef = ElLoading.service({
-      lock: true,
-      text: "登录中...",
-      fullscreen: true,
-      customClass: "backdrop-blur-4px",
-      target: "body",
-      background: "rgba(0, 0, 0, 0.2)",
-    });
     try {
       switch (loginType.value) {
         case LoginType.PWD:
@@ -190,29 +212,19 @@ async function onLogin(formEl: any | undefined) {
       }
     }
     catch (error) {
-      loadingRef.close();
-    }
-    finally {
-      isLoading.value = false;
+      done();
     }
     if (res.code === 20000) {
       // 登录成功
-      if (res.data !== "") {
-        store.$patch({
-          token: res.data,
-          isLogin: true,
-          showLoginForm: true,
-          showRegisterForm: false,
-        });
+      if (res.data) {
+        await store.onUserLogin(res.data, autoLogin.value);
         setTimeout(async () => {
-          await store.onUserLogin(res.data, autoLogin.value);
+          done();
           await navigateTo("/", { replace: true });
-          loadingRef.close();
-        }, 300);
+        }, 500);
       }
       // 登录失败
       else {
-        loadingRef.close();
         ElMessage.error({
           message: res.message,
           duration: 3000,
@@ -222,10 +234,11 @@ async function onLogin(formEl: any | undefined) {
           token: "",
           isLogin: false,
         });
+        done();
       }
     }
     else {
-      loadingRef.close();
+      done();
     }
   });
 }
@@ -321,7 +334,7 @@ async function onLogin(formEl: any | undefined) {
           <template #append>
             <el-button
               type="primary"
-              :disabled="phoneCodeStorage > 0 && isLoading"
+              :disabled="emailCodeStorage > 0 || isLoading"
               @click="getLoginCode(loginType)"
             >
               {{ emailCodeStorage > 0 ? `${emailCodeStorage}s后重新发送` : "获取验证码" }}
@@ -347,7 +360,7 @@ async function onLogin(formEl: any | undefined) {
           <template #append>
             <el-button
               type="primary"
-              :disabled="phoneCodeStorage > 0"
+              :disabled="phoneCodeStorage > 0 || isLoading"
               @click="getLoginCode(loginType)"
             >
               {{ phoneCodeStorage > 0 ? `${phoneCodeStorage}s后重新发送` : "获取验证码" }}
@@ -409,6 +422,7 @@ async function onLogin(formEl: any | undefined) {
           type="primary"
           class="submit w-full tracking-0.2em shadow"
           style="padding: 20px"
+          :loading="user.isOnLogining"
           @keyup.enter="onLogin(formRef)"
           @click="onLogin(formRef)"
         >
@@ -430,10 +444,11 @@ async function onLogin(formEl: any | undefined) {
           <BtnElButton
             type="primary"
             transition-icon
+            :loading="user.isOnLogining"
             icon-class="i-solar-alt-arrow-left-bold"
             @click="navigateTo('/')"
           >
-            继续
+            {{ user.isOnLogining ? "登录中..." : "前往" }}
           </BtnElButton>
           <BtnElButton
             type="danger"

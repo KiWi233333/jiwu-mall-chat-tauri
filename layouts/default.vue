@@ -3,9 +3,7 @@
 </script>
 
 <template>
-  <main class="card-default">
-    <slot />
-  </main>
+  <slot />
 </template>
 
 <style lang="scss" scoped>

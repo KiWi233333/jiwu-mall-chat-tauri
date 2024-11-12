@@ -44,6 +44,7 @@ export const useUserStore = defineStore(
       isEmailVerified: 0,
       isPhoneVerified: 0,
     });
+    const isOnLogining = ref<boolean>(false);
     const userId = computed(() => userInfo.value.id);
     const markPhone = computed(() => userInfo.value?.phone?.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") || "");
 
@@ -86,8 +87,6 @@ export const useUserStore = defineStore(
      * @param t t
      */
     const onUserLogin = async (t: string, saveLocal?: boolean, redirectTo?: string, callback?: (data: UserInfoVO) => void) => {
-      // 钱包
-      // loadUserWallet(t);
       // 用户信息
       const res = await getUserInfo(t);
       if (res.code && res.code === StatusCode.SUCCESS) {
@@ -142,6 +141,8 @@ export const useUserStore = defineStore(
     const onCheckLogin = () => {
       if (token.value)
         return onUserLogin(token.value);
+      else
+        return false;
     };
     /**
      * 退出登录
@@ -152,19 +153,16 @@ export const useUserStore = defineStore(
       clearUserStore();
       useChatStore().resetStore();
       useWs().resetStore();
-      if (t) {
-        await navigateTo("/login");
-        return await toLogout(t);
-      }
-      else {
-        await navigateTo("/login");
-      }
+      await navigateTo("/login");
+      if (t)
+        await toLogout(t);
     }
     /**
      * 清空store缓存
      */
     function clearUserStore() {
       token.value = "";
+      isOnLogining.value = false;
       isLogin.value = false;
       userWallet.value = {
         userId: "",
@@ -204,6 +202,7 @@ export const useUserStore = defineStore(
       userId,
       markPhone,
       userWallet,
+      isOnLogining,
       // actions
       onUserLogin,
       onCheckLogin,

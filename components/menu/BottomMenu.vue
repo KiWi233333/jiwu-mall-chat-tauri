@@ -20,7 +20,19 @@ async function getApplyCount() {
     applyUnRead.value = res.data.unReadCount;
 }
 
+
 onMounted(() => {
+  getApplyCount();
+});
+onActivated(() => {
+  if (user.isLogin)
+    getApplyCount();
+});
+onDeactivated(() => {
+  if (user.isLogin)
+    getApplyCount();
+});
+onBeforeUnmount(() => {
   if (user.isLogin)
     getApplyCount();
 });
