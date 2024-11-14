@@ -116,7 +116,7 @@ callback?: (progress: number) => void) {
   const dir = setting.appDataDownloadDirUrl;
   const existsDir = await existsFile(dir);
   if (!existsDir)
-    mkdirFile(dir);
+    await mkdirFile(dir);
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
