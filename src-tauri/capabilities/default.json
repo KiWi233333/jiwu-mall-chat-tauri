@@ -65,6 +65,7 @@
     "shell:allow-stdin-write",
     "notification:default",
     "notification:allow-get-active",
+    "notification:allow-is-permission-granted",
     "dialog:default"
   ],
   "platforms": [

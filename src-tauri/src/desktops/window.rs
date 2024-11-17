@@ -1,6 +1,6 @@
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 
-pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
+pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
     // 主窗口配置
     let mut main_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .title("极物聊天")
@@ -13,7 +13,7 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
         .inner_size(1280.0, 860.0);
 
     // 消息窗口配置
-    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+    #[cfg(desktop)]
     let mut msgbox_builder = WebviewWindowBuilder::new(app, "msgbox", WebviewUrl::App("/msg".into()))
         .title("消息通知")
         .inner_size(240.0, 300.0)
@@ -90,9 +90,13 @@ pub fn setup_window(app: &AppHandle) -> tauri::Result<()> {
     Ok(())
 }
 
+#[cfg(desktop)]
 pub fn show_window(app: &AppHandle) {
     if let Some(window) = app.webview_windows().values().next() {
-        window.set_focus().unwrap_or_else(|e| eprintln!("设置窗口焦点时出错: {:?}", e));
+        #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+        {
+            window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+        }
     } else {
         eprintln!("未找到窗口");
     }
