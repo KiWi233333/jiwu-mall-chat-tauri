@@ -8,7 +8,7 @@ useHead({
   meta: [
     {
       name: "description",
-      content: "极物圈-主页 开启你的极物之旅！",
+      content: "极物聊天 - 开启你的畅聊之旅！",
     },
   ],
   htmlAttrs: {
@@ -17,7 +17,7 @@ useHead({
 });
 useSeoMeta({
   title: `${appName}✨`,
-  description: "极物圈-主页 开启你的极物之旅！",
+  description: "极物聊天 - 开启你的畅聊之旅！",
   keywords: appKeywords,
 });
 

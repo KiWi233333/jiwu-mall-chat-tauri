@@ -49,9 +49,9 @@ export const useSettingStore = defineStore(
         list: [] as { name: string; value: string }[],
       },
       modeToggle: {
-        value: "auto",
+        value: "system",
         list: [
-          { name: "自动", value: "auto" },
+          { name: "系统", value: "system" },
           { name: "日间", value: "light" },
           { name: "夜间", value: "dark" },
         ],
@@ -325,7 +325,7 @@ export const useSettingStore = defineStore(
 
     async function reset() {
       settingPage.value.fontFamily.value = "Alimama";
-      settingPage.value.modeToggle.value = "auto";
+      settingPage.value.modeToggle.value = "system";
       settingPage.value.isCloseAllTransition = false;
       settingPage.value.isEscMin = true;
       isChatFold.value = false;

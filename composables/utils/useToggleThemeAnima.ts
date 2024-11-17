@@ -2,7 +2,7 @@
 /**
  * 切换主题
  */
-export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: MouseEvent) {
+export function useModeToggle(mode: "dark" | "auto" | "light" | "system" | string, event?: MouseEvent) {
   const setting = useSettingStore();
   if (setting.isThemeChangeLoad)
     return;
@@ -12,14 +12,18 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   const colorMode = useColorMode();
   // @ts-expect-error
   const isAppearanceTransition = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (mode === "system")
+    return;
   if (mode === "auto") {
     const hours = new Date().getHours();
     colorMode.preference = hours < 18 && hours > 6 ? "light" : "dark";
     return;
   }
-  // 不支持
+
+  // 不支持动画
   if (!isAppearanceTransition) {
-    colorMode.preference = mode;
+    colorMode.preference = mode || "system";
     setting.isThemeChangeLoad = false;
     return;
   }
@@ -38,7 +42,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
   const x = event.clientX;
   const y = event.clientY;
   const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-  // @ts-expect-error
   const transition = document.startViewTransition(() => {
     colorMode.preference = mode;
   });
@@ -60,7 +63,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | string, event?: 
       },
     );
   }).catch(() => {
-
   });
   // 完成时
   transition.finished.then(() => {

@@ -14,6 +14,5 @@ debug.log
 debug.log
 *.log
 debug.json
-errors.json
-JiwuChat Setup.exe
+errors.json 
 .idea

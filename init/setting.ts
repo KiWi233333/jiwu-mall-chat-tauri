@@ -1,15 +1,23 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 
+const ColorModeMap: Record<string, string> = {
+  light: "light",
+  dark: "dark",
+  system: "auto",
+};
 
 export async function useSettingInit() {
   const setting = useSettingStore();
   // 1、主题切换
   setting.isThemeChangeLoad = true;
-  watch(() => setting.settingPage.modeToggle.value, (val) => {
-    const nowDate = new Date();
-    if (val === "auto")
-      useModeToggle(nowDate.getHours() < 18 && nowDate.getHours() > 6 ? "light" : "dark");
+  const colorMode = useColorMode();
+  watch(() => [setting.settingPage.modeToggle.value, colorMode.value], (val) => {
+    // const nowDate = new Date();
+    // if (val[0] && val[0] === "auto")
+    //   useModeToggle(nowDate.getHours() < 18 && nowDate.getHours() > 6 ? "light" : "dark");
+    const mode = setting.settingPage.modeToggle.value || "system" as string;
+    useModeToggle(mode);
   }, {
     immediate: true,
   });
