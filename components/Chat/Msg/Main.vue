@@ -198,7 +198,7 @@ async function refundMsg(roomId: number, msgId: number) {
   if (res.code === StatusCode.SUCCESS) {
     if (data.message.id === msgId) {
       data.message.type = MessageType.RECALL;
-      data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我" : `"${user.userInfo.nickname}"`}撤回了一条消息`;
+      data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我" : `"${data.fromUser.nickName}"`}撤回了一条消息`;
       data.message.body = undefined;
     }
   }

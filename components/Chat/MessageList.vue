@@ -94,9 +94,8 @@ function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => vo
   // 重新拉取会话
   getChatContactInfo(roomId, user.getToken)?.then((res) => {
     if (res.code === StatusCode.SUCCESS) {
-      if (chat.contactIdsSet.has(roomId)) { // 更新
-        const index = chat.getContactList.findIndex(p => p.roomId === roomId);
-        chat.getContactList[index] = res.data;
+      if (chat.contactMap[roomId]) { // 更新
+        chat.contactMap[roomId] = res.data;
       }
       else {
         chat.getContactList.unshift(res.data as ChatContactVO); // 追加前置
@@ -231,7 +230,7 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
     }
     // 本房间修改状态
     const msg = findMsg(p.msgId);
-    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${user.userInfo.nickname}"`}撤回了一条消息`;
+    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${msg.fromUser.nickName}"`}撤回了一条消息`;
     // 更新会话列表
     for (let k = 0; k < chat.getContactList.length; k++) {
       const r = chat.getContactList[k];
