@@ -69,14 +69,15 @@ export async function userTauriInit() {
 
 
   // 4、初始化窗口状态
-  if (!isMobileSystem)
+  if (!isMobileSystem) {
     restoreStateCurrent(StateFlags.ALL);
-  setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
-  watchDebounced(() => setting.isMobileSize, () => {
-    saveWindowState(StateFlags.ALL);
-  }, {
-    debounce: 300,
-  });
+    setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
+    watchDebounced(() => setting.isMobileSize, () => {
+      saveWindowState(StateFlags.ALL);
+    }, {
+      debounce: 300,
+    });
+  }
 }
 
 /**

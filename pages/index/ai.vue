@@ -240,7 +240,7 @@ onMounted(() => {
     </el-scrollbar>
     <el-form
       ref="formRef" v-auth :model="form"
-      class="mt-2 flex items-center gap-3 p-2 bg-color sm:p-4"
+      class="mt-4 flex items-center gap-3 bg-color"
       @submit.prevent="onSubmit"
     >
       <div>
@@ -262,8 +262,9 @@ onMounted(() => {
         <el-input
           ref="inputRef"
           v-model.lazy="form.content"
+          style="height: 3rem;"
           :disabled="isChat" placeholder="快开始对话吧 ✨"
-          class="content border-0 border-b-1px pt-4 border-default"
+          class="content border-0 border-b-1px border-default"
         />
       </el-form-item>
       <BtnElButton
