@@ -17,8 +17,10 @@ export async function useSettingInit() {
       return;
     const mode = val[0] === "system" ? (colorMode.value === "dark" ? "dark" : "light") : val[0];
     useModeToggle(mode);
-  }, {
-    immediate: true,
+  });
+  nextTick(() => {
+    const mode = setting.settingPage.modeToggle.value === "system" ? (colorMode.value === "dark" ? "dark" : "light") : setting.settingPage.modeToggle.value;
+    useModeToggle(mode, undefined, true);
   });
   window.addEventListener("keydown", (e) => {
     if (setting.isThemeChangeLoad)

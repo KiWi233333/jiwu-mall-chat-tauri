@@ -4,8 +4,8 @@ const setting = useSettingStore();
 const mode = useColorMode();
 async function toggleFn(e: MouseEvent) {
   const modes = mode.preference === "dark" ? "light" : "dark";
-  setting.settingPage.modeToggle.value = modes;
   useModeToggle(modes, e);
+  setting.settingPage.modeToggle.value = modes;
 }
 </script>
 

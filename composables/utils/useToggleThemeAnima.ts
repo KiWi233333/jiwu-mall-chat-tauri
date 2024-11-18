@@ -2,7 +2,7 @@
 /**
  * 切换主题
  */
-export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | string, event?: MouseEvent) {
+export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | string, event?: MouseEvent, isAnimated = true) {
   const setting = useSettingStore();
   if (setting.isThemeChangeLoad)
     return;
@@ -20,7 +20,7 @@ export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | strin
   }
 
   // 不支持动画
-  if (!isAppearanceTransition) {
+  if (!isAppearanceTransition || !isAnimated) {
     colorMode.preference = mode || "system";
     setting.isThemeChangeLoad = false;
     return;
