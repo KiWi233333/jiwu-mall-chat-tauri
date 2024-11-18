@@ -100,7 +100,7 @@ async function openFileFolder() {
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isLoading" class="my-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
+  <main v-loading.fullscreen.lock="isLoading" class="mt-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
     <h3 flex items-center>
       系统设置
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
@@ -246,15 +246,15 @@ async function openFileFolder() {
     </section>
     <div class="btns mt-a flex flex-col items-center gap-4 sm:flex-row">
       <BtnElButton
-        class="h-3rem w-full shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
-        round
+        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
+
         @click="setting.reset()"
       >
         重置
       </BtnElButton>
       <BtnElButton
-        class="h-3rem w-full shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
-        round style="margin-left: 0;"
+        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
+        style="margin-left: 0;"
         @click="user.exitLogin()"
       >
         退出登录

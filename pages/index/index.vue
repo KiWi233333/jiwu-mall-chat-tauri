@@ -27,7 +27,12 @@ const openRoomDrawer = computed({
     </template>
     <!-- 移动尺寸 popup -->
     <div v-else-if="chat.theContact.roomId">
-      <el-drawer v-model="openRoomDrawer" size="76%" style="box-shadow: none;" modal-class="backdrop-blur-sm transition-[backdrop-filter]" lock-scroll :with-header="false">
+      <el-drawer
+        v-model="openRoomDrawer" size="76%" style="box-shadow: none;"
+        modal-class="backdrop-blur-4px transition-[backdrop-filter] border-default overflow-hidden"
+        lock-scroll
+        :with-header="false"
+      >
         <ChatRoomGroupPopup class="ml-a h-full w-full flex flex-col gap-2 p-4 border-default card-default" />
       </el-drawer>
     </div>

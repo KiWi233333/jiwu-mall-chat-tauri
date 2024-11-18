@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 max-w-360px w-1/4 pl-0) bg-color"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 bg-white sm:(relative left-0 top-0 max-w-360px w-1/4 pl-0) dark:bg-dark-7"
     :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4' : 'hidden') : ''"
   >
     <!-- 搜索群聊 -->
@@ -314,6 +314,10 @@ onBeforeUnmount(() => {
         <i i-carbon:add-large p-2 />
       </BtnElButton>
     </div>
+    <!-- 桌面端是否登录 -->
+    <!-- <small sticky left-0 top-0 p4 sm:hidden border-default-b>
+      当前聊天
+    </small> -->
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list">
       <el-radio-group v-model="theContactId" class="w-full">

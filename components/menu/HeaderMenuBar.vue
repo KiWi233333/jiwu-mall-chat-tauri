@@ -17,7 +17,7 @@ function toggleContactSearch() {
 <template>
   <!-- 菜单栏 -->
   <menu
-    class="group nav relative left-0 top-0 h-2rem flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-3 border-default bg-color"
+    class="group nav"
   >
     <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
       <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
@@ -87,8 +87,8 @@ function toggleContactSearch() {
 
 <style lang="scss" scoped>
 .nav {
+  --at-apply: "h-56px sm:h-50px relative left-0 top-0 flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-3  border-default-b  bg-color";
   z-index: 999;
-  height: $top-nav-height;
   background-size: 3px 3px;
   backdrop-filter: blur(1rem);
 }

@@ -90,8 +90,7 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full flex flex-col items-center border-l-0 bg-light px-2 md:block border-default dark:bg-[#121212] md:shadow-none"
-    style="border: 0;border-right: 1px;"
+    class="relative z-998 h-full flex flex-col items-center px-2 md:block border-default-r bg-menu-color"
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 hover:bg-transparent">

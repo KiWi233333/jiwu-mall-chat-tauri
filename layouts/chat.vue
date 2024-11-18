@@ -59,7 +59,7 @@ const chat = useChatStore();
         <!-- 会话列表 -->
         <ChatContactList :class="{ '!w-0': $route.path !== '/' }" />
         <!-- 聊天框 -->
-        <ChatContent v-show="$route.path === '/' && chat.theContact.roomId" class="flex-1 border-0 border-l-1px border-default" />
+        <ChatContent v-show="$route.path === '/' && chat.theContact.roomId" class="flex-1 border-default-l" />
         <!-- 缓存内容 -->
         <NuxtPage keepalive />
       </div>

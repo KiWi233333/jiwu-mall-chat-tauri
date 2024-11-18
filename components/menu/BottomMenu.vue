@@ -122,10 +122,10 @@ interface MenuItem {
 const activeMenu = computed({
   get: () => route.path,
   set: (val) => {
-    if (activeMenu.value === "/" && val === "/") {
-      setting.isOpenContact = !setting.isOpenContact;
-      return;
-    }
+    // if (activeMenu.value === "/" && val === "/") {
+    //   setting.isOpenContact = !setting.isOpenContact;
+    //   return;
+    // }
     if (val === "/more")
       return;
     navigateTo(val);
