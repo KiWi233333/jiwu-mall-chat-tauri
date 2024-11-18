@@ -38,9 +38,9 @@ export const useSettingStore = defineStore(
     const isUserFold = ref(true);
     const isUserCollapse = ref(true);
     // 主页页折叠
-    const isFold = ref(true);
-    const isCollapse = ref(true);
-    const isMobileSize = ref(false);
+    const isCollapse = ref(true);// 侧边栏折叠
+    const isMobileSize = ref(false);// 是否移动尺寸
+    const isOpenContactSearch = ref(false); // 是否会话搜索
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     // ---------------------设置-----------------
     const settingPage = ref({
@@ -345,9 +345,9 @@ export const useSettingStore = defineStore(
         downloadedText: "",
         ignoreVersion: [] as string[],
       };
-      isFold.value = true;
       isCollapse.value = true;
       isUserFold.value = true;
+      isOpenContactSearch.value = false;
       isUserCollapse.value = true;
       // 下载管理
       showDownloadPanel.value = false;
@@ -405,13 +405,13 @@ export const useSettingStore = defineStore(
 
     return {
       isMobileSize,
+      isOpenContactSearch,
       isDesktop,
       isChatFold,
       // state
       isCollapse,
       isOpenContact,
       isOpenGroupMember,
-      isFold,
       isUserCollapse,
       isUserFold,
       sysPermission,

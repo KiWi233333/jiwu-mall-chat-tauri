@@ -306,14 +306,15 @@ onMounted(() => {
 <template>
   <div
     class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 max-w-360px w-1/4 pl-0) bg-color"
-    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4  transition-300 transition-property-all' : 'w-0') : ''"
+    :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4' : 'hidden') : ''"
   >
     <!-- 搜索群聊 -->
     <div
-      class="p-4"
-      flex-row-c-c
+      class="trnasition-200 flex-row-c-c overflow-y-hidden transition-height sm:p-4"
+      :class="setting.isMobileSize && !setting.isOpenContactSearch ? 'px-4 h-0' : 'h-20 px-4'"
     >
       <ElInput
+        id="search-contact"
         v-model.lazy="chat.searchKeyWords"
         class="mr-2"
         type="text"

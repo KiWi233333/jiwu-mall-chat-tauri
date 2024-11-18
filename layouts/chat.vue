@@ -64,7 +64,7 @@ const chat = useChatStore();
         <NuxtPage keepalive />
       </div>
     </div>
-    <LazyMenuBottomMenu v-if="setting.isMobileSize" class="block sm:hidden" />
+    <LazyMenuBottomMenu v-if="setting.isMobileSize && setting.isOpenContact" class="block sm:hidden" />
   </main>
 </template>
 

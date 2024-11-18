@@ -3,6 +3,15 @@ const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
 // @unocss-include
+function toggleContactSearch() {
+  setting.isOpenContactSearch = !setting.isOpenContactSearch;
+  if (!setting.isOpenContactSearch)
+    return;
+
+  const el = document.querySelector("#search-contact") as any;
+  if (el)
+    el?.focus();
+}
 </script>
 
 <template>
@@ -14,7 +23,7 @@ const setting = useSettingStore();
       <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
         <CardElImage src="/logo.png" class="h-1.8rem w-1.8rem" />
       </NuxtLink>
-      <div :class="setting.isOpenContact ? 'hidden' : 'flex-row-c-c sm:hidden'" @click="setting.isOpenContact = !setting.isOpenContact">
+      <div class="btn-primary" :class="setting.isOpenContact ? 'hidden' : 'flex-row-c-c sm:hidden '" @click="setting.isOpenContact = !setting.isOpenContact">
         <i i-solar-alt-arrow-left-line-duotone p-3 />
       </div>
       <strong hidden sm:block>极物圈</strong>
@@ -23,11 +32,11 @@ const setting = useSettingStore();
     <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>
       <slot name="drag-content" />
     </div>
-    <div class="relative z-1000 flex flex-shrink-0 items-center gap-3">
+    <div class="relative z-1000 flex flex-shrink-0 items-center gap-2">
       <BtnAppDownload />
       <div class="flex items-center gap-3 rounded-2rem px-3 py-1 border-default card-default">
         <!-- 下载（部分端） -->
-        <BtnDownload v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
+        <BtnDownload v-if="setting.appPlatform === 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
         <!-- 主题 -->
         <BtnTheme
           id="toggle-theme-btn"
@@ -39,10 +48,15 @@ const setting = useSettingStore();
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
-      <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
+      <!-- 会话搜索框 -->
+      <div v-if="setting.isMobileSize" class="h-8 w-8 flex-row-c-c rounded-2rem p-1.5 btn-primary-bg border-default card-default" @click="toggleContactSearch">
+        <i :class="setting.isOpenContactSearch ? 'i-carbon:close-outline' : 'i-solar:magnifer-outline'" />
+      </div>
+      <!-- 关闭按钮 -->
+      <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" ml-1 class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default">
         <MenuController>
           <template #start="{ data }">
             <ElButton
