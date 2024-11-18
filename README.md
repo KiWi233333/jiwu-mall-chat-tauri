@@ -162,9 +162,9 @@ pnpm config set registry https://registry.npmjs.org
 
 | 类别         | 技术/组件          | 版本号       |
 | ------------- | ------------------ | ------------ |
-| 框架         | Nuxt3              | ^3.12.2+       |
-|                 | Tauri               | ^2.0.0        |
-| UI 组件库     | Element Plus       | 2.7.6        |
+| 框架         | Nuxt3              | ^3.14.159+       |
+|                 | Tauri               | ^2.1.0        |
+| UI 组件库     | Element Plus       | ^2.8.4        |
 | 状态管理     | Pinia              | 2.1.7        |
 | 工具库       | Vueuse             | 10.11.0      |
 | 构建与开发工具 | Nuxi               | lts        |
@@ -173,3 +173,67 @@ pnpm config set registry https://registry.npmjs.org
 |              | Prettier           | 3.3.2        |
 | 类型检查     | TypeScript         | 5.3.2        |
 | 样式处理     | Sass               | 1.77.6       |
+
+### 🌈 运行脚本 | Scripts
+
+```sh
+// 安装Husky，这是一个用于在Git钩子中运行脚本的工具
+"prepare": "husky install",
+
+// 运行Tauri命令
+"tauri": "tauri",
+
+// 开发Tauri桌面应用
+"dev:tauri": "tauri dev",
+
+// 开发桌面应用的快捷命令
+"dev:desktop": "tauri dev",
+
+// 开发Android平台的Tauri应用
+"dev:android": "tauri android dev",
+
+// 开发iOS平台的Tauri应用
+"dev:ios": "tauri ios dev",
+
+// 开发Nuxt.js应用，使用开发环境的.env文件，并监听主机变化
+"dev:nuxt": "nuxt dev --dotenv .env.development --host",
+
+// 开发Nuxt.js应用，使用生产环境的.env文件，并监听主机变化
+"dev:nuxt:prod": "nuxt dev --dotenv .env.production --host",
+
+// Nuxt.js预览模式
+"preview": "nuxt preview",
+
+// 构建项目，先使用Nuxi生成静态文件，然后构建Tauri应用
+"build": "nuxi generate && tauri build",
+
+// 仅构建Nuxt.js应用，使用生产环境的.env文件
+"build:nuxt": "nuxi generate --dotenv .env.production",
+
+// 构建Nuxt.js单页应用，使用生产环境的.env文件
+"build:nuxt:spa": "nuxi build --dotenv .env.production",
+
+// 构建Tauri应用
+"build:tauri": "tauri build",
+
+// 构建Android平台的Tauri应用，并生成APK文件
+"build:android": "tauri android build --apk",
+
+// 构建iOS平台的Tauri应用，并生成IPA文件
+"build:ios": "tauri ios build --ipa",
+
+// 发布版本，增加次要版本号，推送标签，拉取最新代码，推送到远程仓库
+"release": "npm version minor && git push --tag && git fetch && git push",
+
+// 发布主版本，增加主版本号，推送标签，拉取最新代码，推送到远程仓库
+"release:major": "npm version major && git push --tag && git fetch && git push",
+
+// 发布次要版本，增加次要版本号，推送标签，拉取最新代码，推送到远程仓库
+"release:minor": "npm version minor && git push --tag && git fetch && git push",
+
+// 发布补丁版本，增加补丁版本号，推送标签，拉取最新代码，推送到远程仓库
+"release:patch": "npm version patch && git push --tag && git fetch && git push",
+
+// 运行lint-staged，这是一个用于在Git暂存区运行linters的工具
+"lint-staged": "lint-staged"
+```

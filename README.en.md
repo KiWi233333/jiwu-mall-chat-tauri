@@ -162,9 +162,9 @@ pnpm config set registry https://registry.npmjs.org
 
 | Category | Technology/Component | Version |
 | ------------- | ------------------ | ------------ |
-| Framework | Nuxt3 | ^3.12.2+ |
-| Framework | Tauri | ^2.0.0 |
-| UI Component Library | Element Plus | 2.7.6 |
+| Framework | Nuxt3 | ^3.14.159 |
+| Framework | Tauri | ^2.1.0 |
+| UI Component Library | Element Plus | ^2.8.4 |
 | State Management | Pinia | 2.1.7 |
 | Utility Library | Vueuse | 10.11.0 |
 | Build & Development Tools | Nuxi | lts |
@@ -173,3 +173,67 @@ pnpm config set registry https://registry.npmjs.org
 | Code Quality | Prettier | 3.3.2 |
 | Type Checking | TypeScript | 5.3.2 |
 | Style Processing | Sass | 1.77.6 |
+
+### 🌈 Run Scripts | Scripts
+
+```sh
+// Install Husky, a tool used to run scripts in Git hooks
+"prepare": "husky install",
+
+// Run Tauri command
+"tauri": "tauri",
+
+// Develop Tauri desktop application
+"dev:tauri": "tauri dev",
+
+// Shortcut command for developing desktop applications
+"dev:desktop": "tauri dev",
+
+// Develop Tauri application for Android platform
+"dev:android": "tauri android dev",
+
+// Develop Tauri application for iOS platform
+"dev:ios": "tauri ios dev",
+
+// Develop Nuxt.js application using development environment .env file and listening for host changes
+"dev:nuxt": "nuxt dev --dotenv .env.development --host",
+
+// Develop Nuxt.js application using production environment .env file and listening for host changes
+"dev:nuxt:prod": "nuxt dev --dotenv .env.production --host",
+
+// Nuxt.js preview mode
+"preview": "nuxt preview",
+
+// Build the project, first generate static files using Nuxi, then build Tauri application
+"build": "nuxi generate && tauri build",
+
+// Build Nuxt.js application only, using production environment .env file
+"build:nuxt": "nuxi generate --dotenv .env.production",
+
+// Build Nuxt.js single-page application, using production environment .env file
+"build:nuxt:spa": "nuxi build --dotenv .env.production",
+
+// Build Tauri application
+"build:tauri": "tauri build",
+
+// Build Tauri application for Android platform and generate APK file
+"build:android": "tauri android build --apk",
+
+// Build Tauri application for iOS platform and generate IPA file
+"build:ios": "tauri ios build --ipa",
+
+// Release version, increment the minor version number, push tags, fetch latest code, push to remote repository
+"release": "npm version minor && git push --tag && git fetch && git push",
+
+// Release major version, increment the major version number, push tags, fetch latest code, push to remote repository
+"release:major": "npm version major && git push --tag && git fetch && git push",
+
+// Release minor version, increment the minor version number, push tags, fetch latest code, push to remote repository
+"release:minor": "npm version minor && git push --tag && git fetch && git push",
+
+// Release patch version, increment the patch version number, push tags, fetch latest code, push to remote repository
+"release:patch": "npm version patch && git push --tag && git fetch && git push",
+
+// Run lint-staged, a tool used to run linters in the Git staging area
+"lint-staged": "lint-staged"
+```
