@@ -38,6 +38,7 @@ export async function userTauriInit() {
     setting.osType = "web";
     return;
   }
+  const isMobileSystem = ["android", "ios"].includes(setting.osType);
   // 监听open_url事件
   listen<PayloadType>("open_url", (e) => {
     const url = e.payload.message; // 路径
@@ -67,17 +68,11 @@ export async function userTauriInit() {
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
 
 
-  // 4、初始化窗口
-  try {
-    platform();
+  // 4、初始化窗口状态
+  if (!isMobileSystem)
     restoreStateCurrent(StateFlags.ALL);
-  }
-  catch (error) { // web端兼容
-    // console.warn(error);
-  }
-
-  setting.isMobile = window.innerWidth <= 768; // 判断是否为移动端
-  watchDebounced(() => setting.isMobile, () => {
+  setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
+  watchDebounced(() => setting.isMobileSize, () => {
     saveWindowState(StateFlags.ALL);
   }, {
     debounce: 300,
@@ -107,13 +102,12 @@ export async function useAuthInit() {
   }
 }
 
-
 export const MSG_WEBVIEW_NAME = "msgbox";
 export const MSG_WEBVIEW_WIDTH = 240;
 export const MSG_WEBVIEW_HEIGHT = 300;
 
 /**
- * 初始化消息通知窗口
+ * 初始化消息通知窗口 (仅限桌面端)
  */
 export async function useMsgBoxWebViewInit() {
   let platformName = "web";
@@ -224,7 +218,6 @@ export async function useMsgBoxWebViewInit() {
   };
 }
 
-
 /**
  * 处理消息通知事件
  * @param event 事件
@@ -238,7 +231,7 @@ async function handleChannelMsg(event: MessageEvent) {
   if (!payload)
     return;
   const { type, data } = payload;
-  const win = await WebviewWindow.getByLabel("main");
+  const win = await WebviewWindow?.getByLabel("main");
   if (type === "readContact") { // 读取单个
     chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
     if (chat.theContact.roomId === data.roomId)

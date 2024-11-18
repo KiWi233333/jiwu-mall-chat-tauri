@@ -55,7 +55,7 @@ const chat = useChatStore();
         class="main-box relative"
         v-bind="$attrs"
       >
-        <MenuChatMenu v-if="!setting.isMobile" class="hidden sm:block" />
+        <MenuChatMenu v-if="!setting.isMobileSize" class="hidden sm:block" />
         <!-- 会话列表 -->
         <ChatContactList :class="{ '!w-0': $route.path !== '/' }" />
         <!-- 聊天框 -->
@@ -64,7 +64,7 @@ const chat = useChatStore();
         <NuxtPage keepalive />
       </div>
     </div>
-    <LazyMenuBottomMenu v-if="setting.isMobile" class="block sm:hidden" />
+    <LazyMenuBottomMenu v-if="setting.isMobileSize" class="block sm:hidden" />
   </main>
 </template>
 

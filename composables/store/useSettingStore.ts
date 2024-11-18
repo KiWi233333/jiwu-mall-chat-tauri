@@ -40,7 +40,8 @@ export const useSettingStore = defineStore(
     // 主页页折叠
     const isFold = ref(true);
     const isCollapse = ref(true);
-    const isMobile = ref(false);
+    const isMobileSize = ref(false);
+    const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -403,7 +404,8 @@ export const useSettingStore = defineStore(
     }
 
     return {
-      isMobile,
+      isMobileSize,
+      isDesktop,
       isChatFold,
       // state
       isCollapse,

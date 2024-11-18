@@ -34,7 +34,7 @@ const colorMode = useColorMode();
       </small>
       <!-- 内容 -->
       <template v-if="data.fromUser.userId === user.userInfo.id">
-        <p class="msg-popper mt-2 text-0.8rem">
+        <p class="msg-popper mt-2 text-0.7rem">
           {{ data.message?.content }}
         </p>
       </template>
@@ -58,6 +58,14 @@ const colorMode = useColorMode();
 @use './msg.scss';
 .markdown {
   :deep(.md-editor-preview-wrapper)  {
+    * {
+      font-size: 1em;
+    }
+    img {
+      max-width: 16rem !important;
+      height: auto;
+      max-height: 16rem !important;
+    }
     padding: 0;
     line-height: 1.6em;
     .md-editor-code {

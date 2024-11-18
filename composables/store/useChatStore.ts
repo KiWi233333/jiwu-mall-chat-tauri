@@ -122,10 +122,12 @@ export const useChatStore = defineStore(
         if (!isVisible.value)
           return false;
       }
-      else {
+      else if (setting.isDesktop) { // 桌面端
         const win = await WebviewWindow.getByLabel("main");
         if (!await win?.isFocused()) // 窗口未激活
           return false;
+      }
+      else { // 移动端 TODO:待定
       }
       return true;
     }

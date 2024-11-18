@@ -1,11 +1,11 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 
-const ColorModeMap: Record<string, string> = {
-  light: "light",
-  dark: "dark",
-  system: "auto",
-};
+// const ColorModeMap: Record<string, string> = {
+//   light: "light",
+//   dark: "dark",
+//   system: "auto",
+// };
 
 export async function useSettingInit() {
   const setting = useSettingStore();
@@ -75,7 +75,7 @@ export async function useSettingInit() {
     timer = setTimeout(() => {
       if (app)
         app.classList.remove("stop-transition");
-      setting.isMobile = window.innerWidth < 640;
+      setting.isMobileSize = window.innerWidth < 640;
       timer = null;
     }, 150);
   });
