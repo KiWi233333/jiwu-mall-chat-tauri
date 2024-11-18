@@ -215,7 +215,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 
 const ws = useWs();
 // 成员变动消息
-watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
+const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
   if (!len)
     return;
   // 成员变动消息
@@ -278,6 +278,9 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
 reload();
 onMounted(() => {
   enable(false);
+});
+onBeforeUnmount(() => {
+  stopWatch?.();
 });
 </script>
 

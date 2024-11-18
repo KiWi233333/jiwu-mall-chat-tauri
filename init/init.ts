@@ -72,11 +72,15 @@ export async function userTauriInit() {
   if (!isMobileSystem) {
     restoreStateCurrent(StateFlags.ALL);
     setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
-    watchDebounced(() => setting.isMobileSize, () => {
+    const sotpDebounced = watchDebounced(() => setting.isMobileSize, () => {
       saveWindowState(StateFlags.ALL);
     }, {
       debounce: 1000,
     });
+
+    return () => {
+      sotpDebounced();
+    };
   }
 }
 

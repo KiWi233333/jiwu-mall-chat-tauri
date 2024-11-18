@@ -5,6 +5,7 @@ import { useWSUnmounted, useWsInit } from "./ws";
 import { useIframeInit } from "./iframe";
 
 let unMountedMsgBoxWebView: (() => void) | undefined;
+let unMountedTauri: (() => void) | undefined;
 
 
 /**
@@ -30,7 +31,9 @@ export async function useInit() {
   // 通用初始化
   useDefaultInit();
   // Tauri
-  userTauriInit();
+  userTauriInit().then((res) => {
+    unMountedTauri = res || (() => {});
+  });
   // 会话
   useWsInit();
   // 窗口
@@ -40,6 +43,7 @@ export async function useInit() {
 // 卸载
 export async function useUmounted() {
   useSettingUnmounted?.();
+  unMountedTauri?.();
   useWSUnmounted?.();
   unMountedMsgBoxWebView?.();
   useWindowVisibilityInitUnmounted?.();
