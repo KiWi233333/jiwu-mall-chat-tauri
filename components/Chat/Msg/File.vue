@@ -29,9 +29,11 @@ function onDownloadFile(url: string, fileName: string) {
     mimeType: body?.mimeType,
   }, (val) => {
   });
-  nextTick(() => {
-    setting.showDownloadPanel = true;
-  });
+  if (setting.isDesktop) {
+    nextTick(() => {
+      setting.showDownloadPanel = true;
+    });
+  }
 }
 
 // 导出

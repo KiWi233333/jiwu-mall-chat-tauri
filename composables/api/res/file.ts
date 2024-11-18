@@ -106,13 +106,14 @@ export async function downloadFile(url: string, fileName: string, options: {
 callback?: (progress: number) => void) {
   const { targetPath = "", mimeType = "" } = options;
   const setting = useSettingStore();
-  if (!setting.checkDownloadPath())
-    return;
   const platformType = setting.appPlatform;
   if (["android", "ios", "web"].includes(platformType) || !platformType) {
     // 移动端使用 streamSaver 下载
+    ElMessage.warning("正在使用浏览器下载，请稍后...");
     return downloadFileByStreamSaver(url, fileName, callback);
   }
+  if (!setting.checkDownloadPath())
+    return;
   const dir = setting.appDataDownloadDirUrl;
   const existsDir = await existsFile(dir);
   if (!existsDir)
