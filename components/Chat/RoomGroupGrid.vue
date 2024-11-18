@@ -274,7 +274,7 @@ function exitGroup() {
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("操作成功！");
           chat.setContact();
-          chat.contactList = chat.contactList.filter((e: ChatContactVO) => e.roomId !== props.data.roomId);
+          chat.removeContact(props.data.roomId);
         }
       }
     },

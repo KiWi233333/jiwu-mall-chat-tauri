@@ -234,7 +234,7 @@ async function handleChannelMsg(event: MessageEvent) {
   const { type, data } = payload;
   const win = await WebviewWindow?.getByLabel("main");
   if (type === "readContact") { // 读取单个
-    chat.setContact(chat.contactList.find(p => p.roomId === data.roomId));
+    chat.setContact(chat.contactMap[data.roomId]);
     if (chat.theContact.roomId === data.roomId)
       chat.setReadList(data.roomId);
     if (win) {

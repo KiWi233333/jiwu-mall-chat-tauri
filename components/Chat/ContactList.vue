@@ -28,21 +28,6 @@ async function loadData(dto?: ContactPageDTO) {
     cursor: pageInfo.value.cursor,
   }, user.getToken);
   if (data && data.list) {
-    // if (dto?.type === RoomType.GROUP) {
-    //   data.list.forEach((p: ChatContactVO) => {
-    //     if (p.type === RoomType.GROUP)
-    //       chat.contactList.push(p);
-    //   });
-    // }
-    // else if (dto?.type === RoomType.SELFT) {
-    //   data.list.forEach((p: ChatContactVO) => {
-    //     if (p.type === RoomType.SELFT)
-    //       chat.contactList.push(p);
-    //   });
-    // }
-    // else {
-    // chat.contactList.push(...data.list);
-    // }
     data.list.forEach((p) => {
       chat.contactMap[p.roomId] = p;
     });
@@ -133,13 +118,13 @@ async function refreshItem(roomId: number) {
     return;
   isLoadRoomMap[roomId] = true;
   try {
-    const itemIndex = chat.contactList.findIndex(p => p.roomId === roomId);
-    if (itemIndex === -1)
+    const item = chat.contactMap[roomId] as ChatContactVO | undefined;
+    if (item?.type !== undefined && item.type !== null)
       return;
-    if (chat.contactList[itemIndex]?.type === RoomType.GROUP) {
+    if (item?.type === RoomType.GROUP) {
       const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
       if (res)
-        chat.contactList[itemIndex] = res.data;
+        chat.contactMap[roomId] = res.data;
     }
   }
   catch (error) {
@@ -240,13 +225,14 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
       if (p.changeType === WSMemberStatusEnum.JOIN) {
         getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
           if (res) {
-            const index = chat.contactList.findIndex(ctx => ctx.roomId === p.roomId);
-            if (index !== -1) { // 更新
-              chat.contactList[index] = res.data;
+            const item = chat.contactMap[p.roomId];
+            if (item) { // 更新
+              chat.contactMap[p.roomId] = res.data;
             }
             else { // 添加
               res.data.unreadCount = 1;
-              chat.contactList.unshift(res.data);
+              chat.contactMap[res.data.roomId] = res.data;
+              // unshift();
             }
           }
         }).finally(() => {
@@ -278,16 +264,8 @@ watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
         }
       }
       else if (p.changeType === WSMemberStatusEnum.DEL) {
-        for (let i = 0; i < chat.contactList.length; i++) {
-          const u = chat.contactList[i];
-          // 删除会话
-          if (u && u.roomId === p.roomId) {
-            chat.contactList.splice(i, 1);// 删除会话
-            if (chat.theContact.roomId === u.roomId)
-              chat.setContact(chat.contactList?.[0]);
-            break;
-          }
-        }
+        // 删除会话
+        chat.removeContact(p.roomId);
       }
     }
     ws.wsMsgList.memberMsg.splice(0);
@@ -350,6 +328,11 @@ onMounted(() => {
               aria-selected="true"
               style="border-radius: 0;"
               :value="room.roomId"
+              @click="() => {
+                if (theContactId === room.roomId) {
+                  setting.isOpenContact = false;
+                }
+              }"
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"

@@ -108,7 +108,7 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
         const res = await updateGroupRoomInfo(chat.theContact.roomId, data, user.getToken);
         if (res.code === StatusCode.SUCCESS && res.data === 1) {
           // 更新会话
-          const item = chat.contactList.find(item => item.roomId === chat.theContact.roomId);
+          const item = chat.contactMap[chat.theContact.roomId];
           if (field === "name") {
             if (item)
               item.name = val?.trim() as string;
@@ -392,8 +392,8 @@ function exitGroup() {
         const res = await exitRoomGroup(chat.theContact.roomId, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("操作成功！");
-          chat.contactList = chat.contactList.filter((e: ChatContactVO) => e.roomId !== chat.theContact.roomId);
           chat.setContact();
+          chat.removeContact(chat.theContact.roomId);
         }
       }
     },
@@ -529,7 +529,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

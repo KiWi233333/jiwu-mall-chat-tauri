@@ -82,7 +82,7 @@ export function notification(msg: ChatMessageVO) {
     sendWebNotification(msg.fromUser.nickName, `${msg.message.content || "消息通知"}`, {
       icon: msg.fromUser.avatar ? BaseUrlImg + msg.fromUser.avatar : "/logo.png",
       onClick: () => {
-        chat.setContact(chat.contactList.find(item => item.roomId === msg.message.roomId));
+        chat.setContact(chat.contactMap[msg.message.roomId]);
       },
     });
     return;

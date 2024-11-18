@@ -51,7 +51,6 @@ export const useChatStore = defineStore(
       return list;
     });
     const isNewMsg = computed(() => unReadContactList.value.length > 0);
-    const contactIdsSet = computed(() => new Set(getContactList.value.map(p => p.roomId)));
     const isChatScroll = ref<boolean>(false);
     const isVisible = ref(false); // 是否可见
     const theContact = ref<ChatContactDetailVO>({
@@ -339,7 +338,6 @@ export const useChatStore = defineStore(
       isNewMsg,
       unReadContactList,
       searchKeyWords,
-      contactIdsSet,
       getContactList,
       theContact,
       replyMsg,

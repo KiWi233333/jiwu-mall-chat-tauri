@@ -129,8 +129,9 @@ export interface MenuItem {
     </div>
     <div
       v-if="setting.isChatFold"
-      class="absolute left-0 top-0 block h-100dvh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden" style="background-color: #2222223a;
-    " @click="setting.isChatFold = false"
+      class="absolute left-0 top-0 block h-100dvh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden"
+      style="background-color: #2222223a;"
+      @click="setting.isChatFold = false"
     />
   </div>
 </template>
