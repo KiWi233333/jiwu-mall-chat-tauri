@@ -336,7 +336,7 @@ onMounted(() => {
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"
-                class="flex gap-4 truncate p-4 px-5 transition-200 transition-shadow sm:w-full hover:bg-[#7c7c7c1a] text-color"
+                class="flex gap-4 truncate p-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
                 @contextmenu.stop="onContextMenu($event, room)"
               >
                 <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">

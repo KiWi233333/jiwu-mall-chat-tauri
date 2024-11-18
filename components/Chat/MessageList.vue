@@ -330,11 +330,9 @@ defineExpose({
 
 <template>
   <div
-    relative
+
     v-bind="$attrs"
-    flex
-    flex-col
-    class="msg-list op-0 transition-opacity transition-duration-200"
+    class="msg-list flex flex-col op-0 transition-opacity transition-duration-200"
     :class="{ 'op-100': !isReload }"
   >
     <ListDisAutoIncre

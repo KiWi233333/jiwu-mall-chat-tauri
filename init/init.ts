@@ -75,7 +75,7 @@ export async function userTauriInit() {
     watchDebounced(() => setting.isMobileSize, () => {
       saveWindowState(StateFlags.ALL);
     }, {
-      debounce: 300,
+      debounce: 1000,
     });
   }
 }

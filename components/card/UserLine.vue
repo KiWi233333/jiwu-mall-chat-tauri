@@ -105,11 +105,7 @@ const menuList = ref([
 </script>
 
 <template>
-  <div
-    class="user-card"
-    flex-row-c-c
-    cursor-pointer
-  >
+  <div class="user-card flex-row-c-c cursor-pointer">
     <ClientOnly>
       <el-popover
         v-bind="propverProps"
@@ -244,7 +240,7 @@ const menuList = ref([
                 <BtnElButton
                   size="large"
                   type="danger"
-                  transition-icon plain ml-3
+                  plain transition-icon ml-3
                   icon-class="i-solar:logout-3-broken"
                   @click="user.exitLogin"
                 >

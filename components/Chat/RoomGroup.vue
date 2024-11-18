@@ -404,13 +404,13 @@ function exitGroup() {
 <template>
   <div
     v-bind="$attrs"
-    class="group h-full w-16vw flex flex-col animate-[fade-in-right_300ms] gap-2 border-(0 l-1px default) p-0 px-0 transition-200 transition-width sm:(relative max-w-320px w-20vw flex-col p-4)"
+    class="group w-16vw flex flex-col gap-2 border-(0 l-1px default) p-0 px-0 sm:(relative max-w-320px w-20vw flex-col p-4)"
   >
-    <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate pb-4 sm:flex-row>
+    <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate sm:flex-row sm:pb-4>
       <div hidden sm:flex class="p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
         <i class="block op-80 sm:(h-5 w-5) btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-4 h-4' : 'i-solar:widget-bold-duotone w-2 h-2'" />
       </div>
-      <span my-4 sm:my-0>群成员</span>
+      <small my-4 sm:my-0>群成员</small>
       <div class="rounded-2rem p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="onAdd">
         <i class="block h-1.8em w-1.8em rounded-2rem sm:(h-5 w-5) btn-info border-default" i-carbon:add-large />
       </div>
@@ -619,6 +619,6 @@ function exitGroup() {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 }
 .dark .shadow-bt {
-  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, rgba(34, 34, 34, 1) 100%);
+  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, #1f1f1f 100%);
 }
 </style>
