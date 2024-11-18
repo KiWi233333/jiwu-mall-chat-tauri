@@ -258,6 +258,12 @@ async function submit(formData: ChatMessageDTO = form.value) {
     emit("submit", res.data);
     // 消息阅读上报
     res.data.message.roomId && chat.setReadList(res.data.message.roomId);
+    // 发送消息后自动滚动到底部
+    nextTick(() => {
+      setTimeout(() => {
+        chat?.scrollBottom?.(false);
+      }, 300);
+    });
   }
   else if (res.message === "您和对方已不是好友！") {
     return;

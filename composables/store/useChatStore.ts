@@ -20,7 +20,6 @@ export interface PlaySounder {
   audio?: HTMLAudioElement
 }
 
-
 export interface AtChatMemberOption {
   label: string
   value: string
@@ -37,7 +36,8 @@ export const useChatStore = defineStore(
   () => {
     /******************************* 会话 *********************************/
     const isOpenContact = ref(true);
-    const contactList = ref<ChatContactVO[]>([]);
+    const contactMap = ref<Record<number, ChatContactVO>>({});
+    const contactList = computed(() => Object.values(contactMap.value));
     const searchKeyWords = ref("");
     const getContactList = computed(() => {
       if (searchKeyWords.value)
@@ -100,6 +100,14 @@ export const useChatStore = defineStore(
         msgList: theContact.value.msgList || [],
         unreadMsgList: theContact.value.unreadMsgList || [],
       };
+    }
+
+    // 删除会话
+    function removeContact(roomId: number) {
+      if (roomId === theContact.value.roomId)
+        setContact();
+      Object.freeze(contactMap.value[roomId]);
+      delete contactMap.value[roomId];
     }
 
     /******************************* 群聊成员 *********************************/
@@ -281,7 +289,8 @@ export const useChatStore = defineStore(
 
     /******************************* 重置 *********************************/
     function resetStore() {
-      contactList.value = [];
+      contactMap.value = {};
+      // contactList.value = [];
       theContact.value = {
         activeTime: 0,
         avatar: "",
@@ -325,6 +334,7 @@ export const useChatStore = defineStore(
     }
     return {
       // state
+      contactMap,
       contactList,
       isNewMsg,
       unReadContactList,
@@ -347,6 +357,7 @@ export const useChatStore = defineStore(
       isVisible,
       // 方法
       setContact,
+      removeContact,
       setReadList,
       clearAllUnread,
       setGroupMember,

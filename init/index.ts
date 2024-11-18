@@ -39,8 +39,8 @@ export async function useInit() {
 
 // 卸载
 export async function useUmounted() {
-  useSettingUnmounted();
-  useWSUnmounted();
+  useSettingUnmounted?.();
+  useWSUnmounted?.();
   unMountedMsgBoxWebView?.();
-  useWindowVisibilityInitUnmounted();
+  useWindowVisibilityInitUnmounted?.();
 }

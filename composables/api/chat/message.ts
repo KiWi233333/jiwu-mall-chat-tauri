@@ -211,9 +211,9 @@ export enum MessageType {
   FILE = 4,
   SOUND = 5,
   VIDEO = 6,
-  EMOJI = 7,
+  EMOJI = 7, // 暂无
   SYSTEM = 8,
-  AI_CHAT = 9,
+  AI_CHAT = 9, // 暂无
   DELETE = 10,
 }
 

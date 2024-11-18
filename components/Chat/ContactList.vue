@@ -28,21 +28,24 @@ async function loadData(dto?: ContactPageDTO) {
     cursor: pageInfo.value.cursor,
   }, user.getToken);
   if (data && data.list) {
-    if (dto?.type === RoomType.GROUP) {
-      data.list.forEach((p: ChatContactVO) => {
-        if (p.type === RoomType.GROUP)
-          chat.contactList.push(p);
-      });
-    }
-    else if (dto?.type === RoomType.SELFT) {
-      data.list.forEach((p: ChatContactVO) => {
-        if (p.type === RoomType.SELFT)
-          chat.contactList.push(p);
-      });
-    }
-    else {
-      chat.contactList.push(...data.list);
-    }
+    // if (dto?.type === RoomType.GROUP) {
+    //   data.list.forEach((p: ChatContactVO) => {
+    //     if (p.type === RoomType.GROUP)
+    //       chat.contactList.push(p);
+    //   });
+    // }
+    // else if (dto?.type === RoomType.SELFT) {
+    //   data.list.forEach((p: ChatContactVO) => {
+    //     if (p.type === RoomType.SELFT)
+    //       chat.contactList.push(p);
+    //   });
+    // }
+    // else {
+    // chat.contactList.push(...data.list);
+    // }
+    data.list.forEach((p) => {
+      chat.contactMap[p.roomId] = p;
+    });
   }
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
@@ -72,7 +75,7 @@ const theContactId = computed({
 async function onChangeRoom(newRoomId?: number) {
   if (!newRoomId)
     return;
-  const item = chat.contactList.find(p => p.roomId === newRoomId);
+  const item = chat.contactMap[newRoomId];
   if (!item)
     return;
   if (item.type === RoomType.SELFT)
@@ -104,11 +107,12 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
   isReload.value = true;
   if (isAll) {
     enable(false);// 首次不开启动画
-    chat.contactList = [];
+    chat.contactMap = {};
+    // chat.contactList = [];
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
-    const list = await loadData(dto || props.dto);
+    await loadData(dto || props.dto);
     // if (list?.[0]?.roomId)
     //   theContactId.value = list?.[0]?.roomId;
     // await onChangeRoom(theContactId.value);
@@ -197,7 +201,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
                   ElNotification.success("退出成功！");
                   if (chat.theContact.roomId === item.roomId)
                     chat.setContact();
-                  chat.contactList = chat.contactList.filter((e: ChatContactVO) => e.roomId !== item.roomId);
+                  chat.removeContact(item.roomId);
                 }
               }
             },

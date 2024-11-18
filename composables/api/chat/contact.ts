@@ -155,6 +155,7 @@ export interface ChatContactDetailVO extends ChatContactVO {
    * 详细信息
    */
   roomGroup?: ChatRoomGroup
+
 }
 
 
