@@ -13,10 +13,9 @@ export async function useSettingInit() {
   setting.isThemeChangeLoad = true;
   const colorMode = useColorMode();
   watch(() => [setting.settingPage.modeToggle.value, colorMode.value], (val) => {
-    // const nowDate = new Date();
-    // if (val[0] && val[0] === "auto")
-    //   useModeToggle(nowDate.getHours() < 18 && nowDate.getHours() > 6 ? "light" : "dark");
-    const mode = setting.settingPage.modeToggle.value || "system" as string;
+    if (!val[0])
+      return;
+    const mode = val[0] === "system" ? (colorMode.value === "dark" ? "dark" : "light") : val[0];
     useModeToggle(mode);
   }, {
     immediate: true,

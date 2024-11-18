@@ -362,9 +362,9 @@ export const useSettingStore = defineStore(
           list: [],
         },
         modeToggle: {
-          value: "auto",
+          value: "system",
           list: [
-            { name: "自动", value: "auto" },
+            { name: "系统", value: "system" },
             { name: "日间", value: "light" },
             { name: "夜间", value: "dark" },
           ],

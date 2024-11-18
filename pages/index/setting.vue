@@ -31,32 +31,28 @@ watchDebounced(
   },
 );
 
-const theEvent = ref();
-// 夜间模块
-watchDebounced(
-  () => setting.settingPage.modeToggle.value,
-  async (val: string) => {
-    if (val && document) {
-      if (val)
-        useModeToggle(val, theEvent.value);
-    }
-  },
-);
+const thePostion = ref({
+  clientX: 0,
+  clientY: 0,
+});
 function isColseChange(val: any) {
   if (val)
     document.documentElement.classList.add("stop-transition-all");
   else
     document.documentElement.classList.remove("stop-transition-all");
 }
+const colorMode = useColorMode();
 const theme = computed({
   get: () => setting.settingPage.modeToggle.value,
-  set: (val: string) => setting.settingPage.modeToggle.value = val,
+  set: (val: string) => {
+    useModeToggle(val, thePostion.value as MouseEvent);
+    setting.settingPage.modeToggle.value = val;
+  },
 });
 
 // 公告
 const showNotice = ref(false);
 const notice = ref<string>("# 暂无内容");
-const colorMode = useColorMode();
 
 // 更新
 onMounted(async () => {
@@ -94,7 +90,6 @@ function showVersionNotice(version: string) {
     showNotice.value = true;
   });
 }
-
 
 // 打开下载文件夹
 async function openFileFolder() {
@@ -139,7 +134,7 @@ async function openFileFolder() {
         深色模式
         <el-radio-group
           v-model="theme" class="inputs" :disabled="isLoading"
-          @click="(e: MouseEvent) => theEvent = e"
+          @click="(e: MouseEvent) => thePostion = { clientX: e.clientX, clientY: e.clientY }"
         >
           <el-radio-button
             v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading"
@@ -249,17 +244,18 @@ async function openFileFolder() {
         </div>
       </div>
     </section>
-    <div class="btns mt-a flex items-center">
+    <div class="btns mt-a flex flex-col items-center gap-4 sm:flex-row">
       <BtnElButton
-        class="ml-a shadow" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
+        class="h-3rem w-full shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
         round
         @click="setting.reset()"
       >
         重置
       </BtnElButton>
       <BtnElButton
-        class="shadow" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
-        round @click="user.exitLogin()"
+        class="h-3rem w-full shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:logout-3-outline" type="danger" :transition-icon="true"
+        round style="margin-left: 0;"
+        @click="user.exitLogin()"
       >
         退出登录
       </BtnElButton>

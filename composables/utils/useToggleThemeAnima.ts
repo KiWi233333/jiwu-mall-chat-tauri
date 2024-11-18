@@ -2,7 +2,7 @@
 /**
  * 切换主题
  */
-export function useModeToggle(mode: "dark" | "auto" | "light" | "system" | string, event?: MouseEvent) {
+export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | string, event?: MouseEvent) {
   const setting = useSettingStore();
   if (setting.isThemeChangeLoad)
     return;
@@ -13,8 +13,6 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | "system" | strin
   // @ts-expect-error
   const isAppearanceTransition = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (mode === "system")
-    return;
   if (mode === "auto") {
     const hours = new Date().getHours();
     colorMode.preference = hours < 18 && hours > 6 ? "light" : "dark";
@@ -57,7 +55,7 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | "system" | strin
         clipPath: colorMode.value === "dark" ? clipPath : [...clipPath].reverse(),
       },
       {
-        duration: 720,
+        duration: 800,
         easing: "ease-in-out",
         pseudoElement: colorMode.value === "dark" ? "::view-transition-new(root)" : "::view-transition-old(root)",
       },
@@ -65,11 +63,10 @@ export function useModeToggle(mode: "dark" | "auto" | "light" | "system" | strin
   }).catch(() => {
   });
   // 完成时
-  transition.finished.then(() => {
+  transition.finished.then(async () => {
     document.documentElement.classList.remove("stop-transition");
-    setTimeout(() => {
-      setting.isThemeChangeLoad = false;
-    }, 50);
+    await nextTick();
+    setting.isThemeChangeLoad = false;
   }).catch(() => {
     setting.isThemeChangeLoad = false;
   });
