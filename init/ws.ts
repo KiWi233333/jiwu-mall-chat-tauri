@@ -17,14 +17,13 @@ export async function useWsInit() {
   // 创建 Web Worker
   let worker: Worker;
   // 初始化 Web Worker
-  function reload() {
-    // web端
+  async function reload() {
     worker?.removeEventListener?.("message", (e) => { });
     worker?.terminate?.(); // 关闭 WebSocket 连接
     worker = new Worker("useWsWorker.js");
     // 初始化 WebSocket 连接
-    ws.initDefault((e) => {
-    // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
+    ws.initDefault(() => {
+      // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
       worker.postMessage({
         status: ws.status,
         noticeType,
@@ -59,7 +58,7 @@ export async function useWsInit() {
     if (val[0] !== WsStatusEnum.OPEN && val[1])
       reload();
     else if (!val[1])
-      ws.webSocketHandler?.close();
+      ws.webSocketHandler?.disconnect?.();
   }, {
     debounce: 1000,
     immediate: false,

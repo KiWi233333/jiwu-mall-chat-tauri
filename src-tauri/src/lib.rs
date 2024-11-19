@@ -52,6 +52,7 @@ impl AppBuilder {
 fn setup_mobile() {
     println!("App from Mobile!");
     tauri::Builder::default()
+        .plugin(tauri_plugin_websocket::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_upload::init())
@@ -75,6 +76,7 @@ fn setup_mobile() {
 fn setup_desktop() {
     println!("App from Desktop!");
     tauri::Builder::default()
+        .plugin(tauri_plugin_websocket::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())

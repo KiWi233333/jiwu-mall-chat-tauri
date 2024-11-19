@@ -14,16 +14,17 @@ pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
 
     // 消息窗口配置
     #[cfg(desktop)]
-    let mut msgbox_builder = WebviewWindowBuilder::new(app, "msgbox", WebviewUrl::App("/msg".into()))
-        .title("消息通知")
-        .inner_size(240.0, 300.0)
-        .skip_taskbar(true)
-        .decorations(false)
-        .resizable(false)
-        .always_on_top(true)
-        .shadow(false)
-        .position(-240.0,-300.0)
-        .visible(false);
+    let mut msgbox_builder =
+        WebviewWindowBuilder::new(app, "msgbox", WebviewUrl::App("/msg".into()))
+            .title("消息通知")
+            .inner_size(240.0, 300.0)
+            .skip_taskbar(true)
+            .decorations(false)
+            .resizable(false)
+            .always_on_top(true)
+            .shadow(false)
+            .position(-240.0, -300.0)
+            .visible(false);
 
     // Windows 和 Linux 平台特定配置
     #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -42,33 +43,39 @@ pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
 
     // 构建主窗口和消息窗口
     let main_window = main_builder.build()?;
-    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     let msgbox_window = msgbox_builder.build()?;
 
     // 监听窗口事件
-    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
-    msgbox_window.clone().on_window_event(move |event| match event {
-        WindowEvent::CloseRequested { api, .. } => {
-            println!("关闭请求，窗口将最小化而不是关闭。");
-            api.prevent_close();
-        }
-        WindowEvent::Focused(focused) => {
-            if !*focused {
-                msgbox_window.hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    msgbox_window
+        .clone()
+        .on_window_event(move |event| match event {
+            WindowEvent::CloseRequested { api, .. } => {
+                println!("关闭请求，窗口将最小化而不是关闭。");
+                api.prevent_close();
             }
-        }
-        _ => {}
-    });
+            WindowEvent::Focused(focused) => {
+                if !*focused {
+                    msgbox_window
+                        .hide()
+                        .unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
+                }
+            }
+            _ => {}
+        });
     // 监听窗口事件
-    #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
-    main_window.clone().on_window_event(move |event| match event {
-        WindowEvent::CloseRequested { api, .. } => {
-            println!("关闭请求，窗口将最小化而不是关闭。");
-            api.prevent_close();
-        }
-        _ => {}
-    });
-    
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    main_window
+        .clone()
+        .on_window_event(move |event| match event {
+            WindowEvent::CloseRequested { api, .. } => {
+                println!("关闭请求，窗口将最小化而不是关闭。");
+                api.prevent_close();
+            }
+            _ => {}
+        });
+
     // 仅在构建 macOS 时设置背景颜色
     #[cfg(target_os = "macos")]
     {
@@ -93,9 +100,11 @@ pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
 #[cfg(desktop)]
 pub fn show_window(app: &AppHandle) {
     if let Some(window) = app.webview_windows().values().next() {
-        #[cfg(any(target_os = "windows", target_os = "linux",  target_os = "macos"))]
+        #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
         {
-            window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+            window
+                .show()
+                .unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
         }
     } else {
         eprintln!("未找到窗口");

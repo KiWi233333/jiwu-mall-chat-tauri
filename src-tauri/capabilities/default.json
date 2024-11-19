@@ -66,7 +66,10 @@
     "notification:default",
     "notification:allow-get-active",
     "notification:allow-is-permission-granted",
-    "dialog:default"
+    "dialog:default",
+    "websocket:default",
+    "websocket:allow-connect",
+    "websocket:allow-send"
   ],
   "platforms": [
     "windows",

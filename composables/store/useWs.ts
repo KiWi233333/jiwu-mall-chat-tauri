@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import BackWebSocket, { type Message as BackMessage } from "@tauri-apps/plugin-websocket";
 import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../types/WsType";
 import type { WSFriendApply, WSMemberChange, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WsMsgBodyVO, WsMsgVO, WsSendMsgDTO } from "../types/WsType";
-
 import type { ChatMessageVO } from "../api/chat/message";
 
 
@@ -10,7 +10,7 @@ import type { ChatMessageVO } from "../api/chat/message";
 export const useWs = defineStore(
   "chat_websocket",
   () => {
-    const webSocketHandler = ref<WebSocket | null>(null);
+    const webSocketHandler = ref<any>(null);
     const fullWsUrl = ref("");
     const isWindBlur = ref(false);
     const status = ref<WsStatusEnum>(WsStatusEnum.CLOSE);
@@ -53,20 +53,61 @@ export const useWs = defineStore(
     const isNewMsg = computed(() => wsMsgList.value.newMsg.length > 0);
 
     // 初始化
-    function initDefault(call: (event: Event) => any) {
+    async function initDefault(call: () => any) {
+      const setting = useSettingStore();
       const user = useUserStore();
       if (!user.getToken) {
-        webSocketHandler.value?.close();
+        webSocketHandler.value?.close?.();
+        webSocketHandler.value?.disconnect?.();
         status.value = WsStatusEnum.SAFE_CLOSE;
         return false;
       }
-      // 1、连接
-      link(BaseWSUrl, user.getToken);
-      // 2、打开
-      open(call);
-      // 3、错误监听
-      onerror();
-      oncolse();
+      if (setting.isWeb) {
+        // 1、连接
+        link(BaseWSUrl, user.getToken);
+        // 2、打开
+        if (!webSocketHandler.value)
+          return;
+        webSocketHandler.value.onopen = call;
+        // 3、错误监听
+        webSocketHandler?.value?.addEventListener("error", (e: Event) => {
+          status.value = WsStatusEnum.CLOSE;
+          webSocketHandler.value = null;
+          console.log(e);
+        });
+        // 4、关闭监听
+        webSocketHandler.value.addEventListener("close", (e: Event) => {
+          status.value = WsStatusEnum.SAFE_CLOSE;
+          webSocketHandler.value = null;
+        });
+        return true;
+      }
+
+      // 移动端
+      const url = BaseWSUrl;
+      if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
+        return webSocketHandler.value;
+      fullWsUrl.value = `${url}?Authorization=${user.getToken}`;
+      const ws = await BackWebSocket.connect(fullWsUrl.value);
+      webSocketHandler.value = ws; // 保存连接
+      // 1、打开
+      status.value = ws.id ? WsStatusEnum.OPEN : WsStatusEnum.CLOSE;
+      if (ws.id)
+        call();
+      // 2、错误监听
+      webSocketHandler.value.addListener((msg: BackMessage) => {
+        console.log("Rust Received Message:", msg);
+        if (msg.type === "Close") {
+          status.value = WsStatusEnum.SAFE_CLOSE;
+          webSocketHandler.value = null;
+        }
+        // else if (msg.type === "Ping") {
+        //   // 心跳响应
+        // }
+        // else if (msg.type === "Pong") {
+        //   // 心跳请求
+        // }
+      });
     }
 
     // 链接
@@ -79,32 +120,6 @@ export const useWs = defineStore(
       return webSocketHandler.value;
     }
 
-    // 打开
-    function open(call: (event: Event) => void) {
-      if (!webSocketHandler.value)
-        return;
-      webSocketHandler.value.onopen = call;
-    }
-
-    // 错误重试
-    function onerror() {
-      if (!webSocketHandler.value)
-        return;
-      webSocketHandler.value.addEventListener("error", (e) => {
-        status.value = WsStatusEnum.CLOSE;
-        webSocketHandler.value = null;
-        console.log(e);
-      });
-    }
-
-    function oncolse() {
-      if (!webSocketHandler.value)
-        return;
-      webSocketHandler.value.addEventListener("close", (e) => {
-        status.value = WsStatusEnum.SAFE_CLOSE;
-        webSocketHandler.value = null;
-      });
-    }
 
     const wsMsgMap = {
       [WsMsgBodyType.MESSAGE]: "newMsg",
@@ -120,35 +135,66 @@ export const useWs = defineStore(
     function onMessage(call: (data: WsMsgBodyVO) => void) {
       if (!webSocketHandler.value)
         return;
-      webSocketHandler.value.addEventListener("message", (event) => {
-        if (event && !event.data)
-          return false;
+      const setting = useSettingStore();
+      if (setting.isWeb) {
+        webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
+          if (event && !event.data)
+            return false;
 
-        // 这里需要处理一下，因为有时候会收到空数据
-        try {
-          const data = JSON.parse(event.data);
-          if (data) {
-            const cts = data.data as WsMsgBodyVO;
-            const body = cts.data;
-            if (wsMsgMap[cts.type] !== undefined)
-            // @ts-expect-error
-              wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
-            call(cts);
+          // 这里需要处理一下，因为有时候会收到空数据
+          try {
+            const data = JSON.parse(event.data);
+            if (data) {
+              const cts = data.data as WsMsgBodyVO;
+              const body = cts.data;
+              if (wsMsgMap[cts.type] !== undefined)
+              // @ts-expect-error
+                wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
+              call(cts);
+            }
           }
-        }
-        catch (err) {
-          return null;
-        }
-      });
-    }
+          catch (err) {
+            return null;
+          }
+        });
+      }
+      else { // 移动端
+        webSocketHandler.value.addListener((msg: BackMessage) => {
+          if (msg.type === "Text") {
+            if (!msg.data)
+              return false;
 
+            // 这里需要处理一下，因为有时候会收到空数据
+            try {
+              const data = JSON.parse(String(msg.data));
+              if (data) {
+                const cts = data.data as WsMsgBodyVO;
+                const body = cts.data;
+                if (wsMsgMap[cts.type] !== undefined)
+                // @ts-expect-error
+                  wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
+                call(cts);
+              }
+            }
+            catch (err) {
+              return null;
+            }
+          }
+        });
+      }
+    }
 
     // 关闭
     function close(isConfirm = true) {
       if (!webSocketHandler.value)
         return;
       if (!isConfirm) {
-        webSocketHandler.value.close();
+        try {
+          webSocketHandler.value?.close?.();
+          webSocketHandler.value?.disconnect?.();
+        }
+        catch (err) {
+        }
         status.value = WsStatusEnum.SAFE_CLOSE;
         return;
       }
@@ -162,7 +208,12 @@ export const useWs = defineStore(
           if (res === "confirm") {
             if (!webSocketHandler.value)
               return;
-            webSocketHandler.value.close();
+            try {
+              webSocketHandler.value?.close?.();
+              webSocketHandler.value?.disconnect?.();
+            }
+            catch (err) {
+            }
             status.value = WsStatusEnum.SAFE_CLOSE;
             ElNotification.success("断开成功！");
           }
@@ -184,13 +235,18 @@ export const useWs = defineStore(
      * @param dto 参数
      */
     function send(dto: WsSendMsgDTO) {
-      if (webSocketHandler.value?.OPEN)
-        webSocketHandler.value?.send(JSON.stringify(dto));
+      if (webSocketHandler.value?.OPEN) {
+        const setting = useSettingStore();
+        if (setting.isWeb)
+          webSocketHandler.value?.send(JSON.stringify(dto));
+        else // 移动端
+          webSocketHandler.value?.send(JSON.stringify(dto));
+      }
     }
 
     // 清除
     function resetStore() {
-      webSocketHandler?.value?.close();
+      close(false);
       wsMsgList.value = {
         newMsg: [],
         onlineNotice: [],
@@ -220,8 +276,6 @@ export const useWs = defineStore(
       reload,
       onerror,
       initDefault,
-      link,
-      open,
       send,
       close,
       sendHeart,
@@ -236,7 +290,3 @@ export const useWs = defineStore(
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useWs, import.meta.hot));
 
-
-interface WsMsgTypeMap<T = object> {
-  [key: string]: T[]
-}

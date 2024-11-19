@@ -96,9 +96,10 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
-    if (setting.isMobile) { // 移动端默认开启会话列表
-      setting.isOpenContact = true;
-      setting.isOpenContactSearch = true;
+    if (setting.isMobile) { // 移动端
+      setting.isOpenContact = true;// 打开会话列表
+      setting.isOpenGroupMember = false;// 关闭群成员列表
+      setting.isOpenContactSearch = true;// 打开搜索框
     }
     await loadData(dto || props.dto);
     await nextTick();
