@@ -68,6 +68,7 @@ export const useWs = defineStore(
       onerror();
       oncolse();
     }
+
     // 链接
     function link(url: string = BaseWSUrl, token: string = "") {
       if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
@@ -84,6 +85,7 @@ export const useWs = defineStore(
         return;
       webSocketHandler.value.onopen = call;
     }
+
     // 错误重试
     function onerror() {
       if (!webSocketHandler.value)
@@ -94,6 +96,7 @@ export const useWs = defineStore(
         console.log(e);
       });
     }
+
     function oncolse() {
       if (!webSocketHandler.value)
         return;

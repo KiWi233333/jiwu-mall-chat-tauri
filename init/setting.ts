@@ -16,7 +16,7 @@ export async function useSettingInit() {
     if (!val[0])
       return;
     const mode = val[0] === "system" ? (colorMode.value === "dark" ? "dark" : "light") : val[0];
-    useModeToggle(mode);
+    useModeToggle(mode, undefined, true);
   });
   nextTick(() => {
     const mode = setting.settingPage.modeToggle.value === "system" ? (colorMode.value === "dark" ? "dark" : "light") : setting.settingPage.modeToggle.value;
@@ -66,6 +66,7 @@ export async function useSettingInit() {
 
   let timer: NodeJS.Timeout | null = null;
   // 6、优化动画性能
+  setting.isMobileSize = window.innerWidth < 640;
   window.addEventListener("resize", () => {
     if (timer)
       clearTimeout(timer); // 清除之前的定时器，避免重复触发
@@ -76,7 +77,7 @@ export async function useSettingInit() {
     timer = setTimeout(() => {
       if (app)
         app.classList.remove("stop-transition");
-      setting.isMobileSize = window.innerWidth < 640;
+      setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
       timer = null;
     }, 150);
   });

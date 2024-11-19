@@ -62,6 +62,8 @@ export async function userTauriInit() {
   else {
     setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
   }
+  if (["android", "ios"].includes(setting.appPlatform)) // 非桌面端
+    setting.settingPage.isTrayNotification = !permissionGranted;
 
   // 3、获取文件路径
   if (!await existsFile(setting.appDataDownloadDirUrl))
@@ -71,7 +73,6 @@ export async function userTauriInit() {
   // 4、初始化窗口状态
   if (!isMobileSystem) {
     restoreStateCurrent(StateFlags.ALL);
-    setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
     const sotpDebounced = watchDebounced(() => setting.isMobileSize, () => {
       saveWindowState(StateFlags.ALL);
     }, {

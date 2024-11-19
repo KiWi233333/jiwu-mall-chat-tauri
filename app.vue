@@ -27,17 +27,12 @@ const setting = useSettingStore();
 const isIframe = ref(false);
 const user = useUserStore();
 onMounted(() => {
-  try {
-    if (window)
-      isIframe.value = window?.self !== undefined && window?.self !== window?.top;
-    if (route.path === "/msg") // 进入消息页面
-      useDefaultInit();
-    else
-      useInit();
-  }
-  catch (error) {
-    console.log(error);
-  }
+  if (window)
+    isIframe.value = window?.self !== undefined && window?.self !== window?.top;
+  if (route.path === "/msg") // 进入消息页面
+    useDefaultInit();
+  else
+    useInit();
 });
 onUnmounted(useUmounted);
 </script>

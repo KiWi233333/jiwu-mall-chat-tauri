@@ -171,7 +171,7 @@ async function openFileFolder() {
         </el-tooltip>
       </div>
       <!-- 托盘消息窗口 -->
-      <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
+      <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
         托盘消息窗口
         <el-switch
           v-model="setting.settingPage.isTrayNotification" size="large" active-text="托盘消息" inactive-text="系统通知"
@@ -197,41 +197,43 @@ async function openFileFolder() {
       <!-- 更新 -->
       <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
         关于更新
-        <div class="ml-a flex items-center">
-          <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="mr-4 cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
-          <el-badge
-            v-if="!setting.appUploader.isUpdating"
-            :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload"
-            is-dot
-            :value="+setting.appUploader.isUpload"
-          >
-            <ElButton
-              round class="flex-row-c-c cursor-pointer transition-all"
-              plain
-              style="height: 2em;padding: 0 0.8em;"
-              :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
-              @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
+        <div class="ml-a flex items-center gap-4">
+          <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
+          <template v-if="setting.isDesktop">
+            <el-badge
+              v-if="!setting.appUploader.isUpdating"
+              :offset="[-5, 5]" :hidden="!setting.appUploader.isUpload"
+              is-dot
+              :value="+setting.appUploader.isUpload"
             >
-              <span flex-row-c-c>
-                <i
-                  i-solar:refresh-outline mr-1 inline-block p-2
-                  :class="setting.appUploader.isCheckUpdatateLoad ? 'animate-spin' : ''"
-                />
-                检查更新
-              </span>
-            </ElButton>
-          </el-badge>
-          <el-progress
-            v-else
-            :percentage="+((setting.appUploader.downloaded / setting.appUploader.contentLength) * 100 || 0).toFixed(2)"
-            :stroke-width="18"
-            striped
-            striped-flow
-            text-inside
-            class="progress-bar w-13rem"
-          >
-            {{ setting.appUploader.downloadedText || "- / - MB" }}
-          </el-progress>
+              <ElButton
+                class="flex-row-c-c cursor-pointer transition-all"
+                plain round
+                style="height: 2em;padding: 0 0.8em;"
+                :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
+                @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
+              >
+                <span flex-row-c-c>
+                  <i
+                    i-solar:refresh-outline mr-1 inline-block p-2
+                    :class="setting.appUploader.isCheckUpdatateLoad ? 'animate-spin' : ''"
+                  />
+                  检查更新
+                </span>
+              </ElButton>
+            </el-badge>
+            <el-progress
+              v-else
+              :percentage="+((setting.appUploader.downloaded / setting.appUploader.contentLength) * 100 || 0).toFixed(2)"
+              :stroke-width="18"
+              striped
+              striped-flow
+              text-inside
+              class="progress-bar w-13rem"
+            >
+              {{ setting.appUploader.downloadedText || "- / - MB" }}
+            </el-progress>
+          </template>
         </div>
       </div>
       <!-- 下载路径 -->

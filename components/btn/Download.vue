@@ -13,7 +13,7 @@ const setting = useSettingStore();
 // 打开搜索
 async function openSearch() {
   showSearch.value = !showSearch.value;
-  inputRef.value?.focus?.();
+  inputRef.value?.focus();
 }
 
 // 过滤文件列表

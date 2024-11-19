@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { platform } from "@tauri-apps/plugin-os";
 
 withDefaults(defineProps<{
   showMin?: boolean
@@ -42,9 +43,17 @@ const setting = useSettingStore();
 onMounted(async () => {
   if (setting.isWeb)
     return;
-  const appWindow = getCurrentWindow();
-  appWindow.setAlwaysOnBottom(isAlwaysOnTopVal.value);
-  isMaximized.value = await appWindow.isMaximized();
+  try {
+    const info = platform();
+    if (["windows", "macos", "linux"].includes(info)) {
+      const appWindow = getCurrentWindow();
+      appWindow.setAlwaysOnBottom(isAlwaysOnTopVal.value);
+      isMaximized.value = await appWindow.isMaximized();
+    }
+  }
+  catch (error) {
+    console.log(error);
+  }
 });
 </script>
 

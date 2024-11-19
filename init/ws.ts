@@ -16,10 +16,12 @@ export async function useWsInit() {
   const chat = useChatStore();
   // 创建 Web Worker
   let worker: Worker;
-  // 初始化
+  // 初始化 Web Worker
   function reload() {
-    worker?.terminate?.();
-    worker = new Worker("useWsWoker.js");
+    // web端
+    worker?.removeEventListener?.("message", (e) => { });
+    worker?.terminate?.(); // 关闭 WebSocket 连接
+    worker = new Worker("useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault((e) => {
     // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态

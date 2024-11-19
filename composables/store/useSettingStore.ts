@@ -5,7 +5,7 @@ import type { Action } from "element-plus";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
 import { BaseDirectory } from "@tauri-apps/plugin-fs";
-import { open } from "@tauri-apps/plugin-shell";
+import { open as openUrl } from "@tauri-apps/plugin-shell";
 import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
@@ -42,6 +42,7 @@ export const useSettingStore = defineStore(
     const isMobileSize = ref(false);// 是否移动尺寸
     const isOpenContactSearch = ref(false); // 是否会话搜索
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
+    const isMobile = computed(() => ["android", "ios"].includes(osType.value));
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -131,7 +132,7 @@ export const useSettingStore = defineStore(
         return;
       }
       try {
-        await open(item.localPath);
+        await openUrl(item.localPath);
       }
       catch (error) {
         console.warn(error);
@@ -152,9 +153,10 @@ export const useSettingStore = defineStore(
 
     // 切换下载目录
     async function changeDownloadDir() {
+      const setting = useSettingStore();
       const path = await openDialog({
         multiple: false,
-        directory: true,
+        directory: !!setting.isDesktop, // 仅桌面端支持选择文件夹
       });
       if (!path)
         return;
@@ -162,7 +164,7 @@ export const useSettingStore = defineStore(
         ElMessage.error("选择路径不存在，请重新选择！");
         return;
       }
-      appDataDownloadDirUrl.value = path;
+      appDataDownloadDirUrl.value = setting.isDesktop ? path : path.split("\\").slice(0, -1).join("\\"); // 兼容移动端
       ElMessage.success("下载路径已更改！");
     }
 
@@ -194,7 +196,7 @@ export const useSettingStore = defineStore(
     async function checkUpdates(checkLog = false) {
       appUploader.value.isCheckUpdatateLoad = true;
       try {
-        if (isWeb.value)
+        if (isWeb.value || isMobile.value)
           return false;
         const update = (await check()) as Update;
         appUploader.value.isUpload = !!update?.available;
@@ -377,21 +379,29 @@ export const useSettingStore = defineStore(
       loadSystemFonts();
       if (!isWeb.value) {
         await nextTick();
+        await resetAllWindow();
         appDataDownloadDirUrl.value = `${await appDataDir()}\\downloads`;
         if (appDataDownloadDirUrl.value && !await existsFile(appDataDownloadDirUrl.value))
           await mkdirFile(appDataDownloadDirUrl.value);
-        if (await isAutostartEnabled())
-          await disableAutostart();
-        await resetAllWindowState();
-        setTimeout(async () => {
-          await relaunch();
+        setTimeout(async () => { // 延迟300ms，防止闪屏
+          if (isDesktop.value)
+            await relaunch();
+          else
+            window?.location?.reload?.();
         }, 300);
       }
     }
 
     // 重置所有窗口状态
-    async function resetAllWindowState() {
+    async function resetAllWindow() {
+      if (isWeb.value || !isDesktop.value)
+        return false;
+
       try {
+        // 自动重启
+        if (await isAutostartEnabled())
+          await disableAutostart();
+        // 窗口状态
         const file = await windowStateFilename();
         if (file)
           await removeFile(`${await appDataDir()}\\${file}`);
@@ -407,6 +417,7 @@ export const useSettingStore = defineStore(
       isMobileSize,
       isOpenContactSearch,
       isDesktop,
+      isMobile,
       isChatFold,
       // state
       isCollapse,

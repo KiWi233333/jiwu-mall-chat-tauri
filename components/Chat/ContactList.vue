@@ -93,14 +93,14 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
   if (isAll) {
     enable(false);// 首次不开启动画
     chat.contactMap = {};
-    // chat.contactList = [];
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
+    if (setting.isMobile) { // 移动端默认开启会话列表
+      setting.isOpenContact = true;
+      setting.isOpenContactSearch = true;
+    }
     await loadData(dto || props.dto);
-    // if (list?.[0]?.roomId)
-    //   theContactId.value = list?.[0]?.roomId;
-    // await onChangeRoom(theContactId.value);
     await nextTick();
     enable(!setting.settingPage.isCloseAllTransition);
   }
@@ -291,8 +291,8 @@ onBeforeUnmount(() => {
   >
     <!-- 搜索群聊 -->
     <div
-      class="trnasition-200 flex-row-c-c overflow-y-hidden transition-height sm:p-4"
-      :class="setting.isMobileSize && !setting.isOpenContactSearch ? 'px-4 h-0' : 'h-20 px-4'"
+      class="trnasition-200 h-18 flex-row-c-c px-4 transition-height"
+      :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
         id="search-contact"
@@ -314,6 +314,7 @@ onBeforeUnmount(() => {
         <i i-carbon:add-large p-2 />
       </BtnElButton>
     </div>
+
     <!-- 桌面端是否登录 -->
     <!-- <small sticky left-0 top-0 p4 sm:hidden border-default-b>
       当前聊天

@@ -3,11 +3,11 @@ const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
 // @unocss-include
-function toggleContactSearch() {
+async function toggleContactSearch() {
   setting.isOpenContactSearch = !setting.isOpenContactSearch;
   if (!setting.isOpenContactSearch)
     return;
-
+  await nextTick();
   const el = document.querySelector("#search-contact") as any;
   if (el)
     el?.focus();
