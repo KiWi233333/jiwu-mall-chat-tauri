@@ -192,6 +192,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
+    zIndex: 2010, // 高于遮罩层
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
       {
@@ -426,7 +427,8 @@ function exitGroup() {
           <div
             v-for="p in merberList" :key="p.userId"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-            class="user-card flex-shrink-0"
+            class="user-card flex-shrink-0 cursor-pointer"
+            @contextmenu="onContextMenu($event, p)"
             @click="onContextMenu($event, p)"
           >
             <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
@@ -528,7 +530,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain @click="exitGroup()">
       <span>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
