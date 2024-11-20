@@ -7,6 +7,7 @@
   <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_MICROPHONE" />
 
   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <uses-permission
     android:name="android.permission.READ_EXTERNAL_STORAGE"
     android:maxSdkVersion="32" />

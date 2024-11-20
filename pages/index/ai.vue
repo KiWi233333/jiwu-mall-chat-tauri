@@ -25,6 +25,7 @@ const INIT_MSG = {
     },
   },
 };
+const setting = useSettingStore();
 const user = useUserStore();
 const form = ref({
   role: "user",
@@ -207,7 +208,9 @@ function handleNewChat() {
 
 const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
-  inputRef.value?.focus();
+  if (!setting.isMobileSize)
+    inputRef.value?.focus();
+
   if (msgList.value.length === 0)
     msgList.value.push(INIT_MSG);
 
@@ -215,7 +218,6 @@ onMounted(() => {
     scrollBottom(false);
   });
   // 切换页面时关闭动画
-  const setting = useSettingStore();
   enable(!setting.settingPage.isCloseAllTransition);
 });
 </script>

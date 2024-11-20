@@ -85,6 +85,7 @@ onMounted(async () => {
   setting.loadSystemFonts();
   if (setting.isWeb)
     return;
+  // setting.appUploader.isUpdating = false;
 
   const v = await getVersion();
   // 公告
@@ -245,10 +246,9 @@ async function openFileFolder() {
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
                 round plain
-                :disabled="setting.appUploader.isCheckUpdatateLoad"
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
-                @click=" setting.checkUpdates(true)"
+                @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
               >
                 <span flex-row-c-c>
                   <i
