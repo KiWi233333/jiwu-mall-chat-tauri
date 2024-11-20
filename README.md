@@ -93,10 +93,13 @@
 
 ![账号与安全](./.doc/chat5.png)
 
-- 响应式
+- 移动端适配
 
-<img src="./.doc/chat7.png" width = "200" alt="响应式" align=center />
-<img src="./.doc/chat8.png" width = "200" alt="响应式" align=center />
+<img src="./.doc/chat9.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat7.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat8.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat10.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat11.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
 
 ## ⏳ 起步 | Project Setup
 

@@ -95,8 +95,11 @@ Note: This account does not have permissions for uploading images or changing pa
 
 - Responsiveness
 
-<img src="./.doc/chat7.png" width="200" alt="Responsive" align=center />
-<img src="./.doc/chat8.png" width="200" alt="Responsive" align=center />
+<img src="./.doc/chat9.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat7.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat8.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat10.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<img src="./.doc/chat11.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
 
 ## ⏳ Getting Started | Project Setup
 
