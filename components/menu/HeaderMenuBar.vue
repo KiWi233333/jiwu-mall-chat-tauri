@@ -34,7 +34,7 @@ async function toggleContactSearch() {
     </div>
     <!-- 会话搜索框 -->
     <i
-      v-if="setting.isMobileSize && setting.isOpenContact"
+      v-if=" $route.path === '/' && setting.isMobileSize && setting.isOpenContact"
       class="ml-a btn-primary"
       :class="setting.isOpenContactSearch ? 'i-solar:magnifer-bold text-theme-primary' : 'i-solar:magnifer-outline'"
       title="搜索会话"
@@ -56,7 +56,7 @@ async function toggleContactSearch() {
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <!-- 关闭按钮 -->
