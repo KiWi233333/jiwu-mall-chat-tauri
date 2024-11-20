@@ -100,10 +100,15 @@ export async function useSettingInit() {
     // console.warn(error);
   }
   watch(() => setting.settingPage.isAutoStart, async (val) => {
-    if (val)
-      await enableAutoStart();
-    else
-      await disableAutoStart();
+    try {
+      if (val)
+        await enableAutoStart();
+      else
+        await disableAutoStart();
+    }
+    catch (error) {
+      console.warn(error);
+    }
   });
 }
 

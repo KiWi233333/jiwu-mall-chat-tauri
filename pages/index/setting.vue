@@ -31,6 +31,33 @@ watchDebounced(
   },
 );
 
+const notificationTypeList = [
+  {
+    label: "系统",
+    value: "system",
+  },
+  {
+    label: "托盘",
+    value: "tray",
+  },
+  {
+    label: "关闭",
+    value: undefined,
+  },
+];
+const notificationType = computed({
+  get: () => setting.settingPage.isTrayNotification === undefined ? undefined : (setting.settingPage.isTrayNotification ? "tray" : "system"),
+  set: (val: string) => {
+    setting.settingPage.notificationType.value = val;
+    if (val === "system")
+      setting.settingPage.isTrayNotification.value = false;
+    else if (val === "tray")
+      setting.settingPage.isTrayNotification.value = true;
+    else
+      setting.settingPage.isTrayNotification.value = undefined;
+  },
+});
+
 const thePostion = ref({
   clientX: 0,
   clientY: 0,
@@ -170,13 +197,23 @@ async function openFileFolder() {
           />
         </el-tooltip>
       </div>
-      <!-- 托盘消息窗口 -->
+      <!-- 消息通知 -->
       <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
-        托盘消息窗口
-        <el-switch
+        消息通知
+        <!-- <el-switch
           v-model="setting.settingPage.isTrayNotification" size="large" active-text="托盘消息" inactive-text="系统通知"
           inline-prompt @change="(val) => setting.settingPage.isTrayNotification = !!val"
-        />
+        /> -->
+        <el-radio-group
+          v-model="notificationType" class="inputs" :disabled="isLoading"
+        >
+          <el-radio-button
+            v-for="p in notificationTypeList" :key="p.value" :disabled="isLoading"
+            class="flex-1" :value="p.value"
+          >
+            {{ p.label }}
+          </el-radio-button>
+        </el-radio-group>
       </div>
       <!-- Esc -->
       <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
@@ -208,10 +245,11 @@ async function openFileFolder() {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                plain round
+                round plain
+                :disabled="setting.appUploader.isCheckUpdatateLoad"
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
-                @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
+                @click=" setting.checkUpdates(true)"
               >
                 <span flex-row-c-c>
                   <i

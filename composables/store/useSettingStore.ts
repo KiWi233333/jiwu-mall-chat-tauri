@@ -283,7 +283,7 @@ export const useSettingStore = defineStore(
         });
       }
       catch (error) {
-        // console.warn(error);
+        console.warn(error);
         appUploader.value.isCheckUpdatateLoad = false;
         appUploader.value.isUpload = false;
         appUploader.value.isCheckUpdatateLoad = false;
@@ -293,7 +293,6 @@ export const useSettingStore = defineStore(
         appUploader.value.contentLength = 0;
       }
     }
-
 
     async function loadSystemFonts() {
       settingPage.value.fontFamily.list = [
