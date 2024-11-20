@@ -36,8 +36,8 @@ importers:
         specifier: 6.1.0
         version: 6.1.0
       md-editor-v3:
-        specifier: 4.21.3
-        version: 4.21.3(@codemirror/view@6.34.2)(@lezer/common@1.2.3)(vue@3.5.12(typescript@5.5.4))
+        specifier: 5.0.2
+        version: 5.0.2(@codemirror/view@6.34.2)(@lezer/common@1.2.3)(vue@3.5.12(typescript@5.5.4))
       qiniu-js:
         specifier: 3.4.2
         version: 3.4.2
@@ -64,8 +64,8 @@ importers:
         specifier: 1.2.1
         version: 1.2.1
       '@iconify-json/tabler':
-        specifier: 1.2.7
-        version: 1.2.7
+        specifier: 1.2.8
+        version: 1.2.8
       '@iconify/vue':
         specifier: 4.1.2
         version: 4.1.2(vue@3.5.12(typescript@5.5.4))
@@ -142,8 +142,8 @@ importers:
         specifier: 9.17.0
         version: 9.17.0(eslint@8.56.0)
       husky:
-        specifier: 9.1.6
-        version: 9.1.6
+        specifier: 9.1.7
+        version: 9.1.7
       lint-staged:
         specifier: 15.2.10
         version: 15.2.10
@@ -948,8 +948,8 @@ packages:
   '@iconify-json/solar@1.2.1':
     resolution: {integrity: sha512-LA3WZ7HOi5O/sEc2M+BcQNJYNFDnUKP+ZldmNf8kwndnCuFMo+fukt6tSu4BqYRsRgp/Ku4xnys1JGBDi+QtCQ==}
 
-  '@iconify-json/tabler@1.2.7':
-    resolution: {integrity: sha512-q6FbDeC5caOC7i7/dcJOv7PdovHWItd84hCvsnlD/mzsrl5Nhol6eSQOMRv1bIpyxykGEiSDbOsVK5f23j/aFg==}
+  '@iconify-json/tabler@1.2.8':
+    resolution: {integrity: sha512-xvi/UKhLiFRnutSo6xuHxvOGmskYEoC2St4WDVsU9WAW1DRG1EkBUk/Zy1TpeSsBKMQfyqtdjjx9Cf4ZezOK2w==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -3462,8 +3462,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  husky@9.1.6:
-    resolution: {integrity: sha512-sqbjZKK7kf44hfdE94EoX8MZNk0n7HeW37O4YrVGCF4wzgQjp+akPAkfUK5LZ6KuR/6sqeAVuXHji+RzQgOn5A==}
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -3901,8 +3901,17 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
+  lru-cache@11.0.2:
+    resolution: {integrity: sha512-123qHRfJBmo2jXDbo/a5YOQrJoHF/GNQTLzQ5+IdK5pWpceK17yRc6ozlWd25FxvGKQbIUs91fDFkXmDHTKcyA==}
+    engines: {node: 20 || >=22}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+
+  lucide-vue-next@0.453.0:
+    resolution: {integrity: sha512-5zmv83vxAs9SVoe22veDBi8Dw0Fh2F+oTngWgKnKOkrZVbZjceXLQ3tescV2boB0zlaf9R2Sd9RuUP2766xvsQ==}
+    peerDependencies:
+      vue: '>=3.0.1'
 
   magic-string-ast@0.6.2:
     resolution: {integrity: sha512-oN3Bcd7ZVt+0VGEs7402qR/tjgjbM7kPlH/z7ufJnzTLVBzXJITRHOJiwMmmYMgZfdoWQsfQcY+iKlxiBppnMA==}
@@ -3941,10 +3950,10 @@ packages:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  md-editor-v3@4.21.3:
-    resolution: {integrity: sha512-9+RCioqFIWSExTsG0jf9T/RTrFhtH8SpRcKVjHeEQSlExAr/zsgYt/M9XUy/nuGx87hgNKDzK0PXp/uOlDumAw==}
+  md-editor-v3@5.0.2:
+    resolution: {integrity: sha512-KznY8NWYdof7sndGQN22/dgCUKNR4KAzpz6W7/gIrcTUOvSlltIzY0CedF9lWWG38dC75/CN/wDOIXxnDxfUUg==}
     peerDependencies:
-      vue: ^3.2.47
+      vue: ^3.5.0
 
   mdast-util-from-markdown@0.8.5:
     resolution: {integrity: sha512-2hkTXtYYnr+NubD/g6KGBS/0mFmBcifAsI0yIWRiRo0PjVs6SSOSOdtzbp6kSGnShDN6G5aWZpKQ2lWRy27mWQ==}
@@ -6519,7 +6528,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/tabler@1.2.7':
+  '@iconify-json/tabler@1.2.8':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -9828,7 +9837,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  husky@9.1.6: {}
+  husky@9.1.7: {}
 
   ieee754@1.2.1: {}
 
@@ -10253,9 +10262,15 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
+  lru-cache@11.0.2: {}
+
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  lucide-vue-next@0.453.0(vue@3.5.12(typescript@5.5.4)):
+    dependencies:
+      vue: 3.5.12(typescript@5.5.4)
 
   magic-string-ast@0.6.2:
     dependencies:
@@ -10298,7 +10313,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  md-editor-v3@4.21.3(@codemirror/view@6.34.2)(@lezer/common@1.2.3)(vue@3.5.12(typescript@5.5.4)):
+  md-editor-v3@5.0.2(@codemirror/view@6.34.2)(@lezer/common@1.2.3)(vue@3.5.12(typescript@5.5.4)):
     dependencies:
       '@codemirror/lang-markdown': 6.3.1
       '@codemirror/language-data': 6.5.1(@codemirror/view@6.34.2)
@@ -10306,7 +10321,8 @@ snapshots:
       '@vavt/util': 2.1.0
       codemirror: 6.0.1(@lezer/common@1.2.3)
       copy-to-clipboard: 3.3.3
-      lru-cache: 10.4.3
+      lru-cache: 11.0.2
+      lucide-vue-next: 0.453.0(vue@3.5.12(typescript@5.5.4))
       markdown-it: 14.1.0
       markdown-it-image-figures: 2.1.1(markdown-it@14.1.0)
       markdown-it-sub: 2.0.0
