@@ -48,13 +48,12 @@ const notificationTypeList = [
 const notificationType = computed({
   get: () => setting.settingPage.isTrayNotification === undefined ? undefined : (setting.settingPage.isTrayNotification ? "tray" : "system"),
   set: (val: string) => {
-    setting.settingPage.notificationType.value = val;
     if (val === "system")
-      setting.settingPage.isTrayNotification.value = false;
+      setting.settingPage.isTrayNotification = false;
     else if (val === "tray")
-      setting.settingPage.isTrayNotification.value = true;
+      setting.settingPage.isTrayNotification = true;
     else
-      setting.settingPage.isTrayNotification.value = undefined;
+      setting.settingPage.isTrayNotification = undefined;
   },
 });
 
