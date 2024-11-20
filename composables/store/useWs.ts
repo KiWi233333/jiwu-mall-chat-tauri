@@ -83,7 +83,7 @@ export const useWs = defineStore(
         return true;
       }
 
-      // 移动端
+      // 移动、桌面端
       const url = BaseWSUrl;
       if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
         return webSocketHandler.value;
@@ -94,20 +94,6 @@ export const useWs = defineStore(
       status.value = ws.id ? WsStatusEnum.OPEN : WsStatusEnum.CLOSE;
       if (ws.id)
         call();
-      // 2、错误监听
-      webSocketHandler.value.addListener((msg: BackMessage) => {
-        console.log("Rust Received Message:", msg);
-        if (msg.type === "Close") {
-          status.value = WsStatusEnum.SAFE_CLOSE;
-          webSocketHandler.value = null;
-        }
-        // else if (msg.type === "Ping") {
-        //   // 心跳响应
-        // }
-        // else if (msg.type === "Pong") {
-        //   // 心跳请求
-        // }
-      });
     }
 
     // 链接
@@ -158,9 +144,24 @@ export const useWs = defineStore(
           }
         });
       }
-      else { // 移动端
+      else { // 移动、桌面端
         webSocketHandler.value.addListener((msg: BackMessage) => {
-          if (msg.type === "Text") {
+          console.log(msg);
+          if ("WebSocket protocol error: Connection reset without closing handshake".includes(msg?.data?.toString() || "")) {
+            status.value = WsStatusEnum.SAFE_CLOSE;
+            webSocketHandler.value = null;
+            return;
+          }
+          else if (msg?.data?.toString().includes("WebSocket protocol error")) {
+            status.value = WsStatusEnum.CLOSE;
+            webSocketHandler.value = null;
+            return;
+          }
+          if (msg.type === "Close") {
+            status.value = WsStatusEnum.SAFE_CLOSE;
+            webSocketHandler.value = null;
+          }
+          else if (msg.type === "Text") {
             if (!msg.data)
               return false;
 
@@ -171,7 +172,7 @@ export const useWs = defineStore(
                 const cts = data.data as WsMsgBodyVO;
                 const body = cts.data;
                 if (wsMsgMap[cts.type] !== undefined)
-                // @ts-expect-error
+                  // @ts-expect-error
                   wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
                 call(cts);
               }
@@ -188,6 +189,7 @@ export const useWs = defineStore(
     function close(isConfirm = true) {
       if (!webSocketHandler.value)
         return;
+      console.log("关闭会话");
       if (!isConfirm) {
         try {
           webSocketHandler.value?.close?.();
@@ -235,13 +237,8 @@ export const useWs = defineStore(
      * @param dto 参数
      */
     function send(dto: WsSendMsgDTO) {
-      if (webSocketHandler.value?.OPEN) {
-        const setting = useSettingStore();
-        if (setting.isWeb)
-          webSocketHandler.value?.send(JSON.stringify(dto));
-        else // 移动端
-          webSocketHandler.value?.send(JSON.stringify(dto));
-      }
+      if (webSocketHandler.value?.OPEN)
+        webSocketHandler.value?.send(JSON.stringify(dto));
     }
 
     // 清除

@@ -20,6 +20,7 @@ export async function useWsInit() {
   async function reload() {
     worker?.removeEventListener?.("message", (e) => { });
     worker?.terminate?.(); // 关闭 WebSocket 连接
+    ws.close(false); // 关闭 WebSocket 连接
     worker = new Worker("useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault(() => {
@@ -58,7 +59,7 @@ export async function useWsInit() {
     if (val[0] !== WsStatusEnum.OPEN && val[1])
       reload();
     else if (!val[1])
-      ws.webSocketHandler?.disconnect?.();
+      ws.close(false);
   }, {
     debounce: 1000,
     immediate: false,
