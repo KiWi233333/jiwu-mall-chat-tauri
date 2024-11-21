@@ -17,7 +17,7 @@ export function httpRequest<T = unknown>(
     baseURL: BaseUrl,
     headers: {} as { Authoriztion?: string },
     // 请求拦截器
-    onRequest: () => {
+    onRequest: (config: any) => {
       // 需要登录操作
       // if (config.options.headers?.Authorization !== undefined) {
       //   // @ts-expect-error

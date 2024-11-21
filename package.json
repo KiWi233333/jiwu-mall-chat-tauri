@@ -64,7 +64,7 @@
     "@tauri-apps/plugin-updater": "2.0.0",
     "@unocss/eslint-plugin": "^0.64.1",
     "@unocss/nuxt": "0.64.1",
-    "@vueuse/nuxt": "11.2.0",
+    "@vueuse/nuxt": "11.3.0",
     "crypto-js": "4.2.0",
     "element-plus": "2.8.4",
     "eslint": "^9.15.0",
