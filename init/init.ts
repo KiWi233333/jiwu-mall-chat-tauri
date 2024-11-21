@@ -71,12 +71,12 @@ export async function userTauriInit() {
 
 
   // 4、初始化窗口状态
-  if (!isMobileSystem) {
+  if (!isMobileSystem) { // 非移动端才有该功能
     restoreStateCurrent(StateFlags.ALL);
     const sotpDebounced = watchDebounced(() => setting.isMobileSize, () => {
       saveWindowState(StateFlags.ALL);
     }, {
-      debounce: 1000,
+      debounce: 1500,
     });
 
     return () => {

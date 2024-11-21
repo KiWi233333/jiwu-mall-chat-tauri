@@ -12,6 +12,15 @@ async function toggleContactSearch() {
   if (el)
     el?.focus();
 }
+
+const route = useRoute();
+async function toggleContactOpen() {
+  if (route.path !== "/") {
+    await navigateTo("/");
+    return;
+  }
+  setting.isOpenContact = !setting.isOpenContact;
+}
 </script>
 
 <template>
@@ -23,7 +32,10 @@ async function toggleContactSearch() {
       <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
         <CardElImage src="/logo.png" class="h-1.8rem w-1.8rem" />
       </NuxtLink>
-      <div class="btn-primary" :class="!setting.isOpenContact ? 'flex-row-c-c sm:hidden' : 'hidden '" @click="setting.isOpenContact = !setting.isOpenContact">
+      <div
+        class="btn-primary"
+        :class="!setting.isOpenContact ? 'flex-row-c-c animate-zoom-in animate-duration-200 sm:hidden' : 'hidden '" @click="toggleContactOpen"
+      >
         <i i-solar-alt-arrow-left-line-duotone p-3 />
       </div>
       <strong hidden sm:block>极物圈</strong>
@@ -35,8 +47,7 @@ async function toggleContactSearch() {
     <!-- 会话搜索框 -->
     <i
       v-if=" $route.path === '/' && setting.isMobileSize && setting.isOpenContact"
-      class="ml-a btn-primary"
-      :class="setting.isOpenContactSearch ? 'i-solar:magnifer-bold text-theme-primary' : 'i-solar:magnifer-outline'"
+      class="i-solar:magnifer-outline ml-a animate-zoom-in animate-duration-200 btn-primary"
       title="搜索会话"
       @click="toggleContactSearch"
     />

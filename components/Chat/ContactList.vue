@@ -104,10 +104,15 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     await loadData(dto || props.dto);
     await nextTick();
     enable(!setting.settingPage.isCloseAllTransition);
+    if (setting.isMobileSize) {
+      // 默认选中第一个
+      if (chat.contactList?.[0]?.roomId) {
+        theContactId.value = chat.contactList[0].roomId;
+      }
+    }
   }
-  else { // 刷新某一房间
-    if (roomId)
-      refreshItem(roomId);
+  else if (roomId) { // 刷新某一房间
+    refreshItem(roomId);
   }
   isReload.value = false;
 }

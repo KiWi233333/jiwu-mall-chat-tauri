@@ -518,7 +518,7 @@ watch(() => chat.theContact.roomId, () => {
     <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
       <div
-        class="relative min-h-8 flex items-center gap-4 px-2"
+        class="relative flex items-center gap-2 px-2 sm:(gap-4)"
       >
         <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? '语音 Ctrl+T' : '键盘'" placement="top">
           <i
@@ -527,7 +527,7 @@ watch(() => chat.theContact.roomId, () => {
             @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />
         </el-tooltip>
-        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-4">
+        <div v-show="form.msgType !== MessageType.SOUND" class="ml-a flex items-center gap-2 sm:(ml-0 gap-4)">
           <!-- 图片 -->
           <InputOssFileUpload
             ref="inputOssImgUploadRef"
@@ -575,7 +575,7 @@ watch(() => chat.theContact.roomId, () => {
             @click="toggleChating"
           >
             <i i-solar:soundwave-line-duotone class="icon" p-2.5 />
-            <div w-8rem truncate transition-width class="text px-2 text-center group-hover:w-8rem">
+            <div class="text w-5rem truncate text-center transition-width group-hover:(w-6rem sm:w-9rem) sm:w-8rem">
               <span class="chating-hidden">{{ isChating ? `正在输入 ${second}s` : '语音 Ctrl+T' }}</span>
               <span hidden class="chating-show">停止录音 {{ second ? `${second}s` : '' }}</span>
             </div>
@@ -597,7 +597,7 @@ watch(() => chat.theContact.roomId, () => {
             @click="handlePlayAudio('del')"
           />
         </div>
-        <i ml-a />
+        <div sm:ml-a />
         <!-- 群广播消息 -->
         <div
           v-if="isLord"

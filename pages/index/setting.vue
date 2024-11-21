@@ -8,7 +8,7 @@ import "md-editor-v3/lib/preview.css";
 
 
 useSeoMeta({
-  title: "设置 | 极物聊天",
+  title: "设置 - 极物聊天",
   description: "极物聊天 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });

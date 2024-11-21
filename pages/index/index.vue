@@ -33,7 +33,7 @@ const openRoomDrawer = computed({
         lock-scroll
         :with-header="false"
       >
-        <ChatRoomGroupPopup class="ml-a h-full w-full flex flex-col gap-2 p-4 border-default card-default" />
+        <ChatRoomGroupPopup class="ml-a h-full w-full flex flex-col gap-2 border-r-0 rounded-r-0 p-4 border-default-l card-default" />
       </el-drawer>
     </div>
   </div>

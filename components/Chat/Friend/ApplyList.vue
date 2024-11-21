@@ -14,11 +14,13 @@ const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(async () => {
   const setting = useSettingStore();
   enable(false);
-  await loadData();
-  enable(!setting.settingPage.isCloseAllTransition);
+  await loadData(async () => {
+    await nextTick();
+    enable(!setting.settingPage.isCloseAllTransition);
+  });
 });
 // 加载数据
-async function loadData() {
+async function loadData(call?: () => void) {
   if (isLoading.value || pageInfo.value.isLast)
     return;
 
@@ -30,6 +32,7 @@ async function loadData() {
   pageInfo.value.isLast = Boolean(data.isLast);
   pageInfo.value.page = data.current || 1;
   isLoading.value = false;
+  call && call();
 }
 
 

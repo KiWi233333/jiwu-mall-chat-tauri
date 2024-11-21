@@ -31,8 +31,8 @@ export async function useInit() {
   // 通用初始化
   useDefaultInit();
   // Tauri
-  userTauriInit().then((res) => {
-    unMountedTauri = res || (() => {});
+  userTauriInit().then((call) => {
+    unMountedTauri = call || (() => {});
   });
   // 会话
   useWsInit();

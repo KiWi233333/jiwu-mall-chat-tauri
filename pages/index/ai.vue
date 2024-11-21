@@ -4,7 +4,7 @@ import { XUN_FEI_WSS_URL } from "~/composables/utils/useBaseUrl";
 import { appKeywords } from "~/constants";
 
 useSeoMeta({
-  title: "极物AI | 极物聊天",
+  title: "极物AI - 极物聊天",
   description: "极物聊天 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });
