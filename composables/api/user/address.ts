@@ -1,11 +1,9 @@
 import type { Result } from "@/types/result";
-import { isTrue } from "@/types/result";
 import type { ids } from "~/types";
 
 /**
  * 获取用户地址列表
  * @param token token
- * @returns
  */
 export function getAddressList(token: string) {
   return useHttp.get<Result<AddressInfoVO[]>>("/user/address", {}, { headers: { Authorization: token } });
@@ -30,7 +28,6 @@ export interface AddressInfoVO {
  * 添加收货地址
  * @param dto
  * @param token
- * @returns
  */
 export function addAddressByDTO(dto: AddressDTO, token: string) {
   dto.isDefault = +dto.isDefault;
@@ -54,7 +51,6 @@ export interface AddressDTO {
  * @param addressId 地址id
  * @param dto
  * @param token
- * @returns
  */
 export function updateAddressById(addressId: string, dto: AddressDTO, token: string) {
   dto.isDefault = +dto.isDefault;
@@ -66,7 +62,6 @@ export function updateAddressById(addressId: string, dto: AddressDTO, token: str
  * @param addressId 地址id
  * @param isDefault
  * @param token
- * @returns
  */
 export function updateDefaultAddress(addressId: string, isDefault: number, token: string) {
   return useHttp.put<Result<string>>(`/user/address/default/${addressId}`, { isDefault: +isDefault }, { headers: { Authorization: token } });
@@ -76,7 +71,6 @@ export function updateDefaultAddress(addressId: string, isDefault: number, token
  * 删除收货地址(单个)
  * @param addressId 收货地址id
  * @param token
- * @returns
  */
 export function deleteAddressById(addressId: string, token: string) {
   return useHttp.deleted<Result<string>>(`/user/address/one/${addressId}`, {}, { headers: { Authorization: token } });
@@ -86,7 +80,6 @@ export function deleteAddressById(addressId: string, token: string) {
  * 删除收货地址(批量)
  * @param ids
  * @param token
- * @returns
  */
 export function deleteBatchAddressByIds(ids: ids, token: string) {
   return useHttp.deleted<Result<string>>("/user/address/some", {

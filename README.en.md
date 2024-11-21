@@ -124,9 +124,9 @@ const isDev = !import.meta.env.DEV;
 ```sh
 # It is recommended to run separately
 # 1) Start Nuxt
-pnpm run dev:nuxt 
+pnpm run dev:nuxt
 # 2) Start Tauri
-pnpm run dev:tauri 
+pnpm run dev:tauri
 ```
 
 ### 📦 Build
@@ -140,7 +140,7 @@ pnpm run build:tauri
 Check the source
 
 ```sh
-pnpm get registry 
+pnpm get registry
 ```
 
 Temporary modification

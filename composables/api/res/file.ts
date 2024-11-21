@@ -102,8 +102,7 @@ export const DownFileStatusIconMap: Record<FileStatus, string> = {
 export async function downloadFile(url: string, fileName: string, options: {
   targetPath?: string
   mimeType?: string
-} = {},
-callback?: (progress: number) => void) {
+} = {}, callback?: (progress: number) => void) {
   const { targetPath = "", mimeType = "" } = options;
   const setting = useSettingStore();
   const platformType = setting.appPlatform;

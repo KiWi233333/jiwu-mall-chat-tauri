@@ -2,11 +2,11 @@ export function useCheckXXSText(text: string): string {
   //  https://github.com/leizongmin/js-xss/blob/master/README.zh.md
   text = text
     .replace(/(<br[^>]*>| |\s*)/g, "")
-    .replace(/\&/g, "&amp;")
-    .replace(/\"/g, "&quot;")
-    .replace(/\'/g, "&#39;")
-    .replace(/\</g, "&lt;")
-    .replace(/\>/g, "&gt;");
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
   return text;
 }
 /**
@@ -36,7 +36,7 @@ export function getUserLeave(ponits: number = 0): number {
 /**
  * 根据所给日期获取当月的第一天和最后一天
  * @param date
- * @returns
+ * @returns {Date[]} 日期
  */
 export function getMonthStartEnd(date: Date = new Date()): Date[] {
   return [new Date(date.getFullYear(), date.getMonth(), 0), new Date(date.getFullYear(), date.getMonth() + 1, 0)];
@@ -44,7 +44,7 @@ export function getMonthStartEnd(date: Date = new Date()): Date[] {
 /**
  * 获取开始时间
  * @param date
- * @returns
+ * @returns {Date} 开始时间
  */
 export function getDayStartEnd(date: Date = new Date()): Date[] {
   return [new Date(date.getFullYear(), date.getMonth(), date.getDay()), new Date(date.getFullYear(), date.getMonth(), date.getDay() + 1)];
@@ -99,7 +99,7 @@ export function useAsyncCopyText(text: string): Promise<boolean> {
  * 比对对象生成(表层级)
  * @param oldObj
  * @param newObj
- * @returns
+ * @returns {T} 差异对象
  */
 export function compareObjects<T extends object>(oldObj: T, newObj: T) {
   const updatedObj = {};
@@ -190,8 +190,9 @@ export function moveDom(target: HTMLDivElement, options: {
     if (
       Math.abs(starX - (e.touches ? e.touches[0].clientX : e.clientX)) > 20
       || Math.abs(starY - (e.touches ? e.touches[0].clientY : e.clientY)) > 20
-    )
+    ) {
       isClick = false;
+    }
 
     left = (e.touches ? e.touches[0].clientX : e.clientX) - disX;
     top = (e.touches ? e.touches[0].clientY : e.clientY) - disY;
@@ -219,8 +220,9 @@ export function moveDom(target: HTMLDivElement, options: {
     if (
       Math.abs(starX - (e.touches ? e.touches[0].clientX : e.clientX)) > 20
       || Math.abs(starY - (e.touches ? e.touches[0].clientY : e.clientY)) > 20
-    )
+    ) {
       isClick = false;
+    }
 
     left = (e.touches ? e.touches[0].clientX : e.clientX) - disX;
     top = (e.touches ? e.touches[0].clientY : e.clientY) - disY;

@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { type UserInfoVO, type UserWallet, getUserInfo, getUserInfoSSR } from "../api/user/info";
 import { toLogout } from "../api/user";
+import { getUserInfo, type UserInfoVO, type UserWallet } from "../api/user/info";
 import { getUserWallet } from "../api/user/wallet";
 
 // @unocss-include

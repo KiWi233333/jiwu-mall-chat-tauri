@@ -1,9 +1,5 @@
-declare module "vue-virtual-scroller";
-declare module "crypto-js/sha256"
-declare module "crypto-js"
-declare module "streamsaver"
 declare module "#components"
-
+declare module "streamsaver"
 
 declare global {
   interface Window {

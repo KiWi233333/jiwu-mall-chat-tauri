@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type PostInfoVO } from "@/composables/api/community/post";
+import type { PostInfoVO } from "@/composables/api/community/post";
 import { getPostStatusList } from "@/composables/api/community/post";
 
 const { data } = defineProps<{

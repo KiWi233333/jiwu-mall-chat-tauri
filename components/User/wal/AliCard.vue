@@ -6,7 +6,7 @@ const user = useUserStore();
   <div
     h-180px w-320px flex flex-col justify-between p-4
     element-loading-background="rgba(0, 0, 0, 0.6)"
-    class="group v-card relative rounded-4 bg-#1374f7 text-white shadow-sm dark:bg-#1374f7"
+    class="group relative rounded-4 bg-#1374f7 text-white shadow-sm v-card dark:bg-#1374f7"
   >
     <!-- 顶部 -->
     <div flex-row-bt-c>
@@ -14,7 +14,7 @@ const user = useUserStore();
         flex-row-c-c font-600 opacity-90
       >
         <small
-          class="float-left mr-2 inline h-1.8em w-1.8em rounded-4em bg-light text-center font-700 leading-1.8em color-#1374f7"
+          class="float-left mr-2 inline h-1.8em w-1.8em rounded-4em bg-light text-center color-#1374f7 font-700 leading-1.8em"
         >
           支
         </small>

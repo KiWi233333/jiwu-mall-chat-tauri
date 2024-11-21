@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import * as qiniu from "qiniu-js";
-import { OssFileType, deleteOssFile, getOssErrorCode, getResToken, uploadOssFileSe } from "@/composables/api/res";
+import { deleteOssFile, getOssErrorCode, getResToken, OssFileType, uploadOssFileSe } from "@/composables/api/res";
 import { StatusCode } from "@/types/result";
+import * as qiniu from "qiniu-js";
 
 const {
   limit = 1,
@@ -102,7 +102,8 @@ async function hangdleChange(e: Event) {
         status: "",
         percent: 0,
         file: t.files[0],
-      });
+      },
+    );
   }
   else {
     // 多文件
@@ -281,8 +282,7 @@ defineExpose({
 watch(() => modelValue, (val) => {
   if (val)
     fileList.value = val;
-}, { immediate: true },
-);
+}, { immediate: true });
 
 const getPreImage = computed(() => {
   if (preview)

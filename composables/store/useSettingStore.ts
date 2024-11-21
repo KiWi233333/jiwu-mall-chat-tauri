@@ -1,15 +1,15 @@
-import { relaunch } from "@tauri-apps/plugin-process";
-import type { Update } from "@tauri-apps/plugin-updater";
-import { check } from "@tauri-apps/plugin-updater";
-import type { Action } from "element-plus";
-import { acceptHMRUpdate, defineStore } from "pinia";
-import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
-import { BaseDirectory } from "@tauri-apps/plugin-fs";
-import { open as openUrl } from "@tauri-apps/plugin-shell";
 import type { OsType, Platform } from "@tauri-apps/plugin-os";
+import type { Update } from "@tauri-apps/plugin-updater";
+import type { Action } from "element-plus";
 import { appDataDir } from "@tauri-apps/api/path";
+import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
+import { BaseDirectory } from "@tauri-apps/plugin-fs";
+import { relaunch } from "@tauri-apps/plugin-process";
+import { open as openUrl } from "@tauri-apps/plugin-shell";
+import { check } from "@tauri-apps/plugin-updater";
 import { filename as windowStateFilename } from "@tauri-apps/plugin-window-state";
+import { acceptHMRUpdate, defineStore } from "pinia";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
@@ -61,7 +61,7 @@ export const useSettingStore = defineStore(
       isAutoStart: false, // 开机自启
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
-      isTrayNotification: true, // 托盘通知
+      isTrayNotification: true as (boolean | undefined), // 托盘通知
     });
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);

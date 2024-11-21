@@ -1,4 +1,3 @@
-<!-- eslint-disable prefer-promise-reject-errors -->
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from "element-plus";
 import { DeviceType, getRegisterCode, toLoginByPwd } from "~/composables/api/user";
@@ -25,7 +24,7 @@ const rules = reactive<FormRules>({
   username: [
     { required: true, message: "用户名不能为空！", trigger: "blur" },
     {
-      pattern: /^[a-zA-Z][a-zA-Z0-9_]{0,}$/,
+      pattern: /^[a-z]\w*$/i,
       message: "英文开头、字母数字下划线组成",
       trigger: "change",
     },
@@ -83,7 +82,7 @@ const rules = reactive<FormRules>({
     { required: true, message: "邮箱不能为空！", trigger: "blur" },
     {
       pattern:
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-z\-0-9]+\.)+[a-z]{2,}))$/i,
       message: "邮箱格式不正确！",
       trigger: ["blur", "change"],
     },
@@ -92,7 +91,7 @@ const rules = reactive<FormRules>({
     { required: true, message: "手机号不能为空！", trigger: "blur" },
     {
       pattern:
-        /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/,
+        /^(?:(?:\+|00)86)?1(?:3\d|4[5-79]|5[0-35-9]|6[5-7]|7[0-8]|8\d|9[1589])\d{8}$/,
       message: "手机号格式不正确！",
       trigger: "change",
     },
@@ -168,11 +167,7 @@ async function getRegCode(type: RegisterType) {
  * @param step 自增自减
  * @param fn 回调
  */
-function useInterval(timer: any,
-  num: Ref<number>,
-  target?: number,
-  step: number = -1,
-  fn?: () => void) {
+function useInterval(timer: any, num: Ref<number>, target?: number, step: number = -1, fn?: () => void) {
   num.value = target || timer.value;
   timer.value = setInterval(() => {
     num.value += step;

@@ -44,8 +44,7 @@ export function onContextMenu(e: MouseEvent, item: ChatMessageVO, callList: MsgM
       onClick: () => {
         chat.setReplyMsg(item);
       },
-    },
-    {
+    }, {
       label: "@TA",
       disabled: isSelf,
       onClick: () => {

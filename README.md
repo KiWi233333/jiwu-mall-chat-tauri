@@ -124,9 +124,9 @@ const isDev = !import.meta.env.DEV;
 ```sh
 # 建议分开运行
 # 1）启动nuxt
-pnpm run dev:nuxt 
+pnpm run dev:nuxt
 # 2）启动tauri
-pnpm run dev:tauri 
+pnpm run dev:tauri
 ```
 
 ### 📦 打包
@@ -140,7 +140,7 @@ pnpm run build:tauri
 查看源
 
 ```sh
-pnpm get registry 
+pnpm get registry
 ```
 
 临时修改

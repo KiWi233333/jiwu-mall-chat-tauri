@@ -51,8 +51,9 @@ export function getRoomGroupUserPage(roomId: number | null = null, pageSize = 10
  * @param token token
  * @returns 分页
  */
-export function getRoomGroupAllUser(roomId: number, token: string) {
-  return $fetch<Result<ChatMemberSeVO[]>>(
+export function getRoomGroupAllUser(roomId: number, token: string): Promise<Result<ChatMemberSeVO[]>> {
+  return useHttp.post<Result<ChatMemberSeVO[]>>(
+    // return $fetch(
     `${BaseUrl}/chat/room/group/member/list/${roomId}`,
     {
       headers: {

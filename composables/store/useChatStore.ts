@@ -1,8 +1,7 @@
-/* eslint-disable @stylistic/js/spaced-comment */
-import { acceptHMRUpdate, defineStore } from "pinia";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import type { ChatContactVO } from "../api/chat/contact";
 import type { ChatMemberVO } from "../api/chat/room";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { acceptHMRUpdate, defineStore } from "pinia";
 
 enum FriendOptType {
   Empty = -1,
@@ -34,7 +33,7 @@ export interface AtChatMemberOption {
 export const useChatStore = defineStore(
   "chat",
   () => {
-    /******************************* 会话 *********************************/
+    /** ***************************** 会话 */
     const isOpenContact = ref(true);
     const contactMap = ref<Record<number, ChatContactVO>>({});
     const contactList = computed(() => Object.values(contactMap.value));
@@ -109,7 +108,7 @@ export const useChatStore = defineStore(
       delete contactMap.value[roomId];
     }
 
-    /******************************* 群聊成员 *********************************/
+    /** ***************************** 群聊成员 */
     const onOfflineList = ref<ChatMemberVO[]>([]);
     const roomGroupPageInfo = ref({
       cursor: null as null | string,
@@ -122,7 +121,7 @@ export const useChatStore = defineStore(
     }
 
 
-    /******************************* 页面状态 **********/
+    /** ***************************** 页面状态 */
     async function isActiveWindow(): Promise<boolean> {
       const setting = useSettingStore();
       if (setting.isWeb) { // web端
@@ -224,7 +223,7 @@ export const useChatStore = defineStore(
       onDownUpChangeRoomLoading.value = false;
     };
 
-    /******************************* 艾特AT人 *********************************/
+    /** ***************************** 艾特AT人 */
     const atUserList = ref<Partial<AtChatMemberOption>[]>([]);
     const atUidListTemp = ref<string[]>([]);
 
@@ -247,7 +246,7 @@ export const useChatStore = defineStore(
       atUserList.value = atUserList.value.filter(p => p.username !== username);
     }
 
-    /******************************* 回复消息 *********************************/
+    /** ***************************** 回复消息 */
     const replyMsg = ref<Partial<ChatMessageVO>>();
 
     // 回复消息
@@ -256,7 +255,7 @@ export const useChatStore = defineStore(
     }
 
 
-    /******************************* 联系人面板管理 *********************************/
+    /** ***************************** 联系人面板管理 */
     const theFriendOpt = ref<TheFriendOpt>({
       type: -1,
       data: {},
@@ -286,7 +285,7 @@ export const useChatStore = defineStore(
       },
     }) as Ref<boolean>;
 
-    /******************************* 重置 *********************************/
+    /** ***************************** 重置 */
     function resetStore() {
       contactMap.value = {};
       // contactList.value = [];

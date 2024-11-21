@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatContactVO, RoomType } from "@/composables/api/chat/contact";
+import ContextMenu from "@imengyu/vue3-context-menu";
 import { WSMemberStatusEnum } from "~/composables/types/WsType";
 
 const props = defineProps<{
@@ -28,7 +28,7 @@ async function loadData(dto?: ContactPageDTO) {
     cursor: pageInfo.value.cursor,
   }, user.getToken);
   if (data && data.list) {
-    data.list.forEach((p) => {
+    data.list.forEach((p: ChatContactVO) => {
       chat.contactMap[p.roomId] = p;
     });
   }

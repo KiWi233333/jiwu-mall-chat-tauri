@@ -16,7 +16,7 @@ const getStatus = computed(() => {
 
 <template>
   <el-tag
-    :type="getStatus?.iconClass || ''" class="ml-2 text-light shadow md:ml-4"
+    :type="(getStatus?.iconClass || '') as any" class="ml-2 text-light shadow md:ml-4"
     effect="dark"
     v-bind="$attrs"
   >

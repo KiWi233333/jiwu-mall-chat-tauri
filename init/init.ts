@@ -5,7 +5,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { type as osType, platform, type } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
-import { StateFlags, restoreStateCurrent, saveWindowState } from "@tauri-apps/plugin-window-state";
+import { restoreStateCurrent, saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
 import { useFlashTray } from "~/composables/tauri/window";
 import type { PayloadType } from "~/types/tauri";
 

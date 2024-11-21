@@ -61,7 +61,7 @@ useSeoMeta({
 
 <style scoped lang="scss">
 .inputs {
-  --at-apply: 'transition-200 select-none opacity-80 group-hover:opacity-100';
+  --at-apply: "transition-200 select-none opacity-80 group-hover:opacity-100";
 }
 
 :deep(.el-radio-group.inputs) {

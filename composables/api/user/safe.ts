@@ -1,4 +1,4 @@
-import type { Result, isTrue } from "@/types/result";
+import type { isTrue, Result } from "@/types/result";
 
 /**
  * 获取用户登录设备信息列表

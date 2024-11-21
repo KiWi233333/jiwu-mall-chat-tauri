@@ -56,7 +56,7 @@ async function toggleContactSearch() {
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <!-- 关闭按钮 -->

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { RoomType } from "@/composables/api/chat/contact";
-
 const props = defineProps<{
   data: Partial<ChatMessageVO>
 }>();

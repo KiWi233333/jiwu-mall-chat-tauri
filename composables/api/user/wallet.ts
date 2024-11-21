@@ -26,7 +26,7 @@ export interface UserWalletVO {
 
 /**
  * 获取充值套餐
- * @returns
+ * @returns WalletComboVO[]
  */
 export function getWalletCombo(token: string) {
   return useHttp.get<Result<WalletComboVO[]>>("/user/wallet/combo", {

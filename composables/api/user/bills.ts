@@ -44,7 +44,7 @@ export interface BillsInfoVO {
  * 获取账单统计（详细）
  * @param dto
  * @param token
- * @returns
+ * @returns Result<BillsTotalVO>
  */
 export function getBillsTotal(dto: BillsTotaDTO, token: string) {
   return useHttp.post<Result<BillsTotalVO>>("/user/bills/total/detail", {}, {
@@ -68,7 +68,7 @@ enum BillsTypeText {
  * 获取账单统计（时间）
  * @param dto
  * @param token
- * @returns
+ * @returns Result<BillsTimeTotalVO[]>
  */
 export function getBillsTotalTable(dto: BillsTimeTotalDTO, token: string) {
   return useHttp.post<Result<BillsTimeTotalVO[]>>("/user/bills/total", {}, {

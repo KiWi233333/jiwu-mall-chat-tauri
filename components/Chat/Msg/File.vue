@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FileBodyMsgVO } from "~/composables/api/chat/message";
-import { DownFileStatusIconMap, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, downloadFile, formatFileSize } from "~/composables/api/res/file";
+import { DownFileStatusIconMap, downloadFile, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
 
 /**
  * 文件消息

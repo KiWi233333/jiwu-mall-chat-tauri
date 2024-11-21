@@ -16,7 +16,7 @@ const rules = reactive({
   newEmail: [
     { required: true, message: "邮箱不能为空！", trigger: "blur" },
     {
-      pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g,
+      pattern: /^[\w.%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/gi,
       message: "邮箱格式不正确！",
       trigger: "change",
     },
@@ -36,7 +36,6 @@ const rules = reactive({
 async function onUpdatePhone(formEl: FormInstance | undefined) {
   if (!formEl || isLoading.value)
     return;
-  // @ts-expect-error
   await formEl.validate((valid) => {
     if (valid) {
       isLoading.value = true;
@@ -70,7 +69,7 @@ async function toUpdate() {
   }
 }
 // 获取验证码
-let timer: NodeJS.Timer;
+let timer: NodeJS.Timeout | string | number | undefined;
 async function getEmailCode() {
   if (emailCodeStorage.value > 0)
     return;

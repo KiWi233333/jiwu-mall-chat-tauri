@@ -21,7 +21,7 @@ async function loadData(val: string) {
   try {
     // 确认是否为好友
     await isChatFriend({ uidList: [val] }, store.getToken).then((res) => {
-      const data = res.data.checkedList.find(p => p.uid === val);
+      const data = res.data.checkedList.find((p: FriendCheck) => p.uid === val);
       isFrend.value = data && data.isFriend === isTrue.TRUE;
     });
     // 获取用户信息

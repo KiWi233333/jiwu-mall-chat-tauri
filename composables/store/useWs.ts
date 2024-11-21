@@ -1,8 +1,8 @@
-import { acceptHMRUpdate, defineStore } from "pinia";
-import BackWebSocket, { type Message as BackMessage } from "@tauri-apps/plugin-websocket";
-import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../types/WsType";
-import type { WSFriendApply, WSMemberChange, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WsMsgBodyVO, WsMsgVO, WsSendMsgDTO } from "../types/WsType";
 import type { ChatMessageVO } from "../api/chat/message";
+import type { WSFriendApply, WSMemberChange, WsMsgBodyVO, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WsSendMsgDTO } from "../types/WsType";
+import BackWebSocket, { type Message as BackMessage } from "@tauri-apps/plugin-websocket";
+import { acceptHMRUpdate, defineStore } from "pinia";
+import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../types/WsType";
 
 
 // @unocss-include

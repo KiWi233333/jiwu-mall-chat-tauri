@@ -1,6 +1,6 @@
 
-import { type Result, StatusCode, type isTrue } from "@/types/result";
 import type { Gender } from "@/types/index";
+import { type isTrue, type Result, StatusCode } from "@/types/result";
 
 
 /**
@@ -55,12 +55,12 @@ export interface ChatMessageVO<T extends object = any> {
   /**
    * 发送者信息
    */
-  fromUser: ChatUserInfo
+  fromUser: ChatUserInfo;
   /**
    * 消息详情
    */
-  message: Message<T>
-  [property: string]: any
+  message: Message<T>;
+  [property: string]: any;
 }
 
 /**
@@ -69,11 +69,11 @@ export interface ChatMessageVO<T extends object = any> {
  * UserInfo
  */
 export interface ChatUserInfo {
-  userId: string
-  avatar?: null | string
-  gender?: Gender
-  nickName: string
-  [property: string]: any
+  userId: string;
+  avatar?: null | string;
+  gender?: Gender;
+  nickName: string;
+  [property: string]: any;
 }
 /**
  * 消息详情
@@ -81,47 +81,47 @@ export interface ChatUserInfo {
  * Message
  */
 export interface Message<T extends object = object> {
-  id: number
-  roomId: number
-  sendTime: number
+  id: number;
+  roomId: number;
+  sendTime: number;
   /**
    * 文本内容
    */
-  content?: null | string
+  content?: null | string;
   /**
    * 消息类型
    */
-  type?: MessageType
+  type?: MessageType;
   /**
    * 消息内容不同的消息类型，内容体不同，见https://www.yuque.com/snab/mallcaht/rkb2uz5k1qqdmcmd
    */
-  body?: T
+  body?: T;
 }
 
 /**
  * 文本消息
  */
 export interface TextBodyMsgVO<T = object> {
-  content: string
-  urlContentMap: { [key: string]: UrlInfoDTO }
-  atUidList: string[]
+  content: string;
+  urlContentMap: { [key: string]: UrlInfoDTO };
+  atUidList: string[];
   reply: {
-    id: number
-    uid: string
-    nickName: string
-    type: MessageType
-    canCallback: isTrue
-    gapCount: number
-    body?: T
-  }
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
+    canCallback: isTrue;
+    gapCount: number;
+    body?: T;
+  };
 }
 export interface UrlInfoDTO {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
   /**
    * 网站LOGO
    */
-  image?: string
+  image?: string;
 
 }
 
@@ -129,67 +129,67 @@ export interface UrlInfoDTO {
  * 语音消息
  */
 export interface SoundBodyMsgVO<T = object> {
-  url: string
-  second: number
-  translation?: string // 转文本
+  url: string;
+  second: number;
+  translation?: string; // 转文本
   reply: {
-    id: number
-    uid: string
-    nickName: string
-    type: MessageType
-    canCallback: isTrue
-    gapCount: number
-    body?: T
-  }
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
+    canCallback: isTrue;
+    gapCount: number;
+    body?: T;
+  };
 }
 /**
  * 图片消息
  */
 export interface ImgBodyMsgVO {
-  url: string
-  size?: number
-  width?: number
-  height?: number
+  url: string;
+  size?: number;
+  width?: number;
+  height?: number;
   reply: {
-    id: number
-    uid: string
-    nickName: string
-    type: MessageType
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
     /**
      * 是否可消息跳转 0否 1是
      */
-    canCallback: isTrue
+    canCallback: isTrue;
     /**
      * 跳转间隔的消息条数
      */
-    gapCount: number
-    body?: any
-  }
+    gapCount: number;
+    body?: any;
+  };
 }
 /**
  * 文件消息
  */
 export interface FileBodyMsgVO {
-  url: string
-  size: number
-  fileName: string
-  mimeType?: string
-  fileType?: FileBodyMsgTypeEnum
+  url: string;
+  size: number;
+  fileName: string;
+  mimeType?: string;
+  fileType?: FileBodyMsgTypeEnum;
   reply: {
-    id: number
-    uid: string
-    nickName: string
-    type: MessageType
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
     /**
      * 是否可消息跳转 0否 1是
      */
-    canCallback: isTrue
+    canCallback: isTrue;
     /**
      * 跳转间隔的消息条数
      */
-    gapCount: number
-    body?: any
-  }
+    gapCount: number;
+    body?: any;
+  };
 }
 
 export enum FileBodyMsgTypeEnum {
@@ -257,45 +257,45 @@ export interface ChatMessageDTO<T = MessageType> {
   /**
    * 房间id
    */
-  roomId: number
+  roomId: number;
   /**
    * 文本消息（可选）
    */
-  content?: string
+  content?: string;
   /**
    * 消息类型
    */
-  msgType?: MessageType
+  msgType?: MessageType;
   /**
    * 消息内容，类型不同传值不同
    */
-  body: any
-  [property: string]: any
+  body: any;
+  [property: string]: any;
 }
 
 interface MessageBodyMap {
-  [MessageType.TEXT]: TextBodyDTO
-  [MessageType.IMG]: ImgBodyDTO
-  [MessageType.SOUND]: SoundBodyDTO
-  [MessageType.RECALL]: RecallBodyDTO
+  [MessageType.TEXT]: TextBodyDTO;
+  [MessageType.IMG]: ImgBodyDTO;
+  [MessageType.SOUND]: SoundBodyDTO;
+  [MessageType.RECALL]: RecallBodyDTO;
 }
 export interface TextBodyDTO {
-  replyMsgId?: string
-  atUidList?: string[]
+  replyMsgId?: string;
+  atUidList?: string[];
 }
 export interface ImgBodyDTO {
-  url: string
-  size?: number
-  width?: number
-  height?: number
+  url: string;
+  size?: number;
+  width?: number;
+  height?: number;
 }
 export interface SoundBodyDTO {
-  fileName: string
-  second: number
+  fileName: string;
+  second: number;
 }
 export interface RecallBodyDTO {
-  recallUid?: string
-  recallTime?: number
+  recallUid?: string;
+  recallTime?: number;
 }
 /**
  * 撤回消息
@@ -384,8 +384,8 @@ export interface ChatMessageReadVO {
   /**
    * 已读或者未读的用户uid
    */
-  uid?: null | string
-  [property: string]: any
+  uid?: null | string;
+  [property: string]: any;
 }
 
 /**

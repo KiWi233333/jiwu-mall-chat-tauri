@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormInstance } from "vant";
+import type { FormInstance } from "element-plus";
 import { getUpdateNewCode } from "~/composables/api/user/info";
 
 const emits = defineEmits(["close"]);
@@ -32,12 +32,10 @@ const rules = reactive({
 
 /**
  * 修改手机号
- * @param type
  */
 async function onUpdatePhone(formEl: FormInstance | undefined) {
   if (!formEl || isLoading.value)
     return;
-  // @ts-expect-error
   await formEl.validate((valid) => {
     if (valid) {
       isLoading.value = true;
@@ -71,7 +69,7 @@ async function toUpdate() {
   }
 }
 // 获取验证码
-let timer: NodeJS.Timer | undefined;
+let timer: NodeJS.Timeout | string | number | undefined;
 async function getPhoneCode() {
   if (phoneCodeStorage.value > 0)
     return;
@@ -160,97 +158,97 @@ async function getPhoneCode() {
 
 <style scoped lang="scss">
 .form {
-	width: 360px;
-	display: block;
-	padding: 1em 2em;
-	background-color: #ffffff98;
-	border-radius: var(--el-border-radius-base);
-	backdrop-filter: blur(5px);
-	border: 1px solid rgba(109, 109, 109, 0.2);
-	box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
-	overflow: hidden;
-	animation-delay: 0.1s;
+  width: 360px;
+  display: block;
+  padding: 1em 2em;
+  background-color: #ffffff98;
+  border-radius: var(--el-border-radius-base);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(109, 109, 109, 0.2);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
+  overflow: hidden;
+  animation-delay: 0.1s;
 
-	:deep(.el-input__wrapper) {
-		padding: 0.3em 1em;
-	}
+  :deep(.el-input__wrapper) {
+    padding: 0.3em 1em;
+  }
 
-	// 报错信息
-	:deep(.el-form-item) {
-		padding: 0.2em;
+  // 报错信息
+  :deep(.el-form-item) {
+    padding: 0.2em;
 
-		.el-form-item__error {
-			padding-top: 0.2em;
-		}
-	}
+    .el-form-item__error {
+      padding-top: 0.2em;
+    }
+  }
 }
 
 :deep(.el-button) {
-	padding: 0 1em;
+  padding: 0 1em;
 }
 
 .dark .form {
-	background-color: #161616d8;
+  background-color: #161616d8;
 }
 
 .animate__animated {
-	animation-duration: 0.5s;
+  animation-duration: 0.5s;
 }
 
 // label总体
 :deep(.el-form-item) {
-	margin-bottom: 14px;
+  margin-bottom: 14px;
 }
 
 // 切换登录
 .toggle-login {
-	position: relative;
-	border-radius: var(--el-border-radius-base);
-	backdrop-filter: blur(10px);
-	background-color: #b3b3b32a;
-	padding: 0.3em;
-	display: flex;
+  position: relative;
+  border-radius: var(--el-border-radius-base);
+  backdrop-filter: blur(10px);
+  background-color: #b3b3b32a;
+  padding: 0.3em;
+  display: flex;
 
-	:deep(.el-button) {
-		background-color: transparent;
-		transition: 0.3s;
-		padding: 0em 0.6em;
-		border: none;
-	}
+  :deep(.el-button) {
+    background-color: transparent;
+    transition: 0.3s;
+    padding: 0em 0.6em;
+    border: none;
+  }
 
-	.active {
-		transition: 0.3s;
-		background-color: #ffffff;
-		z-index: 1;
-		box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
-		color: var(--el-text-color);
-	}
+  .active {
+    transition: 0.3s;
+    background-color: #ffffff;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
+    color: var(--el-text-color);
+  }
 }
 
 .dark .active {
-	background-color: var(--el-color-primary);
+  background-color: var(--el-color-primary);
 }
 
 .submit {
-	font-size: 1.1em;
-	transition: 0.3s;
-	cursor: pointer;
+  font-size: 1.1em;
+  transition: 0.3s;
+  cursor: pointer;
 
-	:deep(.el-input__wrapper) {
-		background-color: var(--el-color-danger);
-		cursor: pointer;
+  :deep(.el-input__wrapper) {
+    background-color: var(--el-color-danger);
+    cursor: pointer;
 
-		* {
-			color: #fff;
-			font-weight: 600;
-			letter-spacing: 0.3em;
-		}
-	}
+    * {
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+    }
+  }
 }
 
 .dark .submit :deep(.el-input__wrapper) {
-	background-color: var(--el-color-danger);
-	cursor: pointer;
-	color: #fff;
+  background-color: var(--el-color-danger);
+  cursor: pointer;
+  color: #fff;
 }
 </style>

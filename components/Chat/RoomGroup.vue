@@ -200,7 +200,8 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         onClick: () => {
           chat.setAtUid(item.userId);
         },
-      }, {
+      },
+      {
         icon: "btn-info i-solar:user-bold ",
         label: "联系他",
         hidden: isSelf,

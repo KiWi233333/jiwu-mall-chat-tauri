@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { getVersion } from "@tauri-apps/api/app";
-import { MdPreview } from "md-editor-v3";
-import "md-editor-v3/lib/preview.css";
-import { open as openFile } from "@tauri-apps/plugin-shell";
 import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
+import { getVersion } from "@tauri-apps/api/app";
+import { open as openFile } from "@tauri-apps/plugin-shell";
+import { MdPreview } from "md-editor-v3";
 import { appKeywords } from "~/constants";
+import "md-editor-v3/lib/preview.css";
 
 
 useSeoMeta({
@@ -331,7 +331,7 @@ async function openFileFolder() {
 
 <style scoped lang="scss">
 .inputs {
-  --at-apply: 'transition-200  select-none';
+  --at-apply: "transition-200  select-none";
   --el-border-radius-base: 2em !important;
 }
 
@@ -372,7 +372,7 @@ async function openFileFolder() {
 }
 :deep(.notice-toast-preview-wrapper) {
   .task-list-item-checkbox[type="checkbox"] {
-      display: none !important;
+    display: none !important;
   }
 }
 </style>

@@ -30,7 +30,7 @@ export function toLoginByEmail(email: string, code: string) {
  * 手机号登录
  * @param phone 邮箱
  * @param code
- * @returns
+ * @returns promise
  */
 export function toLoginByPhone(phone: string, code: string): Promise<Result<string>> {
   return useHttp.post<Result<string>>("/user/login/phone", { phone, code });

@@ -42,10 +42,12 @@ async function onSearch() {
   if (
     !searchHistoryList.value.includes(searchKeyWords.value)
     && searchHistoryList.value.length <= 6
-  )
+  ) {
     searchHistoryList.value.unshift(searchKeyWords.value.trim());
-  else
+  }
+  else {
     searchHistoryList.value.pop();
+  }
 
   await onLoadMore();
 }

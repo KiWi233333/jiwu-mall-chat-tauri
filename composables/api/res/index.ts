@@ -1,8 +1,8 @@
 import type { EpPropMergeType } from "element-plus/lib/utils";
-import * as qiniu from "qiniu-js";
 import type { Config, Extra, UploadProgress } from "qiniu-js/esm/upload/base";
 import type { PartialObserver } from "qiniu-js/esm/utils/observable";
 import type { StringLiteralLike } from "typescript";
+import * as qiniu from "qiniu-js";
 
 /**
  * @param file 上传文件
@@ -15,12 +15,10 @@ export function uploadOssFile(
   filenameKey: string | null = null,
   token: string,
   observer: PartialObserver<UploadProgress, qiniu.QiniuError | qiniu.QiniuRequestError | qiniu.QiniuNetworkError, any>,
-  putExtra?: Partial<Extra>, config?: Config) {
-  const observable = qiniu.upload(file,
-    filenameKey,
-    token,
-    putExtra,
-    config);
+  putExtra?: Partial<Extra>,
+  config?: Config,
+) {
+  const observable = qiniu.upload(file, filenameKey, token, putExtra, config);
   return observable.subscribe(observer); // 上传开始
 }
 
@@ -37,12 +35,9 @@ export function uploadOssFileSe(
   fileName: string | null = null,
   token: string,
   putExtra?: Partial<Extra>,
-  config?: Config) {
-  return qiniu.upload(file,
-    fileName,
-    token,
-    putExtra,
-    config);
+  config?: Config,
+) {
+  return qiniu.upload(file, fileName, token, putExtra, config);
 }
 
 const ossErrorCode = new Map([

@@ -24,7 +24,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
       <CardElImage
         v-if="body?.url"
         :src="BaseUrlImg + body?.url"
-        class="h-9rem max-w-16rem min-w-6rem w-fit shadow-sm border-default card-default bg-color"
+        class="h-9rem max-w-16rem min-w-4 w-fit shadow-sm border-default card-default bg-color"
         preview-teleported
         :alt="body?.url"
         :preview-src-list="[BaseUrlImg + body?.url]"

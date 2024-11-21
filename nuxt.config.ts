@@ -24,6 +24,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@popperjs/core", "resize-detector"],
   },
+  // @ts-expect-error
   nuxtLink: {
     prefetch: true,
     prefetchOn: { visibility: true },
@@ -40,16 +41,13 @@ export default defineNuxtConfig({
     // UI
     "@element-plus/nuxt",
     "@formkit/auto-animate/nuxt",
-    "@unocss/nuxt",
-    // 基础
-    "@pinia/nuxt",
-    // "@vite-pwa/nuxt",
+    "@unocss/nuxt", // 基础
+    "@pinia/nuxt", // 状态管理
     "@pinia-plugin-persistedstate/nuxt",
+    "@nuxt/eslint",
   ],
-
   srcDir: "",
   rootDir: "",
-
   app: {
     head: {
       title: `${appName}✨`,
@@ -87,11 +85,7 @@ export default defineNuxtConfig({
   imports: {
     dirs: [
       // Scan top-level modules
-      "composables",
-      "composables/utils/**",
-      "composables/store/**",
-      "composables/api/*/",
-      "types/*/.ts",
+      "composables/**",
       "types/**",
     ],
   },
@@ -102,7 +96,6 @@ export default defineNuxtConfig({
     "@/assets/styles/index.scss",
     "@/assets/styles/animate.scss",
   ],
-
   // alias: {
   //   "~": "/<srcDir>",
   //   "@": "/<srcDir>",
@@ -114,7 +107,6 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: "",
   },
-
   // 3、elementPlus
   elementPlus: {
     icon: "ElIcon",
@@ -160,6 +152,17 @@ export default defineNuxtConfig({
           },
         },
         // external: ["workbox-build"],
+      },
+    },
+  },
+  typescript: {
+    typeCheck: true,
+  },
+  eslint: {
+    config: {
+      standalone: false,
+      nuxt: {
+        sortConfigKeys: false,
       },
     },
   },

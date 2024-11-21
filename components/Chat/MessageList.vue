@@ -103,10 +103,9 @@ function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => vo
       callBack && callBack(res.data as ChatContactVO);
     }
   }).catch(() => {
-  })
-    .finally(() => {
-      delete updateContactList[roomId];
-    });
+  }).finally(() => {
+    delete updateContactList[roomId];
+  });
 }
 
 // 监听房间
@@ -167,18 +166,17 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
       continue;
     const body = getBody(p) || "";
     // 1）更新会话列表
-    updateContact(p.message.roomId,
-      {
-        // text: `${p.fromUser.nickName}：${body}`,
-      }, (contact) => {
-        // 添加未读数量
-        if (p.fromUser.userId !== user.userInfo.id)
-          contact.unreadCount += 1;
-        contact.text = contact.type === RoomType.GROUP ? `${p.fromUser.nickName}: ${body}` : body;
-        contact.activeTime = Date.now();
-        if (p.message.roomId === chat.theContact.roomId && p.fromUser.userId !== user.userInfo.id)
-          chat.theContact.unreadCount += 1;
-      });
+    updateContact(p.message.roomId, {
+      // text: `${p.fromUser.nickName}：${body}`,
+    }, (contact) => {
+      // 添加未读数量
+      if (p.fromUser.userId !== user.userInfo.id)
+        contact.unreadCount += 1;
+      contact.text = contact.type === RoomType.GROUP ? `${p.fromUser.nickName}: ${body}` : body;
+      contact.activeTime = Date.now();
+      if (p.message.roomId === chat.theContact.roomId && p.fromUser.userId !== user.userInfo.id)
+        chat.theContact.unreadCount += 1;
+    });
     // 2）更新消息列表
     if (p.message.roomId !== chat.theContact.roomId)
       continue;

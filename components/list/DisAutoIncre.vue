@@ -37,9 +37,11 @@ const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
   ([obj]) => {
     isIntersecting.value = !!obj?.isIntersecting;
-  }, {
+  },
+  {
     threshold: 0,
-  });
+  },
+);
 
 function callBack() {
   if (props.noMore && props.autoStop) {

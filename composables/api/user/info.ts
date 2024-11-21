@@ -1,5 +1,5 @@
+import type { isTrue, Result } from "@/types/result";
 import type { DeviceType } from ".";
-import type { Result, isTrue } from "@/types/result";
 import type { Gender, UserStatus } from "~/types";
 
 /**
@@ -68,14 +68,16 @@ export interface UserInfoVO {
  */
 export function updateAvatar(file: any, token: string): Promise<Result<string>> {
   return useHttp.put<Result<string>>(
-    "/user/info/avatar", {
+    "/user/info/avatar",
+    {
     },
     {
       headers: {
         Authorization: token,
       },
       body: file,
-    });
+    },
+  );
 }
 
 /**
@@ -93,7 +95,8 @@ export function updatePwdByCode(type: DeviceType, dto: UpdateSecondPwdDTO, token
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 export interface UpdateSecondPwdDTO {
   code: string
@@ -114,7 +117,8 @@ export function updatePwdByToken(dto: UpdatePwd, token: string): Promise<Result<
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 interface UpdatePwd {
   oldPassword: string
@@ -135,7 +139,8 @@ export function updateInfoByDTO(upUserInfo: UpdateInfo, token: string): Promise<
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 export interface UpdateInfo {
   gender?: Gender
@@ -164,7 +169,8 @@ export function getCheckCode(key: string, type: DeviceType, token: string): Prom
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 
 
@@ -183,7 +189,8 @@ export function getUpdateNewCode(key: string, type: DeviceType, token: string): 
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 /**
  * 更换手机号
@@ -199,7 +206,8 @@ export function updatePhone(dto: UpdatePhone, token: string): Promise<Result<str
       headers: {
         Authorization: token,
       },
-    });
+    },
+  );
 }
 
 /**

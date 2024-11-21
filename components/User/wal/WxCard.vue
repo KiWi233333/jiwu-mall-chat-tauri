@@ -8,7 +8,7 @@ const user = useUserStore();
 
     h-180px w-320px flex flex-col justify-between p-4
     element-loading-background="rgba(0, 0, 0, 0.6)"
-    class="group v-card relative rounded-4 bg-#29bd29 text-white shadow-sm dark:bg-#29bd29"
+    class="group relative rounded-4 bg-#29bd29 text-white shadow-sm v-card dark:bg-#29bd29"
   >
     <!-- 顶部 -->
     <div flex-row-bt-c>

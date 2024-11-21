@@ -1,4 +1,4 @@
-import type { Result, isTrue } from "@/types/result";
+import type { isTrue, Result } from "@/types/result";
 import { BaseUrl } from "~/composables/utils/useBaseUrl";
 
 /**
@@ -411,13 +411,13 @@ export const getPostStatusList: {
   iconClass: "" | "warning" | "danger" | "success" | "info"
   value: number
 }[] = [
-    { title: "待审核", iconClass: "warning", value: 0 },
-    { title: "已审核", iconClass: "", value: 1 },
-    { title: "回收站", iconClass: "danger", value: 2 },
-    { title: "已驳回", iconClass: "danger", value: 3 },
-    { title: "管理员删除", iconClass: "", value: 4 },
-    { title: "存草稿", iconClass: "success", value: 5 },
-  ];
+  { title: "待审核", iconClass: "warning", value: 0 },
+  { title: "已审核", iconClass: "", value: 1 },
+  { title: "回收站", iconClass: "danger", value: 2 },
+  { title: "已驳回", iconClass: "danger", value: 3 },
+  { title: "管理员删除", iconClass: "", value: 4 },
+  { title: "存草稿", iconClass: "success", value: 5 },
+];
 
 Object.freeze(getPostStatusList);
 /************************************/

@@ -38,13 +38,12 @@
     /* animation: loading-fade-in-out 1.4s ease-in-out infinite; */
   }
 
-
   .dark #first-app-loading {
     background-color: #1a1a1a;
     color: #f3f3f3;
   }
 
-  /* 
+  /*
   @keyframes loading-fade-in-out {
     0% {
       opacity: 1;
@@ -77,12 +76,11 @@
   <!-- 获取模式 -->
   <script>
     const mode = localStorage.getItem("vueuse-color-scheme");
-    if (mode)
-      document.documentElement.classList.toggle(mode);
+    if (mode) document.documentElement.classList.toggle(mode);
   </script>
   <div id="first-app-loading">
-    <h2 style="display: flex; align-items: center;">
-      <img src="/logo.png" style="width: 1.9rem;height: 1.9rem;margin-right: 0.5rem;" />
+    <h2 style="display: flex; align-items: center">
+      <img src="/logo.png" style="width: 1.9rem; height: 1.9rem; margin-right: 0.5rem" />
       极物圈
     </h2>
     <svg id="app-loading-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

@@ -201,7 +201,8 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         onClick: () => {
           chat.setAtUid(item.userId);
         },
-      }, {
+      },
+      {
         icon: "btn-info i-solar:user-bold ",
         label: "联系他",
         hidden: isSelf,
@@ -227,7 +228,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
           isChatFriend({ uidList: [item.userId] }, user.getToken).then((res) => {
             if (res.code !== StatusCode.SUCCESS)
               return ElMessage.error(res.msg || "申请失败，请稍后再试！");
-            const user = res.data.checkedList.find(p => p.uid === item.userId);
+            const user = res.data.checkedList.find((p: FriendCheck) => p.uid === item.userId);
             if (user && user.isFriend)
               return ElMessage.warning("申请失败，和对方已是好友！");
             // 开启申请
@@ -364,9 +365,7 @@ watchThrottled(() => ws.wsMsgList.onlineNotice, (list: WSOnlineOfflineNotify[] =
 });
 
 
-const merberList = computed(() => {
-  return chat.onOfflineList.sort((a, b) => b.activeStatus - a.activeStatus);
-});
+const merberList = computed(() => chat.onOfflineList.sort((a, b) => b.activeStatus - a.activeStatus));
 
 const ChatNewGroupDialogRef = ref();
 const showAddDialog = ref(false);

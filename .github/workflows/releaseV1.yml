@@ -11,12 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest' # M系列芯片的mac
-            args: '--target aarch64-apple-darwin'
-          - platform: 'macos-latest' # Intel芯片的mac
-            args: '--target x86_64-apple-darwin'
-          - platform: 'ubuntu-20.04' # for Tauri v1 you could replace this with ubuntu-20.04.
-          - platform: 'windows-latest'
+          - platform: macos-latest # M系列芯片的mac
+            args: --target aarch64-apple-darwin
+          - platform: macos-latest # Intel芯片的mac
+            args: --target x86_64-apple-darwin
+          - platform: ubuntu-20.04 # for Tauri v1 you could replace this with ubuntu-20.04.
+          - platform: windows-latest
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -79,9 +79,9 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: '🔥 Release v__VERSION__'
+          releaseName: 🔥 Release v__VERSION__
           # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
-          releaseBody: '**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)'
+          releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

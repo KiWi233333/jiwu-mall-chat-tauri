@@ -1,11 +1,9 @@
-import type { ChatRoomRoleEnum } from "./room";
 import type { Result } from "@/types/result";
+import type { ChatRoomRoleEnum } from "./room";
 
 /**
  * 获取会话列表（游标）
  * @param dto 条件
- * @param pageSize 大小
- * @param cursor 游标
  * @param token token
  * @returns 分页
  */
@@ -135,13 +133,13 @@ export function getChatContactInfo(roomId: number, token: string, roomType: Room
  */
 export function getSelfContactInfoByFriendUid(friendId: string, token: string) {
   return useHttp.get<Result<ChatContactDetailVO>>(
-      `/chat/contact/self/${friendId}`,
-      { },
-      {
-        headers: {
-          Authorization: token,
-        },
+    `/chat/contact/self/${friendId}`,
+    { },
+    {
+      headers: {
+        Authorization: token,
       },
+    },
   );
 }
 

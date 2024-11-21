@@ -1,8 +1,8 @@
 import { StatusCode, StatusCodeText } from "~/types/result";
 
-type FetchType = typeof $fetch
-type ReqType = Parameters<FetchType>[0]
-type FetchOptions = Parameters<FetchType>[1]
+type FetchType = typeof $fetch;
+type ReqType = Parameters<FetchType>[0];
+type FetchOptions = Parameters<FetchType>[1];
 
 export function httpRequest<T = unknown>(
   method: any,
@@ -17,7 +17,7 @@ export function httpRequest<T = unknown>(
     baseURL: BaseUrl,
     headers: {} as { Authoriztion?: string },
     // 请求拦截器
-    onRequest: (config) => {
+    onRequest: () => {
       // 需要登录操作
       // if (config.options.headers?.Authorization !== undefined) {
       //   // @ts-expect-error
@@ -25,7 +25,7 @@ export function httpRequest<T = unknown>(
       //     user.showLoginForm = true;
       // }
     },
-    onResponse: (config) => {
+    onResponse: (config: any) => {
       const data = config.response._data;
       let msg = "";
       const type = "error";
@@ -46,9 +46,7 @@ export function httpRequest<T = unknown>(
         return;
       }
       // 续签
-      // @ts-expect-error
       if (config.response.headers?.Authorization) {
-        // @ts-expect-error
         user.token = config.response.headers?.Authorization;
       }
       if (msg !== "") {
@@ -72,7 +70,7 @@ export function httpRequest<T = unknown>(
       })();
     },
     // 不同响应码
-    onResponseError({ response }) {
+    onResponseError({ response }: any) {
       switch (response.status) {
         case 400:
           msg = "请求参数错误，请稍后重试！";
@@ -106,7 +104,7 @@ export function httpRequest<T = unknown>(
     else
       defaultOpts.body = bodyOrParams;
   }
-  return $fetch<T>(url, { ...defaultOpts, ...opts });
+  return $fetch(url, { ...defaultOpts, ...opts }) as Promise<T>;
 }
 
 export const useHttp = {

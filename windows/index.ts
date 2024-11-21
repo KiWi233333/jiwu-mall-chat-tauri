@@ -4,9 +4,9 @@
  * @time    2024.10
  */
 
-import { type WindowOptions, getAllWindows, getCurrentWindow } from "@tauri-apps/api/window";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { listen } from "@tauri-apps/api/event";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { getAllWindows, getCurrentWindow, type WindowOptions } from "@tauri-apps/api/window";
 
 const appWindow = getCurrentWindow();
 

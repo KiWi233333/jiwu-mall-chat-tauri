@@ -17,7 +17,7 @@ const deviceList = ref<DeviceIpInfo[]>([]);
 // 信息
 async function getDeviceList() {
   const res = await getLoginDeviceList(user.getToken);
-  const result: DeviceIpInfo[] = res.data.sort((a, b) => b.isLocal - a.isLocal);
+  const result: DeviceIpInfo[] = res.data.sort((a: DeviceIpInfo, b: DeviceIpInfo) => b.isLocal - a.isLocal);
   const getList = [];
   for (const p of result)
     getList.push(await getDeviceIpInfo(p.ip, user.getToken));

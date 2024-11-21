@@ -17,7 +17,7 @@ export interface LineWalletDataType {
 
 <template>
   <div
-    class="v-card flex-row-bt-c p-6"
+    class="flex-row-bt-c p-6 v-card"
     :class="props.data.class"
   >
     <!-- 左边 -->

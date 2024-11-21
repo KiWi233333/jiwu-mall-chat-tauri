@@ -213,7 +213,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
  *  uidList: 识别到的@用户的uid列表
  *  atUidList: 识别到的@用户的{userId, nickName}列表
  */
-export function useAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(\#(\S+)\)\s/g }): { uidList: string[]; atUidList: AtChatMemberOption[] } {
+export function useAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(#(\S+)\)\s/g }): { uidList: string[]; atUidList: AtChatMemberOption[] } {
   const { regExp } = configs;
   if (!regExp)
     throw new Error("regExp is required");
@@ -260,14 +260,14 @@ export function useLoadAtUserList() {
       return;
     const { data, code } = await getRoomGroupAllUser(chat.theContact.roomId, user.getToken);
     if (data && code === StatusCode.SUCCESS) {
-      userOptions.value = (data || []).map(u => ({
+      userOptions.value = (data || []).map((u: ChatMemberSeVO) => ({
         label: u.nickName,
         value: `${u.nickName}(#${u.username})`,
         userId: u.userId,
         avatar: u.avatar,
         username: u.username,
         nickName: u.nickName,
-      })).filter(u => u.userId !== user.userInfo.id);
+      })).filter((u: AtChatMemberOption) => u.userId !== user.userInfo.id);
     }
   }
 

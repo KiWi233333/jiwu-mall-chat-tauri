@@ -1,3 +1,4 @@
+// @ts-expect-error
 import type { ModuleOptions } from "@vite-pwa/nuxt";
 import { appDescription, appName } from "../constants/index";
 

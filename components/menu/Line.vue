@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ElMenuItem, ElSubMenu } from "element-plus";
 import type { IndexMenuType } from ".";
+import { ElMenuItem, ElSubMenu } from "element-plus";
 
 const { data } = defineProps<{
   data: IndexMenuType
