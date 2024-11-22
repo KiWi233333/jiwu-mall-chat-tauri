@@ -39,14 +39,28 @@ export async function userTauriInit() {
     return;
   }
   const isMobileSystem = ["android", "ios"].includes(setting.osType);
+
+  let stopDebounced = null;
+  // 1、初始化窗口状态
+  if (!isMobileSystem) { // 非移动端才有该功能
+    restoreStateCurrent(StateFlags.ALL);
+    stopDebounced = watchDebounced(() => setting.isMobileSize, async () => {
+      setTimeout(async () => {
+        await saveWindowState(StateFlags.ALL);
+      }, 200);
+    }, {
+      debounce: 1000,
+    });
+  }
+
   // 监听open_url事件
-  listen<PayloadType>("open_url", (e) => {
+  const unListenOpenUrl = await listen<PayloadType>("open_url", (e) => {
     const url = e.payload.message; // 路径
     if (url)
       open(url);
   });
   // 监听路由事件
-  listen<PayloadType>("router", (e) => {
+  const unListenRouter = await listen<PayloadType>("router", (e) => {
     const path = e.payload.message; // 路径
     if (path)
       navigateTo(path);
@@ -70,19 +84,11 @@ export async function userTauriInit() {
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
 
 
-  // 4、初始化窗口状态
-  if (!isMobileSystem) { // 非移动端才有该功能
-    restoreStateCurrent(StateFlags.ALL);
-    const sotpDebounced = watchDebounced(() => setting.isMobileSize, () => {
-      saveWindowState(StateFlags.ALL);
-    }, {
-      debounce: 1500,
-    });
-
-    return () => {
-      sotpDebounced();
-    };
-  }
+  return () => {
+    unListenRouter?.();
+    unListenOpenUrl?.();
+    stopDebounced?.();
+  };
 }
 
 /**

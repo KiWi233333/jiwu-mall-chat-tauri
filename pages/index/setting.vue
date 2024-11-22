@@ -120,8 +120,22 @@ function showVersionNotice(version: string) {
 
 // 打开下载文件夹
 async function openFileFolder() {
-  if (!await existsFile(setting.appDataDownloadDirUrl))
+  if (!await existsFile(setting.appDataDownloadDirUrl)) {
+    ElMessageBox.confirm("下载目录不存在，是否创建？", {
+      title: "提示",
+      center: true,
+      confirmButtonText: "创建",
+      cancelButtonText: "取消",
+      confirmButtonClass: "el-button-warning",
+      lockScroll: true,
+      callback: async (action: string) => {
+        if (action === "confirm") {
+          mkdirFile(setting.appDataDownloadDirUrl);
+        }
+      },
+    });
     return;
+  }
   openFile(setting.appDataDownloadDirUrl);
 }
 </script>

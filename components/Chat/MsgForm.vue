@@ -9,6 +9,7 @@ const emit = defineEmits<{
 }>();
 const user = useUserStore();
 const chat = useChatStore();
+const setting = useSettingStore();
 
 // hooks
 const {
@@ -461,7 +462,7 @@ watch(() => chat.theContact.roomId, () => {
             loading="lazy"
             :preview-src-list="[img.id || BaseUrlImg + img.key]"
             :src="img.id || BaseUrlImg + img.key"
-            class="max-h-19.2rem max-w-10.8rem rounded"
+            class="h-9rem max-w-16rem rounded"
             title="左键放大 | 右键删除"
           />
           <div
@@ -520,14 +521,14 @@ watch(() => chat.theContact.roomId, () => {
       <div
         class="relative flex items-center gap-2 px-2 sm:(gap-4)"
       >
-        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? '语音 Ctrl+T' : '键盘'" placement="top">
+        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? setting.isMobile ? '语音 Ctrl+T' : '语音' : '键盘'" placement="top">
           <i
             :class="form.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken hover:animate-pulse' : 'i-solar:keyboard-broken'"
             class="h-6 w-6 cursor-pointer btn-primary"
             @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />
         </el-tooltip>
-        <div v-show="form.msgType !== MessageType.SOUND" class="ml-a flex items-center gap-2 sm:(ml-0 gap-4)">
+        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
           <!-- 图片 -->
           <InputOssFileUpload
             ref="inputOssImgUploadRef"

@@ -56,7 +56,7 @@ onMounted(() => {
       <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" />
     </template>
     <template #default>
-      <div class="w-90vw md:w-350px">
+      <div class="w-92vw sm:w-350px">
         <div class="flex items-center gap-2 p-2 pt-0">
           <i class="i-solar-download-minimalistic-broken p-0.6em" />
           <span>下载</span>

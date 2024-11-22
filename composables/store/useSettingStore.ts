@@ -10,7 +10,6 @@ import { open as openUrl } from "@tauri-apps/plugin-shell";
 import { check } from "@tauri-apps/plugin-updater";
 import { filename as windowStateFilename } from "@tauri-apps/plugin-window-state";
 import { acceptHMRUpdate, defineStore } from "pinia";
-
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useSettingStore = defineStore(
@@ -40,7 +39,7 @@ export const useSettingStore = defineStore(
     // 主页页折叠
     const isCollapse = ref(true);// 侧边栏折叠
     const isMobileSize = ref(false);// 是否移动尺寸
-    const isOpenContactSearch = ref(false); // 是否会话搜索
+    const isOpenContactSearch = ref(true); // 是否会话搜索
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     const isMobile = computed(() => ["android", "ios"].includes(osType.value));
     // ---------------------设置-----------------
@@ -182,7 +181,7 @@ export const useSettingStore = defineStore(
           ElMessage.error("文件夹不存在！");
           return;
         }
-        await open(folderPath);
+        openUrl(folderPath);
       }
       catch (error) {
         console.warn(error);
@@ -348,7 +347,7 @@ export const useSettingStore = defineStore(
       };
       isCollapse.value = true;
       isUserFold.value = true;
-      isOpenContactSearch.value = false;
+      isOpenContactSearch.value = true;
       isUserCollapse.value = true;
       // 下载管理
       showDownloadPanel.value = false;
