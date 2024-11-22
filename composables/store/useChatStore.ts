@@ -147,6 +147,8 @@ export const useChatStore = defineStore(
       if (!await isActiveWindow()) // 窗口未激活
         return false;
       const user = useUserStore();
+      if (!user.getToken)
+        return false;
       setMsgReadByRoomId(roomId, user.getToken).then((res) => {
         if (res.code !== StatusCode.SUCCESS)
           return false;
