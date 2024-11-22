@@ -23,8 +23,10 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
       <!-- 内容 -->
       <CardElImage
         v-if="body?.url"
+        error-root-class="h-9rem w-9rem"
         :src="BaseUrlImg + body?.url"
-        class="h-9rem max-w-16rem min-w-8 w-fit shadow-sm border-default card-default bg-color"
+        load-class="!border-none"
+        class="h-9rem max-w-16rem w-fit shadow-sm border-default card-default"
         preview-teleported
         :alt="body?.url"
         :preview-src-list="[BaseUrlImg + body?.url]"

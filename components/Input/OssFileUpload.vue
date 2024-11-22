@@ -109,6 +109,8 @@ async function hangdleChange(e: Event) {
     // 多文件
     if (t.files.length > limit || fileList.value.length + t.files.length > limit) {
       emit("errorMsg", `最多只能上传${limit}个文件`);
+      await nextTick();
+      resetInput();
       return error.value = `最多只能上传${limit}个文件`;
     }
     else {
@@ -213,8 +215,11 @@ function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
 
 
 function resetInput() {
-  if (inputRef?.value?.value)
+  if (inputRef?.value?.value) {
     inputRef.value.value = "";
+    fileList.value = [];
+    error.value = "";
+  }
 }
 // 删除文件
 async function removeItem(t: OssFile) {

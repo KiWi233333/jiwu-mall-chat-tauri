@@ -99,6 +99,8 @@ function onSubmitFile(key: string, pathList: string[]) {
       msgType: MessageType.FILE, // 文件
       content: form.value.content,
       body: {
+        atUidList: form.value.body.atUidList,
+
         url: key,
         fileName: file?.file?.name,
         size: file?.file?.size,
@@ -151,7 +153,7 @@ async function onPaste(e: ClipboardEvent) {
       ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
-    inputOssImgUploadRef.value?.resetInput?.();
+    // inputOssImgUploadRef.value?.resetInput?.();
     inputOssFileUploadRef.value?.resetInput?.();
     fileList.value = [];
     await inputOssFileUploadRef.value?.onUpload({
@@ -219,19 +221,24 @@ async function onSubmit(e?: KeyboardEvent) {
       form.value.body.atUidList = [];
     }
     // 图片
-    if (form.value.msgType === MessageType.IMG && isUploadImg.value) {
-      ElMessage.warning("图片正在上传中，请稍后再试！");
-      return;
+    if (form.value.msgType === MessageType.IMG) {
+      if (isUploadImg.value) {
+        ElMessage.warning("图片正在上传中，请稍后再试！");
+        return;
+      }
+      if (imgList.value.length > 1) {
+        await multiSubmitImg();
+        return;
+      }
     }
     // 文件
     if (form.value.msgType === MessageType.FILE && isUploadFile.value) {
       ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
-
     // 开始提交
     isSending.value = true;
-    // 二次处理
+    // 语音消息 二次处理
     if (form.value.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
         form.value.body.url = key;
@@ -249,7 +256,7 @@ async function onSubmit(e?: KeyboardEvent) {
 /**
  * 发送消息
  */
-async function submit(formData: ChatMessageDTO = form.value) {
+async function submit(formData: ChatMessageDTO = form.value, callback?: (msg: ChatMessageVO) => void) {
   const res = await addChatMessage({
     ...formData,
     roomId: chat.theContact.roomId,
@@ -259,18 +266,62 @@ async function submit(formData: ChatMessageDTO = form.value) {
     emit("submit", res.data);
     // 消息阅读上报
     res.data.message.roomId && chat.setReadList(res.data.message.roomId);
+    if (typeof callback === "function") { // 执行回调
+      callback(res.data);
+    }
+    else {
     // 发送消息后自动滚动到底部
-    nextTick(() => {
+      await nextTick();
       setTimeout(() => {
         chat?.scrollBottom?.(false);
       }, 300);
-    });
+    }
   }
   else if (res.message === "您和对方已不是好友！") {
     return;
   }
   resetForm();
 }
+
+/**
+ * 批量发送图片消息
+ */
+async function multiSubmitImg() {
+  isSending.value = true;
+  const formTemp = JSON.parse(JSON.stringify(form.value));
+  // 批量发送图片消息
+  const uploadedFiles = new Set(); // 用来跟踪已经上传的文件
+  for (const file of imgList.value) {
+    form.value = {
+      roomId: chat.theContact.roomId,
+      msgType: MessageType.IMG, // 默认
+      content: "",
+      body: {
+        url: file.key,
+        size: file?.file?.size || 0,
+      },
+    };
+    await submit(form.value); // 等待提交完成
+    uploadedFiles.add(file.key); // 标记文件为已上传
+  }
+  // 一次性移除所有已上传的文件
+  imgList.value = imgList.value.filter(file => !uploadedFiles.has(file.key));
+
+  // 发送文本消息
+  if (formTemp.content) {
+    formTemp.body.url = undefined;
+    formTemp.body.size = undefined;
+    formTemp.msgType = MessageType.TEXT; // 默认
+    form.value = {
+      ...formTemp,
+      roomId: chat.theContact.roomId,
+      msgType: MessageType.TEXT, // 默认
+    };
+    await submit(form.value);
+  }
+  isSending.value = false;
+}
+
 
 /**
  * 发送群广播消息
@@ -448,13 +499,13 @@ watch(() => chat.theContact.roomId, () => {
         </el-tag>
       </div>
       <!-- 图片 -->
-      <el-form-item
+      <div
         v-if="imgList.length > 0"
-        class="w-full cursor-pointer"
-        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
+        class="w-full flex flex-wrap cursor-pointer justify-end gap-2"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;"
       >
         <div
-          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg"
+          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default bg-color hover:shadow-lg"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
         >
           <CardElImage
@@ -462,7 +513,8 @@ watch(() => chat.theContact.roomId, () => {
             loading="lazy"
             :preview-src-list="[img.id || BaseUrlImg + img.key]"
             :src="img.id || BaseUrlImg + img.key"
-            class="h-9rem max-w-16rem rounded"
+            class="rounded"
+            :class="imgList.length > 1 ? 'w-4rem h-4rem sm:(w-6rem h-6rem)' : 'h-9rem max-w-16rem'"
             title="左键放大 | 右键删除"
           />
           <div
@@ -472,9 +524,9 @@ watch(() => chat.theContact.roomId, () => {
             {{ img.status === '' ? '上传中...' : '上传失败' }}
           </div>
         </div>
-      </el-form-item>
+      </div>
       <!-- 文件 -->
-      <el-form-item
+      <div
         v-if="fileList.length > 0"
         class="w-full cursor-pointer"
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
@@ -500,7 +552,7 @@ watch(() => chat.theContact.roomId, () => {
             </el-progress>
           </div>
         </div>
-      </el-form-item>
+      </div>
       <!-- 回复 -->
       <el-form-item
         v-if="chat.replyMsg?.fromUser"
@@ -528,45 +580,6 @@ watch(() => chat.theContact.roomId, () => {
             @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />
         </el-tooltip>
-        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
-          <!-- 图片 -->
-          <InputOssFileUpload
-            ref="inputOssImgUploadRef"
-            v-model="imgList"
-            :multiple="false"
-            :preview="false"
-            :limit="1"
-            :disable="isDisabled"
-            class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
-            pre-class="hidden"
-            :upload-type="OssFileType.IMAGE"
-            input-class="op-0 h-5 w-5 cursor-pointer "
-            :upload-quality="0.5"
-            @error-msg="(msg:string) => {
-              ElMessage.error(msg)
-            }"
-            @submit="onSubmitImg"
-          />
-          <!-- 文件 -->
-          <InputOssFileUpload
-            ref="inputOssFileUploadRef"
-            v-model="fileList"
-            :multiple="false"
-            :size="FILE_MAX_SIZE"
-            :preview="false"
-            :limit="1"
-            :disable="isDisabled"
-            class="i-solar-folder-with-files-line-duotone h-5 w-5 cursor-pointer btn-primary"
-            pre-class="hidden"
-            :upload-type="OssFileType.FILE"
-            input-class="op-0 h-5 w-5 cursor-pointer "
-            :accept="FILE_UPLOAD_ACCEPT"
-            @error-msg="(msg:string) => {
-              ElMessage.error(msg)
-            }"
-            @submit="onSubmitFile"
-          />
-        </div>
         <!-- 语音 -->
         <div v-show="form.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
           <BtnElButton
@@ -598,7 +611,47 @@ watch(() => chat.theContact.roomId, () => {
             @click="handlePlayAudio('del')"
           />
         </div>
-        <div sm:ml-a />
+        <!-- 图片 -->
+        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
+          <InputOssFileUpload
+            ref="inputOssImgUploadRef"
+            v-model="imgList"
+            :multiple="true"
+            :preview="false"
+            :size="IMG_MAX_SIZE"
+            :limit="9"
+            :disable="isDisabled"
+            class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            pre-class="hidden"
+            :upload-type="OssFileType.IMAGE"
+            input-class="op-0 h-5 w-5 cursor-pointer "
+            :upload-quality="0.5"
+            @error-msg="(msg:string) => {
+              ElMessage.error(msg)
+            }"
+            @submit="onSubmitImg"
+          />
+          <!-- 文件 -->
+          <InputOssFileUpload
+            ref="inputOssFileUploadRef"
+            v-model="fileList"
+            :multiple="false"
+            :size="FILE_MAX_SIZE"
+            :preview="false"
+            :limit="1"
+            :disable="isDisabled"
+            class="i-solar-folder-with-files-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            pre-class="hidden"
+            :upload-type="OssFileType.FILE"
+            input-class="op-0 h-5 w-5 cursor-pointer "
+            :accept="FILE_UPLOAD_ACCEPT"
+            @error-msg="(msg:string) => {
+              ElMessage.error(msg)
+            }"
+            @submit="onSubmitFile"
+          />
+        </div>
+        <i ml-a block w-0 />
         <!-- 群广播消息 -->
         <div
           v-if="isLord"

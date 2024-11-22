@@ -2,6 +2,8 @@
 defineProps<{
   src: string
   loadClass?: string
+  loadRootClass?: string
+  errorRootClass?: string
   errorClass?: string
 }>();
 const setting = useSettingStore();
@@ -17,11 +19,11 @@ const setting = useSettingStore();
   >
     <!-- 占位 -->
     <template #placeholder>
-      <div :class="loadClass !== undefined ? loadClass : 'sky-loading '" h-full w-full flex-row-c-c />
+      <div class="h-full w-full" :class="loadClass !== undefined ? loadClass : 'sky-loading'" />
     </template>
     <!-- 错误 -->
     <template #error>
-      <div class="h-full w-full flex-row-c-c">
+      <div class="h-full w-full flex-row-c-c" :class="errorRootClass">
         <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
     </template>

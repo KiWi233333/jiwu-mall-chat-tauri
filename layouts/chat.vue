@@ -6,12 +6,14 @@ const user = useUserStore();
 const ws = useWs();
 const setting = useSettingStore();
 const chat = useChatStore();
+
+const online = useOnline();
 </script>
 
 <template>
   <main class="h-full flex flex-col !overflow-hidden card-default">
     <div
-      v-if=" user.isLogin"
+      v-if="user.isLogin"
       class="relative h-full flex flex-col overflow-hidden"
     >
       <MenuHeaderMenuBar>
@@ -23,6 +25,7 @@ const chat = useChatStore();
           >
             <div truncate text-3 tracking-0.1em el-color-danger>
               {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : (!user.isLogin && !user.getToken) ? "未登录" : '网络错误' }}
+              <small v-if="online" class="text-[var(--el-color-danger)]">（未连接网络）</small>
             </div>
             <div class="absolute h-full w-full flex-row-bt-c scale-80 px-1.5 op-0 transition-all group-hover:(scale-100 op-100) bg-color">
               <BtnElButton
