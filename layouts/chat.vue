@@ -66,7 +66,8 @@ const online = useOnline();
         <NuxtPage keepalive />
       </div>
     </div>
-    <LazyMenuBottomMenu v-if="setting.isOpenContact" class="block sm:hidden" />
+    <div v-else class="relative h-full flex flex-col overflow-hidden" />
+    <LazyMenuBottomMenu v-if="user.isLogin && setting.isOpenContact" class="block sm:hidden" />
   </main>
 </template>
 

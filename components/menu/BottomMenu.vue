@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { getApplyUnRead } from "~/composables/api/chat/friend";
-
 defineEmits<{
   (e: "close"): void
 }>();
@@ -15,26 +13,24 @@ const applyUnRead = ref(0);
  * 获取好友申请数量 (未读)
  */
 async function getApplyCount() {
+  if (!user.getTokenFn() || !setting.isMobileSize)
+    return;
   const res = await getApplyUnRead(user.getToken);
   if (res.code === StatusCode.SUCCESS)
     applyUnRead.value = res.data.unReadCount;
 }
 
-
 onMounted(() => {
   getApplyCount();
 });
 onActivated(() => {
-  if (user.isLogin)
-    getApplyCount();
+  getApplyCount();
 });
 onDeactivated(() => {
-  if (user.isLogin)
-    getApplyCount();
+  getApplyCount();
 });
 onBeforeUnmount(() => {
-  if (user.isLogin)
-    getApplyCount();
+  getApplyCount();
 });
 
 // @unocss-include

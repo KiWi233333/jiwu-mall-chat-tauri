@@ -65,7 +65,7 @@ export const useUserStore = defineStore(
     });
 
     function getTokenFn() {
-      return token.value;
+      return token.value?.trim();
     }
     /**
      * 加载用户钱包信息
@@ -149,13 +149,14 @@ export const useUserStore = defineStore(
      * @param t token
      */
     async function callbackUserExit(t?: string) {
+      if (t)
+        await toLogout(t);
       // 退出登录
       clearUserStore();
       useChatStore().resetStore();
       useWs().resetStore();
+      await nextTick();
       await navigateTo("/login");
-      if (t)
-        await toLogout(t);
     }
     /**
      * 清空store缓存
