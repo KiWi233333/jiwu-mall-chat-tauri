@@ -2,6 +2,8 @@
   // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
   "exclude": [
-    "src-tauri/**"
+    "src-tauri/**",
+    "dist/**",
+    ".output/**"
   ]
 }

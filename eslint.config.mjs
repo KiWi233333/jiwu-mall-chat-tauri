@@ -33,6 +33,8 @@ export default withNuxt(
     yaml: true,
     ignores: [
       "src-tauri/**",
+      "dist/**",
+      ".output/**",
     ],
     // 格式化
     formatters: {
