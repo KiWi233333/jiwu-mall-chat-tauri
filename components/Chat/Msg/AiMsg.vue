@@ -58,16 +58,13 @@ const colorMode = useColorMode();
 @use './msg.scss';
 .markdown {
   :deep(.md-editor-preview-wrapper)  {
-    * {
-      font-size: 1em;
-    }
-    img {
-      max-width: 16rem !important;
-      height: auto;
-      max-height: 16rem !important;
-    }
     padding: 0;
-    line-height: 1.6em;
+    img {
+      border-radius: 0.25rem;
+      overflow: hidden;
+      max-width: 12rem !important;
+      max-height: 12rem !important;
+    }
     .md-editor-code {
       .md-editor-code-block {
          line-height: 1.6em;
@@ -81,10 +78,6 @@ const colorMode = useColorMode();
       }
     }
 
-    img {
-      border-radius: 0.25rem;
-      overflow: hidden;
-    }
   }
 }
 </style>

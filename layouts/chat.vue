@@ -22,9 +22,9 @@ const online = useOnline();
             class="group relative h-2/3 flex-row-c-c overflow-hidden rounded-8 px-2 text-center border-default card-default-br sm:px-4"
             w-10em animate-zoom-in-down shadow-md shadow-inset
           >
-            <small truncate text-3 tracking-0.1em el-color-danger>
+            <small truncate text-10px tracking-0.1em el-color-danger>
               {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : (!user.isLogin && !user.getToken) ? "未登录" : '网络错误' }}
-              <span v-if="online" class="text-[var(--el-color-danger)]">(未连接网络)</span>
+              <span v-if="online" class="text-[var(--el-color-danger)]">(无网络)</span>
             </small>
             <div class="absolute h-full w-full flex-row-bt-c scale-80 px-1.5 op-0 transition-all group-hover:(scale-100 op-100) bg-color">
               <BtnElButton

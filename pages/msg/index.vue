@@ -42,7 +42,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="h-100vh overflow-hidden">
+  <div class="h-100vh overflow-hidden text-0.8rem">
     <NuxtLayout name="default">
       <main class="h-100vh flex flex-col justify-between gap-3 truncate p-3">
         <div class="border-0 border-b-1px pb-2 border-default">
