@@ -34,7 +34,7 @@ onMounted(() => {
       <ElImage src="/images/login_bg.jpg" fit="cover" class="h-full select-none overflow-hidden rounded-r-0 card-default" />
     </div>
     <!-- 表单 -->
-    <div class="flex flex-col select-none pt-20vh" data-tauri-drag-region>
+    <div class="flex flex-col select-none pt-24vh sm:pt-20vh" data-tauri-drag-region>
       <div mx-a class="w-3/4 text-center sm:(w-3/5 text-left)">
         <div key="login-bg" class="fixed left-4 top-0 flex items-center gap-2 py-4 sm:(relative left-a top-a)">
           <ElImage
