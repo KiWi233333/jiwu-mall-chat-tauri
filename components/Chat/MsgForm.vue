@@ -153,7 +153,7 @@ async function onPaste(e: ClipboardEvent) {
       ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
-    // inputOssImgUploadRef.value?.resetInput?.();
+    inputOssImgUploadRef.value?.resetInput?.();
     inputOssFileUploadRef.value?.resetInput?.();
     fileList.value = [];
     await inputOssFileUploadRef.value?.onUpload({
@@ -166,13 +166,13 @@ async function onPaste(e: ClipboardEvent) {
     form.value.msgType = MessageType.FILE; // 文件
   }
   if (img) {
-    if (isUploadImg.value) {
-      ElMessage.warning("图片正在上传中，请稍后再试！");
-      return;
-    }
+    // if (isUploadImg.value) { // 单图片上传
+    //   ElMessage.warning("图片正在上传中，请稍后再试！");
+    //   return;
+    // }
+    // imgList.value = [];
     inputOssImgUploadRef.value?.resetInput?.();
     inputOssFileUploadRef.value?.resetInput?.();
-    imgList.value = [];
     await inputOssImgUploadRef.value?.onUpload({
       id: URL.createObjectURL(img),
       key: undefined,

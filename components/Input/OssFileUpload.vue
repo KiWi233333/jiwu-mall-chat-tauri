@@ -109,7 +109,7 @@ async function hangdleChange(e: Event) {
   }
   else {
     // 多文件
-    if (t.files.length > limit || fileList.value.length + t.files.length > limit) {
+    if (t.files.length > limit || (fileList.value.length + t.files.length) > limit) {
       emit("errorMsg", `最多只能上传${limit}个文件`);
       await nextTick();
       resetInput();
@@ -138,6 +138,13 @@ async function hangdleChange(e: Event) {
  */
 async function onUpload(file: OssFile) {
   // 文件校验
+  if (fileList.value.length + 1 > limit) { // 限制上传数量
+    error.value = `最多只能上传${limit}个文件`;
+    emit("errorMsg", error.value);
+    await nextTick();
+    resetInput();
+    return;
+  }
   if (size !== undefined && file?.file?.size && file?.file?.size > size) {
     error.value = `文件大小不能超过${formatFileSize(size)}`;
     emit("errorMsg", error.value);
