@@ -25,7 +25,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
         v-if="body?.url"
         error-root-class="h-9rem w-9rem"
         :src="BaseUrlImg + body?.url"
-        load-class="!border-none"
+        load-class="sky-loading block !h-9rem !w-9rem absolute top-0"
         class="h-9rem max-w-16rem w-fit shadow-sm border-default card-default"
         preview-teleported
         :alt="body?.url"
@@ -41,4 +41,9 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
 
 <style lang="scss" scoped>
 @use './msg.scss';
+:deep(.el-image__wrapper) {
+  width: 9rem;
+  height: 9rem;
+  position: static;
+}
 </style>

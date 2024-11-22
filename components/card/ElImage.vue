@@ -19,7 +19,7 @@ const setting = useSettingStore();
   >
     <!-- 占位 -->
     <template #placeholder>
-      <div class="h-full w-full" :class="loadClass !== undefined ? loadClass : 'sky-loading'" />
+      <div :class="loadClass !== undefined ? loadClass : 'sky-loading h-full w-full'" />
     </template>
     <!-- 错误 -->
     <template #error>
