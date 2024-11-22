@@ -517,12 +517,12 @@ watch(() => chat.theContact.roomId, () => {
             :class="imgList.length > 1 ? 'w-4rem h-4rem sm:(w-6rem h-6rem)' : 'h-9rem max-w-16rem'"
             title="左键放大 | 右键删除"
           />
-          <div
+          <small
             v-if="img.status !== 'success'"
             class="absolute right-0 top-0 h-full w-full flex-row-c-c p-4 backdrop-blur-4px"
           >
             {{ img.status === '' ? '上传中...' : '上传失败' }}
-          </div>
+          </small>
         </div>
       </div>
       <!-- 文件 -->
@@ -619,6 +619,7 @@ watch(() => chat.theContact.roomId, () => {
             :multiple="true"
             :preview="false"
             :size="IMG_MAX_SIZE"
+            :min-size="1024"
             :limit="9"
             :disable="isDisabled"
             class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
@@ -637,6 +638,7 @@ watch(() => chat.theContact.roomId, () => {
             v-model="fileList"
             :multiple="false"
             :size="FILE_MAX_SIZE"
+            :min-size="1024"
             :preview="false"
             :limit="1"
             :disable="isDisabled"

@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
-export const IMG_MAX_SIZE = 20 * 1024 * 1024;// 20MB
+export const IMG_MAX_SIZE = 5 * 1024 * 1024;// 5MB
 export const FILE_MAX_SIZE = 50 * 1024 * 1024;// 50MB
 export const FILE_TYPE_ICON_MAP = {
   "text/plain": "/images/icon/TXT.png",

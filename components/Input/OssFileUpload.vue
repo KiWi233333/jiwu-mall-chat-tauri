@@ -6,6 +6,7 @@ import * as qiniu from "qiniu-js";
 const {
   limit = 1,
   size,
+  minSize,
   draggable = false,
   preClass = "",
   errorClass = "",
@@ -52,6 +53,7 @@ interface Props {
    * 文件大小限制 单位：Byte
    */
   size?: number
+  minSize?: number
   draggable?: boolean
   preClass?: string
   errorClass?: string
@@ -137,7 +139,13 @@ async function hangdleChange(e: Event) {
 async function onUpload(file: OssFile) {
   // 文件校验
   if (size !== undefined && file?.file?.size && file?.file?.size > size) {
-    error.value = `文件大小不能超过${size / 1024 / 1024}M`;
+    error.value = `文件大小不能超过${formatFileSize(size)}`;
+    emit("errorMsg", error.value);
+    return;
+  }
+  if (minSize !== undefined && file?.file?.size && file?.file?.size < minSize) {
+    error.value = `文件大小不能小于${formatFileSize(minSize)}`;
+    emit("errorMsg", error.value);
     return;
   }
   else {
