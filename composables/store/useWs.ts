@@ -63,8 +63,7 @@ export const useWs = defineStore(
         status.value = WsStatusEnum.SAFE_CLOSE;
         return false;
       }
-
-      const openWebSocket = setting.isWeb;
+      const openWebSocket = setting.isDesktop || setting.isWeb;
       if (openWebSocket) {
         // 1、连接
         link(BaseWSUrl, user.getToken);
@@ -126,7 +125,7 @@ export const useWs = defineStore(
       if (!webSocketHandler.value)
         return;
       const setting = useSettingStore();
-      const openWebSocket = setting.isWeb;
+      const openWebSocket = setting.isDesktop || setting.isWeb;
       if (openWebSocket) {
         webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
           if (event && !event.data)

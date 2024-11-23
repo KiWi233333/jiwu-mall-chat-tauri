@@ -106,6 +106,18 @@ onBeforeUnmount(() => {
   timer.value && clearTimeout(timer.value);
   timer.value = null;
 });
+
+// 滚动事件
+const onScroll = useDebounceFn((e) => {
+  // 滚动到底部
+  const offset = 100;
+  if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight - 462 - offset) {
+    console.log("底部");
+    if (chat.theContact.roomId && chat.theContact.unreadCount > 0) {
+      chat.setReadList(chat.theContact.roomId);
+    }
+  }
+}, 500);
 </script>
 
 <template>
@@ -116,7 +128,8 @@ onBeforeUnmount(() => {
     <el-scrollbar
       ref="scrollbarRef"
       class="stop-transition h-full flex-1"
-      wrap-class="px-0  shadow-(sm inset) sm:px-2" view-class="msg-list pb-2rem"
+      wrap-class="px-0  shadow-(sm inset) sm:px-2"
+      view-class="msg-list pb-2rem" @scroll="onScroll"
     >
       <ChatMessageList
         ref="ChatMessageListRef"

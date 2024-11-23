@@ -77,7 +77,7 @@ export async function userTauriInit() {
     setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
   }
   if (["android", "ios"].includes(setting.appPlatform)) // 非桌面端
-    setting.settingPage.isTrayNotification = !permissionGranted;
+    setting.settingPage.isTrayNotification = permissionGranted ? false : undefined;
 
   // 3、获取文件路径
   if (!await existsFile(setting.appDataDownloadDirUrl))

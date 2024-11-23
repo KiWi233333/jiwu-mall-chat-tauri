@@ -259,9 +259,9 @@ const options = [
     class="form"
   >
     <template v-if="!user.isLogin">
-      <h3 mb-4 tracking-0.2em op-80>
+      <h4 mb-4 tracking-0.2em op-80>
         聊你所想，聊天随心✨
-      </h3>
+      </h4>
       <p
         mb-4 text-0.8em tracking-0.1em op-70
       >

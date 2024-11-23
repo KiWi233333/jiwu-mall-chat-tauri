@@ -336,9 +336,9 @@ function toLoginForm() {
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
     <small v-if="isLoading" class="z-999 absolute-center-center">{{ loadingText }}</small>
-    <h3 mb-4 tracking-0.2em op-80>
+    <h4 mb-4 tracking-0.2em op-80>
       开启你的专属圈子✨
-    </h3>
+    </h4>
     <p mb-4 text-0.8em tracking-0.1em op-70>
       已有账户？
       <span cursor-pointer color-emerald transition-300 hover:font-700 @click="toLoginForm">

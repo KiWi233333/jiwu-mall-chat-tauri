@@ -60,7 +60,6 @@ export async function useFlashTray() {
     if (bool && tray) {
       if (flashTimer.value)
         clearInterval(flashTimer.value);
-
       flashTimer.value = setInterval(() => {
         setTrayIcon(open.value ? null : msgUrl);
         open.value = !open.value;

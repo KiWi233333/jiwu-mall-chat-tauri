@@ -28,15 +28,18 @@ export async function useSettingInit() {
     keyToggleTheme(e);
   });
   // 2、获取版本更新
-  setting.appUploader.isCheckUpdatateLoad = false;
-  setting.appUploader.isUpdating = false;
-  setting.appUploader.isUpload = false;
-  setting.appUploader.version = "";
-  setting.appUploader.newVersion = "";
-  setting.appUploader.contentLength = 0;
-  setting.appUploader.downloaded = 0;
-  setting.appUploader.downloadedText = "";
-  setting.checkUpdates();
+  const route = useRoute();
+  if (route.path !== "/msg") {
+    setting.appUploader.isCheckUpdatateLoad = false;
+    setting.appUploader.isUpdating = false;
+    setting.appUploader.isUpload = false;
+    setting.appUploader.version = "";
+    setting.appUploader.newVersion = "";
+    setting.appUploader.contentLength = 0;
+    setting.appUploader.downloaded = 0;
+    setting.appUploader.downloadedText = "";
+    setting.checkUpdates();
+  }
 
   // 3、准备完成关闭加载动画
   const app = document.body;

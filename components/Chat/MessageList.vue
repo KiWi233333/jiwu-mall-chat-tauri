@@ -328,7 +328,6 @@ defineExpose({
 
 <template>
   <div
-
     v-bind="$attrs"
     class="msg-list flex flex-col op-0 transition-opacity transition-duration-200"
     :class="{ 'op-100': !isReload }"

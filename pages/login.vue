@@ -42,15 +42,15 @@ onMounted(() => {
       data-fade
     >
       <div mx-a class="w-4/5 text-center sm:(w-3/5 text-left)">
-        <div key="login-bg" class="fixed left-4 top-0 flex items-center gap-4 py-4 sm:(relative left-a top-a)">
+        <div key="login-bg" class="flex items-center gap-3 sm:(relative left-a top-a)">
           <ElImage
             src="/logo.png" class="h-2em w-2em"
           />
-          <strong class="font-bold tracking-0.2em">
+          <h4 class="font-bold tracking-0.2em">
             极物聊天
-          </strong>
+          </h4>
         </div>
-        <div ref="autoAnimateRef" class="relative mt-10">
+        <div ref="autoAnimateRef" class="relative mt-6 sm:mt-8">
           <!-- 登录 -->
           <FormLoginForm
             v-if="user.showLoginForm"
