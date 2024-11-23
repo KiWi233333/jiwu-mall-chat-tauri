@@ -116,12 +116,19 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     Ok(())
 }
 
-fn show_window(app: &AppHandle) {
-    let windows = app.webview_windows(); // This should now work
-    windows
-        .values()
-        .next()
-        .expect("Sorry, no window found")
-        .set_focus()
-        .expect("Can't Bring Window to Focus");
+
+
+#[cfg(desktop)]
+pub fn show_window(app: &AppHandle) {
+    use crate::desktops::window::setup_desktop_window;
+
+    if let Some(window) = app.webview_windows().get("main") {
+            window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
+            window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+            window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
+    } else {
+        eprintln!("未找到窗口");
+        // 创建窗口
+        setup_desktop_window(app).unwrap_or_else(|e| eprintln!("创建窗口时出错: {:?}", e));
+    }
 }
