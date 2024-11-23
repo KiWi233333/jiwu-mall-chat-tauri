@@ -56,18 +56,23 @@ export const useWs = defineStore(
     async function initDefault(call: () => any) {
       const setting = useSettingStore();
       const user = useUserStore();
+
       if (!user.getToken) {
         webSocketHandler.value?.close?.();
         webSocketHandler.value?.disconnect?.();
         status.value = WsStatusEnum.SAFE_CLOSE;
         return false;
       }
-      if (setting.isWeb) {
+
+      const openWebSocket = setting.isWeb;
+      if (openWebSocket) {
         // 1、连接
         link(BaseWSUrl, user.getToken);
         // 2、打开
-        if (!webSocketHandler.value)
+        if (!webSocketHandler.value) {
+          status.value = WsStatusEnum.SAFE_CLOSE;
           return;
+        }
         webSocketHandler.value.onopen = call;
         // 3、错误监听
         webSocketHandler?.value?.addEventListener("error", (e: Event) => {
@@ -82,7 +87,6 @@ export const useWs = defineStore(
         });
         return true;
       }
-
       // 移动、桌面端
       const url = BaseWSUrl;
       if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
@@ -122,7 +126,8 @@ export const useWs = defineStore(
       if (!webSocketHandler.value)
         return;
       const setting = useSettingStore();
-      if (setting.isWeb) {
+      const openWebSocket = setting.isWeb;
+      if (openWebSocket) {
         webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
           if (event && !event.data)
             return false;
@@ -180,6 +185,11 @@ export const useWs = defineStore(
             catch (err) {
               return null;
             }
+          }
+          // 其他情况
+          else if (!["Binary", "Ping", "Pong"].includes(msg.type)) {
+            status.value = WsStatusEnum.SAFE_CLOSE;
+            webSocketHandler.value = null;
           }
         });
       }

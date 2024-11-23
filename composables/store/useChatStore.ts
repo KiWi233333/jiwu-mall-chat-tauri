@@ -134,6 +134,9 @@ export const useChatStore = defineStore(
           return false;
       }
       else { // 移动端 TODO:待定
+        const win = await WebviewWindow.getByLabel("main");
+        if (!await win?.isFocused()) // 窗口未激活
+          return false;
       }
       return true;
     }

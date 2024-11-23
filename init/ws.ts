@@ -29,7 +29,6 @@ export async function useWsInit() {
         status: ws.status,
         noticeType,
       });
-      ws.sendHeart();
       ws.onMessage(async (msg) => {
         // 消息通知
         if (noticeType[msg.type]) {
@@ -41,7 +40,7 @@ export async function useWsInit() {
           if (setting.settingPage.isTrayNotification === undefined) // 关闭通知
             return;
 
-          if (!setting.settingPage.isTrayNotification || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
+          if (setting.settingPage.isTrayNotification === false || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
             notification(body);
         }
       });
@@ -93,7 +92,6 @@ export function notification(msg: ChatMessageVO) {
     });
     return;
   }
-
   // tauri 通知
   sendNotification({
     icon: ["android", "ios"].includes(setting.appPlatform) ? "/logo.png" : BaseUrlImg + msg.fromUser.avatar,

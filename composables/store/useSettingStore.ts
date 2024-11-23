@@ -2,6 +2,7 @@ import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import type { Update } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import { appDataDir } from "@tauri-apps/api/path";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { BaseDirectory } from "@tauri-apps/plugin-fs";
@@ -70,6 +71,20 @@ export const useSettingStore = defineStore(
     const isOpenContact = ref(true); // 是否打开会话列表
     const showChatMenu = ref(true);
     const downUpChangeContact = ref(true); // 向上向下切换联系人列表
+    async function checkMainWinVisible() {
+      try {
+        if (isWeb.value) {
+          return true;
+        }
+        const wind = await WebviewWindow.getByLabel("main");
+        if (!wind)
+          return true;
+        return wind.isFocused();
+      }
+      catch (e) {
+        return true;
+      }
+    };
 
     // ---------------------- 下载管理 -----------------
     const BaseDirCode = BaseDirectory.AppData;
@@ -439,6 +454,7 @@ export const useSettingStore = defineStore(
       isWeb,
       // actions
       checkUpdates,
+      checkMainWinVisible,
       loadSystemFonts,
       reset,
       fileDownProgressCallback,

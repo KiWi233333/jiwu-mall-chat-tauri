@@ -21,6 +21,22 @@ async function toggleContactOpen() {
   }
   setting.isOpenContact = !setting.isOpenContact;
 }
+
+const isPageReload = ref(false);
+// const online = useOnline();
+// const ws = useWs();
+// watch(() => (!ws.webSocketHandler || !online.value), (val) => {
+//   if (val) {
+//     isPageReload.value = true;
+//   }
+// }, { immediate: true });
+function reloadPage() {
+  isPageReload.value = true;
+  location.reload();
+  setTimeout(() => {
+    isPageReload.value = false;
+  }, 500);
+}
 </script>
 
 <template>
@@ -51,9 +67,15 @@ async function toggleContactOpen() {
       title="搜索会话"
       @click="toggleContactSearch"
     />
-    <div class="relative z-1000 flex flex-shrink-0 items-center gap-2">
+    <div class="relative z-1000 flex flex-shrink-0 items-center gap-0 sm:gap-2">
       <BtnAppDownload />
       <div class="flex items-center gap-3 rounded-2rem px-2 py-1 border-default card-default">
+        <!-- 刷新页面 -->
+        <div
+          v-show="!isPageReload"
+          class="i-solar:refresh-outline h-4.5 w-4.5 cursor-pointer bg-[var(--el-color-info)] transition-300 hover:rotate-180"
+          @click="reloadPage"
+        />
         <!-- 下载（部分端） -->
         <BtnDownload v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
         <!-- 主题 -->
@@ -67,15 +89,17 @@ async function toggleContactOpen() {
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <!-- 关闭按钮 -->
-      <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" ml-1 class="flex items-center border-0 border-l-1px pl-3 sm:gap-2 border-default">
+      <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="ml-2 max-w-9em flex items-center gap-0 border-0 border-l-1px pl-3 sm:(max-w-fit gap-2) border-default">
         <MenuController>
           <template #start="{ data }">
             <ElButton
-              text text-amber-1 size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="async () => {
+              text
+              size="small"
+              style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="async () => {
                 if (data.onToggleWindow) {
                   const val = await data.onToggleWindow('alwaysOnTop')
                   isTop = val.isAlwaysOnTopVal
