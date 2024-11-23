@@ -23,6 +23,7 @@ export default defineConfig({
     // 颜色
     ["text-color", "text-dark dark:text-white"],
     ["bg-color", "bg-white dark:bg-dark"],
+    ["bg-color-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) backdrop-blur-12px"],
     ["bg-menu-color", "bg-white  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     // 边框

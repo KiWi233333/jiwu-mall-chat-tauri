@@ -23,28 +23,34 @@ onMounted(() => {
 
 <template>
   <div
-    class="relative overflow-hidden overflow-hidden shadow border-default card-default bg-color"
+    class="main-box relative overflow-hidden overflow-hidden shadow border-default card-default bg-color"
     grid="~ cols-1 md:cols-2"
   >
-    <div data-tauri-drag-region fixed right-4 top-4 flex items-center gap-2>
-      <MenuController v-if="setting.isDesktop" key="header" :show-max="false" />
+    <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex items-center gap-2 sm:w-50vw>
+      <div ml-a p-2 sm:p-4>
+        <MenuController v-if="setting.isDesktop" key="header" :show-max="false" />
+      </div>
     </div>
     <!-- bg -->
     <div hidden h-full w-full select-none border-0 border-r-1px shadow-md shadow-inset md:block border-default>
       <ElImage src="/images/login_bg.jpg" fit="cover" class="h-full select-none overflow-hidden rounded-r-0 card-default" />
     </div>
     <!-- 表单 -->
-    <div class="flex flex-col select-none pt-24vh sm:pt-20vh" data-tauri-drag-region>
-      <div mx-a class="w-3/4 text-center sm:(w-3/5 text-left)">
-        <div key="login-bg" class="fixed left-4 top-0 flex items-center gap-2 py-4 sm:(relative left-a top-a)">
+    <div
+      class="mt-a h-7/10 flex flex-col select-none rounded-t-8 pt-10 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color pt-20vh shadow-none) border-default-t bg-color-br"
+      data-tauri-drag-region
+      data-fade
+    >
+      <div mx-a class="w-4/5 text-center sm:(w-3/5 text-left)">
+        <div key="login-bg" class="fixed left-4 top-0 flex items-center gap-4 py-4 sm:(relative left-a top-a)">
           <ElImage
             src="/logo.png" class="h-2em w-2em"
           />
-          <strong class="font-bold tracking-0.2em op-80">
+          <strong class="font-bold tracking-0.2em">
             极物聊天
           </strong>
         </div>
-        <div ref="autoAnimateRef">
+        <div ref="autoAnimateRef" class="relative mt-10">
           <!-- 登录 -->
           <FormLoginForm
             v-if="user.showLoginForm"
@@ -60,3 +66,12 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.main-box {
+  background-image: url("/images/login_bg.jpg");
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 42%;
+}
+</style>

@@ -238,6 +238,12 @@ async function onLogin(formEl: any | undefined) {
     }
   });
 }
+
+const options = [
+  { label: "密码登录", value: LoginType.PWD },
+  { label: "手机登录", value: LoginType.PHONE },
+  { label: "邮箱登录", value: LoginType.EMAIL },
+];
 </script>
 
 <template>
@@ -253,24 +259,19 @@ async function onLogin(formEl: any | undefined) {
     class="form"
   >
     <template v-if="!user.isLogin">
-      <h2
-        mb-5
-        mt-4
-        tracking-0.2em
-      >
-        极物圈社区聊天✨
-      </h2>
+      <h3 mb-4 tracking-0.2em op-80>
+        聊你所想，聊天随心✨
+      </h3>
       <p
-        mb-10 text-0.8em tracking-0.1em
+        mb-4 text-0.8em tracking-0.1em op-70
       >
-        没有账户？
+        还没有账户？
         <span
           cursor-pointer color-emerald transition-300 hover:font-700
           @click="toRegister"
         >
           立即注册
         </span>
-
         <span
           flex-1
           class="transition-all btn-info"
@@ -280,37 +281,11 @@ async function onLogin(formEl: any | undefined) {
         </span>
       </p>
       <!-- 切换登录 -->
-      <div
+      <el-segmented
         v-show="loginType !== LoginType.ADMIN"
-        class="toggle-login"
-        my-1em
-      >
-        <el-button
-          flex-1
-          :class="{ active: loginType === LoginType.EMAIL }"
-          tracking-0.1em
-          @click="loginType = LoginType.EMAIL"
-        >
-          邮箱登录
-        </el-button>
-        <el-button
-          flex-1
-          :class="{ active: loginType === LoginType.PHONE }"
-          tracking-0.1em
-          @click="loginType = LoginType.PHONE"
-        >
-          手机登录
-        </el-button>
-        <el-button
-          flex-1
-          :class="{ active: loginType === LoginType.PWD }"
-          tracking-0.1em
-          tracking-0.2em
-          @click="loginType = LoginType.PWD"
-        >
-          密码登录
-        </el-button>
-      </div>
+        v-model="loginType"
+        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default" :options="options"
+      />
       <!-- 验证码登录(客户端 ) -->
       <!-- 邮箱登录 -->
       <el-form-item
@@ -472,10 +447,11 @@ async function onLogin(formEl: any | undefined) {
 
   // 报错信息
   :deep(.el-form-item) {
-    padding: 0.2em;
+    padding: 0.3em 0.1em;
+
 
     .el-form-item__error {
-      padding-top: 0.2em;
+      padding-top: 0;
     }
   }
 }
@@ -494,27 +470,14 @@ async function onLogin(formEl: any | undefined) {
 }
 
 // 切换登录
-.toggle-login {
-  position: relative;
-  border-radius: var(--el-border-radius-base);
-  backdrop-filter: blur(10px);
-  background-color: #b3b3b32a;
-  padding: 0.3em;
-  display: flex;
-
-  :deep(.el-button) {
-    background-color: transparent;
-    transition: 0.3s;
-    padding: 0 0.6em;
-    border: none;
-  }
-
-  .active {
-    transition: 0.3s;
-    background-color: #fff;
-    z-index: 1;
-    box-shadow: rgb(0 0 0 / 20%) 0 1px 4px;
-    color: var(--el-text-color);
+:deep(.toggle-login.el-segmented) {
+  --el-segmented-item-selected-color: var(--el-text-color-primary);
+  // --el-segmented-item-selected-bg-color: #ffd100;
+  --el-border-radius-base: 6px;
+  height: 2.6rem;
+  padding: 0.4rem;
+  .el-segmented__item:hover:not(.is-selected) {
+    background: transparent;
   }
 }
 

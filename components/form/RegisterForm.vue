@@ -7,6 +7,11 @@ import { RegisterType } from "~/types/user/index.js";
 
 // 注册方式
 const registerType = ref<number>(RegisterType.PHONE);
+const options = [
+  { label: "手机号注册", value: RegisterType.PHONE },
+  { label: "邮箱注册", value: RegisterType.EMAIL },
+  { label: "常规注册", value: RegisterType.PASSWORD },
+];
 // 请求加载
 const isLoading = ref<boolean>(false);
 const loadingText = ref<string>("");
@@ -331,36 +336,21 @@ function toLoginForm() {
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
     <small v-if="isLoading" class="z-999 absolute-center-center">{{ loadingText }}</small>
-    <h2 mb-5 mt-4 tracking-0.2em>
+    <h3 mb-4 tracking-0.2em op-80>
       开启你的专属圈子✨
-    </h2>
-    <p mb-10 text-0.8em tracking-0.1em>
+    </h3>
+    <p mb-4 text-0.8em tracking-0.1em op-70>
       已有账户？
       <span cursor-pointer color-emerald transition-300 hover:font-700 @click="toLoginForm">
         立即登录
       </span>
     </p>
     <!-- 切换注册 -->
-    <div class="toggle-login" my-1em>
-      <el-button
-        flex-1 :class="{ active: registerType === RegisterType.PHONE }" tracking-0.1em
-        @click="registerType = RegisterType.PHONE"
-      >
-        手机注册
-      </el-button>
-      <el-button
-        flex-1 :class="{ active: registerType === RegisterType.EMAIL }" tracking-0.1em
-        @click="registerType = RegisterType.EMAIL"
-      >
-        邮箱注册
-      </el-button>
-      <el-button
-        flex-1 :class="{ active: registerType === RegisterType.PASSWORD }" tracking-0.1em
-        @click="registerType = RegisterType.PASSWORD"
-      >
-        密码注册
-      </el-button>
-    </div>
+    <el-segmented
+      v-model="registerType"
+      class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default"
+      :options="options"
+    />
     <!-- 验证码注册(客户端 ) -->
     <!-- 用户名 -->
     <el-form-item label="" prop="username" class="animated">
@@ -430,7 +420,7 @@ function toLoginForm() {
 
   // 报错信息
   :deep(.el-form-item) {
-    padding: 0.2em;
+    padding: 0.3em 0.1em;
 
     .el-form-item__error {
       padding-top: 0;
@@ -448,27 +438,14 @@ function toLoginForm() {
 }
 
 // 切换注册
-.toggle-login {
-  position: relative;
-  border-radius: var(--el-border-radius-base);
-  backdrop-filter: blur(10px);
-  background-color: #dddddd2a;
-  padding: 0.3em;
-  display: flex;
-
-  :deep(.el-button) {
-    background-color: transparent;
-    transition: 0.3s;
-    padding: 0em 0.6em;
-    border: none;
-  }
-
-  .active {
-    transition: 0.3s;
-    background-color: #ffffff;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
-    background-color: transparent;
-    color: var(--el-text-color);
+:deep(.toggle-login.el-segmented) {
+  --el-segmented-item-selected-color: var(--el-text-color-primary);
+  // --el-segmented-item-selected-bg-color: #ffd100;
+  --el-border-radius-base: 6px;
+  height: 2.6rem;
+  padding: 0.4rem;
+  .el-segmented__item:hover:not(.is-selected) {
+    background: transparent;
   }
 }
 
