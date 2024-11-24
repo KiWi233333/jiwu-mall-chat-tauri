@@ -203,6 +203,7 @@ export const useWs = defineStore(
         try {
           webSocketHandler.value?.close?.();
           webSocketHandler.value?.disconnect?.();
+          webSocketHandler.value = null; // 清空 WebSocket 连接
         }
         catch (err) {
         }

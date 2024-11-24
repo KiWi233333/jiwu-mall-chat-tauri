@@ -16,11 +16,15 @@ export async function useWsInit() {
   const chat = useChatStore();
   // 创建 Web Worker
   let worker: Worker;
+  const isReload = ref(false);
   // 初始化 Web Worker
   async function reload() {
-    worker?.removeEventListener?.("message", (e) => { });
+    if (isReload.value) {
+      return;
+    }
+    isReload.value = true;
     worker?.terminate?.(); // 关闭 WebSocket 连接
-    ws.close(false); // 关闭 WebSocket 连接
+    ws?.close?.(false); // 关闭 WebSocket 连接
     worker = new Worker("useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault(() => {
@@ -46,20 +50,31 @@ export async function useWsInit() {
       });
     });
     // Web Worker 消息处理
-    worker.addEventListener("message", (e) => {
+    worker.onmessage = (e) => {
       if (e.data.type === "reload")
         reload();
       if (e.data.type === "heart")
         ws.sendHeart();
       if (e.data.type === "log")
         console.log(e.data.data);
-    });
+    };
+    // Web Worker 错误处理
+    worker.onerror = (e) => {
+      console.error(e);
+      reload();
+    };
+    // Web Worker 消息错误处理
+    worker.onmessageerror = (e) => {
+      console.error(e);
+      reload();
+    };
+    isReload.value = false;
   }
   // 自动重连
   if (ws.status !== WsStatusEnum.OPEN && user.isLogin)
     reload();
   watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
-    if (val[0] !== WsStatusEnum.OPEN && val[1])
+    if ((val[0] !== WsStatusEnum.OPEN || !ws.webSocketHandler) && val[1])
       reload();
     else if (!val[1])
       ws.close(false);
