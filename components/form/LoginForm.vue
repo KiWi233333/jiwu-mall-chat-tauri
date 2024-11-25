@@ -284,7 +284,7 @@ const options = [
       <el-segmented
         v-show="loginType !== LoginType.ADMIN"
         v-model="loginType"
-        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default !text-light" :options="options"
+        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default dark:bg-dark-300" :options="options"
       />
       <!-- 验证码登录(客户端 ) -->
       <!-- 邮箱登录 -->
@@ -479,6 +479,10 @@ const options = [
   .el-segmented__item:hover:not(.is-selected) {
     background: transparent;
   }
+  .el-segmented__item.is-selected {
+    color: #fff;
+  }
+
 }
 
 .dark .active {

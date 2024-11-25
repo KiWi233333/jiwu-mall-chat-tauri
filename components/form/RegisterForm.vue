@@ -348,7 +348,7 @@ function toLoginForm() {
     <!-- 切换注册 -->
     <el-segmented
       v-model="registerType"
-      class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default"
+      class="toggle-btns grid grid-cols-3 mb-4 w-full gap-2 card-default dark:bg-dark-300"
       :options="options"
     />
     <!-- 验证码注册(客户端 ) -->
@@ -438,7 +438,7 @@ function toLoginForm() {
 }
 
 // 切换注册
-:deep(.toggle-login.el-segmented) {
+:deep(.toggle-btns.el-segmented) {
   --el-segmented-item-selected-color: var(--el-text-color-primary);
   // --el-segmented-item-selected-bg-color: #ffd100;
   --el-border-radius-base: 6px;
@@ -446,6 +446,10 @@ function toLoginForm() {
   padding: 0.4rem;
   .el-segmented__item:hover:not(.is-selected) {
     background: transparent;
+  }
+
+  .el-segmented__item.is-selected {
+    color: #fff;
   }
 }
 
