@@ -238,7 +238,7 @@ async function openFileFolder() {
         />
       </div>
       <!-- 自启动 -->
-      <div v-if="!setting.isWeb" :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
+      <div v-if="setting.isDesktop" :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
         开机自启
         <el-switch
           v-model="setting.settingPage.isAutoStart" size="large" active-text="自启"
