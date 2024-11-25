@@ -39,8 +39,10 @@ export const useSettingStore = defineStore(
     const isUserCollapse = ref(true);
     // 主页页折叠
     const isCollapse = ref(true);// 侧边栏折叠
+    // 设备状态
     const isMobileSize = ref(false);// 是否移动尺寸
     const isOpenContactSearch = ref(true); // 是否会话搜索
+    const isUseWebsocket = ref(true); // 是否使用 websocket
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     const isMobile = computed(() => ["android", "ios"].includes(osType.value));
     // ---------------------设置-----------------
@@ -349,6 +351,7 @@ export const useSettingStore = defineStore(
       isOpenGroupMember.value = true;
       showChatMenu.value = true;
       isThemeChangeLoad.value = false;
+      isUseWebsocket.value = true;
       appUploader.value = {
         isCheckUpdatateLoad: false,
         isUpdating: false,
@@ -451,6 +454,7 @@ export const useSettingStore = defineStore(
       appDataDownloadDirUrl,
       BaseDirCode,
       osType,
+      isUseWebsocket,
       isWeb,
       // actions
       checkUpdates,

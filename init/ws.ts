@@ -4,19 +4,22 @@ import { sendWebNotification } from "~/composables/utils/useWebToast";
 
 
 export async function useWsInit() {
-// 1、聊天模块
+  // 聊天模块
   const ws = useWs();
   const user = useUserStore();
   const setting = useSettingStore();
+
   // 通知消息类型  WsMsgBodyType
   const noticeType = {
     [WsMsgBodyType.MESSAGE]: true, // 普通消息
     [WsMsgBodyType.APPLY]: true, // 好友消息
   } as Record<WsMsgBodyType, boolean>;
   const chat = useChatStore();
+
   // 创建 Web Worker
   let worker: Worker;
   const isReload = ref(false);
+
   // 初始化 Web Worker
   async function reload() {
     if (isReload.value) {
@@ -25,6 +28,9 @@ export async function useWsInit() {
     isReload.value = true;
     worker?.terminate?.(); // 关闭 WebSocket 连接
     ws?.close?.(false); // 关闭 WebSocket 连接
+    if (!user.isLogin) {
+      return;
+    }
     worker = new Worker("useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault(() => {
@@ -53,8 +59,11 @@ export async function useWsInit() {
     worker.onmessage = (e) => {
       if (e.data.type === "reload")
         reload();
-      if (e.data.type === "heart")
+      if (e.data.type === "heart") {
+        if (ws.status !== WsStatusEnum.OPEN || !ws.webSocketHandler)
+          return reload();
         ws.sendHeart();
+      }
       if (e.data.type === "log")
         console.log(e.data.data);
     };

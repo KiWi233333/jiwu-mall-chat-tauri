@@ -63,10 +63,13 @@ export const useWs = defineStore(
         status.value = WsStatusEnum.SAFE_CLOSE;
         return false;
       }
-      const openWebSocket = setting.isDesktop || setting.isWeb;
-      if (openWebSocket) {
+      if (setting.isUseWebsocket) {
         // 1、连接
-        link(BaseWSUrl, user.getToken);
+        if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
+          return webSocketHandler.value;
+        fullWsUrl.value = `${BaseWSUrl}?Authorization=${user.getToken}`;
+        webSocketHandler.value = new WebSocket(fullWsUrl.value);
+        status.value = WsStatusEnum.OPEN;
         // 2、打开
         if (!webSocketHandler.value) {
           status.value = WsStatusEnum.SAFE_CLOSE;
@@ -86,7 +89,7 @@ export const useWs = defineStore(
         });
         return true;
       }
-      // 移动、桌面端
+      // rust websocket 连接
       const url = BaseWSUrl;
       if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
         return webSocketHandler.value;
@@ -97,16 +100,6 @@ export const useWs = defineStore(
       status.value = ws.id ? WsStatusEnum.OPEN : WsStatusEnum.CLOSE;
       if (ws.id)
         call();
-    }
-
-    // 链接
-    function link(url: string = BaseWSUrl, token: string = "") {
-      if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
-        return webSocketHandler.value;
-      fullWsUrl.value = `${url}?Authorization=${token}`;
-      webSocketHandler.value = new WebSocket(fullWsUrl.value);
-      status.value = WsStatusEnum.OPEN;
-      return webSocketHandler.value;
     }
 
 
@@ -125,8 +118,7 @@ export const useWs = defineStore(
       if (!webSocketHandler.value)
         return;
       const setting = useSettingStore();
-      const openWebSocket = setting.isDesktop || setting.isWeb;
-      if (openWebSocket) {
+      if (setting.isUseWebsocket) {
         webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
           if (event && !event.data)
             return false;
@@ -148,7 +140,7 @@ export const useWs = defineStore(
           }
         });
       }
-      else { // 移动、桌面端
+      else { // rust ws
         webSocketHandler.value.addListener((msg: BackMessage) => {
           console.log(msg);
           if ("WebSocket protocol error: Connection reset without closing handshake".includes(msg?.data?.toString() || "")) {
@@ -281,7 +273,6 @@ export const useWs = defineStore(
       // 方法
       resetStore,
       reload,
-      onerror,
       initDefault,
       send,
       close,
