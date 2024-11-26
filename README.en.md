@@ -6,7 +6,7 @@
 
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
-        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project%20Address-blueviolet.svg?style=plastic">
+        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project Address-blueviolet.svg?style=plastic">
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
         <img class="disabled-img-view" alt="License"
@@ -23,21 +23,21 @@
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/master/LICENSE" target="_blank">
         <img class="disabled-img-view" alt="License: Apache-2.0"
-          src="https://img.shields.io/badge/License-Apache%20-2.0-blue.svg">
+          src="https://img.shields.io/badge/License-Apache--2.0-blue.svg">
       </a>
     </div>
 
-Language: Simplified Chinese | [English](./README.en.md)
+Language: English | [Simplified Chinese](./README.md)
 </div>
 
 ### Introduction
 
-JiwuChat Tauri APP is a desktop chat application based on the Nuxt3 + Tauri + Element Plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. Additionally, it supports AI shopping chat and a global dark mode. Users can engage in real-time chatting, share updates, and interact with AI customer service through this app.
+JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + element-plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. It also supports AI shopping chat and global dark mode. Users can engage in real-time chat, share updates, and AI customer service Q&A through the app.
 
 ### Technology
 
 ```txt
-Based on the Nuxt3 + Tauri + Element Plus framework
+Based on the Nuxt3 + Tauri + element-plus framework
 ```
 
 ### Trends
@@ -46,24 +46,24 @@ Based on the Nuxt3 + Tauri + Element Plus framework
 
 ### Default Account
 
-- Username: ikun233
+- Account: ikun233
 - Password: 123456
 
-Note: This account does not have permissions for uploading images or changing passwords.
+Note: This account does not have permissions for uploading images, changing passwords, etc.
 
 ### Feature List
 
 | Feature Module | Description | Status |
 | --- | --- | --- |
-| User Module | Supports login and registration via account, phone number, and email | ✔ |
-| Messaging Module | Supports real-time chat with various message types including text, images, files, voice, @mentions, recall, and deletion | ✔ |
-| AI Shopping Module | AI shopping chat feature providing product recommendations under "Jiwu Circle" | ✔ |
-| Conversation Module | Supports group and private chats with roles such as group owner, admin, and regular user | ✔ |
+| User Module | Supports login and registration with account, phone number, and email | ✔ |
+| Message Module | Supports real-time chat with text, images, files, voice, @users, retract, delete, and other message types | ✔ |
+| Conversation Module | Supports group chat, private chat, and various roles such as group owner, administrator, and ordinary user | ✔ |
 | Contact Module | Supports viewing, adding, and deleting contacts | ✔ |
 | System Version Module | Supports automatic app updates and viewing version announcements | ✔ |
-| Account & Security Module | Offers features like account login, password change, account management, device security, and account online/offline status | ✔ |
-| File Download Management Module | Supports local file download, opening, and deletion | ✔ |
-| Other Features | Global dark mode, font customization, custom download paths, multi-system support, and customizable settings | ✔ |
+| Account & Security Module | Provides functions for account login, password change, account management, device security, and account online/offline | ✔ |
+| AI Shopping Module | AI shopping chat feature, providing product recommendations under "Jiwu Circle" | ✔ |
+| File Download Management Module | Supports local file download, open, and delete functions | ✔ |
+| Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
 
 ### Project Screenshots
 
@@ -93,13 +93,17 @@ Note: This account does not have permissions for uploading images or changing pa
 
 ![Account & Security](./.doc/chat5.png)
 
-- Responsiveness
+- Mobile Adaptation
 
-<img src="./.doc/chat9.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
-<img src="./.doc/chat7.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
-<img src="./.doc/chat8.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
-<img src="./.doc/chat10.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
-<img src="./.doc/chat11.png" width = "200" style="display:inline-block;" alt="移动端适配" align=center />
+<div>
+ <img src="./.doc/chat12.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+</div>
 
 ## ⏳ Getting Started | Project Setup
 
@@ -114,22 +118,26 @@ pnpm install
 
 ### ✨ Development
 
-Modify the `useBaseUrl.ts` file to change the `API address` to your local API address or adjust the following.
-
-```ts
-// useBaseUrl.ts
-const isDev = !import.meta.env.DEV;
-```
+- If there is a backend service, you can modify the `.env.development` environment variable file for development
 
 ```sh
 # It is recommended to run separately
-# 1) Start Nuxt
+# Terminal 1: Start nuxt
 pnpm run dev:nuxt
-# 2) Start Tauri
+# Terminal 2: Start tauri
 pnpm run dev:tauri
 ```
 
-### 📦 Build
+- If there is no backend service, modify the `.env.development` environment variable or use the `.env.production` configuration file.
+
+```sh
+# Terminal 1: Start nuxt
+pnpm run dev:nuxt:prod
+# Terminal 2: Start tauri
+pnpm run dev:tauri
+```
+
+### 📦 Package
 
 ```sh
 pnpm run build:tauri
@@ -163,80 +171,21 @@ pnpm config set registry https://registry.npmjs.org
 
 ### 🔧 Technology Stack | Tech Stack
 
-| Category | Technology/Component | Version |
-| ------------- | ------------------ | ------------ |
-| Framework | Nuxt3 | ^3.14.159 |
-| Framework | Tauri | ^2.1.0 |
-| UI Component Library | Element Plus | ^2.8.4 |
-| State Management | Pinia | 2.1.7 |
-| Utility Library | Vueuse | 10.11.0 |
-| Build & Development Tools | Nuxi | lts |
-| Build & Development Tools | Vite | lts |
-| Code Quality | ESLint | 8.56.0 |
-| Code Quality | Prettier | 3.3.2 |
-| Type Checking | TypeScript | 5.3.2 |
-| Style Processing | Sass | 1.77.6 |
+| Category        | Technology/Component | Version   |
+| --------------- | ------------------- | --------- |
+| Framework      | Nuxt3              | ^3.14.159+ |
+|                 | Tauri              | ^2.1.0    |
+| UI Component Library | Element Plus      | ^2.8.4    |
+| State Management | Pinia             | 2.1.7     |
+| Utility Library | Vueuse            | 10.11.0   |
+| Build & Development Tools | Nuxi          | lts      |
+|                 | Vite              | lts      |
+| Code Quality   | ESLint            | 8.56.0    |
+|                 | Prettier          | 3.3.2    |
+| Type Checking  | TypeScript        | 5.3.2    |
+| Style Processing | Sass             | 1.77.6   |
 
-### 🌈 Run Scripts | Scripts
+## 💬 Contact
 
-```sh
-// Install Husky, a tool used to run scripts in Git hooks
-"prepare": "husky install",
-
-// Run Tauri command
-"tauri": "tauri",
-
-// Develop Tauri desktop application
-"dev:tauri": "tauri dev",
-
-// Shortcut command for developing desktop applications
-"dev:desktop": "tauri dev",
-
-// Develop Tauri application for Android platform
-"dev:android": "tauri android dev",
-
-// Develop Tauri application for iOS platform
-"dev:ios": "tauri ios dev",
-
-// Develop Nuxt.js application using development environment .env file and listening for host changes
-"dev:nuxt": "nuxt dev --dotenv .env.development --host",
-
-// Develop Nuxt.js application using production environment .env file and listening for host changes
-"dev:nuxt:prod": "nuxt dev --dotenv .env.production --host",
-
-// Nuxt.js preview mode
-"preview": "nuxt preview",
-
-// Build the project, first generate static files using Nuxi, then build Tauri application
-"build": "nuxi generate && tauri build",
-
-// Build Nuxt.js application only, using production environment .env file
-"build:nuxt": "nuxi generate --dotenv .env.production",
-
-// Build Nuxt.js single-page application, using production environment .env file
-"build:nuxt:spa": "nuxi build --dotenv .env.production",
-
-// Build Tauri application
-"build:tauri": "tauri build",
-
-// Build Tauri application for Android platform and generate APK file
-"build:android": "tauri android build --apk",
-
-// Build Tauri application for iOS platform and generate IPA file
-"build:ios": "tauri ios build --ipa",
-
-// Release version, increment the minor version number, push tags, fetch latest code, push to remote repository
-"release": "npm version minor && git push --tag && git fetch && git push",
-
-// Release major version, increment the major version number, push tags, fetch latest code, push to remote repository
-"release:major": "npm version major && git push --tag && git fetch && git push",
-
-// Release minor version, increment the minor version number, push tags, fetch latest code, push to remote repository
-"release:minor": "npm version minor && git push --tag && git fetch && git push",
-
-// Release patch version, increment the patch version number, push tags, fetch latest code, push to remote repository
-"release:patch": "npm version patch && git push --tag && git fetch && git push",
-
-// Run lint-staged, a tool used to run linters in the Git staging area
-"lint-staged": "lint-staged"
-```
+- Email: [kiwi2333@qq.com](mailto:kiwi2333@qq.com)
+- QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qq&menu=yes)

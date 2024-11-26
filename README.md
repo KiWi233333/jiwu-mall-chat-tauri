@@ -118,18 +118,21 @@ pnpm install
 
 ### ✨ 开发
 
-修改`useBaseUrl.ts`文件，将`接口地址`改为你本地的接口地址或修改以下。
-
-```ts
-// useBaseUrl.ts
-const isDev = !import.meta.env.DEV;
-```
+- 若有后端服务，可采用自定义修改开发`.env.development`环境变量文件进行开发
 
 ```sh
 # 建议分开运行
-# 1）启动nuxt
+# 终端1：启动nuxt
 pnpm run dev:nuxt
-# 2）启动tauri
+# 终端2：启动tauri
+pnpm run dev:tauri
+```
+- 若没有后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。
+
+```sh
+# 终端1：启动nuxt
+pnpm run dev:nuxt:prod
+# 终端2：启动tauri
 pnpm run dev:tauri
 ```
 
@@ -181,66 +184,7 @@ pnpm config set registry https://registry.npmjs.org
 | 类型检查     | TypeScript         | 5.3.2        |
 | 样式处理     | Sass               | 1.77.6       |
 
-### 🌈 运行脚本 | Scripts
+## 💬 联系方式 | Contact
 
-```sh
-// 安装Husky，这是一个用于在Git钩子中运行脚本的工具
-"prepare": "husky install",
-
-// 运行Tauri命令
-"tauri": "tauri",
-
-// 开发Tauri桌面应用
-"dev:tauri": "tauri dev",
-
-// 开发桌面应用的快捷命令
-"dev:desktop": "tauri dev",
-
-// 开发Android平台的Tauri应用
-"dev:android": "tauri android dev",
-
-// 开发iOS平台的Tauri应用
-"dev:ios": "tauri ios dev",
-
-// 开发Nuxt.js应用，使用开发环境的.env文件，并监听主机变化
-"dev:nuxt": "nuxt dev --dotenv .env.development --host",
-
-// 开发Nuxt.js应用，使用生产环境的.env文件，并监听主机变化
-"dev:nuxt:prod": "nuxt dev --dotenv .env.production --host",
-
-// Nuxt.js预览模式
-"preview": "nuxt preview",
-
-// 构建项目，先使用Nuxi生成静态文件，然后构建Tauri应用
-"build": "nuxi generate && tauri build",
-
-// 仅构建Nuxt.js应用，使用生产环境的.env文件
-"build:nuxt": "nuxi generate --dotenv .env.production",
-
-// 构建Nuxt.js单页应用，使用生产环境的.env文件
-"build:nuxt:spa": "nuxi build --dotenv .env.production",
-
-// 构建Tauri应用
-"build:tauri": "tauri build",
-
-// 构建Android平台的Tauri应用，并生成APK文件
-"build:android": "tauri android build --apk",
-
-// 构建iOS平台的Tauri应用，并生成IPA文件
-"build:ios": "tauri ios build --ipa",
-
-// 发布版本，增加次要版本号，推送标签，拉取最新代码，推送到远程仓库
-"release": "npm version minor && git push --tag && git fetch && git push",
-
-// 发布主版本，增加主版本号，推送标签，拉取最新代码，推送到远程仓库
-"release:major": "npm version major && git push --tag && git fetch && git push",
-
-// 发布次要版本，增加次要版本号，推送标签，拉取最新代码，推送到远程仓库
-"release:minor": "npm version minor && git push --tag && git fetch && git push",
-
-// 发布补丁版本，增加补丁版本号，推送标签，拉取最新代码，推送到远程仓库
-"release:patch": "npm version patch && git push --tag && git fetch && git push",
-
-// 运行lint-staged，这是一个用于在Git暂存区运行linters的工具
-"lint-staged": "lint-staged"
-```
+- 邮箱：[kiwi2333@qq.com](mailto:kiwi2333@qq.com)
+- QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qqq&menu=yes)
