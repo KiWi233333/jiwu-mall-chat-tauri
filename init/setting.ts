@@ -1,12 +1,6 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 
-// const ColorModeMap: Record<string, string> = {
-//   light: "light",
-//   dark: "dark",
-//   system: "auto",
-// };
-
 export async function useSettingInit() {
   const setting = useSettingStore();
   // 1、主题切换
@@ -15,18 +9,17 @@ export async function useSettingInit() {
   watch(() => [setting.settingPage.modeToggle.value, colorMode.value], (val) => {
     if (!val[0])
       return;
-    const mode = val[0] === "system" ? (colorMode.value === "dark" ? "dark" : "light") : val[0];
-    useModeToggle(mode, undefined, true);
+    useModeToggle(val[0], undefined, true);
   });
   nextTick(() => {
-    const mode = setting.settingPage.modeToggle.value === "system" ? (colorMode.value === "dark" ? "dark" : "light") : setting.settingPage.modeToggle.value;
-    useModeToggle(mode, undefined, true);
+    useModeToggle(setting.settingPage.modeToggle.value, undefined, true);
   });
   window.addEventListener("keydown", (e) => {
     if (setting.isThemeChangeLoad)
       return;
     keyToggleTheme(e);
   });
+
   // 2、获取版本更新
   const route = useRoute();
   if (route.path !== "/msg") {
@@ -123,7 +116,7 @@ function keyToggleTheme(e: KeyboardEvent) {
     const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
     const xy = dom?.getBoundingClientRect();
     const colorMode = useColorMode();
-    const mode = colorMode.preference === "dark" ? "light" : "dark";
+    const mode = colorMode.value === "dark" ? "light" : "dark";
     const setting = useSettingStore();
     // 持久化
     setting.settingPage.modeToggle.value = mode;
