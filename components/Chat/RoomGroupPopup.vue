@@ -192,7 +192,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    zIndex: 2010, // 高于遮罩层
+    zIndex: 3000, // 高于遮罩层
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
       {
