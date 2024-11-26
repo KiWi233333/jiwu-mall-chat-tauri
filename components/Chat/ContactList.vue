@@ -27,6 +27,9 @@ async function loadData(dto?: ContactPageDTO) {
     pageSize: pageInfo.value.size,
     cursor: pageInfo.value.cursor,
   }, user.getToken);
+  if (!data) {
+    return;
+  }
   if (data && data.list) {
     data.list.forEach((p: ChatContactVO) => {
       chat.contactMap[p.roomId] = p;

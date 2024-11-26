@@ -1,5 +1,4 @@
 import type { isTrue, Result } from "@/types/result";
-import { BaseUrl } from "~/composables/utils/useBaseUrl";
 
 /**
  * 获取帖子列表

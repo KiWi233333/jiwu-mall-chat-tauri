@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { WsStatusEnum } from "~/composables/types/WsType";
-import { XUN_FEI_WSS_URL } from "~/composables/utils/useBaseUrl";
 import { appKeywords } from "~/constants";
 
 useSeoMeta({

@@ -7,7 +7,7 @@ import "dayjs/locale/zh-cn";
 
 const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
 const isSSR = process.env.NUXT_PUBLIC_SPA;
-const mode = process.env.NUXT_PUBLIC_NODE_ENV;
+const mode = process.env.NUXT_PUBLIC_NODE_ENV as "development" | "production" | "test";
 // 打印
 console.log(`mode:${mode} api_url:${BASE_URL} SSR:${isSSR}`);
 export default defineNuxtConfig({
