@@ -130,8 +130,8 @@ pnpm run dev:tauri
 - 若没有后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。
 
 ```sh
-# 终端1：启动nuxt
-pnpm run dev:nuxt:prod
+# 终端1：启动nuxt (发布环境)
+pnpm run prod:nuxt
 # 终端2：启动tauri
 pnpm run dev:tauri
 ```

@@ -131,8 +131,8 @@ pnpm run dev:tauri
 - If there is no backend service, modify the `.env.development` environment variable or use the `.env.production` configuration file.
 
 ```sh
-# Terminal 1: Start nuxt
-pnpm run dev:nuxt:prod
+# Terminal 1: Start prod nuxt (recommended ✔)
+pnpm run nuxt:prod
 # Terminal 2: Start tauri
 pnpm run dev:tauri
 ```

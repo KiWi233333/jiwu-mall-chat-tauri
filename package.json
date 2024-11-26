@@ -12,7 +12,7 @@
     "dev:android": "tauri android dev",
     "dev:ios": "tauri ios dev",
     "dev:nuxt": "nuxt dev --dotenv .env.development --host",
-    "dev:nuxt:prod": "nuxt dev --dotenv .env.production --host",
+    "prod:nuxt": "nuxt dev --dotenv .env.production --host",
     "preview": "nuxt preview",
     "build": "nuxi generate && tauri build",
     "build:nuxt": "nuxi generate --dotenv .env.production",
