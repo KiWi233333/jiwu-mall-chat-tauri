@@ -14,11 +14,11 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 
 <template>
   <div
-    class="border-0 border-r-1px transition-200 transition-width border-default"
+    class="w-[ border-0 transition-200 transition-width sm:(border-default border-r-1px)"
     v-bind="$attrs"
   >
     <slot name="top">
-      <div class="card-item mb-4 border-0 border-b-1px pb-4 border-default">
+      <div class="card-item mb-4 border-0 border-b-1px pb-4">
         <div class="hover:bg-transparent">
           <ChatFriendApplySearch
             @submit="val => {
@@ -28,7 +28,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
         </div>
       </div>
     </slot>
-    <ElScrollbar height="calc(100% - 3.8rem)" wrap-class="pb-10" class="scrollbar">
+    <el-scrollbar height="calc(100% - 3.8rem)" wrap-class="pb-10" class="scrollbar">
       <div class="card-item">
         <small op-90>新的朋友</small>
         <div class="item mt-4" @click="onNewView">
@@ -50,7 +50,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
           <ChatFriendList />
         </el-collapse-item>
       </el-collapse>
-    </ElScrollbar>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -62,7 +62,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
   --at-apply:"mb-5 flex flex-col"
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) rounded-6px transition-300"
+  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) transition-200"
 }
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {

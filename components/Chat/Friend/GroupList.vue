@@ -61,7 +61,7 @@ onMounted(() => {
         <div class="avatar-icon">
           <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
         </div>
-        <p>{{ p.name || "未填写" }}</p>
+        <span>{{ p.name || "未填写" }}</span>
       </div>
     </ListAutoIncre>
   </div>

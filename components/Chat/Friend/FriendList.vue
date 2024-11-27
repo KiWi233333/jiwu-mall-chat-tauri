@@ -22,8 +22,6 @@ async function loadData() {
   isLoading.value = false;
 }
 loadData();
-
-
 // 会话store
 const chat = useChatStore();
 watch(() => chat.isAddNewFriend, (val) => {
@@ -71,7 +69,7 @@ onMounted(() => {
         <div class="avatar-icon">
           <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
         </div>
-        <small>{{ p.nickName || "未填写" }}</small>
+        <span>{{ p.nickName || "未填写" }}</span>
       </div>
     </ListAutoIncre>
   </div>

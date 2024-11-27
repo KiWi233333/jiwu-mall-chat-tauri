@@ -151,12 +151,12 @@ export async function useMsgBoxWebViewInit() {
     immediate: true,
     debounce: 300,
   });
-  watch(() => user.isLogin, (newVal, oldVal) => {
+  const online = useOnline();
+  watch(() => user.isLogin && online.value, (newVal, oldVal) => {
     activeIcon.value = newVal ? onlineUrl : offlineUrl;
   }, {
     immediate: true,
   });
-
 
   // 判断是否已存在消息通知窗口
   const webview = await WebviewWindow.getByLabel(MSG_WEBVIEW_NAME);

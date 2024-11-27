@@ -147,7 +147,7 @@ async function openFileFolder() {
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
     </h3>
     <ElDivider class="opacity-60" />
-    <section text-0.9rem grid="~ cols-1 gap-4">
+    <section data-fade text-0.9rem grid="~ cols-1 gap-4">
       <!-- 字体 -->
       <div class="group h-8 flex-row-bt-c">
         字体设置
@@ -164,10 +164,11 @@ async function openFileFolder() {
           placeholder="请选择主题字体"
         >
           <el-option
-            v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :label="item.name"
-            :value="item.value"
+            v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :value="item.name"
             :title="item.name"
-          />
+          >
+            {{ item.name }}
+          </el-option>
         </el-select>
       </div>
       <!-- 黑暗 -->

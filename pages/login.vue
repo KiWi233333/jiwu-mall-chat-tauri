@@ -23,7 +23,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="main-box relative overflow-hidden overflow-hidden shadow border-default card-default bg-color"
+    class="main-box relative overflow-hidden shadow bg-color"
     grid="~ cols-1 md:cols-2"
   >
     <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex items-center gap-2 sm:w-50vw>
@@ -37,7 +37,7 @@ onMounted(() => {
     </div>
     <!-- 表单 -->
     <div
-      class="mt-a h-7/10 flex flex-col select-none rounded-t-8 pt-10 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color pt-20vh shadow-none) border-default-t bg-color-br"
+      class="mt-a h-7/10 flex flex-col select-none rounded-t-8 pt-10 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color pt-24vh shadow-none) border-default-t bg-color-br"
       data-tauri-drag-region
       data-fade
     >

@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 const error = useError();
+definePageMeta({
+  key: route => route.path,
+  layout: false,
+});
 </script>
 
 <template>

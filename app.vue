@@ -38,33 +38,34 @@ onUnmounted(useUmounted);
 </script>
 
 <template>
-  <main class="h-100dvh flex-row-c-c">
+  <main class="h-100dvh overflow-hidden rounded-1.5 border-default bg-color">
     <NuxtPage
-      :key="user.userId"
-      class="h-full w-full border-default card-default bg-color"
+      class="h-full w-full"
       :class="{ 'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px)': !isIframe && setting.isWeb }"
     />
   </main>
 </template>
 
 <style lang="scss">
+// .layout-enter-active,
+// .layout-leave-active,
 // .page-enter-active,
 // .page-leave-active {
 //   opacity: 1;
-//   transition-duration: 0.3s;
-//   transition-property: filter, opacity;
-//   will-change: filter, opacity;
+//   transition-duration: 0.2s;
+//   transition-property: opacity;
+//   will-change: opacity;
 // }
-
+// .layout-enter-from,
+// .layout-leave-to,
 // .page-enter-from,
 // .page-leave-to {
 //   opacity: 0;
-//   filter: blur(4px) contrast(4);
 // }
-
+// .dark .layout-enter-from,
+// .dark .layout-leave-to,
 // .dark .page-enter-from,
 // .dark .page-leave-to {
-//   opacity: 0.7;
-//   filter: blur(4px) contrast(4);
+//   opacity: 0;
 // }
 </style>

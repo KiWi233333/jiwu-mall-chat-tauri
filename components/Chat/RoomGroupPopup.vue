@@ -279,6 +279,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
                 message: "成功复制至剪贴板！",
                 grouping: true,
               });
+              const { isSupported, share } = useShare();
             },
           },
         ],

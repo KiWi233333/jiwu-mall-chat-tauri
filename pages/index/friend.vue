@@ -13,12 +13,12 @@ const chat = useChatStore();
   <div class="relative flex flex-1">
     <!-- 好友列表 -->
     <div
-      class="w-full transition-all sm:(relative mx-auto w-1/4 p-0) card-default"
+      class="w-full transition-all sm:(relative mx-auto w-25vw p-0) bg-color"
     >
       <ChatFriendTabs class="relative mx-a h-full flex-shrink-0 p-4" />
     </div>
     <div
-      class="z-1 h-full flex-1 flex-shrink-0 flex-col sm:w-3/4 card-default"
+      class="z-1 h-full flex-1 flex-shrink-0 flex-col card-default"
       :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
     >
       <div
@@ -29,7 +29,7 @@ const chat = useChatStore();
       <ChatFriendMainType
         v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
         :data="chat.theFriendOpt"
-        class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 bg-color"
+        class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 card-default"
       />
       <div
         v-else
