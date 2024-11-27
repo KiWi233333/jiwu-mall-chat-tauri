@@ -67,7 +67,7 @@ function reloadPage() {
       title="搜索会话"
       @click="toggleContactSearch"
     />
-    <div class="relative z-1000 flex flex-shrink-0 items-center gap-0 sm:gap-2">
+    <div class="relative z-1000 flex flex-shrink-0 items-center gap-2">
       <BtnAppDownload />
       <div class="flex items-center gap-3 rounded-2rem px-2 py-1 border-default card-default">
         <!-- 刷新页面 -->
