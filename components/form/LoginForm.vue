@@ -403,7 +403,7 @@ const options = [
     </template>
     <template v-else>
       <div class="mt-16 flex-row-c-c flex-col gap-8">
-        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="h-8rem w-8rem border-default card-default" />
+        <CardElImage :src="BaseUrlImg + user.userInfo.avatar" class="h-6rem w-6rem sm:(h-8rem w-8rem) border-default card-default" />
         <div text-center>
           <span>
             {{ user.userInfo.username || "未登录" }}

@@ -77,7 +77,9 @@ export async function useWsInit() {
       console.error(e);
       reload();
     };
-    isReload.value = false;
+    setTimeout(() => {
+      isReload.value = false;
+    }, 500);
   }
   // 自动重连
   if (ws.status !== WsStatusEnum.OPEN && user.isLogin)

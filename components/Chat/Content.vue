@@ -112,7 +112,6 @@ const onScroll = useDebounceFn((e) => {
   // 滚动到底部
   const offset = 100;
   if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight - 462 - offset) {
-    console.log("底部");
     if (chat.theContact.roomId && chat.theContact.unreadCount > 0) {
       chat.setReadList(chat.theContact.roomId);
     }
