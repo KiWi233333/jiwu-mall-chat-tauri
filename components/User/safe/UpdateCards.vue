@@ -57,13 +57,8 @@ const form = ref({
       flex flex-1 flex-col
     >
       <div class="flex items-center">
-        <el-avatar
-          size="large"
-          :src="
-            user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : `${BaseUrlImg}default.png`
-          "
-        />
-        <strong class="ml-3 block">用户名：{{ user.userInfo.username }}</strong>
+        <CardElImage class="h-12 w-12 card-default" :src="BaseUrlImg + user.userInfo.avatar" />
+        <strong class="ml-3 block">{{ user.userInfo.username }}</strong>
         <i
           opacity-0
           transition-300
@@ -95,7 +90,7 @@ const form = ref({
           手机号：
           <small
             opacity-80
-            :class="{ 'text-red-5': user.userInfo.isPhoneVerified === 0 }"
+            :class="{ 'text-red-5': !user.userInfo.phone }"
           >
             {{ (showMarkPhone ? user.markPhone : user.userInfo.phone) || "还未绑定" }}
           </small>
@@ -104,7 +99,7 @@ const form = ref({
           class="cursor-pointer transition-300 hover:text-[var(--el-color-primary)]"
           @click="form.showUpdatePhone = true"
         >
-          {{ user.userInfo.isPhoneVerified ? "修改手机号" : "绑定" }}
+          {{ user.userInfo.phone ? "修改手机号" : "绑定" }}
         </small>
       </div>
       <!-- 邮箱 -->
@@ -115,7 +110,7 @@ const form = ref({
           邮&emsp;箱：
           <small
             opacity-80
-            :class="{ 'text-red-5': user.userInfo.isEmailVerified === 0 }"
+            :class="{ 'text-red-5': !user.userInfo.email }"
           >
             {{ user.userInfo.email || "还未绑定" }}
           </small>
@@ -124,7 +119,7 @@ const form = ref({
           class="cursor-pointer transition-300 hover:text-[var(--el-color-primary)]"
           @click="form.showUpdateEmail = true"
         >
-          {{ user.userInfo.isEmailVerified ? "修改邮箱" : "绑定" }}
+          {{ user.userInfo.email ? "修改邮箱" : "绑定" }}
         </small>
       </div>
       <div
