@@ -196,6 +196,19 @@ function getBody(msg: ChatMessageVO) {
     const _msg = msg as ChatMessageVO<SoundBodyMsgVO>;
     return `[语音] ${getSecondsText(_msg?.message?.body?.second || 0)}`;
   }
+  else if (msg.message.type === MessageType.IMG) {
+    const _msg = msg as ChatMessageVO<ImgBodyMsgVO>;
+    return `[图片] ${_msg?.message.content}`;
+  }
+  else if (msg.message.type === MessageType.FILE) {
+    const _msg = msg as ChatMessageVO<FileBodyMsgVO>;
+    return `[${_msg.message.body?.fileName || "文件"}] ${_msg?.message.content}`;
+  }
+  else if (msg.message.type === MessageType.VIDEO) {
+    const _msg = msg as ChatMessageVO<ImgBodyMsgVO>;
+    return `[视频] ${_msg?.message.content}`;
+  }
+
   return msg.message.content;
 }
 
@@ -293,7 +306,7 @@ function updateContact(roomId: number, data: Partial<ChatContactVO>, callBack?: 
   for (let i = 0; i < chat.getContactList.length; i++) {
     const p = chat.getContactList[i];
     if (p && p.roomId === roomId) {
-      p.text = data.text !== undefined ? data.text : p.text;
+      p.text = data.text || p.text;
       p.unreadCount = data.unreadCount !== undefined ? data.unreadCount : p.unreadCount;
       p.activeTime = data.activeTime !== undefined ? data.activeTime : p.activeTime;
       p.avatar = data.avatar !== undefined ? data.avatar : p.avatar;
