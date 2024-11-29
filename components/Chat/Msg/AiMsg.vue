@@ -65,6 +65,11 @@ const colorMode = useColorMode();
       max-width: 12rem !important;
       max-height: 12rem !important;
     }
+    ol,
+    ul {
+      padding-left: 1.5em;
+      margin-top: .5em;
+    }
     .md-editor-code {
       .md-editor-code-block {
          line-height: 1.6em;

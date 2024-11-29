@@ -92,39 +92,38 @@ function sendMsg(msg: string, id: string) {
   if (body.value.ws && body.value.ws.OPEN === 1)
     return;
   body.value.ws = new WebSocket(XUN_FEI_WSS_URL);
-  body.value.ws.onopen = (e) => {
+  body.value.ws.onopen = async (e) => {
     status.value = WsStatusEnum.OPEN;
     if (dto?.value?.payload?.message?.text?.[0])
       dto.value.payload.message.text[0].content = msg;
     dto.value.header.uid = id;
     body.value.ws?.send(JSON.stringify(dto.value));
-    nextTick(() => {
-      scrollBottom();
-    });
+    await nextTick();
+    scrollBottom();
   };
-  body.value.ws.onclose = () => {
+  body.value.ws.onclose = async () => {
     setTimeout(() => {
       status.value = WsStatusEnum.SAFE_CLOSE;
     }, 300);
     body.value.ws = null;
+    await nextTick();
     scrollBottom();
     inputRef.value?.focus();
   };
   body.value.ws.onerror = () => {
     body.value.ws = null;
-    setTimeout(() => {
+    setTimeout(async () => {
       status.value = WsStatusEnum.CLOSE;
-    }, 300);
-    nextTick(() => {
+      await nextTick();
       scrollBottom();
       inputRef.value?.focus();
-    });
+    }, 300);
   };
   body.value.ws.onmessage = (e) => {
     if (e.data) {
       const data = JSON.parse(e.data);
       status.value = WsStatusEnum.OPEN;
-      status.value = data.payload.status as WsStatusEnum;
+      // status.value = data.payload.status as WsStatusEnum;
       const text = data?.payload?.choices?.text || [];
       text.value = "";
       text.forEach((p: any) => {
@@ -153,10 +152,8 @@ function sendMsg(msg: string, id: string) {
           },
         },
       });
-    }
-    nextTick(() => {
       scrollBottom();
-    });
+    }
   };
   msgList.value.push({
     fromUser: {
@@ -241,14 +238,14 @@ onMounted(() => {
     </el-scrollbar>
     <el-form
       ref="formRef" v-auth :model="form"
-      class="mt-4 flex items-center gap-3 bg-color"
+      class="mt-4 flex items-center gap-2 sm:gap-4 bg-color"
       @submit.prevent="onSubmit"
     >
       <div>
         <el-tooltip content="新对话" placement="top">
           <CardElImage
             :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-            class="h-2.4rem w-2.4rem cursor-pointer rounded-1/2 shadow"
+            class="h-2.2rem w-2.2rem cursor-pointer rounded-1/2 shadow"
             @click="handleNewChat"
           />
         </el-tooltip>
@@ -263,9 +260,8 @@ onMounted(() => {
         <el-input
           ref="inputRef"
           v-model.lazy="form.content"
-          style="height: 3rem;"
           :disabled="isChat" placeholder="快开始对话吧 ✨"
-          class="content border-0 border-b-1px border-default"
+          class="content mt-4 border-0 border-b-1px border-default"
         />
       </el-form-item>
       <BtnElButton
