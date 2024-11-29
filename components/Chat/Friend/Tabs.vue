@@ -14,7 +14,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 
 <template>
   <div
-    class="w-[ border-0 transition-200 transition-width sm:(border-default border-r-1px)"
+    class="border-0 transition-200 transition-width"
     v-bind="$attrs"
   >
     <slot name="top">
@@ -62,7 +62,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
   --at-apply:"mb-5 flex flex-col"
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] ) transition-200"
+  --at-apply:"flex items-center gap-4 p-2 cursor-pointer hover:(bg-[#b8b8b849] )  rounded-6px transition-200"
 }
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {
