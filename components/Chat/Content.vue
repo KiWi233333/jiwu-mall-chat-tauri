@@ -81,6 +81,8 @@ function scrollBottom(animate = true) {
 function saveScrollTop() {
   chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight;
 }
+
+// 滚动到指定位置
 async function scrollTop(size: number) {
   await scrollbarRef.value?.scrollTo({
     top: size || 0,
@@ -102,11 +104,6 @@ function onSendMsg(msg: ChatMessageVO) {
   }); // 发送消息后自动滚动到底部
 };
 
-onBeforeUnmount(() => {
-  timer.value && clearTimeout(timer.value);
-  timer.value = null;
-});
-
 // 滚动事件
 const onScroll = useDebounceFn((e) => {
   // 滚动到底部
@@ -117,6 +114,15 @@ const onScroll = useDebounceFn((e) => {
     }
   }
 }, 500);
+
+onBeforeUnmount(() => {
+  timer.value && clearTimeout(timer.value);
+  timer.value = null;
+});
+onDeactivated(() => {
+  timer.value && clearTimeout(timer.value);
+  timer.value = null;
+});
 </script>
 
 <template>
@@ -127,7 +133,7 @@ const onScroll = useDebounceFn((e) => {
     <el-scrollbar
       ref="scrollbarRef"
       class="stop-transition h-full flex-1"
-      wrap-class="px-0  shadow-(sm inset) sm:px-2"
+      wrap-class="px-0 shadow-(sm inset) sm:px-2"
       view-class="msg-list pb-2rem" @scroll="onScroll"
     >
       <ChatMessageList
