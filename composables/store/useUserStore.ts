@@ -220,7 +220,7 @@ export const useUserStore = defineStore(
   {
     // https://prazdevs.github.io/pinia-plugin-persistedstate/frameworks/nuxt-3.html
     persist: {
-      storage: persistedState.localStorage,
+      storage: piniaPluginPersistedstate.localStorage(),
     },
   },
 );
