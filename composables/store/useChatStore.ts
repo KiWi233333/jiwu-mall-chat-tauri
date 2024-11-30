@@ -50,8 +50,8 @@ export const useChatStore = defineStore(
       return list;
     });
     const isNewMsg = computed(() => unReadContactList.value.length > 0);
-    const isChatScroll = ref<boolean>(false);
     const isVisible = ref(false); // 是否可见
+    const isMsgListScroll = ref(false); // 消息列表是否滚动
     const theContact = ref<ChatContactDetailVO>({
       activeTime: 0,
       avatar: "",
@@ -320,7 +320,6 @@ export const useChatStore = defineStore(
         size: 15,
       };
       onOfflineList.value = [];
-      isChatScroll.value = false;
       playSounder.value = {
         state: "stop",
         url: "",
@@ -350,9 +349,9 @@ export const useChatStore = defineStore(
       delUserId,
       isAddNewFriend,
       isOpenContact,
+      isMsgListScroll,
       roomGroupPageInfo,
       onOfflineList,
-      isChatScroll,
       playSounder,
       isVisible,
       // 方法

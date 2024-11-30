@@ -66,8 +66,7 @@ async function onChangeRoom(newRoomId?: number) {
   const item = chat.contactMap[newRoomId];
   if (!item)
     return;
-  if (item.type === RoomType.SELFT)
-    contact.setContact(item);
+  contact.setContact(item); // 提前设置当前会话
   try {
     const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
     if (res && res.code === StatusCode.SUCCESS) {

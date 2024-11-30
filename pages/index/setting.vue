@@ -31,20 +31,32 @@ watchDebounced(
   },
 );
 
-const notificationTypeList = [
-  {
-    label: "系统",
-    value: "system",
-  },
-  {
-    label: "托盘",
-    value: "tray",
-  },
-  {
-    label: "关闭",
-    value: undefined,
-  },
-];
+const notificationTypeList = computed(() => setting.isMobile
+  ? [
+      {
+        label: "系统",
+        value: "system",
+      },
+      {
+        label: "关闭",
+        value: undefined,
+      },
+    ]
+  : [
+      {
+        label: "系统",
+        value: "system",
+      },
+      {
+        label: "托盘",
+        value: "tray",
+      },
+      {
+        label: "关闭",
+        value: undefined,
+      },
+    ],
+);
 const notificationType = computed({
   get: () => setting.settingPage.isTrayNotification === undefined ? undefined : (setting.settingPage.isTrayNotification ? "tray" : "system"),
   set: (val: string) => {
@@ -200,7 +212,7 @@ async function openFileFolder() {
         </el-tooltip>
       </div>
       <!-- 上下按键切换会话 -->
-      <div class="group h-8 flex-row-bt-c">
+      <div v-if="!setting.isMobileSize" class="group h-8 flex-row-bt-c">
         切换会话
         <el-tooltip
           :content="!setting.downUpChangeContact ? '开启方向上下键切换' : '关闭方向上下键切换'" placement="left"
@@ -213,12 +225,8 @@ async function openFileFolder() {
         </el-tooltip>
       </div>
       <!-- 消息通知 -->
-      <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
+      <div v-if="setting.isDesktop || setting.isMobile" class="group h-8 flex-row-bt-c">
         消息通知
-        <!-- <el-switch
-          v-model="setting.settingPage.isTrayNotification" size="large" active-text="托盘消息" inactive-text="系统通知"
-          inline-prompt @change="(val) => setting.settingPage.isTrayNotification = !!val"
-        /> -->
         <el-radio-group
           v-model="notificationType" class="inputs" :disabled="isLoading"
         >
@@ -231,7 +239,7 @@ async function openFileFolder() {
         </el-radio-group>
       </div>
       <!-- Esc -->
-      <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
+      <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
         ESC关闭
         <el-switch
           v-model="setting.settingPage.isEscMin" size="large" active-text="开启" inactive-text="关闭"
@@ -260,7 +268,7 @@ async function openFileFolder() {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                round plain
+                plain round
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"

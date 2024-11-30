@@ -17,11 +17,14 @@ const isReload = ref(false);
  */
 async function loadData(call?: (data?: Message[]) => void) {
   const roomId = chat.theContact.roomId;
-
   if (isLoading.value || isReload.value || pageInfo.value.isLast || !roomId)
     return;
+  if (chat.isMsgListScroll) {
+    return;
+  }
   isLoading.value = true;
   isReload.value = false;
+
   getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
     if (roomId !== chat.theContact.roomId)
       return;
@@ -54,7 +57,6 @@ async function loadData(call?: (data?: Message[]) => void) {
     pageInfo.value.cursor = null;
   });
 }
-
 
 const theRequest = ref<Promise<any> | null>(null);
 // 重新加载
@@ -331,6 +333,110 @@ function findMsg(msgId: number) {
       return p;
   }
 }
+
+// 滚动
+const scrollbarRef = ref();
+const timer = ref<any>(0);
+/**
+ * 滚动到指定消息
+ * @Param msgId 消息id
+ * @Param gapCount 偏移消息量（用于翻页）
+ * @Param isAnimated 是否动画滚动
+ */
+function scrollReplyMsg(msgId: number, gapCount: number = 0, isAnimated: boolean = true) {
+  if (!msgId)
+    return;
+  const offset = -10;
+  const el = document.querySelector(`#chat-msg-${msgId}`) as HTMLElement;
+  if (!el) {
+    timer.value = setTimeout(() => {
+      const el = document.querySelector(`#chat-msg-${msgId}`) as HTMLElement;
+      if (el) {
+        timer.value && clearTimeout(timer.value);
+        timer.value = null;
+        scrollReplyMsg(msgId, gapCount); // 递归翻页
+      }
+      else {
+        scrollTop(0);
+        scrollReplyMsg(msgId, gapCount);
+      }
+    }, 120);
+  }
+  else {
+    clearTimeout(timer.value);
+    timer.value = null;
+    // 找到对应消息
+    nextTick(() => {
+      if (!el)
+        return;
+      clearTimeout(timer.value);
+      scrollTop((el?.offsetTop || 0) + offset, isAnimated);
+      el.classList.add("reply-shaing");
+      timer.value = setTimeout(() => {
+        el.classList.remove("reply-shaing");
+        timer.value = null;
+      }, 2000);
+    });
+  }
+}
+
+// 滚动到底部
+function scrollBottom(animate = true) {
+  scrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight, animate);
+}
+
+// 保存上一个位置
+function saveScrollTop() {
+  chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight;
+}
+
+// 滚动到指定位置
+async function scrollTop(size: number, animated = false) {
+  if (chat.isMsgListScroll) {
+    return;
+  }
+  chat.isMsgListScroll = true;
+  scrollbarRef.value?.wrapRef?.scrollTo({ // 缓动
+    top: size || 0,
+    behavior: animated ? "smooth" : undefined,
+  });
+  if (animated) {
+    await nextTick();
+    setTimeout(() => {
+      chat.isMsgListScroll = false;
+    }, 400);
+  }
+  else {
+    chat.isMsgListScroll = false;
+  }
+}
+
+// 滚动事件
+const onScroll = useDebounceFn((e) => {
+  // 滚动到底部
+  const offset = 100;
+  if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight - 462 - offset) {
+    if (chat.theContact.roomId && chat.theContact.unreadCount > 0) {
+      chat.setReadList(chat.theContact.roomId);
+    }
+  }
+}, 500);
+
+// 绑定事件
+chat.scrollBottom = scrollBottom;
+chat.scrollReplyMsg = scrollReplyMsg;
+chat.saveScrollTop = saveScrollTop;
+chat.scrollTop = scrollTop;
+
+onBeforeUnmount(() => {
+  timer.value && clearTimeout(timer.value);
+  timer.value = null;
+});
+onDeactivated(() => {
+  timer.value && clearTimeout(timer.value);
+  timer.value = null;
+});
+
 // 暴露
 defineExpose({
   reload,
@@ -340,30 +446,39 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    v-bind="$attrs"
-    class="msg-list flex flex-col op-0 transition-opacity transition-duration-200"
-    :class="{ 'op-100': !isReload }"
+  <el-scrollbar
+    ref="scrollbarRef"
+    class="stop-transition h-full flex-1"
+    wrap-class="px-0 shadow-(sm inset) sm:px-2"
+    view-class="msg-list pb-2rem" @scroll="onScroll"
   >
-    <ListDisAutoIncre
-      :auto-stop="false"
-      :immediate="false"
-      :no-more="pageInfo.isLast && !isReload"
-      :loading="isLoading && !isReload"
-      loading-class="load-chaotic-orbit"
-      @load="loadData"
+    <div
+      v-bind="$attrs"
+      class="msg-list flex flex-col op-0 transition-opacity transition-duration-150"
+      :class="{ 'op-100': !isReload }"
     >
-      <!-- 消息适配器 -->
-      <ChatMsgMain
-        v-for="(msg, i) in chat.theContact.msgList"
-        :id="`chat-msg-${msg.message.id}`"
-        :key="msg.message.id"
-        :index="i"
-        :data="msg"
-        :last-msg="i > 0 ? chat.theContact.msgList[i - 1] : {}"
-      />
-    </ListDisAutoIncre>
-  </div>
+      <ListDisAutoIncre
+        :auto-stop="false"
+        :delay="800"
+        :threshold-height="200"
+        :immediate="false"
+        :no-more="pageInfo.isLast && !isReload"
+        :loading="isLoading && !isReload"
+        loading-class="load-chaotic-orbit"
+        @load="loadData"
+      >
+        <!-- 消息适配器 -->
+        <ChatMsgMain
+          v-for="(msg, i) in chat.theContact.msgList"
+          :id="`chat-msg-${msg.message.id}`"
+          :key="msg.message.id"
+          :index="i"
+          :data="msg"
+          :last-msg="i > 0 ? chat.theContact.msgList[i - 1] : {}"
+        />
+      </ListDisAutoIncre>
+    </div>
+  </el-scrollbar>
 </template>
 
 <style lang="scss" scoped>

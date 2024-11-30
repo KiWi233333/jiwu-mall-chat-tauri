@@ -59,9 +59,9 @@ const online = useOnline();
       >
         <MenuChatMenu class="hidden sm:block" />
         <!-- 会话列表 -->
-        <ChatContactList :class="{ '!w-0 op-0': $route.path !== '/' }" />
+        <ChatContactList v-show="$route.path === '/'" />
         <!-- 聊天框 -->
-        <ChatContent v-show="$route.path === '/' && chat.theContact.roomId" class="flex-1 border-default-l" />
+        <ChatContent v-show="$route.path === '/'" v-if=" chat.theContact.roomId" class="flex-1 border-default-l" />
         <!-- 缓存内容 -->
         <NuxtPage keepalive />
       </div>

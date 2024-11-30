@@ -55,21 +55,22 @@ onUnmounted(useUmounted);
 // .layout-leave-active,
 // .page-enter-active,
 // .page-leave-active {
-//   opacity: 1;
 //   transition-duration: 0.2s;
-//   transition-property: opacity;
-//   will-change: opacity;
+//   will-change: opacity transform;
+//   transform: none;
 // }
 // .layout-enter-from,
 // .layout-leave-to,
 // .page-enter-from,
 // .page-leave-to {
 //   opacity: 0;
+//   transform: scale(0.9);
 // }
 // .dark .layout-enter-from,
 // .dark .layout-leave-to,
 // .dark .page-enter-from,
 // .dark .page-leave-to {
 //   opacity: 0;
+//   transform: scale(0.9) translateY(10px);
 // }
 </style>

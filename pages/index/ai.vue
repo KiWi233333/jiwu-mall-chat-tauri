@@ -203,7 +203,9 @@ function handleNewChat() {
 }
 
 const [autoAnimateRef, enable] = useAutoAnimate({});
-onMounted(() => {
+onMounted(() => active());
+onActivated(() => active());
+function active() {
   if (!setting.isMobileSize)
     inputRef.value?.focus();
 
@@ -215,7 +217,7 @@ onMounted(() => {
   });
   // 切换页面时关闭动画
   enable(!setting.settingPage.isCloseAllTransition);
-});
+}
 </script>
 
 <template>
