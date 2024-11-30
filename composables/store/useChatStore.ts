@@ -147,6 +147,9 @@ export const useChatStore = defineStore(
         return false;
       if (!await isActiveWindow()) // 窗口未激活
         return false;
+      if (useRoute().path !== "/") { // 不在聊天页面
+        return;
+      }
       const user = useUserStore();
       if (!user.getToken)
         return false;
