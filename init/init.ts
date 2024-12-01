@@ -7,7 +7,6 @@ import { type as osType, platform, type } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
 import { restoreStateCurrent, saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
 import { useFlashTray } from "~/composables/tauri/window";
-import type { PayloadType } from "~/types/tauri";
 
 /**
  * Tauri事件

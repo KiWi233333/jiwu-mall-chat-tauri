@@ -31,7 +31,8 @@ watchDebounced(
   },
 );
 
-const notificationTypeList = computed(() => setting.isMobile
+// 通知
+const notificationTypeList = computed(() => (setting.isMobile || setting.isWeb)
   ? [
       {
         label: "系统",
@@ -39,26 +40,26 @@ const notificationTypeList = computed(() => setting.isMobile
       },
       {
         label: "关闭",
-        value: undefined,
+        value: false,
       },
     ]
   : [
-      {
-        label: "系统",
-        value: "system",
-      },
       {
         label: "托盘",
         value: "tray",
       },
       {
+        label: "系统",
+        value: "system",
+      },
+      {
         label: "关闭",
-        value: undefined,
+        value: false,
       },
     ],
 );
 const notificationType = computed({
-  get: () => setting.settingPage.isTrayNotification === undefined ? undefined : (setting.settingPage.isTrayNotification ? "tray" : "system"),
+  get: () => setting.settingPage.isTrayNotification === undefined ? false : (setting.settingPage.isTrayNotification ? "tray" : "system"),
   set: (val: string) => {
     if (val === "system")
       setting.settingPage.isTrayNotification = false;
@@ -69,6 +70,13 @@ const notificationType = computed({
   },
 });
 
+
+// 主题
+const themeConfigList = setting.settingPage.modeToggle.list.map(item => ({
+  ...item,
+  label: item.name,
+  value: item.value,
+}));
 const thePostion = ref({
   clientX: 0,
   clientY: 0,
@@ -186,17 +194,13 @@ async function openFileFolder() {
       <!-- 黑暗 -->
       <div :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
         深色模式
-        <el-radio-group
-          v-model="theme" class="inputs" :disabled="isLoading"
+        <el-segmented
+          v-model="theme"
+          class="inputs border-default"
+          style="width:13rem;background-color: transparent;--el-segmented-item-selected-color: #fff;--el-border-radius-base: 2rem;"
+          :options="themeConfigList"
           @click="(e: MouseEvent) => thePostion = { clientX: e.clientX, clientY: e.clientY }"
-        >
-          <el-radio-button
-            v-for="p in setting.settingPage.modeToggle.list" :key="p.value" :disabled="isLoading"
-            class="flex-1" :value="p.value"
-          >
-            {{ p.name }}
-          </el-radio-button>
-        </el-radio-group>
+        />
       </div>
       <!-- 关闭动画 -->
       <div class="group h-8 flex-row-bt-c">
@@ -225,18 +229,14 @@ async function openFileFolder() {
         </el-tooltip>
       </div>
       <!-- 消息通知 -->
-      <div v-if="setting.isDesktop || setting.isMobile" class="group h-8 flex-row-bt-c">
+      <div class="group h-8 flex-row-bt-c">
         消息通知
-        <el-radio-group
-          v-model="notificationType" class="inputs" :disabled="isLoading"
-        >
-          <el-radio-button
-            v-for="p in notificationTypeList" :key="p.value" :disabled="isLoading"
-            class="flex-1" :value="p.value"
-          >
-            {{ p.label }}
-          </el-radio-button>
-        </el-radio-group>
+        <el-segmented
+          v-model="notificationType"
+          class="inputs border-default"
+          style="width:13rem;background-color: transparent;--el-segmented-item-selected-color: #fff;--el-border-radius-base: 2rem;"
+          :options="notificationTypeList"
+        />
       </div>
       <!-- Esc -->
       <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
@@ -268,7 +268,7 @@ async function openFileFolder() {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                plain round
+                round plain
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -354,6 +354,7 @@ async function openFileFolder() {
 
 <style scoped lang="scss">
 .inputs {
+  --btn-nums: 3;
   --at-apply: "transition-200  select-none";
   --el-border-radius-base: 2em !important;
 }
@@ -362,8 +363,7 @@ async function openFileFolder() {
   border: 1px solid #7c7c7c33;
   border-radius: 1rem;
   width: 13rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
 
   .el-radio-button__inner {
     border: none;
