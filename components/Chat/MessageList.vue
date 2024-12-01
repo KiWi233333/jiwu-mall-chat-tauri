@@ -71,7 +71,7 @@ function reload(roomId: number) {
   chat.theContact.msgList.splice(0);
   isReload.value = true;
   isLoading.value = true;
-  theRequest.value = getChatMessagePage(roomId, 20, null, user.getToken).then(({ data }) => {
+  theRequest.value = getChatMessagePage(roomId, 20, null, user.getToken).then(async ({ data }) => {
     if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
@@ -80,15 +80,18 @@ function reload(roomId: number) {
     chat.theContact.msgList = data.list;
     pageInfo.value.isLast = data.isLast;
     pageInfo.value.cursor = data.cursor;
-    nextTick(() => {
-      setTimeout(() => { // 滚动到底部
-        chat.scrollBottom(false);
-        isLoading.value = false;
-        isReload.value = false;
-        chat.saveScrollTop && chat.saveScrollTop();
-      }, 0);
-    });
-  });
+    await nextTick();
+    isLoading.value = false;
+    isReload.value = false;
+    chat.scrollBottom(false);
+    chat.saveScrollTop && chat.saveScrollTop();
+  }).catch(async () => {
+    await nextTick();
+    isLoading.value = false;
+    isReload.value = false;
+    chat.scrollBottom(false);
+  })
+  ;
 }
 
 // 重新加载会话列表
@@ -454,7 +457,7 @@ defineExpose({
   >
     <div
       v-bind="$attrs"
-      class="msg-list flex flex-col op-0 transition-opacity transition-duration-150"
+      class="msg-list flex flex-col op-0 transition-opacity transition-duration-200"
       :class="{ 'op-100': !isReload }"
     >
       <ListDisAutoIncre
