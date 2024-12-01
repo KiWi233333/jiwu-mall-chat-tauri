@@ -67,7 +67,7 @@ const online = useOnline();
       </div>
     </div>
     <div v-else class="relative h-full flex flex-col overflow-hidden" />
-    <LazyMenuBottomMenu v-if="user.isLogin && setting.isOpenContact" class="block sm:hidden" />
+    <LazyMenuBottomMenu v-if="user.isLogin && setting.isOpenContact" class="grid sm:hidden" />
   </main>
 </template>
 
