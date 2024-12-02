@@ -8,15 +8,19 @@ watch(() => setting.isWeb, async (isWeb) => {
   const res = await getLatestVersion();
   if (res) {
     const ua = navigator.userAgent;
-    let system: keyof AppPlatforms = "windows-x86_64";
-    if (ua.toLowerCase().includes("windows"))
-      system = "windows-x86_64";
-    else if (ua.toLowerCase().includes("macos"))
-      system = "darwin-aarch64";
-    else if (ua.toLowerCase().includes("linux"))
-      system = "linux-x86_64";
+    console.log();
+
     latestVersion.value = res;
-    downloadUrl.value = res.platforms[system].url || "https://kiwi233.top/%E9%A1%B9%E7%9B%AE/%E6%9E%81%E7%89%A9%E8%81%8A%E5%A4%A9.html#%F0%9F%92%BB-%E4%B8%8B%E8%BD%BD";
+    if (ua.toLowerCase().includes("windows"))
+      downloadUrl.value = res.platforms["windows-x86_64"].url;
+    else if (ua.toLowerCase().includes("macos"))
+      downloadUrl.value = res.platforms["darwin-aarch64"].url;
+    else if (ua.toLowerCase().includes("linux"))
+      downloadUrl.value = res.platforms["linux-x86_64"].url;
+    else if (ua.includes("iPhone"))
+      downloadUrl.value = `${BaseUrlAppFile}/app/${res.version}/JiwuChat_${res.version}.apk`;
+    else
+      downloadUrl.value = "https://kiwi233.top/%E9%A1%B9%E7%9B%AE/%E6%9E%81%E7%89%A9%E8%81%8A%E5%A4%A9.html#%F0%9F%92%BB-%E4%B8%8B%E8%BD%BD";
   }
 }, { immediate: true });
 </script>

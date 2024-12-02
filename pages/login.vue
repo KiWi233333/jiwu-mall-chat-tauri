@@ -27,7 +27,8 @@ onMounted(() => {
     grid="~ cols-1 md:cols-2"
   >
     <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex items-center gap-2 sm:w-50vw>
-      <div ml-a p-2 sm:p-4>
+      <div ml-a flex p-2 sm:p-4>
+        <BtnAppDownload class="mr-2" />
         <MenuController v-if="setting.isDesktop" key="header" :show-max="false" />
       </div>
     </div>
@@ -68,10 +69,12 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.main-box {
-  background-image: url("/images/login_bg.jpg");
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size: 100% 42%;
+@media (max-width: 640px) {
+  .main-box {
+    background-image: url("/images/login_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 42%;
+  }
 }
 </style>
