@@ -43,7 +43,7 @@ onUnmounted(useUmounted);
   >
     <div
       class="h-full w-full overflow-hidden rounded-1.5 border-default bg-color"
-      :class="{ 'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px)': !isIframe && setting.isWeb }"
+      :class="{ 'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px) shadow-lg': !isIframe && setting.isWeb }"
     >
       <NuxtPage class="h-full w-full" />
     </div>
