@@ -25,9 +25,10 @@ export async function useWsInit() {
     if (isReload.value) {
       return;
     }
+    console.log("web worker reload");
     isReload.value = true;
     worker?.terminate?.(); // 关闭 WebSocket 连接
-    ws?.close?.(false); // 关闭 WebSocket 连接
+    await ws?.close?.(false); // 关闭 WebSocket 连接
     if (!user.isLogin) {
       return;
     }
@@ -82,16 +83,16 @@ export async function useWsInit() {
     }, 500);
   }
   // 自动重连
-  if (ws.status !== WsStatusEnum.OPEN && user.isLogin)
-    reload();
   watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
-    if ((val[0] !== WsStatusEnum.OPEN || !ws.webSocketHandler) && val[1])
+    if (val[0] !== WsStatusEnum.OPEN && val[1]) {
       reload();
-    else if (!val[1])
+    }
+    else if (!val[1]) {
       ws.close(false);
+    }
   }, {
-    debounce: 1000,
-    immediate: false,
+    debounce: 500,
+    immediate: true,
   });
 
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。

@@ -187,14 +187,14 @@ export const useWs = defineStore(
     }
 
     // 关闭
-    function close(isConfirm = true) {
+    async function close(isConfirm = true) {
       if (!webSocketHandler.value)
         return;
       console.log("关闭会话");
       if (!isConfirm) {
         try {
-          webSocketHandler.value?.close?.();
-          webSocketHandler.value?.disconnect?.();
+          await webSocketHandler.value?.close?.();
+          await webSocketHandler.value?.disconnect?.();
           webSocketHandler.value = null; // 清空 WebSocket 连接
         }
         catch (err) {
