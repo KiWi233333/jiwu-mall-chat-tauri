@@ -73,7 +73,7 @@ export default defineNuxtConfig({
     payloadExtraction: false,
     renderJsonPayloads: true, //
     emitRouteChunkError: false, // https://nuxt.com.cn/docs/getting-started/error-handling#js-chunk-%E9%94%99%E8%AF%AF
-    viewTransition: true, // 支持View Transition API Chorme111 https://blog.csdn.net/weixin_42553583/article/details/130474259
+    // viewTransition: true, // 支持View Transition API Chorme111 https://blog.csdn.net/weixin_42553583/article/details/130474259
     crossOriginPrefetch: true, // 使用 Speculation Rules API 启用跨源预取。
   },
   routeRules: {
