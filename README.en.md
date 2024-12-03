@@ -30,31 +30,25 @@
 Language: English | [Simplified Chinese](./README.md)
 </div>
 
-### Introduction
+## Introduction
 
 JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + element-plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. It also supports AI shopping chat and global dark mode. Users can engage in real-time chat, share updates, and AI customer service Q&A through the app.
 
-<!-- 多端适配 英文 -->
+## Multi-platform Support
 ![Multi-platform Support](.doc/previews.png)
 
-### Technology
-
-```txt
-Based on the Nuxt3 + Tauri + element-plus framework
-```
-
-### Trends
+## Trends
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
-### Default Account
+## Default Account
 
 - Account: ikun233
 - Password: 123456
 
 Note: This account does not have permissions for uploading images, changing passwords, etc.
 
-### Feature List
+## Feature List
 
 | Feature Module | Description | Status |
 | --- | --- | --- |
@@ -68,7 +62,7 @@ Note: This account does not have permissions for uploading images, changing pass
 | File Download Management Module | Supports local file download, open, and delete functions | ✔ |
 | Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
 
-### Project Screenshots
+## Project Screenshots
 
 - Chat Desktop App Login
 
@@ -108,7 +102,7 @@ Note: This account does not have permissions for uploading images, changing pass
  <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
 </div>
 
-## ⏳ Getting Started | Project Setup
+## ⏳ Getting Started
 
 ### 📦 Install Dependencies
 
@@ -172,7 +166,7 @@ Restore
 pnpm config set registry https://registry.npmjs.org
 ```
 
-### 🔧 Technology Stack | Tech Stack
+## 🔧 Technology Stack | Tech Stack
 
 | Category        | Technology/Component | Version   |
 | --------------- | ------------------- | --------- |

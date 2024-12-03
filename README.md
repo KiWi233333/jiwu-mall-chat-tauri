@@ -30,30 +30,26 @@
 语言 : 简体中文 | [English](./README.en.md)
 </div>
 
-### 介绍
+## 介绍
 
 极物聊天 Tauri APP 是一个基于Nuxt3 + Tauri + element-plus 基本框架的聊天桌面应用。它提供了一个美观的用户界面，并集成了聊天和社交功能。同时，它还支持AI购物聊天和全局夜间模式。用户可以通过该应用进行实时聊天、分享动态和AI客服问答。
 
+## 多端适配
+
 ![多端适配](.doc/previews.png)
 
-### 技术
-
-```txt
-基于Nuxt3 + Tauri + element-plus 基本框架
-```
-
-### 趋势
+## 趋势
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
-### 默认账号
+## 默认账号
 
 - 账号：ikun233
 - 密码：123456
 
 注：该账号上传图片、修改密码等部分没有权限
 
-### 功能列表
+## 功能列表
 
 | 功能模块 | 功能描述 | 状态 |
 | --- | --- | --- |
@@ -67,7 +63,7 @@
 | 文件下载管理模块 | 支持文件本地下载、打开、删除等功能 | ✔ |
 | 其他功能 | 全局夜间模式、字体、自定义下载路径、多系统支持、定制化设置等 | ✔ |
 
-### 项目截图
+## 项目截图
 
 - 聊天桌面应用 Login
 
@@ -107,7 +103,7 @@
  <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
 </div>
 
-## ⏳ 起步 | Project Setup
+## ⏳ 起步
 
 ### 📦 安装依赖
 
@@ -170,7 +166,7 @@ pnpm config set registry https://registry.npm.taobao.org
 pnpm config set registry https://registry.npmjs.org
 ```
 
-### 🔧 涉及技术栈 | Tech Stack
+## 🔧 涉及技术栈 | Tech Stack
 
 | 类别         | 技术/组件          | 版本号       |
 | ------------- | ------------------ | ------------ |
