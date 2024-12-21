@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_API_WS_BASE_URL: string
   readonly VITE_BASE_OSS_PATH: string
   readonly VITE_XUN_FEI_WSS_URL: string
+  readonly VITE_XUN_FEI_APP_ID: string
 }
 
 interface ImportMeta {

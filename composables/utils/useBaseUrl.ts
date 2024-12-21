@@ -14,4 +14,5 @@ export const AuthKey = "Authorization";
 export const BaseWSUrl = import.meta.env.VITE_API_WS_BASE_URL;
 
 export const XUN_FEI_WSS_URL = import.meta.env.VITE_XUN_FEI_WSS_URL;
+export const XUN_FEI_APP_ID = import.meta.env.VITE_XUN_FEI_APP_ID;
 

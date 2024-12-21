@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { WsStatusEnum } from "~/composables/types/WsType";
+import { XUN_FEI_APP_ID } from "~/composables/utils/useBaseUrl";
 import { appKeywords } from "~/constants";
 
 useSeoMeta({
@@ -39,7 +40,7 @@ const body = ref({
 
 const dto = ref({
   header: {
-    app_id: "3b3875ac",
+    app_id: XUN_FEI_APP_ID,
     uid: user.userInfo.id,
   },
   parameter: {
