@@ -93,6 +93,7 @@ export async function useWsInit() {
   }, {
     debounce: 500,
     immediate: true,
+    deep: true,
   });
 
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。

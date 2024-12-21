@@ -40,9 +40,9 @@ export const useChatStore = defineStore(
     const searchKeyWords = ref("");
     const getContactList = computed(() => {
       if (searchKeyWords.value)
-        return contactList.value.sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
+        return Object.values(contactMap.value).sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
       else
-        return contactList.value.sort((a, b) => b.activeTime - a.activeTime);
+        return Object.values(contactMap.value).sort((a, b) => b.activeTime - a.activeTime);
     });
     const unReadContactList = computed(() => {
       const list = contactList.value.filter(p => p.unreadCount);
