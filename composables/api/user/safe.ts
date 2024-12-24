@@ -28,55 +28,21 @@ export interface DeviceInfo {
   userAgentString: string
   operatingSystem: string
   browserVersion: BrowserVersion
+  ipInfo: IpInfo
+}
+// IpInfo
+export interface IpInfo {
+  country: null | string,
+  region: null | string,
+  province: null | string,
+  city: string,
+  isp: string,
+  address: string,
+  addressAndIsp: string
 }
 // 浏览器信息
 export interface BrowserVersion {
   version: string
   majorVersion: string
   minorVersion: string
-}
-
-/**
- * 获取IP设备信息
- * @param ip 对应ip地址
- * @returns IP信息
- */
-export function getDeviceIpInfo(ip: string, token: string) {
-  return useHttp.get<Result<DeviceIpInfo>>(`/res/ip/info?ip=${ip}`, {}, {
-    headers: {
-      Authorization: token,
-    },
-  });
-}
-
-export interface DeviceIpInfo {
-  ip: string
-  id: number
-  city?: null | string
-  country?: null | string
-  isp?: null | string
-  region?: string
-  province?: string
-  address?: string
-  addressAndIsp?: string
-  isLocal: isTrue
-  browser: string
-  userAgentString: string
-  operatingSystem: string
-  browserVersion: BrowserVersion
-  ioCount?: number
-  took?: number
-  operator?: string
-  other?: string
-}
-
-export interface IpInfo {
-  region: string
-  ioCount: number
-  took: number
-  country: string
-  province: string
-  city: string
-  operator: string
-  other: string
 }

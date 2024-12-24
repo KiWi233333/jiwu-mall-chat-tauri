@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import type { DeviceIpInfo } from "@/composables/api/user/safe";
+import type { DeviceInfo } from "@/composables/api/user/safe";
 
 const { data } = defineProps<{
-  data: DeviceIpInfo
+  data: DeviceInfo
 }>();
 </script>
 
 <template>
   <div class="flex flex-col border-1px p-4 leading-1.5em transition-all border-default-dashed card-default">
     <small class="mb-1 flex-row-bt-c font-600">
-      {{ data.country && data.country !== "0" ? data.country : "未知" }}
-      {{ data.province && data.province !== "0" ? data.province : "未知" }}
-      {{ data.city && data.city !== "0" ? data.city : "未知" }}
+      {{ data?.ipInfo?.country && data?.ipInfo?.country !== "0" ? data?.ipInfo?.country : "未知" }}
+      {{ data?.ipInfo?.province && data?.ipInfo?.province !== "0" ? data?.ipInfo?.province : "未知" }}
+      {{ data?.ipInfo?.city && data?.ipInfo?.city !== "0" ? data?.ipInfo?.city : "未知" }}
       <el-tag
         v-if="data.isLocal"
         type="info"

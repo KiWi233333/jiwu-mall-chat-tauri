@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { DeviceIpInfo } from "@/composables/api/user/safe";
 import { getLoginDeviceList, toUserOffline } from "@/composables/api/user/safe";
 
 const [autoAnimateRef, enable] = useAutoAnimate({
@@ -13,47 +12,13 @@ onMounted(() => {
 const user = useUserStore();
 const isLoading = ref<boolean>(false);
 
-const deviceList = ref<DeviceIpInfo[]>([]);
+const deviceList = ref<DeviceInfo[]>([]);
 // 信息
 async function getDeviceList() {
   const res = await getLoginDeviceList(user.getToken);
-  const result: DeviceIpInfo[] = res.data.sort((a: DeviceIpInfo, b: DeviceIpInfo) => b.isLocal - a.isLocal);
-
-  const getList = [];
-
-  for (const p of result) {
-    getList.push(getDeviceIpInfo(p.ip, user.getToken));
-
-    // 每10个设备，等待500ms
-    if (getList.length === 10) {
-      const ProList = await Promise.all(getList);
-      ProList.forEach((p, i) => {
-        const index = i + (getList.length - 10); // 调整索引
-        result[index] = {
-          ...p.data,
-          ...result[index],
-        };
-      });
-
-      // 清空 getList 数组，并等待500ms
-      getList.length = 0;
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
+  if (res.code === StatusCode.SUCCESS) {
+    deviceList.value = res.data.sort((a, b) => a.isLocal);
   }
-
-  // 处理剩余的设备
-  if (getList.length > 0) {
-    const ProList = await Promise.all(getList);
-    ProList.forEach((p, i) => {
-      const index = i + (result.length - getList.length);
-      result[index] = {
-        ...p.data,
-        ...result[index],
-      };
-    });
-  }
-
-  deviceList.value = result.sort((a, b) => a.isLocal);
   return true;
 }
 getDeviceList();
@@ -62,10 +27,8 @@ async function reload() {
   if (isLoading.value)
     return;
   deviceList.value.splice(0);
-  isLoading.value = true;
   const flag = await getDeviceList();
   setTimeout(() => {
-    isLoading.value = false;
     ElMessage.success(flag ? "刷新成功🎉！" : "刷新失败，请稍后重试！");
   }, 300);
 }

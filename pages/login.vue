@@ -34,7 +34,7 @@ onMounted(() => {
     </div>
     <!-- bg -->
     <div hidden h-full w-full select-none border-0 border-r-1px shadow-md shadow-inset md:block border-default>
-      <ElImage src="/images/login_bg.jpg" fit="cover" class="h-full select-none overflow-hidden rounded-r-0 card-default" />
+      <ElImage src="/images/login_bg.jpg" fit="cover" class="h-full w-full select-none overflow-hidden rounded-r-0 card-default" />
     </div>
     <!-- 表单 -->
     <div
