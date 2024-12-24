@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
-import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
@@ -530,7 +530,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" round plain @click="exitGroup()">
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
