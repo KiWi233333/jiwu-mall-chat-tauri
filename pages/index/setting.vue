@@ -184,8 +184,9 @@ async function openFileFolder() {
           placeholder="请选择主题字体"
         >
           <el-option
-            v-for="item in setting.settingPage.fontFamily.list" :key="item.value" :value="item.name"
-            :title="item.name"
+            v-for="item in setting.settingPage.fontFamily.list" :key="item.value"
+            :value="item.value"
+            :label="item.name"
           >
             {{ item.name }}
           </el-option>
