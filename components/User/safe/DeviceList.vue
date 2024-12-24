@@ -18,18 +18,41 @@ const deviceList = ref<DeviceIpInfo[]>([]);
 async function getDeviceList() {
   const res = await getLoginDeviceList(user.getToken);
   const result: DeviceIpInfo[] = res.data.sort((a: DeviceIpInfo, b: DeviceIpInfo) => b.isLocal - a.isLocal);
-  const getList = [];
-  for (const p of result)
-    getList.push(await getDeviceIpInfo(p.ip, user.getToken));
 
-  // 获取地址
-  const ProList = await Promise.all(getList);
-  ProList.forEach((p, i) => {
-    result[i] = {
-      ...p.data,
-      ...result[i],
-    };
-  });
+  const getList = [];
+
+  for (const p of result) {
+    getList.push(getDeviceIpInfo(p.ip, user.getToken));
+
+    // 每10个设备，等待500ms
+    if (getList.length === 10) {
+      const ProList = await Promise.all(getList);
+      ProList.forEach((p, i) => {
+        const index = i + (getList.length - 10); // 调整索引
+        result[index] = {
+          ...p.data,
+          ...result[index],
+        };
+      });
+
+      // 清空 getList 数组，并等待500ms
+      getList.length = 0;
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
+  // 处理剩余的设备
+  if (getList.length > 0) {
+    const ProList = await Promise.all(getList);
+    ProList.forEach((p, i) => {
+      const index = i + (result.length - getList.length);
+      result[index] = {
+        ...p.data,
+        ...result[index],
+      };
+    });
+  }
+
   deviceList.value = result.sort((a, b) => a.isLocal);
   return true;
 }
@@ -100,7 +123,7 @@ function exitLogin(ua?: string) {
       <!-- 列表 -->
       <div
         ref="autoAnimateRef"
-        class="relative grid grid-cols-1 gap-2 lg:grid-cols-3 sm:grid-cols-2"
+        class="relative grid grid-cols-1 gap-2 pb-4rem lg:grid-cols-3 sm:grid-cols-2"
       >
         <UserSafeDeviceCard
           v-for="p in deviceList"
