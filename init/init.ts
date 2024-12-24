@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { appDataDir } from "@tauri-apps/api/path";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
-import { type as osType, platform, type } from "@tauri-apps/plugin-os";
+import { type as osType, platform } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
 import { restoreStateCurrent, saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
 import { useFlashTray } from "~/composables/tauri/window";
@@ -50,6 +50,13 @@ export async function userTauriInit() {
     }, {
       debounce: 1000,
     });
+  }
+
+
+  // msgbox 默认不调整
+  const msgbox = WebviewWindow.getCurrent();
+  if (msgbox.label === "msgbox" && useRoute().path !== "/msg") {
+    navigateTo("/msg");
   }
 
   // 监听open_url事件
@@ -115,13 +122,13 @@ export async function useAuthInit() {
 
 export const MSG_WEBVIEW_NAME = "msgbox";
 export const MSG_WEBVIEW_WIDTH = 240;
-export const MSG_WEBVIEW_HEIGHT = 300;
 
 /**
  * 初始化消息通知窗口 (仅限桌面端)
  */
 export async function useMsgBoxWebViewInit() {
   let platformName = "web";
+  const MSG_WEBVIEW_HEIGHT = ref(300);
   try {
     platformName = platform();
   }
@@ -130,7 +137,7 @@ export async function useMsgBoxWebViewInit() {
   }
   if (!["windows", "linux", "macos"].includes(platformName))
     return;
-
+  restoreStateCurrent(StateFlags.ALL);
   const chat = useChatStore();
   const user = useUserStore();
   const ws = useWs();
@@ -151,6 +158,7 @@ export async function useMsgBoxWebViewInit() {
     debounce: 300,
   });
   const online = useOnline();
+
   watch(() => user.isLogin && online.value, (newVal, oldVal) => {
     activeIcon.value = newVal ? onlineUrl : offlineUrl;
   }, {
@@ -162,6 +170,13 @@ export async function useMsgBoxWebViewInit() {
   if (!webview)
     return;
 
+  // 获取消息通知窗口
+  const msgbox = await WebviewWindow.getByLabel("msgbox");
+  if (msgbox) {
+    msgbox?.innerSize().then((size) => {
+      MSG_WEBVIEW_HEIGHT.value = size.height;
+    });
+  }
   // 监听点击事件消息通知事件
   const trayClickUnlisten = await listen("tray_click", async (event) => {
     const win = await WebviewWindow.getByLabel("main");
@@ -190,17 +205,20 @@ export async function useMsgBoxWebViewInit() {
     if (!win)
       return;
     const position = event.payload as LogicalPosition;
-    const types = type();
+    const winPosition = await win.position();
+    console.log("winPosition", winPosition);
+
+    const setting = useSettingStore();
     const screenSize = window.screen;
     const taskWidth = screenSize.width - screenSize.availWidth;
     const taskHeight = screenSize.height - screenSize.availHeight;
-    if (types === "windows") {
+    if (setting.osType === "windows") {
       // 任务栏 上下左右四个位置
       let x = position.x - MSG_WEBVIEW_WIDTH / 2;
-      let y = position.y - MSG_WEBVIEW_HEIGHT;
+      let y = position.y - MSG_WEBVIEW_HEIGHT.value;
       if (x < 0) {
         x = taskWidth;
-        y = position.y - MSG_WEBVIEW_HEIGHT / 2;
+        y = position.y - MSG_WEBVIEW_HEIGHT.value / 2;
       }
       if (y < 0) {
         x = position.x - MSG_WEBVIEW_WIDTH / 2;
@@ -208,13 +226,15 @@ export async function useMsgBoxWebViewInit() {
       }
       if (x + MSG_WEBVIEW_WIDTH > screenSize.availWidth) {
         x = screenSize.availWidth - MSG_WEBVIEW_WIDTH;
-        y = position.y - MSG_WEBVIEW_HEIGHT / 2;
+        y = position.y - MSG_WEBVIEW_HEIGHT.value / 2;
       }
-      if (y + MSG_WEBVIEW_HEIGHT > screenSize.availHeight)
-        y = screenSize.availHeight - MSG_WEBVIEW_HEIGHT;
+      if (y + MSG_WEBVIEW_HEIGHT.value > screenSize.availHeight) {
+        y = screenSize.availHeight - MSG_WEBVIEW_HEIGHT.value;
+      }
+      console.log(x, y);
       await win.setPosition(new LogicalPosition(x, y));
     }
-    else if (types === "macos") {
+    else if (setting.osType === "macos") {
       await win.setPosition(new LogicalPosition(position.x - MSG_WEBVIEW_WIDTH / 2, position.y));
     }
     await win.show();

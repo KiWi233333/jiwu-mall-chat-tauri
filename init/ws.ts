@@ -29,10 +29,10 @@ export async function useWsInit() {
     isReload.value = true;
     worker?.terminate?.(); // 关闭 WebSocket 连接
     await ws?.close?.(false); // 关闭 WebSocket 连接
-    if (!user.isLogin) {
+    if (!user?.getTokenFn()) {
       return;
     }
-    worker = new Worker("useWsWorker.js");
+    worker = new Worker("/useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault(() => {
       // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
