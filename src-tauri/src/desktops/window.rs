@@ -72,7 +72,8 @@ pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
             WindowEvent::CloseRequested { api, .. } => {
                 println!("关闭请求，窗口将最小化而不是关闭。");
                 api.prevent_close();
-                main_window.hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
+                #[cfg(any(target_os = "windows", target_os = "linux"))]
+                main_window.clone().hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
             }
             _ => {}
         });
