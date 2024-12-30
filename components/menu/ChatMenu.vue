@@ -17,9 +17,18 @@ async function getApplyCount() {
   if (!user.getTokenFn() || setting.isMobileSize)
     return;
   const res = await getApplyUnRead(user.getToken);
-  if (res.code === StatusCode.SUCCESS)
+  if (res.code === StatusCode.SUCCESS) {
     applyUnRead.value = res.data.unReadCount;
+  }
 }
+watch(() => route.path, (newVal, oldVal) => {
+  if (newVal === "/friend" || oldVal === "/friend") {
+    getApplyCount();
+  }
+});
+watch(() => ws.wsMsgList.applyMsg.length, (newVal, oldVal) => {
+  getApplyCount();
+});
 
 onMounted(() => {
   getApplyCount();
@@ -48,7 +57,7 @@ const menuList: MenuItem[] = [
     path: "/friend",
     icon: "i-solar:users-group-rounded-line-duotone",
     activeIcon: "i-solar:users-group-rounded-bold-duotone",
-    tipValue: computed(() => applyUnRead.value + ws.wsMsgList.applyMsg.length),
+    tipValue: computed(() => applyUnRead.value),
   },
   {
     title: "AI客服",
