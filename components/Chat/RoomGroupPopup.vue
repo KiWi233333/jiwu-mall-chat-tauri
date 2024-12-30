@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
-import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
 
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
@@ -620,6 +620,6 @@ function exitGroup() {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 }
 .dark .shadow-bt {
-  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, #1f1f1f 100%);
+  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, rgba(34, 34, 34, 1) 100%);
 }
 </style>

@@ -620,6 +620,6 @@ function exitGroup() {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 }
 .dark .shadow-bt {
-  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, #1f1f1f 100%);
+  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, rgba(34, 34, 34, 1) 100%);
 }
 </style>

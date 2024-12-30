@@ -258,3 +258,34 @@ body .el-message {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
+
+
+// el-image
+.el-image-viewer__wrapper:focus {
+  animation: fade-in-anim 0.3s ease-in-out;
+  .el-image-viewer__canvas {
+    animation: fade-blur 0.2s ease-in-out;
+  }
+}
+
+@keyframes fade-blur {
+  0% {
+    opacity: 0;
+    filter: blur(1rem);
+    transform: scale(0.9);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    filter: blur(0);
+  }
+} 
+@keyframes fade-in-anim {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
