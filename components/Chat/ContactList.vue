@@ -66,23 +66,7 @@ async function onChangeRoom(newRoomId?: number) {
   const item = chat.contactMap[newRoomId];
   if (!item)
     return;
-  contact.setContact(item); // 提前设置当前会话
-  try {
-    const res = await getChatContactInfo(newRoomId, user.getToken, item?.type);
-    if (res && res.code === StatusCode.SUCCESS) {
-      contact.setContact(res?.data);
-      if (item) {
-        item.roomGroup = res?.data?.roomGroup;
-        item.member = res?.data?.member;
-      }
-    }
-    else {
-      contact.setContact(chat.contactList[0] || {} as ChatContactVO);
-    }
-  }
-  catch (error) {
-    console.log(error);
-  }
+  await contact.setContact(item); // 提前设置当前会话
   setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
@@ -193,7 +177,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
                   ElNotification.success("退出成功！");
                   if (chat.theContact.roomId === item.roomId)
                     chat.setContact();
-                  chat.removeContact(item.roomId);
+                  await chat.removeContact(item.roomId);
                 }
               }
             },
@@ -272,7 +256,7 @@ const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len
       }
       else if (p.changeType === WSMemberStatusEnum.DEL) {
         // 删除会话
-        chat.removeContact(p.roomId);
+        await chat.removeContact(p.roomId);
       }
     }
     ws.wsMsgList.memberMsg.splice(0);

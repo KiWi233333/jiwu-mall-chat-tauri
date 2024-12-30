@@ -35,8 +35,8 @@ const form = ref<ChatMessageDTO>({
 const inputAllRef = ref(); // 输入框
 const formRef = ref();
 const isSending = ref(false);
-const isDisabled = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
-const isNoExist = computed(() => chat.theContact.selfExist === 0); // 自己不存在
+const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
+const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); // 自己不存在 或 不是好友
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 
 // 读取@用户列表 hook
@@ -482,7 +482,7 @@ watch(() => chat.theContact.roomId, () => {
     ref="formRef"
     :model="form"
     v-bind="$attrs"
-    :disabled="isDisabled"
+    :disabled="isDisabledFile"
     class="w-full"
     style="position: relative;"
   >
@@ -621,7 +621,7 @@ watch(() => chat.theContact.roomId, () => {
             :size="IMG_MAX_SIZE"
             :min-size="1024"
             :limit="9"
-            :disable="isDisabled"
+            :disable="isDisabledFile"
             class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
             pre-class="hidden"
             :upload-type="OssFileType.IMAGE"
@@ -641,7 +641,7 @@ watch(() => chat.theContact.roomId, () => {
             :min-size="1024"
             :preview="false"
             :limit="1"
-            :disable="isDisabled"
+            :disable="isDisabledFile"
             class="i-solar-folder-with-files-line-duotone h-5 w-5 cursor-pointer btn-primary"
             pre-class="hidden"
             :upload-type="OssFileType.FILE"
@@ -725,7 +725,7 @@ watch(() => chat.theContact.roomId, () => {
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
       <BtnElButton
-        :disabled="!user.isLogin || isSending"
+        :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
         class="group bottom-2.5 right-2.5 ml-a overflow-hidden shadow !absolute"
         type="primary"
         round
@@ -738,7 +738,7 @@ watch(() => chat.theContact.roomId, () => {
       </BtnElButton>
     </div>
     <div
-      v-show="isNoExist"
+      v-show="isNotExistOrNorFriend"
       class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-2px shadow backdrop-blur-4px border-default"
     >
       <span op-80>

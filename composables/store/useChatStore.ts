@@ -78,32 +78,59 @@ export const useChatStore = defineStore(
     });
 
     // 改变会话
-    function setContact(vo?: ChatContactVO) {
-      if (!vo)
-        return;
-      if (vo?.roomId)
-        vo.unreadCount = 0;
-      theContact.value = {
-        ...(vo || {
+    async function setContact(vo?: ChatContactVO) {
+      if (!vo || !vo.roomId) {
+        theContact.value = {
           activeTime: 0,
           avatar: "",
-          roomId: undefined,
+          roomId: 0,
           hotFlag: 1,
           name: "",
           text: "",
           type: 1,
+          selfExit: 1,
           unreadCount: 0,
-        }),
+          // 消息列表
+          msgList: [],
+          unreadMsgList: [],
+          roomGroup: undefined,
+          member: undefined,
+        };
+        return;
+      }
+      if (vo?.roomId)
+        vo.unreadCount = 0;
+
+      theContact.value = {
+        ...(vo || {}),
         // 消息列表
         msgList: theContact.value.msgList || [],
         unreadMsgList: theContact.value.unreadMsgList || [],
       };
+
+      try {
+        const user = useUserStore();
+        const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type);
+        if (res && res.code === StatusCode.SUCCESS) {
+          theContact.value = {
+            ...(res?.data || {}),
+            msgList: theContact.value.msgList || [],
+            unreadMsgList: theContact.value.unreadMsgList || [],
+          };
+        }
+        else {
+          setContact();
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
 
     // 删除会话
-    function removeContact(roomId: number) {
+    async function removeContact(roomId: number) {
       if (roomId === theContact.value.roomId)
-        setContact();
+        await setContact();
       Object.freeze(contactMap.value[roomId]);
       delete contactMap.value[roomId];
     }
@@ -158,20 +185,9 @@ export const useChatStore = defineStore(
           return false;
 
         // 标记已读
-        const ctx = contactList.value.find(p => p.roomId === roomId);
-        if (ctx) {
-          ctx.unreadCount = 0;
-          if (lastMsg)
-            ctx.text = lastMsg;
-        }
-        // 更新会话
         if (roomId === theContact.value.roomId) {
-          theContact.value = {
-            ...theContact.value,
-            ...ctx,
-            unreadCount: 0,
-            text: lastMsg,
-          };
+          theContact.value.unreadCount = 0;
+          theContact.value.text = lastMsg;
         }
         // 消费消息
         const ws = useWs();
@@ -294,7 +310,6 @@ export const useChatStore = defineStore(
     /** ***************************** 重置 */
     function resetStore() {
       contactMap.value = {};
-      // contactList.value = [];
       theContact.value = {
         activeTime: 0,
         avatar: "",
@@ -303,16 +318,13 @@ export const useChatStore = defineStore(
         name: "",
         text: "",
         type: 1,
+        selfExit: 1,
         unreadCount: 0,
         // 消息列表
         msgList: [],
         unreadMsgList: [],
-      };
-      atUserList.value = [];
-      atUidListTemp.value = [];
-      theFriendOpt.value = {
-        type: -1,
-        data: {},
+        roomGroup: undefined,
+        member: undefined,
       };
       delUserId.value = "";
       isAddNewFriend.value = false;
