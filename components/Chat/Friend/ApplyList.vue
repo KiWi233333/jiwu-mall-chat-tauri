@@ -52,7 +52,7 @@ function onArgeeFriend(applyId: number) {
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("已添加好友！");
           for (const p of list.value) {
-            if (p.userId)
+            if (p.userId && p.applyId === applyId)
               p.status = ChatApplyStatusType.Argee;
           }
           chat.setIsAddNewFriend(true);
