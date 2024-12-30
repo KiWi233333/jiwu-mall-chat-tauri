@@ -7,6 +7,7 @@ const user = useUserStore();
     <div v-if="user.userInfo?.id">
       <el-popover
         placement="bottom"
+        transition="popper-fade"
         :width="60"
       >
         <template #reference>

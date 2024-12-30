@@ -295,7 +295,7 @@ onBeforeUnmount(() => {
         :prefix-icon="ElIconSearch"
         minlength="2"
         maxlength="30"
-        placeholder="搜索好友群聊"
+        placeholder="搜索"
       />
       <BtnElButton
         plain
@@ -341,7 +341,7 @@ onBeforeUnmount(() => {
                     <p truncate>
                       {{ room.name }}
                     </p>
-                    <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.7em op-35 sm:block>
+                    <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.8em sm:block text-mini-50>
                       {{ getTime(room.activeTime) }}
                     </span>
                   </div>
@@ -354,7 +354,7 @@ onBeforeUnmount(() => {
           </div>
           <template #done>
             <div
-              class="mb-6 w-full text-center text-0.8rem opacity-60"
+              class="mb-6 w-full text-center text-mini"
             >
               暂无更多
             </div>

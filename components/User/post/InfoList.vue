@@ -167,7 +167,7 @@ defineExpose({
           <p
             v-show="isNoMore || isNot"
             class="w-full py-8"
-            text-center text-bluegray tracking-1
+            text-center tracking-1 text-mini
           >
             {{ isNoMore ? "暂无更多帖子" : "暂无帖子" }}
           </p>

@@ -879,3 +879,60 @@ html.stop-transition-all {
     background-position-x: -20%;
   }
 }
+
+// popper 进入动画
+.popper-fade-move,
+.popper-fade-enter-active,
+.popper-fade-leave-active {
+  transition-duration: $transition-delay;
+  transition-timing-function: $animate-cubic;
+  transition-property: opacity, transform;
+}
+
+.popper-fade-enter-from,
+.popper-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.98) translateY(-2%);
+  transform-origin: center top;
+}
+.popper-fade-leave-active {
+  position: absolute;
+}
+
+.popper-fade-down-move,
+.popper-fade-down-enter-active,
+.popper-fade-down-leave-active {
+  transition-duration: $transition-delay;
+  transition-timing-function: $animate-cubic;
+  transition-property: opacity, transform;
+}
+
+.popper-fade-down-enter-from,
+.popper-fade-down-leave-to {
+  opacity: 0;
+  transform: scale(0.98) translateY(-2%);
+  transform-origin: center top;
+}
+.popper-fade-down-leave-active {
+  position: absolute;
+}
+
+.popper-fade-up-move,
+.popper-fade-up-enter-active,
+.popper-fade-up-leave-active {
+  transition-duration: $transition-delay;
+  transition-timing-function: $animate-cubic;
+  transition-property: opacity, transform;
+}
+
+.popper-fade-up-enter-from,
+.popper-fade-up-leave-to {
+  opacity: 0;
+  transform: scale(0.98) translateY(2%);
+  transform-origin: center top;
+}
+.popper-fade-up-leave-active {
+  position: absolute;
+}
+
+

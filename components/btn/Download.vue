@@ -50,7 +50,10 @@ onMounted(() => {
     placement="top"
     width="fit-content"
     :teleported="true" popper-class="popover"
-    transition="fade" trigger="click" append-to="body" :hide-after="0"
+    transition="popper-fade"
+    trigger="click"
+    append-to="body"
+    :hide-after="0"
   >
     <template #reference>
       <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" />

@@ -21,11 +21,19 @@ export default defineConfig({
     ["btn-default", "border-0 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)] transition-200 text-white"],
     ["btn-primary-bg", " cursor-pointer rounded-4px hover:bg-[var(--el-color-primary)]  hover:text-white"],
     // 颜色
-    ["text-color", "text-dark dark:text-white"],
     ["bg-color", "bg-white dark:bg-dark"],
     ["bg-color-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) backdrop-blur-12px"],
     ["bg-menu-color", "bg-white  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
+    ["text-color", "text-dark dark:text-white"],
+    // 文本颜色
+    ["text-default", "text-1em text-dark dark:text-white"],
+    ["text-mini", "text-dark-50 dark:text-[#979898] text-xs"],
+    ["text-mini-50", "text-xs text-dark-50 dark:text-[#717171]"],
+    ["text-color-primary", "text-[var(--el-color-primary)]"],
+    ["text-small", "text-dark-50 dark:text-[#979898] text-sm"],
+    ["text-small-50", "text-sm text-dark-50 dark:text-[#717171]"],
+    ["text-small-color", "text-dark-50 dark:text-[#979898]"],
     // 边框
     ["border-default", "border-1px border-solid border-gray-200 dark:border-dark-300"],
     ["border-default-r", "border-solid border-gray-200 border-0 border-r-1px  dark:border-dark-300"],

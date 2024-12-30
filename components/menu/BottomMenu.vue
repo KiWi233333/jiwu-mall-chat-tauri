@@ -123,6 +123,7 @@ const activeMenu = computed({
       <el-popover
         v-else
         :width="30"
+        transition="popper-fade-up"
         :offset="25"
         trigger="hover"
       >

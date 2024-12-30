@@ -109,7 +109,7 @@ const menuList = ref([
     <ClientOnly>
       <el-popover
         v-bind="propverProps"
-        transition="fade"
+        transition="popper-fade"
         :teleported="true"
         style="transform-origin: right top"
         :placement="propverProps?.placement || 'bottom'"

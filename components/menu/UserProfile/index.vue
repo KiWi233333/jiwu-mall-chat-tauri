@@ -34,6 +34,7 @@ function onLogin(type: FormType) {
           <el-popover
             placement="bottom"
             class="inline-block sm:hidden"
+            transition="popper-fade"
             teleported
             :width="100"
             :offset="20"

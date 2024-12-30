@@ -175,12 +175,12 @@ onMounted(() => {
 <template>
   <ClientOnly>
     <el-popover
+      transition="popper-fade"
       placement="top"
       width="fit-content"
       class="shadow-lg"
       :teleported="true"
       popper-class="popover"
-      transition="fade"
       trigger="click"
       append-to="body"
       :hide-after="0"
@@ -234,9 +234,9 @@ onMounted(() => {
               />
             </el-form-item>
             <BtnElButton
-              class="group ml-a" icon-class="i-solar:map-arrow-right-bold-duotone block mr-1" round
+              class="group ml-a" icon-class="i-solar:map-arrow-right-bold-duotone block mr-1"
               :disabled="!user.isLogin || isChat"
-              transition-icon
+              transition-icon round
               type="info" @click=" onSubmit "
             >
               发送&nbsp;

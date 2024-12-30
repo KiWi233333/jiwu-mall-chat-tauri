@@ -14,6 +14,7 @@ const bgUrl = useLocalStorage("jiwu_user_bg", "/image/user-bg/kiwi-bg-4.jpg");
     <el-popover
       width="fit-content"
       placement="top"
+      transition="popper-fade-up"
       title="切换壁纸"
       :teleported="true"
       trigger="click"
