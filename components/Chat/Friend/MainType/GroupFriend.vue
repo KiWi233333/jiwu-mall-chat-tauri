@@ -42,6 +42,7 @@ function exitRoom(roomId: number) {
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("退出成功！");
           chat.setTheFriendOpt(FriendOptType.Empty, {});
+          chat.setDelGroupId(roomId); // 清除房间
         }
       }
     },

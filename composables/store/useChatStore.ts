@@ -288,14 +288,18 @@ export const useChatStore = defineStore(
       theFriendOpt.value.data = data;
     }
 
-    const delUserId = ref("");
 
+    // 面板删除好友|退出群聊操作
+    const delUserId = ref("");
     function setDelUserId(userId: string) {
       delUserId.value = userId;
     }
-
+    const delGroupId = ref<number | undefined>(undefined);
+    function setDelGroupId(groupId: number | undefined) {
+      delGroupId.value = groupId;
+    }
+    // 添加好友
     const isAddNewFriend = ref(false);
-
     function setIsAddNewFriend(val: boolean) {
       isAddNewFriend.value = val;
     }
@@ -369,6 +373,7 @@ export const useChatStore = defineStore(
       onOfflineList,
       playSounder,
       isVisible,
+      delGroupId,
       // 方法
       setContact,
       removeContact,
@@ -380,6 +385,7 @@ export const useChatStore = defineStore(
       removeAtByUsername,
       setReplyMsg,
       setDelUserId,
+      setDelGroupId,
       setTheFriendOpt,
       onReloadContact,
       resetStore,

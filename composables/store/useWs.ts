@@ -190,16 +190,19 @@ export const useWs = defineStore(
     async function close(isConfirm = true) {
       if (!webSocketHandler.value)
         return;
-      console.log("关闭会话");
       if (!isConfirm) {
         try {
           await webSocketHandler.value?.close?.();
           await webSocketHandler.value?.disconnect?.();
           webSocketHandler.value = null; // 清空 WebSocket 连接
+          status.value = WsStatusEnum.SAFE_CLOSE;
         }
         catch (err) {
+          status.value = WsStatusEnum.SAFE_CLOSE;
         }
-        status.value = WsStatusEnum.SAFE_CLOSE;
+        finally {
+          status.value = WsStatusEnum.SAFE_CLOSE;
+        }
         return;
       }
       ElMessageBox.confirm("是否断开会话？", "提示", {

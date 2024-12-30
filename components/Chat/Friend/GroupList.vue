@@ -29,13 +29,19 @@ async function loadData() {
 const chat = useChatStore();
 const [autoAnimateRef, enable] = useAutoAnimate();
 
-watchDebounced(() => chat.delUserId, (val) => {
+watch(() => chat.delUserId, (val) => {
   if (val) {
     list.value = list.value.filter(p => p.userId !== val);
     chat.setDelUserId("");
   }
 }, {
-  debounce: 300,
+});
+watchDebounced(() => chat.delGroupId, (val) => {
+  if (val) {
+    list.value = list.value.filter(p => p.roomId !== val);
+    chat.setDelGroupId(undefined);
+  }
+}, {
 });
 const setting = useSettingStore();
 loadData();
