@@ -546,7 +546,7 @@ watch(() => chat.theContact.roomId, () => {
               :striped-flow="file.status !== 'success'"
               :duration="10"
               class="mt-2"
-              :percentage="file.percent" :stroke-width="4" :status="file?.status as any || 'active'"
+              :percentage="file.percent" :stroke-width="4" :status="file?.status as any || ''"
             >
               {{ formatFileSize(file?.file?.size || 0) }}
             </el-progress>

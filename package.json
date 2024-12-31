@@ -14,7 +14,7 @@
     "dev:nuxt": "nuxt dev --dotenv .env.development --host",
     "prod:nuxt": "nuxt dev --dotenv .env.production --host",
     "preview": "nuxt preview",
-    "build": "nuxi generate && tauri build",
+    "build": "nuxi generate --dotenv .env.production && tauri build",
     "build:nuxt": "nuxi generate --dotenv .env.production",
     "build:nuxt:test": "nuxi build --dotenv .env.production",
     "build:tauri": "tauri build",
