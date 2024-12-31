@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import { useModeToggle } from "@/composables/utils/useToggleThemeAnima";
 import { getVersion } from "@tauri-apps/api/app";
 import { open as openFile } from "@tauri-apps/plugin-shell";
 import { MdPreview } from "md-editor-v3";
-import { appKeywords } from "~/constants";
+import { appKeywords, appName } from "~/constants";
 import "md-editor-v3/lib/preview.css";
 
 
 useSeoMeta({
-  title: "设置 - 极物聊天",
+  title: `设置 - ${appName}`,
   description: "极物聊天 - 极物圈 开启你的极物之旅！",
   keywords: appKeywords,
 });

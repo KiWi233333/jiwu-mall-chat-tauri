@@ -672,7 +672,7 @@ watch(() => chat.theContact.roomId, () => {
         v-if="form.msgType !== MessageType.SOUND"
         prop="content"
         style="padding: 0;margin: 0;"
-        class="relative h-40 w-full"
+        class="input relative h-40 w-full"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
@@ -689,10 +689,10 @@ watch(() => chat.theContact.roomId, () => {
           :autosize="false"
           type="textarea"
           resize="none"
-          class="input"
           :class="{
             focused: form.content,
           }"
+          style="height: 100%;"
           placement="top"
           autofocus
           show-word-limit
@@ -715,6 +715,9 @@ watch(() => chat.theContact.roomId, () => {
               群成员
             </span>
           </template>
+          <!-- <template #footer>
+            <span my-2 op-70 />
+          </template> -->
         </el-mention>
       </el-form-item>
       <!-- 录音 -->
@@ -724,18 +727,20 @@ watch(() => chat.theContact.roomId, () => {
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
-      <BtnElButton
-        :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
-        class="group bottom-2.5 right-2.5 ml-a overflow-hidden shadow !absolute"
-        type="primary"
-        round
-        size="small"
-        :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
-        style="padding: 0.8rem;width: 6rem;"
-        @click="onSubmit()"
-      >
-        发送&nbsp;
-      </BtnElButton>
+      <div class="flex p-1 pt-0">
+        <BtnElButton
+          :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
+          class="group ml-a overflow-hidden shadow"
+          type="primary"
+          round
+          size="small"
+          :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
+          style="padding: 0.8rem;width: 6rem;"
+          @click="onSubmit()"
+        >
+          发送&nbsp;
+        </BtnElButton>
+      </div>
     </div>
     <div
       v-show="isNotExistOrNorFriend"
@@ -771,9 +776,13 @@ watch(() => chat.theContact.roomId, () => {
     padding: 0 0.4rem;
   }
 }
+:deep(.el-form-item__content) {
+    padding: 0;
+  }
 .input {
   :deep(.el-input__count) {
-    left: 0px;
+    left: 0.8em;
+    bottom: -2.5em;
     background-color: transparent;
     transition: opacity 0.2s;
     opacity: 0;
@@ -789,6 +798,7 @@ watch(() => chat.theContact.roomId, () => {
     }
   }
 }
+
 // 语音
 .is-chating {
   --at-apply: "shadow-lg ";

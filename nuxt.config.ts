@@ -1,5 +1,4 @@
 // 打包分包插件解决潜在循环依赖
-// import { chunkSplitPlugin } from "vite-plugin-chunk-split";
 // import { prismjsPlugin } from "vite-plugin-prismjs";
 // import { pwa } from "./config/pwa";
 import { appDescription, appName } from "./constants/index";
