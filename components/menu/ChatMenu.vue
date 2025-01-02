@@ -14,7 +14,7 @@ const applyUnRead = ref(0);
  * 获取好友申请数量 (未读)
  */
 async function getApplyCount() {
-  if (!user.getTokenFn() || setting.isMobileSize)
+  if (!user.getTokenFn())
     return;
   const res = await getApplyUnRead(user.getToken);
   if (res.code === StatusCode.SUCCESS) {

@@ -13,12 +13,21 @@ const applyUnRead = ref(0);
  * 获取好友申请数量 (未读)
  */
 async function getApplyCount() {
-  if (!user.getTokenFn() || !setting.isMobileSize)
+  if (!user.getTokenFn())
     return;
   const res = await getApplyUnRead(user.getToken);
-  if (res.code === StatusCode.SUCCESS)
+  if (res.code === StatusCode.SUCCESS) {
     applyUnRead.value = res.data.unReadCount;
+  }
 }
+watch(() => route.path, (newVal, oldVal) => {
+  if (newVal === "/friend" || oldVal === "/friend") {
+    getApplyCount();
+  }
+});
+watch(() => ws.wsMsgList.applyMsg.length, (newVal, oldVal) => {
+  getApplyCount();
+});
 
 onMounted(() => {
   getApplyCount();
@@ -49,7 +58,7 @@ const menuList = [
     path: "/friend",
     icon: "i-solar:users-group-rounded-line-duotone",
     activeIcon: "i-solar:users-group-rounded-bold-duotone",
-    tipValue: computed(() => applyUnRead.value + ws.wsMsgList.applyMsg.length) as { value: number },
+    tipValue: computed(() => applyUnRead.value),
     isDot: false,
   },
   {
@@ -90,7 +99,6 @@ const menuList = [
   },
 ];
 
-const preRoutePath = ref("");
 const activeMenu = computed({
   get: () => route.path,
   set: async (val) => {
