@@ -11,6 +11,7 @@ const setting = useSettingStore();
 
 <template>
   <el-image
+    v-if="src !== `${BaseUrlImg}`"
     :src="src"
     fit="cover"
     hide-on-click-modal
@@ -26,8 +27,14 @@ const setting = useSettingStore();
       <div class="h-full w-full flex-row-c-c" :class="errorRootClass">
         <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
+      te>
     </template>
   </el-image>
+  <template v-else>
+    <div class="flex-row-c-c text-mini" :class="$attrs.class">
+      <i class="icon i-solar-gallery-add-bold-duotone op-60" :class="errorClass" />
+    </div>
+  </template>
 </template>
 
 <style scoped lang="scss">
