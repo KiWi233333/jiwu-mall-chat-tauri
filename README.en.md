@@ -37,10 +37,6 @@ JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + el
 ## Multi-platform Support
 ![Multi-platform Support](.doc/previews.png)
 
-## Trends
-
-![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
-
 ## Default Account
 
 - Account: ikun233
@@ -186,3 +182,7 @@ pnpm config set registry https://registry.npmjs.org
 
 - Email: [kiwi2333@qq.com](mailto:kiwi2333@qq.com)
 - QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qq&menu=yes)
+
+## Trends
+
+![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)

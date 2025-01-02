@@ -38,10 +38,6 @@
 
 ![多端适配](.doc/previews.png)
 
-## 趋势
-
-![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
-
 ## 默认账号
 
 - 账号：ikun233
@@ -181,6 +177,10 @@ pnpm config set registry https://registry.npmjs.org
 |              | Prettier           | 3.3.2        |
 | 类型检查     | TypeScript         | 5.3.2        |
 | 样式处理     | Sass               | 1.77.6       |
+
+## 趋势
+
+![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
 ## 💬 联系方式 | Contact
 
