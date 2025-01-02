@@ -33,6 +33,16 @@ export interface AtChatMemberOption {
 export const useChatStore = defineStore(
   "chat",
   () => {
+    /** ***************************** 发送消息 */
+    const msgForm = ref<ChatMessageDTO>({
+      roomId: -1,
+      msgType: MessageType.TEXT, // 默认
+      content: undefined,
+      body: {
+      },
+    });
+    /** ***************************** 撤回的消息map */
+    const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
     /** ***************************** 会话 */
     const isOpenContact = ref(true);
     const contactMap = ref<Record<number, ChatContactVO>>({});
@@ -125,6 +135,14 @@ export const useChatStore = defineStore(
       catch (error) {
         console.log(error);
       }
+    }
+
+    // 添加撤回消息
+    function setRecallMsg(msg: ChatMessageVO) {
+      if (!msg?.message?.id)
+        return false;
+      recallMsgMap.value[msg.message.roomId] = JSON.parse(JSON.stringify(msg));
+      return true;
     }
 
     // 删除会话
@@ -353,6 +371,8 @@ export const useChatStore = defineStore(
     }
     return {
       // state
+      msgForm,
+      recallMsgMap,
       contactMap,
       contactList,
       isNewMsg,
@@ -376,6 +396,7 @@ export const useChatStore = defineStore(
       delGroupId,
       // 方法
       setContact,
+      setRecallMsg,
       removeContact,
       setReadList,
       clearAllUnread,

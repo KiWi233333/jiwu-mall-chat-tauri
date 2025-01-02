@@ -4,14 +4,14 @@
  */
 defineProps<{
   data: ChatMessageVO<TextBodyMsgVO>
-  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 </script>
 
 <template>
   <ChatMsgTemplate
-    :last-msg="lastMsg"
+    :prev-msg="prevMsg"
     :index="index"
     :data="data"
     v-bind="$attrs"

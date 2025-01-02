@@ -4,7 +4,7 @@
  */
 const props = defineProps<{
   data: ChatMessageVO<ImgBodyMsgVO>
-  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 const { data } = toRefs(props);
@@ -14,7 +14,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
 
 <template>
   <ChatMsgTemplate
-    :last-msg="lastMsg"
+    :prev-msg="prevMsg"
     :index="index"
     :data="data"
     v-bind="$attrs"

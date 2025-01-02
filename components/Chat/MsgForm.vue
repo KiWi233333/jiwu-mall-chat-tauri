@@ -25,13 +25,6 @@ const {
 } = useRecording();
 
 // 表单
-const form = ref<ChatMessageDTO>({
-  roomId: chat.theContact.roomId,
-  msgType: MessageType.TEXT, // 默认
-  content: "",
-  body: {
-  },
-});
 const inputAllRef = ref(); // 输入框
 const formRef = ref();
 const isSending = ref(false);
@@ -43,7 +36,7 @@ const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.th
 const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
 watch(() => chat.atUidListTemp, (val) => {
   if (val.length) {
-    form.value.content += val.map((uid) => {
+    chat.msgForm.content += val.map((uid) => {
       const user = userOptions.value.find(u => u.userId === uid);
       return user ? `@${user.nickName}(#${user.username}) ` : "";
     }).join("");
@@ -75,10 +68,10 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
       width = img.width || 0;
       height = img.height || 0;
     };
-    form.value = {
+    chat.msgForm = {
       roomId: chat.theContact.roomId,
       msgType: MessageType.IMG, // 图片
-      content: form.value.content,
+      content: chat.msgForm.content,
       body: {
         url: key,
         width,
@@ -94,12 +87,12 @@ const fileList = ref<OssFile[]>([]);
 function onSubmitFile(key: string, pathList: string[]) {
   const file = fileList.value.find(f => f.key === key);
   if (key && file?.file) {
-    form.value = {
+    chat.msgForm = {
       roomId: chat.theContact.roomId,
       msgType: MessageType.FILE, // 文件
-      content: form.value.content,
+      content: chat.msgForm.content,
       body: {
-        atUidList: form.value.body.atUidList,
+        atUidList: chat.msgForm.body.atUidList,
 
         url: key,
         fileName: file?.file?.name,
@@ -123,17 +116,17 @@ async function startChating(e: KeyboardEvent) {
   if (e.key === "t" && e.ctrlKey && !isChating.value) {
     e.preventDefault();
     isChating.value = true;
-    form.value.msgType = MessageType.SOUND; // 语音
+    chat.msgForm.msgType = MessageType.SOUND; // 语音
   }
   else if (e.key === "c" && e.ctrlKey && isChating.value) {
     e.preventDefault();
     isChating.value = false;
-    form.value.msgType = MessageType.SOUND; // 语音
+    chat.msgForm.msgType = MessageType.SOUND; // 语音
   }
 }
 
-const isUploadImg = computed(() => form.value.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
-const isUploadFile = computed(() => form.value.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
+const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
+const isUploadFile = computed(() => chat.msgForm.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
 /**
  * 粘贴上传
  * @param e 事件对象
@@ -163,7 +156,7 @@ async function onPaste(e: ClipboardEvent) {
       percent: 0,
       file,
     });
-    form.value.msgType = MessageType.FILE; // 文件
+    chat.msgForm.msgType = MessageType.FILE; // 文件
   }
   if (img) {
     // if (isUploadImg.value) { // 单图片上传
@@ -180,7 +173,7 @@ async function onPaste(e: ClipboardEvent) {
       percent: 0,
       file: img,
     });
-    form.value.msgType = MessageType.IMG; // 图片
+    chat.msgForm.msgType = MessageType.IMG; // 图片
   }
 }
 
@@ -190,7 +183,7 @@ async function onPaste(e: ClipboardEvent) {
 async function onSubmit(e?: KeyboardEvent) {
   if (e) {
     // 上下键
-    if (!form?.value?.content?.trim() && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    if (!chat.msgForm.content?.trim() && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
       chat.onDownUpChangeRoom(e.key === "ArrowDown" ? "down" : "up");
       return;
     }
@@ -206,22 +199,22 @@ async function onSubmit(e?: KeyboardEvent) {
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
       return;
-    if (form.value.msgType === MessageType.TEXT && (!form.value.content || form.value.content?.trim().length > 500))
+    if (chat.msgForm.msgType === MessageType.TEXT && (!chat.msgForm.content || chat.msgForm.content?.trim().length > 500))
       return;
 
     // 处理 @用户
-    if (chat.theContact.type === RoomType.GROUP && form.value.content?.includes("@")) {
-      const { uidList, atUidList } = useAtUsers(form.value.content, userOptions.value);
+    if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content?.includes("@")) {
+      const { uidList, atUidList } = useAtUsers(chat.msgForm.content, userOptions.value);
       chat.atUserList = [...atUidList];
-      form.value.body.atUidList = [...new Set(uidList)];
+      chat.msgForm.body.atUidList = [...new Set(uidList)];
       if (document.querySelector(".at-select")) // enter冲突at选择框
         return;
     }
     else {
-      form.value.body.atUidList = [];
+      chat.msgForm.body.atUidList = [];
     }
     // 图片
-    if (form.value.msgType === MessageType.IMG) {
+    if (chat.msgForm.msgType === MessageType.IMG) {
       if (isUploadImg.value) {
         ElMessage.warning("图片正在上传中，请稍后再试！");
         return;
@@ -232,31 +225,31 @@ async function onSubmit(e?: KeyboardEvent) {
       }
     }
     // 文件
-    if (form.value.msgType === MessageType.FILE && isUploadFile.value) {
+    if (chat.msgForm.msgType === MessageType.FILE && isUploadFile.value) {
       ElMessage.warning("文件正在上传中，请稍后再试！");
       return;
     }
     // 开始提交
     isSending.value = true;
     // 语音消息 二次处理
-    if (form.value.msgType === MessageType.SOUND) {
+    if (chat.msgForm.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
-        form.value.body.url = key;
-        form.value.body.translation = audioTransfromText.value;
-        form.value.body.second = second.value;
-        submit(form.value);
+        chat.msgForm.body.url = key;
+        chat.msgForm.body.translation = audioTransfromText.value;
+        chat.msgForm.body.second = second.value;
+        submit(chat.msgForm);
       });
       return;
     }
     // 普通消息
-    submit(form.value);
+    submit(chat.msgForm);
   });
 }
 
 /**
  * 发送消息
  */
-async function submit(formData: ChatMessageDTO = form.value, callback?: (msg: ChatMessageVO) => void) {
+async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: ChatMessageVO) => void) {
   const res = await addChatMessage({
     ...formData,
     roomId: chat.theContact.roomId,
@@ -288,11 +281,11 @@ async function submit(formData: ChatMessageDTO = form.value, callback?: (msg: Ch
  */
 async function multiSubmitImg() {
   isSending.value = true;
-  const formTemp = JSON.parse(JSON.stringify(form.value));
+  const formTemp = JSON.parse(JSON.stringify(chat.msgForm));
   // 批量发送图片消息
   const uploadedFiles = new Set(); // 用来跟踪已经上传的文件
   for (const file of imgList.value) {
-    form.value = {
+    chat.msgForm = {
       roomId: chat.theContact.roomId,
       msgType: MessageType.IMG, // 默认
       content: "",
@@ -301,7 +294,7 @@ async function multiSubmitImg() {
         size: file?.file?.size || 0,
       },
     };
-    await submit(form.value); // 等待提交完成
+    await submit(chat.msgForm); // 等待提交完成
     uploadedFiles.add(file.key); // 标记文件为已上传
   }
   // 一次性移除所有已上传的文件
@@ -312,12 +305,12 @@ async function multiSubmitImg() {
     formTemp.body.url = undefined;
     formTemp.body.size = undefined;
     formTemp.msgType = MessageType.TEXT; // 默认
-    form.value = {
+    chat.msgForm = {
       ...formTemp,
       roomId: chat.theContact.roomId,
       msgType: MessageType.TEXT, // 默认
     };
-    await submit(form.value);
+    await submit(chat.msgForm);
   }
   isSending.value = false;
 }
@@ -332,7 +325,7 @@ function onSubmitLordMsg(formData: ChatMessageDTO) {
     ElMessage.error("仅群主可发送广播消息！");
     return;
   }
-  form.value = {
+  chat.msgForm = {
     roomId: chat.theContact.roomId,
     msgType: MessageType.SYSTEM, // 默认
     content: "",
@@ -364,7 +357,7 @@ onUnmounted(() => {
 
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
-  form.value.body.replyMsgId = val;
+  chat.msgForm.body.replyMsgId = val;
   nextTick(() => {
     if (inputAllRef.value?.input)
       inputAllRef.value?.input?.focus(); // 聚焦
@@ -432,7 +425,7 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
 
 // 重置表单
 function resetForm() {
-  form.value = {
+  chat.msgForm = {
     roomId: chat.theContact.roomId,
     msgType: MessageType.TEXT, // 默认
     content: "",
@@ -480,7 +473,7 @@ watch(() => chat.theContact.roomId, () => {
 <template>
   <el-form
     ref="formRef"
-    :model="form"
+    :model="chat.msgForm"
     v-bind="$attrs"
     :disabled="isDisabledFile"
     class="w-full"
@@ -573,15 +566,15 @@ watch(() => chat.theContact.roomId, () => {
       <div
         class="relative flex items-center gap-2 px-2 sm:(gap-4)"
       >
-        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="form.msgType !== MessageType.SOUND ? setting.isMobile ? '语音 Ctrl+T' : '语音' : '键盘'" placement="top">
+        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="chat.msgForm.msgType !== MessageType.SOUND ? setting.isMobile ? '语音 Ctrl+T' : '语音' : '键盘'" placement="top">
           <i
-            :class="form.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken hover:animate-pulse' : 'i-solar:keyboard-broken'"
+            :class="chat.msgForm.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken hover:animate-pulse' : 'i-solar:keyboard-broken'"
             class="h-6 w-6 cursor-pointer btn-primary"
-            @click="form.msgType = form.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
+            @click="chat.msgForm.msgType = chat.msgForm.msgType === MessageType.TEXT ? MessageType.SOUND : MessageType.TEXT"
           />
         </el-tooltip>
         <!-- 语音 -->
-        <div v-show="form.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
+        <div v-show="chat.msgForm.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
           <BtnElButton
             type="primary"
             class="group tracking-0.1em hover:shadow-lg" :class="{ 'is-chating': isChating }"
@@ -595,7 +588,7 @@ watch(() => chat.theContact.roomId, () => {
             </div>
           </BtnElButton>
         </div>
-        <div v-show="form.msgType === MessageType.SOUND && theAudioFile?.id" class="absolute-center-x">
+        <div v-show="chat.msgForm.msgType === MessageType.SOUND && theAudioFile?.id" class="absolute-center-x">
           <i p-2.4 />
           <BtnElButton
             type="primary"
@@ -612,7 +605,7 @@ watch(() => chat.theContact.roomId, () => {
           />
         </div>
         <!-- 图片 -->
-        <div v-show="form.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
+        <div v-show="chat.msgForm.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
           <InputOssFileUpload
             ref="inputOssImgUploadRef"
             v-model="imgList"
@@ -669,7 +662,7 @@ watch(() => chat.theContact.roomId, () => {
       </div>
       <!-- 内容 -->
       <el-form-item
-        v-if="form.msgType !== MessageType.SOUND"
+        v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
         style="padding: 0;margin: 0;"
         class="input relative h-40 w-full"
@@ -679,18 +672,18 @@ watch(() => chat.theContact.roomId, () => {
       >
         <el-mention
           ref="inputAllRef"
-          v-model.lazy="form.content"
+          v-model.lazy="chat.msgForm.content"
           :options="userOpenOptions"
           :prefix="['@']"
           popper-class="at-select"
-          :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(form.content, pattern, value)"
+          :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="6"
           :maxlength="500"
           :autosize="false"
           type="textarea"
           resize="none"
           :class="{
-            focused: form.content,
+            focused: chat.msgForm.content,
           }"
           style="height: 100%;"
           placement="top"
@@ -722,7 +715,7 @@ watch(() => chat.theContact.roomId, () => {
       </el-form-item>
       <!-- 录音 -->
       <p
-        v-if="form.msgType === MessageType.SOUND"
+        v-if="chat.msgForm.msgType === MessageType.SOUND"
         class="relative h-40 w-full flex-row-c-c overflow-hidden p-8 pt-2 text-wrap op-90"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}

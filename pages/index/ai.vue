@@ -235,7 +235,7 @@ function active() {
         <ChatMsgMain
           v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
           :data="msg"
-          :last-msg="i > 0 ? msgList[i - 1] : undefined"
+          :prev-msg="i > 0 ? msgList[i - 1] : undefined"
         />
       </div>
     </el-scrollbar>

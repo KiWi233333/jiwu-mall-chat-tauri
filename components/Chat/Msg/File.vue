@@ -7,7 +7,7 @@ import { DownFileStatusIconMap, downloadFile, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_
  */
 const props = defineProps<{
   data: ChatMessageVO<FileBodyMsgVO>
-  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 const { data } = toRefs(props);
@@ -46,7 +46,7 @@ const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url])
 
 <template>
   <ChatMsgTemplate
-    :last-msg="lastMsg"
+    :prev-msg="prevMsg"
     :index="index"
     :data="data"
     v-bind="$attrs"

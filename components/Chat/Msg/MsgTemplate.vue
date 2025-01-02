@@ -6,7 +6,7 @@ import { dayjs } from "element-plus";
  */
 const { data } = defineProps<{
   data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO>
-  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 defineEmits(["clickAvatar"]);

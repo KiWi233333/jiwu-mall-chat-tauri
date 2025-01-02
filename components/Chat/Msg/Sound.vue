@@ -6,7 +6,7 @@ import { dayjs } from "element-plus";
  */
 const props = withDefaults(defineProps<{
   data: ChatMessageVO<SoundBodyMsgVO>
-  lastMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
   showTranslation: boolean
 }>(), {

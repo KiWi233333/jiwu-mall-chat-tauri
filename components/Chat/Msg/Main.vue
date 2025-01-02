@@ -8,9 +8,9 @@ import { save } from "@tauri-apps/plugin-dialog";
 /**
  * 消息适配器
  */
-const { data, lastMsg, index } = defineProps<{
+const { data, prevMsg, index } = defineProps<{
   data: ChatMessageVO
-  lastMsg?: ChatMessageVO
+  prevMsg?: ChatMessageVO
   index: number
 }>();
 const map: MsgComType = {
@@ -68,10 +68,10 @@ const setting = useSettingStore();
 
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
+  const isSelf = user.userInfo.id === item.fromUser.userId;
   e.preventDefault();
   if (disabledRightClick.value)
     return;
-  const isSelf = user.userInfo.id === item.fromUser.userId;
   const msgType = data.message?.type;
   const isDownloaded = msgType === MessageType.FILE && setting.fileDownloadMap?.[BaseUrlFile + item.message.body.url];
   const opt = {
@@ -197,6 +197,8 @@ async function refundMsg(roomId: number, msgId: number) {
   const res = await refundChatMessage(roomId, msgId, user.getToken);
   if (res.code === StatusCode.SUCCESS) {
     if (data.message.id === msgId) {
+      // 记录撤回的消息（提供后续撤回功能）
+      chat.setRecallMsg(JSON.parse(JSON.stringify(data)));
       data.message.type = MessageType.RECALL;
       data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我" : `"${data.fromUser.nickName}"`}撤回了一条消息`;
       data.message.body = undefined;
@@ -242,7 +244,7 @@ function formatDate(date: Date) {
     return `${year}年${month}月${day}日 ${hours}:${minutes}`;
 }
 // 是否显示时间
-const showTime = lastMsg?.message?.sendTime && (data.message.sendTime - lastMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
+const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 
 // 点击头像
 function onClickAvatar() {
@@ -265,7 +267,7 @@ function onClickAvatar() {
     :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
     ref="msgRef"
     :show-translation="showTranslation"
-    :last-msg="lastMsg"
+    :prev-msg="prevMsg"
     :index="index"
     :data="data"
     v-bind="$attrs"
