@@ -2,8 +2,7 @@
 import { getLoginDeviceList, toUserOffline } from "@/composables/api/user/safe";
 
 const [autoAnimateRef, enable] = useAutoAnimate({
-  duration: 300,
-  easing: "cubic-bezier(0.61, 0.225, 0.195, 1.3)",
+  duration: 200,
 });
 onMounted(() => {
   const setting = useSettingStore();
@@ -81,7 +80,6 @@ function exitLogin(ua?: string) {
       v-loading="isLoading"
       rounde-4 h-62vh overflow-y-auto
       element-loading-background="initial"
-      class="group"
     >
       <!-- 列表 -->
       <div

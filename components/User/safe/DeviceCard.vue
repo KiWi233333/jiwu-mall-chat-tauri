@@ -7,7 +7,7 @@ const { data } = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col border-1px p-4 leading-1.5em transition-all border-default-dashed card-default">
+  <div class="item flex flex-col border-1px p-4 leading-1.5em transition-all border-default-dashed card-default">
     <small class="mb-1 flex-row-bt-c font-600">
       {{ data?.ipInfo?.country && data?.ipInfo?.country !== "0" ? data?.ipInfo?.country : "未知" }}
       {{ data?.ipInfo?.province && data?.ipInfo?.province !== "0" ? data?.ipInfo?.province : "未知" }}
@@ -39,11 +39,17 @@ const { data } = defineProps<{
       运营商：{{ data.operator }}
     </small> -->
     <div
-      class="btns mt-1 flex-row-bt-c opacity-100 transition-300 group-hover:opacity-100 md:opacity-0"
+      class="btns item-hover mt-1 flex-row-bt-c opacity-100 transition-300 md:opacity-0"
     >
       <slot />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.item:hover  {
+  .item-hover {
+    opacity: 1;
+  }
+}
+</style>
