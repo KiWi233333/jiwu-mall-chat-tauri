@@ -139,6 +139,7 @@ export async function useMsgBoxWebViewInit() {
     return;
   restoreStateCurrent(StateFlags.ALL);
   const chat = useChatStore();
+  const setting = useSettingStore();
   const user = useUserStore();
   const ws = useWs();
   const isNewAllMsg = computed(() => chat.isNewMsg || ws.isNewMsg);
@@ -148,8 +149,12 @@ export async function useMsgBoxWebViewInit() {
   channel.addEventListener("message", handleChannelMsg);
   // 是否有新消息，控制图标闪烁
   const { start, stop, activeIcon, onlineUrl, offlineUrl } = await useFlashTray();
-  watchDebounced(isNewAllMsg, async (newVal, oldVal) => {
-    if (newVal)
+  watchDebounced([isNewAllMsg, () => setting.settingPage.isTrayNotification], async ([newAllMsg, isTrayNotification], oldVal) => {
+    if (isTrayNotification !== true) {
+      stop();
+      return;
+    }
+    if (newAllMsg)
       start(true);
     else
       stop();
@@ -201,6 +206,9 @@ export async function useMsgBoxWebViewInit() {
   const trayMouseoverUnlisten = await listen("tray_mouseenter", async (event) => {
     if (!isNewAllMsg.value)
       return;
+    if (useSettingStore().settingPage.isTrayNotification !== true) { // 未开启托盘通知
+      return;
+    }
     const win = await WebviewWindow.getByLabel("msgbox");
     if (!win)
       return;
@@ -261,6 +269,11 @@ async function handleChannelMsg(event: MessageEvent) {
   const chat = useChatStore();
   if (!payload)
     return;
+  // 是否托盘通知
+  const setting = useSettingStore();
+  if (setting.settingPage.isTrayNotification !== true) {
+    return;
+  }
   const { type, data } = payload;
   const win = await WebviewWindow?.getByLabel("main");
   if (type === "readContact") { // 读取单个

@@ -16,30 +16,25 @@ export async function useWsInit() {
   } as Record<WsMsgBodyType, boolean>;
   const chat = useChatStore();
 
-  // 创建 Web Worker
-  let worker: Worker;
   const isReload = ref(false);
+  const worker = ref<Worker>();
 
   // 初始化 Web Worker
   async function reload() {
     if (isReload.value) {
       return;
     }
+    // 创建 Web Worker
     console.log("web worker reload");
     isReload.value = true;
-    worker?.terminate?.(); // 关闭 WebSocket 连接
+    worker.value?.terminate?.(); // 关闭 WebSocket 连接
     await ws?.close?.(false); // 关闭 WebSocket 连接
     if (!user?.getTokenFn()) {
       return;
     }
-    worker = new Worker("/useWsWorker.js");
+    worker.value = new Worker("/useWsWorker.js");
     // 初始化 WebSocket 连接
     ws.initDefault(() => {
-      // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
-      worker.postMessage({
-        status: ws.status,
-        noticeType,
-      });
       ws.onMessage(async (msg) => {
         // 消息通知
         if (noticeType[msg.type]) {
@@ -55,9 +50,17 @@ export async function useWsInit() {
             notification(body);
         }
       });
+      if (!worker.value) {
+        return;
+      }
+      // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
+      worker.value.postMessage({
+        status: ws.status,
+        noticeType,
+      });
     });
     // Web Worker 消息处理
-    worker.onmessage = (e) => {
+    worker.value.onmessage = (e) => {
       if (e.data.type === "reload")
         reload();
       if (e.data.type === "heart") {
@@ -69,12 +72,12 @@ export async function useWsInit() {
         console.log(e.data.data);
     };
     // Web Worker 错误处理
-    worker.onerror = (e) => {
+    worker.value.onerror = (e) => {
       console.error(e);
       reload();
     };
     // Web Worker 消息错误处理
-    worker.onmessageerror = (e) => {
+    worker.value.onmessageerror = (e) => {
       console.error(e);
       reload();
     };
