@@ -44,7 +44,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "3.12.1",
     "@element-plus/icons-vue": "2.3.1",
-    "@element-plus/nuxt": "1.1.0",
+    "@element-plus/nuxt": "1.1.1",
     "@formkit/auto-animate": "0.8.2",
     "@iconify-json/carbon": "1.2.5",
     "@iconify-json/solar": "1.2.2",
@@ -65,7 +65,7 @@
     "@unocss/nuxt": "0.65.3",
     "@vueuse/nuxt": "12.3.0",
     "crypto-js": "4.2.0",
-    "element-plus": "2.8.4",
+    "element-plus": "2.9.1",
     "eslint": "^9.17.0",
     "eslint-plugin-format": "^0.1.3",
     "husky": "9.1.7",
@@ -73,10 +73,10 @@
     "nuxt": "3.14.1592",
     "pinia": "2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
-    "sass": "1.77.5",
+    "sass": "1.83.0",
     "typescript": "5.7.2",
     "vite-plugin-chunk-split": "0.5.0",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^2.1.6"
   },
   "husky": {
     "hooks": {
