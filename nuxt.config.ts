@@ -133,6 +133,7 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
+          silenceDeprecations: ["legacy-js-api"],
           additionalData: `
           @use "@/assets/styles/element/index.scss" as element;
           @use "@/assets/styles/element/dark.scss" as dark;
