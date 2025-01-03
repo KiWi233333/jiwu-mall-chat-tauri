@@ -59,7 +59,7 @@ onMounted(() => {
       <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" />
     </template>
     <template #default>
-      <div class="w-92vw sm:w-350px">
+      <div class="w-90vw sm:w-350px">
         <div class="flex items-center gap-2 p-2 pt-0">
           <i class="i-solar-download-minimalistic-broken p-0.6em" />
           <span>下载</span>
@@ -79,7 +79,7 @@ onMounted(() => {
         </div>
         <!-- 内容 -->
         <el-scrollbar
-          ref="scollRef" view-class="p-2 h-50dvh md:h-340px"
+          ref="scollRef" view-class="p-2 h-40vh md:h-340px"
           class="relative rounded bg-light shadow shadow-inset dark:bg-dark-9"
         >
           <div v-if="filterList.length" ref="autoAnimateRef" relative flex flex-col pb-4>
