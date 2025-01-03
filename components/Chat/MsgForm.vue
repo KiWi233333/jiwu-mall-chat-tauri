@@ -776,6 +776,7 @@ watch(() => chat.theContact.roomId, () => {
   :deep(.el-input__count) {
     left: 0.8em;
     bottom: -2.5em;
+    width: fit-content;
     background-color: transparent;
     transition: opacity 0.2s;
     opacity: 0;
