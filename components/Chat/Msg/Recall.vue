@@ -7,27 +7,21 @@ const { data } = defineProps<{
   prevMsg?: Partial<ChatMessageVO<TextBodyMsgVO>>
 }>();
 const roomId = data.message?.roomId;
-const user = useUserStore();
 const chat = useChatStore();
-const enoughEditMsgInfo = computed(() => (
-  data?.fromUser?.userId && user?.userInfo?.id === data?.fromUser?.userId && roomId
-  && chat.recallMsgMap[roomId]
-  && data?.message?.id
-  && chat.recallMsgMap[roomId]?.message.id === data.message.id
-  && chat.recallMsgMap[roomId]?.message.type === MessageType.TEXT
-)
-  ? chat.recallMsgMap[roomId]
-  : undefined);
+const enoughEditMsgInfo = computed(() => chat.recallMsgMap[roomId] && chat.recallMsgMap[roomId].message.id === data.message.id ? chat.recallMsgMap[roomId] : undefined);
 
 // 重新编辑消息
 function editRecallMsg() {
   if (!enoughEditMsgInfo.value) {
     return;
   }
+  if (enoughEditMsgInfo.value.message.type !== MessageType.TEXT || !enoughEditMsgInfo.value.message.content) {
+    ElMessage.warning("非文字部分暂不支持重新编辑！");
+  }
   // 重新编辑消息
   chat.msgForm = {
     roomId: enoughEditMsgInfo.value.message.roomId,
-    msgType: enoughEditMsgInfo.value.message.type,
+    msgType: MessageType.TEXT, // 暂时只支持文字消息
     content: enoughEditMsgInfo.value.message.content || "",
     body: {
       // ...enoughEditMsgInfo.message.body,

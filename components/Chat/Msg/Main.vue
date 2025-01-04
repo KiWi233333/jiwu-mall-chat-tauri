@@ -194,11 +194,14 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
 
 // 撤回消息
 async function refundMsg(roomId: number, msgId: number) {
+  const oldData = JSON.parse(JSON.stringify(data));
   const res = await refundChatMessage(roomId, msgId, user.getToken);
   if (res.code === StatusCode.SUCCESS) {
     if (data.message.id === msgId) {
-      // 记录撤回的消息（提供后续撤回功能）
-      chat.setRecallMsg(JSON.parse(JSON.stringify(data)));
+      if (data.message.content) {
+        // 记录撤回的消息（提供后续撤回功能）
+        chat.setRecallMsg(oldData);
+      }
       data.message.type = MessageType.RECALL;
       data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我" : `"${data.fromUser.nickName}"`}撤回了一条消息`;
       data.message.body = undefined;
