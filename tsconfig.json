@@ -4,6 +4,7 @@
   "exclude": [
     "src-tauri/**",
     "dist/**",
-    ".output/**"
+    ".output/**",
+    "node_modules/**"
   ]
 }

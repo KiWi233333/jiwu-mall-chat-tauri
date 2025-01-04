@@ -58,6 +58,7 @@ async function addMsg() {
       >
         <el-input
           v-model="applyForm.content"
+          class="text-input card-rounded-df border-default-hover"
           autofocus type="textarea" :rows="4"
           placeholder="请输入广播消息内容"
           @keydown.enter.prevent="addMsg"
@@ -74,4 +75,15 @@ async function addMsg() {
     </template>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+.text-input {
+  :deep(.el-textarea__inner) {
+    resize: none;
+    box-shadow: none !important;
+    background-color: transparent;
+    caret-color: var(--el-color-primary);
+  }
+}
+</style>
 

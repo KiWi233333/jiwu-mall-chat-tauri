@@ -149,14 +149,21 @@ export const useUserStore = defineStore(
      * @param t token
      */
     async function callbackUserExit(t?: string) {
-      if (t)
-        await toLogout(t);
-      // 退出登录
-      clearUserStore();
-      useChatStore().resetStore();
-      useWs().resetStore();
-      await nextTick();
-      await navigateTo("/login");
+      try {
+        if (t)
+          await toLogout(t);
+      }
+      catch (error) {
+        console.log(error);
+      }
+      finally {
+        // 退出登录
+        clearUserStore();
+        useChatStore().resetStore();
+        useWs().resetStore();
+        await nextTick();
+        await navigateTo("/login");
+      }
     }
     /**
      * 清空store缓存
