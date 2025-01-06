@@ -77,6 +77,8 @@ export default defineConfig({
     ["group-btn-primary", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-primary)]"],
     ["group-btn-danger", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-danger)]"],
     ["group-btn-warning", "transition-200 cursor-pointer rounded-4px group-hover:text-[var(--el-color-warning)]"],
+
+    ["btn-light-bg", "transition-200 cursor-pointer rounded-4px hover:(text-white bg-[var(--el-color-light)])"],
   ],
   rules: [
     // color: info success primary danger warning

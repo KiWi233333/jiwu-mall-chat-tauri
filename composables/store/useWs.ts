@@ -45,6 +45,10 @@ export const useWs = defineStore(
        */
       tokenMsg: [] as object[],
       /**
+       * rtc通讯 WsMsgBodyType.RTC_CALL
+       */
+      rtcMsg: [] as WSRtcCallMsg[],
+      /**
        * 其他
        */
       other: [] as object[],
@@ -111,6 +115,7 @@ export const useWs = defineStore(
       [WsMsgBodyType.APPLY]: "applyMsg",
       [WsMsgBodyType.MEMBER_CHANGE]: "memberMsg",
       [WsMsgBodyType.TOKEN_EXPIRED_ERR]: "tokenMsg",
+      [WsMsgBodyType.RTC_CALL]: "rtcMsg",
     };
 
     // 接收消息
@@ -256,6 +261,7 @@ export const useWs = defineStore(
         deleteMsg: [],
         applyMsg: [],
         memberMsg: [],
+        rtcMsg: [],
         tokenMsg: [],
         other: [],
       };

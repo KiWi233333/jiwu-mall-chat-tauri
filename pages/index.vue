@@ -7,6 +7,8 @@ const ws = useWs();
 const setting = useSettingStore();
 const chat = useChatStore();
 const online = useOnline();
+
+const chatRtcCallDialogRef = ref<any>();
 </script>
 
 <template>
@@ -53,6 +55,12 @@ const online = useOnline();
           </div>
         </template>
       </MenuHeaderMenuBar>
+      <!-- 通话dialog -->
+      <ChatRtcCallDialog
+        ref="chatRtcCallDialogRef"
+        v-model="chat.showRtcCall"
+        v-model:call-type="chat.rtcCallType"
+      />
       <div
         class="main-box relative"
         v-bind="$attrs"

@@ -205,7 +205,11 @@ export const useChatStore = defineStore(
         // 标记已读
         if (roomId === theContact.value.roomId) {
           theContact.value.unreadCount = 0;
+          theContact.value.unreadMsgList = [];
           theContact.value.text = lastMsg;
+          if (contactMap.value[roomId]) {
+            contactMap.value[roomId].unreadCount = 0;
+          }
         }
         // 消费消息
         const ws = useWs();
@@ -369,9 +373,74 @@ export const useChatStore = defineStore(
       scrollTopSize.value = 0;
       saveScrollTop();
     }
+
+
+    /** ***************************** RTC通话 */
+    const showRtcCall = ref(false);
+    const confirmRtcFn = ref({
+      confirmCall: () => { },
+      rejectCall: () => { },
+    });
+    const rtcCallType = ref<CallTypeEnum | undefined>(undefined);
+    const webRtc = useWebRTC((type, { confirmCall, rejectCall }) => {
+      rtcCallType.value = type;
+      showRtcCall.value = true;
+      confirmRtcFn.value = { confirmCall, rejectCall };
+    });
+
+    // 打开通话
+    async function openRtcCall(roomId: number, type: CallTypeEnum, confirmOption?: { message?: string, title?: string }) {
+      const {
+        message = "是否确认发起通话？",
+        title = type === CallTypeEnum.AUDIO ? "语音通话" : "视频通话",
+      } = confirmOption || {};
+      if (theContact.value.type === RoomType.GROUP) {
+        ElMessage.warning("群聊无法进行通话！");
+        return;
+      }
+      ElMessageBox.confirm(message, {
+        title,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+      }).then(async (action) => {
+        if (action !== "confirm" || !type) {
+          return;
+        }
+        rtcCallType.value = type;
+        const user = useUserStore();
+        await nextTick();
+        // 查询是否在通话中
+        const resp = await getChatRTCMessage(roomId, user.getToken);
+        if (resp.code === StatusCode.SUCCESS && resp.status) { // 正在通话中
+          const chat = useChatStore();
+          chat.showRtcCall = false;
+          return false;
+        }
+        const res = await webRtc.startCall(roomId, type, undefined);
+        if (res === false)
+          showRtcCall.value = false;
+        else
+          showRtcCall.value = true;
+      }).catch((e) => {
+        console.warn(e);
+      });
+    }
+
+    // 重新回滚通话
+    async function rollbackCall(roomId: number, type: CallTypeEnum, msg?: ChatMessageVO) {
+      openRtcCall(roomId, type, { message: "是否确认重新拨打？" });
+    }
+    function useChatWebRTC() {
+      return webRtc;
+    }
+
+
     return {
       // state
       msgForm,
+      rtcCallType,
+      showRtcCall,
       recallMsgMap,
       contactMap,
       contactList,
@@ -410,6 +479,10 @@ export const useChatStore = defineStore(
       setTheFriendOpt,
       onReloadContact,
       resetStore,
+      openRtcCall,
+      rollbackCall,
+      useChatWebRTC,
+      confirmRtcFn,
       // dom
       scrollTopSize,
       saveScrollTop,

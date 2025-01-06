@@ -159,7 +159,6 @@ watch(() => ws.wsMsgList.deleteMsg.length, () => {
 }, {
   immediate: false,
 });
-
 /**
  * 新消息处理
  * @param list 原始列表
@@ -189,10 +188,23 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     chat.setReadList(chat.theContact.roomId);
     // 3）本房间追加消息
     const msg = findMsg(p.message.id);
-    if (!msg)
+    if (!msg) {
       chat.theContact.msgList.push(p);
+      p.message.type === MessageType.RTC && handleRTCMsg(p);
+    }
   }
   ws.wsMsgList.newMsg.splice(0);
+}
+
+// 处理rtc消息
+function handleRTCMsg(msg: ChatMessageVO) {
+  const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
+  // 更新滚动位置
+  if (msg.message.roomId === chat.theContact.roomId && rtcMsg.senderId === user.userInfo.id) {
+    nextTick(() => {
+      chat.scrollBottom(true);
+    });
+  }
 }
 
 // 计算消息内容
@@ -212,6 +224,10 @@ function getBody(msg: ChatMessageVO) {
   else if (msg.message.type === MessageType.VIDEO) {
     const _msg = msg as ChatMessageVO<ImgBodyMsgVO>;
     return `[视频] ${_msg?.message.content}`;
+  }
+  else if (msg.message.type === MessageType.RTC) {
+    const _msg = msg as ChatMessageVO<RtcLiteBodyMsgVO>;
+    return `[${_msg.message.body?.typeText || "通讯聊天"}] ${_msg?.message.content}`;
   }
 
   return msg.message.content;
@@ -419,7 +435,7 @@ const onScroll = useDebounceFn((e) => {
   // 滚动到底部
   const offset = 100;
   if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight - 462 - offset) {
-    if (chat.theContact.roomId && chat.theContact.unreadCount > 0) {
+    if (chat.theContact.roomId && (chat.theContact.unreadCount > 0 || chat.contactMap?.[chat.theContact.roomId]?.unreadCount)) {
       chat.setReadList(chat.theContact.roomId);
     }
   }

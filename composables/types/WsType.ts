@@ -47,7 +47,7 @@ export interface WsMsgVO extends Result<WsMsgBodyVO> {
 
 export interface WsMsgBodyVO<T = WsMsgBodyType> {
   type: T
-  data: ChatMessageVO | WSOnlineOfflineNotify | WSMsgRecall | WSFriendApply | WSMemberChange
+  data: ChatMessageVO | WSOnlineOfflineNotify | WSMsgRecall | WSFriendApply | WSMemberChange | WSRtcCallMsg
 }
 
 
@@ -88,12 +88,42 @@ export enum WsMsgBodyType {
    * 消息删除通知
    */
   DELETE = 8,
+  /**
+   * 实时通话
+   */
+  RTC_CALL = 9,
+
 }
 
 // 上下线通知类型定义
 export interface WSOnlineOfflineNotify {
   changeList: ChatMemberVO[]
   onlineNum: number
+}
+
+
+/**
+ * RTC信令交互消息
+ */
+export interface RtcBodyMsgVO {
+  // 通话ID
+  callId?: number;
+  // 信令类型
+  signalType: SignalTypeEnum;
+  // 信令数据
+  data: any;
+  // 接收者ID列表
+  receiverIds: string[];
+  // 发送者ID
+  senderId?: string;
+  // 通话状态
+  status: CallStatusEnum;
+  // 通话类型
+  type: CallTypeEnum;
+  // 开始时间戳
+  startTime: number;
+  // 结束时间戳
+  endTime?: number;
 }
 
 export interface OnlineOffItem {
@@ -142,5 +172,5 @@ export interface WsMsgDataTypeMap<T> {
   [WsMsgBodyType.APPLY]: WSFriendApply
   [WsMsgBodyType.MEMBER_CHANGE]: WSMemberChange
   [WsMsgBodyType.TOKEN_EXPIRED_ERR]: null
+  [WsMsgBodyType.RTC_CALL]: WSRtcCallMsg
 }
-

@@ -31,7 +31,7 @@ const isSending = ref(false);
 const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); // 自己不存在 或 不是好友
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
-
+const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
 // 读取@用户列表 hook
 const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
 watch(() => chat.atUidListTemp, (val) => {
@@ -101,7 +101,6 @@ function onSubmitFile(key: string, pathList: string[]) {
     };
   }
 }
-
 // 语音
 onMounted(() => {
   // 监听快捷键
@@ -465,9 +464,6 @@ watch(() => chat.theContact.roomId, () => {
   resetForm();
   loadUser();
 });
-
-// 监听文件拖拽事件
-// const { fileList: fileDropList } = await useLinterFileDrop();
 </script>
 
 <template>
@@ -647,16 +643,32 @@ watch(() => chat.theContact.roomId, () => {
           />
         </div>
         <i ml-a block w-0 />
-        <!-- 群广播消息 -->
-        <div
-          v-if="isLord"
-          title="群广播消息"
-          class="i-solar-confetti-minimalistic-line-duotone w-fit p-3 transition-200 btn-primary"
-          @click="showLordMsg = true"
-        />
+        <template v-if="chat.msgForm.msgType !== MessageType.SOUND">
+          <!-- 群广播消息 -->
+          <div
+            v-if="isLord"
+            title="群广播消息"
+            class="i-solar-confetti-minimalistic-line-duotone inline-block p-2.8 transition-200 btn-primary"
+            @click="showLordMsg = true"
+          />
+          <!-- 语音通话 -->
+          <div
+            v-if="isSelfRoom"
+            title="语音通话"
+            class="i-solar:phone-calling-outline p-2.8 transition-200 btn-primary"
+            @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.AUDIO)"
+          />
+          <!-- 视频通话 -->
+          <div
+            v-if="isSelfRoom"
+            title="视频通话"
+            class="i-solar:videocamera-record-line-duotone p-2.8 transition-200 btn-primary"
+            @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.VIDEO)"
+          />
+        </template>
         <!-- 滚动底部 -->
         <div
-          class="i-solar:double-alt-arrow-down-line-duotone w-fit p-3 transition-200 btn-primary"
+          class="i-solar:double-alt-arrow-down-line-duotone inline-block p-2.8 transition-200 btn-primary"
           @click="setReadAndScrollBottom"
         />
       </div>

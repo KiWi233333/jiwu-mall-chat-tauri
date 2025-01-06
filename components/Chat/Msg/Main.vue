@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
+import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
 import { MessageType } from "@/composables/api/chat/message";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { save } from "@tauri-apps/plugin-dialog";
@@ -22,6 +22,7 @@ const map: MsgComType = {
   [MessageType.SYSTEM]: ChatMsgSystem,
   [MessageType.AI_CHAT]: ChatMsgAiMsg,
   [MessageType.SOUND]: ChatMsgSound,
+  [MessageType.RTC]: ChatMsgRTC,
 };
 interface MsgComType {
   [property: number]: any

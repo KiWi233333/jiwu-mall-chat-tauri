@@ -192,6 +192,53 @@ export interface FileBodyMsgVO {
   };
 }
 
+
+/**
+ * RTC消息 （公共系统显示的）
+ */
+export interface RtcLiteBodyMsgVO {
+  // 发送者ID
+  senderId?: string;
+  // 通话状态
+  status: CallStatusEnum;
+  // 通话状态文本
+  statusText: string;
+  // 通话类型
+  type: CallTypeEnum;
+  // 通话类型文本
+  typeText: string;
+  // 开始时间戳
+  startTime?: number;
+  // 结束时间戳
+  endTime?: number;
+  // 通话时长文本
+  durationText?: string;
+}
+
+/**
+ * RTC消息 个人推送的
+ */
+export interface RtcBodyMsgVO {
+  // 通话ID
+  callId?: number;
+  // 信令类型
+  signalType: SignalTypeEnum;
+  // 信令数据
+  data: any;
+  // 接收者ID列表
+  receiverIds: string[];
+  // 发送者ID
+  senderId?: string;
+  // 通话状态
+  status: CallStatusEnum;
+  // 通话类型
+  type: CallTypeEnum;
+  // 开始时间戳
+  startTime: number;
+  // 结束时间戳
+  endTime?: number;
+}
+
 export enum FileBodyMsgTypeEnum {
   //  "TXT" | "EXCEL" | "XLSX" | "PDF" | "PPT" | "PPTX" | "DOC" | "DOCX"
   TXT = "TXT",
@@ -215,6 +262,7 @@ export enum MessageType {
   SYSTEM = 8,
   AI_CHAT = 9, // 暂无
   DELETE = 10,
+  RTC = 11, // rtc通话
 }
 
 export const MessageTypeText = {
@@ -228,6 +276,7 @@ export const MessageTypeText = {
   [MessageType.SYSTEM]: "系统消息",
   [MessageType.AI_CHAT]: "机器人消息",
   [MessageType.DELETE]: "删除消息",
+  [MessageType.RTC]: "RTC通讯消息",
 };
 
 
