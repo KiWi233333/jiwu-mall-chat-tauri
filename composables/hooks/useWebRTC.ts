@@ -446,12 +446,22 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       connectionStatus.value = CallStatusEnum.CALLING;
 
       await nextTick();
+
+      // 开启铃声
+      bellAudio.value = new Audio("/sound/bell.mp3");
+      bellAudio.value!.loop = true;
+      bellAudio.value?.play();
+
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
         // 添加确认和拒绝的方法
         const confirmCall = () => {
           resolve(true);
           connectionStatus.value = CallStatusEnum.ACCEPT;
+          if (bellAudio.value) { // 停止铃声
+            bellAudio.value.pause();
+            bellAudio.value = null;
+          }
         };
         const rejectCall = () => {
           resolve(false);
