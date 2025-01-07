@@ -356,7 +356,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         }
       }, MAX_TIME_OUT_SECONDS * 1000);
 
-      // await getLocalStream(type);
+      await getLocalStream(type);
       loading.close();
 
       // 1. 创建 RTCPeerConnection
