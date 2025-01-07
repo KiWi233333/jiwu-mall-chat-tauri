@@ -245,6 +245,13 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
   const createPeerConnection = (roomId: number) => {
     try {
       const pc = new RTCPeerConnection(configuration);
+
+      // 添加本地流
+      localStream.value?.getTracks().forEach((track) => {
+        localStream.value && pc.addTrack(track, localStream.value);
+      });
+
+
       // 监听远程流
       pc.ontrack = (event) => {
         // console.log("收到远程流:", event);
@@ -255,16 +262,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           remoteStream.value = null;
         }
       };
-      // 添加本地流
-      localStream.value?.getTracks().forEach((track) => {
-        localStream.value && pc.addTrack(track, localStream.value);
-      });
-
       // channel.value = pc.createDataChannel("channel");
       // pc.ondatachannel = (event) => {
       //   // console.log("创建数据通道:", event);
       // };
-
       // 连接状态变化 "closed" | "connected" | "connecting" | "disconnected" | "failed" | "new";
       pc.onconnectionstatechange = (e) => {
         // console.log("RTC 连接状态变化: ", pc.connectionState);
@@ -311,7 +312,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // @ts-expect-error
         rtcStatus.value = (e?.currentTarget?.connectionState || pc.connectionState) as RTCPeerConnectionState;
       };
-
       peerConnection.value = pc;
       return pc;
     }
@@ -444,9 +444,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
   async function handleOffer({ data: offer, type, roomId }: WSRtcCallMsg) {
     try {
       connectionStatus.value = CallStatusEnum.CALLING;
-
       await nextTick();
-
       // 开启铃声
       bellAudio.value = new Audio("/sound/bell.mp3");
       bellAudio.value!.loop = true;
@@ -470,7 +468,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         };
         // 获取房间信息
         handleContactInfo(roomId);
-
         openDialog(type, { confirmCall, rejectCall });
 
         // 30秒超时自动拒绝
@@ -574,7 +571,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           }
           // 4. 发起者 - 设置远程描述
           await peerConnection.value.setRemoteDescription(answer);
-
           // 5. 监听 ICE 连接状态
           peerConnection.value.onicecandidate = async (event) => {
             // console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
