@@ -122,7 +122,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         clear();
         return true;
       }
-      console.log("结束通话 : ", rtcMsg.value.roomId, status);
+      // console.log("结束通话 : ", rtcMsg.value.roomId, status);
       if ([CallStatusEnum.END].includes(status)) {
         const res = await hangUpRTCCall(rtcMsg.value.roomId, user.getToken);
         if (res.code !== StatusCode.SUCCESS) {
@@ -193,7 +193,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       const devices = await navigator.mediaDevices.enumerateDevices();
       audioDevices.value = devices.filter(device => device.kind === "audioinput");
       videoDevices.value = devices.filter(device => device.kind === "videoinput");
-      console.log(audioDevices.value, videoDevices.value);
+      // console.log(audioDevices.value, videoDevices.value);
 
       // 默认选择第一个设备
       if (audioDevices.value.length > 0 && !selectedAudioDevice.value && audioDevices.value?.[0]?.deviceId)
@@ -247,33 +247,11 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
 
       // 监听远程流
       pc.ontrack = (event) => {
-        console.log("收到远程流:", event);
         if (event.streams[0]) {
           remoteStream.value = event.streams[0];
         }
         else {
           remoteStream.value = null;
-        }
-      };
-
-
-      // 5. 监听 ICE 连接状态
-      pc.onicecandidate = async (event) => {
-        console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
-        if (event.candidate && roomId) {
-          try {
-            const res = await updateChatRTCMessage(roomId, {
-              signalType: SignalTypeEnum.CANDIDATE,
-              data: event.candidate,
-            }, user.getToken);
-
-            if (res.code !== StatusCode.SUCCESS) {
-              console.error("发送ICE候选者失败:", res.message);
-            }
-          }
-          catch (err) {
-            console.error("发送ICE候选者出错:", err);
-          }
         }
       };
 
@@ -284,7 +262,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
 
       // 连接状态变化 "closed" | "connected" | "connecting" | "disconnected" | "failed" | "new";
       pc.onconnectionstatechange = (e) => {
-        console.log("RTC 连接状态变化: ", pc.connectionState);
+        // console.log("RTC 连接状态变化: ", pc.connectionState);
         switch (pc.connectionState) {
           case "new":
             break;
@@ -298,6 +276,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
             durationTimer.value = setInterval(() => {
               callDuration.value++;
             }, 1000);
+            // console.log("RTC 连接成功", CallStatusEnum.ACCEPT);
             updateChatRTCMessage(roomId, {
               status: CallStatusEnum.ACCEPT,
             }, user.getToken);
@@ -534,7 +513,26 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       // 4. 创建并发送 answer
       const answer = await peerConnection.value.createAnswer();
       await peerConnection.value.setLocalDescription(answer);
-      console.log(`${user.userInfo.username}：发送 answer 信令:`, answer);
+      // console.log(`${user.userInfo.username}：发送 answer 信令:`, answer);
+
+      peerConnection.value.onicecandidate = async (event) => {
+        // console.log(user.userInfo.username, "接收端 - 收到 ICE candidate 信令:", event.candidate);
+        if (event.candidate && roomId) {
+          try {
+            const res = await updateChatRTCMessage(roomId, {
+              signalType: SignalTypeEnum.CANDIDATE,
+              data: event.candidate,
+            }, user.getToken);
+
+            if (res.code !== StatusCode.SUCCESS) {
+              console.error("发送ICE候选者失败:", res.message);
+            }
+          }
+          catch (err) {
+            console.error("发送ICE候选者出错:", err);
+          }
+        }
+      };
       // 监听 ICE 连接状态
       // 5. 监听 ICE candidate
       if (!roomId) {
@@ -549,24 +547,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       if (res.code !== StatusCode.SUCCESS) {
         return false;
       }
-      // peerConnection.value.onicecandidate = async (event) => {
-      //   console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
-      //   if (event.candidate && roomId) {
-      //     try {
-      //       const res = await updateChatRTCMessage(roomId, {
-      //         signalType: SignalTypeEnum.CANDIDATE,
-      //         data: event.candidate,
-      //       }, user.getToken);
-
-      //       if (res.code !== StatusCode.SUCCESS) {
-      //         console.error("发送ICE候选者失败:", res.message);
-      //       }
-      //     }
-      //     catch (err) {
-      //       console.error("发送ICE候选者出错:", err);
-      //     }
-      //   }
-      // };
       connectionStatus.value = CallStatusEnum.ACCEPT;
     }
     catch (error) {
@@ -575,7 +555,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
     }
   }
 
-  // 2. 处理收到的 answer
+  // 2. 处理收到的 answer 发起者 收到的回信
   async function handleAnswer({ data: answer, roomId }: WSRtcCallMsg) {
     try {
       if (peerConnection.value) {
@@ -584,7 +564,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           clearTimeout(callTimer.value);
           callTimer.value = null;
         }
-        console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
+        // console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
 
         // 2. 停止铃声
         if (bellAudio.value) {
@@ -601,25 +581,25 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           }
           // 4. 发起者 - 设置远程描述
           await peerConnection.value.setRemoteDescription(answer);
-          // // 5. 监听 ICE 连接状态
-          // peerConnection.value.onicecandidate = async (event) => {
-          //   console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
-          //   if (event.candidate && roomId) {
-          //     try {
-          //       const res = await updateChatRTCMessage(roomId, {
-          //         signalType: SignalTypeEnum.CANDIDATE,
-          //         data: event.candidate,
-          //       }, user.getToken);
+          // 5. 监听 ICE 连接状态
+          peerConnection.value.onicecandidate = async (event) => {
+            // console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
+            if (event.candidate && roomId) {
+              try {
+                const res = await updateChatRTCMessage(roomId, {
+                  signalType: SignalTypeEnum.CANDIDATE,
+                  data: event.candidate,
+                }, user.getToken);
 
-          //       if (res.code !== StatusCode.SUCCESS) {
-          //         console.error("发送ICE候选者失败:", res.message);
-          //       }
-          //     }
-          //     catch (err) {
-          //       console.error("发送ICE候选者出错:", err);
-          //     }
-          //   }
-          // };
+                if (res.code !== StatusCode.SUCCESS) {
+                  console.error("发送ICE候选者失败:", res.message);
+                }
+              }
+              catch (err) {
+                console.error("发送ICE候选者出错:", err);
+              }
+            }
+          };
         }
       }
     }
@@ -630,10 +610,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
     }
   }
   // 3. 处理 ICE candidate
-  async function handleCandidate({ data: candidate }: WSRtcCallMsg) {
+  async function handleCandidate({ data: candidate, roomId }: WSRtcCallMsg) {
     try {
       if (peerConnection.value && candidate && candidate.candidate) {
-        console.log("收到 candidate 信令:", candidate.candidate);
+        // console.log("收到 candidate 信令:", candidate.candidate);
         await peerConnection.value.addIceCandidate(candidate);
       }
     }
@@ -705,7 +685,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // 替换现有轨道
         const newVideoTrack = newStream.getVideoTracks()[0];
         const oldVideoTrack = localStream.value.getVideoTracks()[0];
-        console.log(oldVideoTrack, newVideoTrack);
+        // console.log(oldVideoTrack, newVideoTrack);
 
         if (newVideoTrack) {
           if (!oldVideoTrack) {
