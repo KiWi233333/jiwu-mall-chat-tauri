@@ -16,7 +16,7 @@ const user = useUserStore();
 // 从useWebRTC获取状态和方法
 const {
   rtcStatus,
-  isConnecting,
+  isRtcConnecting,
   callDuration,
   isSender,
   theContact,
@@ -135,6 +135,9 @@ watch(() => setting.isMobileSize, (val) => {
 
 // 格式化通话时长
 const formattedDuration = computed(() => {
+  if (!callDuration.value) {
+    return "连接中...";
+  }
   const minutes = Math.floor(callDuration.value / 60);
   const seconds = callDuration.value % 60;
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
@@ -154,11 +157,11 @@ const rtcDescText = computed(() => {
   if (isConnected.value) {
     return `通话时长 ${formattedDuration.value}`;
   }
+  else if (isRtcConnecting.value) {
+    return "正在连接中...";
+  }
   else if (connectionStatus.value === CallStatusEnum.CALLING) {
     return isSender ? "正在呼叫..." : "待接听...";
-  }
-  else if (isConnecting.value) {
-    return "正在连接中...";
   }
   else {
     return rtcCallTextMap[connectionStatus.value || "undefined"];
