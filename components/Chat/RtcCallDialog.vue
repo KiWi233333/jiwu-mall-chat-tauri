@@ -20,6 +20,8 @@ const {
   callDuration,
   isSender,
   theContact,
+  // peerConnection,
+  // channel,
   // 设备相关
   audioDevices,
   selectedAudioDevice,
@@ -66,11 +68,11 @@ const isConnectClose = computed(() => [undefined, CallStatusEnum.END, CallStatus
 // @unocss-include
 const isMaxVideoClass = ref<MaxVideoObjEnum>(MaxVideoObjEnum.CONTAIN); // 最大化视频
 const isSelfMinView = ref(false); // 切换视频流
-const minWindStream = computed(() => isSelfMinView.value ? localStream.value : remoteStream.value); // 小窗口的视频流
-const maxWindStream = computed(() => isSelfMinView.value ? remoteStream.value : localStream.value); // 大窗口的视频流
+const minWindStream = computed(() => callType === CallTypeEnum.VIDEO ? isSelfMinView.value ? localStream.value : remoteStream.value : null); // 小窗口的视频流
+const maxWindStream = computed(() => callType === CallTypeEnum.VIDEO ? (!isSelfMinView.value ? localStream.value : remoteStream.value) : remoteStream.value); // 大窗口的视频流
 const audioVolume = ref(1); // 最小音量 默认扬声器音量
-const minWindStreamProps = computed(() => ({ muted: !isSelfMinView.value, volume: !isSelfMinView.value ? 0 : (audioVolume.value > 1 ? 1 : audioVolume.value) })); // 非本人视频静音
-const maxWindStreamProps = computed(() => ({ muted: isSelfMinView.value, volume: isSelfMinView.value ? 0 : (audioVolume.value > 1 ? 1 : audioVolume.value) }));// 本人视频静音
+const minWindStreamProps = computed(() => ({ muted: !isSelfMinView.value, volume: !isSelfMinView.value ? 0 : audioVolume.value })); // 非本人视频静音
+const maxWindStreamProps = computed(() => ({ muted: isSelfMinView.value, volume: isSelfMinView.value ? 0 : audioVolume.value }));// 本人视频静音
 const isMinWind = ref(false); // 最小化
 
 // 拖拽
@@ -297,7 +299,7 @@ defineExpose({
         <div v-if="callType === CallTypeEnum.AUDIO || !remoteStream?.getVideoTracks()[0]?.enabled" class="relative">
           <CardElImage
             :src="BaseUrlImg + theContact.avatar"
-            class="avatar mx-a h-20 w-20 rounded-full shadow-lg border-default-hover"
+            class="avatar mx-a h-20 w-20 select-none rounded-full shadow-lg border-default-hover"
           />
           <div class="username mt-4 text-center text-lg font-medium">
             {{ theContact.name }}
@@ -335,9 +337,10 @@ defineExpose({
           <!-- 麦克风控制 -->
           <el-dropdown trigger="hover">
             <button
-              type="button" circle style="width: 3.2rem;height: 3.2rem;margin: 0;"
+              type="button"
+              style="width: 3.2rem;height: 3.2rem;margin: 0;"
               class="cursor-pointer rounded-full border-none shadow-sm hover:op-80"
-              :class="localStream?.getAudioTracks()[0]?.enabled ? 'bg-light text-dark' : ' text-light bg-[#222d2b60] '"
+              :class="localStream?.getAudioTracks()[0]?.enabled ? '!bg-light !text-dark' : '!text-light !bg-[#222d2b60] '"
               :plain="localStream?.getAudioTracks()[0]?.enabled ? false : true" size="large" @click.capture="toggleMute"
             >
               <i class="i-solar:microphone-3-bold p-3.5" />
@@ -410,7 +413,7 @@ defineExpose({
       <!-- 控制按钮区域 mini -->
       <div
         v-if="connectionStatus !== undefined && isMinWind"
-        class="btns-mini mt-a max-w-22em flex flex-wrap items-center justify-center gap-col-8 gap-row-6 px-12 py-6 sm:(gap-col-6 gap-row-6)"
+        class="btns-mini bottom-4 left-0 mx-a w-full flex items-center justify-around px-4 !absolute"
       >
         <!-- 接听者的接听/拒绝按钮 -->
         <template v-if="!isSender && connectionStatus === CallStatusEnum.CALLING">
@@ -419,14 +422,14 @@ defineExpose({
             style="width: 2.2rem;height: 2.2rem;margin: 0;" type="success" circle size="large" class="shadow"
             @click="chat.confirmRtcFn.confirmCall()"
           >
-            <i class="i-solar:phone-calling-bold mt-1 p-3.5" />
+            <i class="i-solar:phone-calling-bold mt-1 p-2.8" />
           </el-button>
           <!-- 拒绝按钮 -->
           <el-button
             style="width: 2.2rem;height: 2.2rem;margin: 0;" type="danger" circle size="large" class="shadow"
             title="挂断" @click="chat.confirmRtcFn.rejectCall()"
           >
-            <i class="i-solar:end-call-bold mt-1 rotate-4 transform p-3.5" />
+            <i class="i-solar:end-call-bold mt-1 rotate-4 transform p-2.8" />
           </el-button>
         </template>
         <!-- 控制按钮 -->
@@ -437,7 +440,7 @@ defineExpose({
             :style="{ order: callType === CallTypeEnum.VIDEO ? 4 : 1 }" circle size="large" class="shadow" title="挂断"
             @click="endCallFn"
           >
-            <i class="i-solar:end-call-broken p-3.5" />
+            <i class="i-solar:end-call-broken p-2.8" />
           </el-button>
         </template>
       </div>
@@ -452,7 +455,7 @@ defineExpose({
         <CardElImage
           v-show="!minWindStream?.getVideoTracks()[0]?.enabled" title="点击切换"
           :src="isSelfMinView ? BaseUrlImg + user.userInfo.avatar : BaseUrlImg + theContact.avatar"
-          class="h-24 w-16 cursor-pointer object-cover border-default card-default-br"
+          class="h-24 w-16 cursor-pointer select-none object-cover border-default card-default-br"
           @click="isSelfMinView = !isSelfMinView"
         />
       </div>
@@ -467,27 +470,24 @@ defineExpose({
       <CardElImage
         v-show="!maxWindStream?.getVideoTracks()[0]?.enabled"
         :src="!isSelfMinView ? BaseUrlImg + user.userInfo.avatar : BaseUrlImg + theContact.avatar"
-        class="absolute left-0 top-0 mx-a h-full w-full filter-blur"
+        class="absolute left-0 top-0 mx-a h-full w-full select-none filter-blur"
       />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-:deep(.el-dialog__header) {
-  display: none !important;
-}
-
 .bg-linear {
   background: linear-gradient(to bottom, rgba(20, 20, 20, 1), rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0));
 }
-
-.btns {
-  --el-button-hover-text-color: #fff !important;
-  // :deep(.el-button) {
-  // background-color: initial !important;
-  // }
-}
+// .btns {
+//   // --el-button-hover-text-color: #fff !important;
+//   // :deep(.el-button) {
+//   //   // &:hover {
+//   //   //   // background-color: none;
+//   //   // }
+//   // }
+// }
 
 .rtc-dialog {
   transition: width 0.2s, height 0.2s ease, transform 0.2s;
@@ -532,7 +532,7 @@ defineExpose({
     }
 
     .btns-mini {
-      display: block;
+      display: flex;
       opacity: 0;
       transition: opacity 0.2s;
     }
