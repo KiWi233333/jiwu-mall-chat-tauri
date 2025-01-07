@@ -260,10 +260,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         localStream.value && pc.addTrack(track, localStream.value);
       });
 
-      channel.value = pc.createDataChannel("channel");
-      pc.ondatachannel = (event) => {
-        // console.log("创建数据通道:", event);
-      };
+      // channel.value = pc.createDataChannel("channel");
+      // pc.ondatachannel = (event) => {
+      //   // console.log("创建数据通道:", event);
+      // };
 
       // 连接状态变化 "closed" | "connected" | "connecting" | "disconnected" | "failed" | "new";
       pc.onconnectionstatechange = (e) => {

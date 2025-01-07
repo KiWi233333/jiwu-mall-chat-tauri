@@ -296,7 +296,7 @@ defineExpose({
       <!-- 中间 头像和状态区域 -->
       <div class="avatar-box my-a flex flex-col items-center truncate">
         <!-- 远程视频/头像显示 -->
-        <div v-if="callType === CallTypeEnum.AUDIO || !remoteStream?.getVideoTracks()[0]?.enabled" class="relative">
+        <div v-if="callType === CallTypeEnum.AUDIO || !remoteStream?.getVideoTracks()[0]?.enabled" class="relative flex-row-c-c flex-col">
           <CardElImage
             :src="BaseUrlImg + theContact.avatar"
             class="avatar mx-a h-20 w-20 select-none rounded-full shadow-lg border-default-hover"
