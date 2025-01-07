@@ -4,17 +4,7 @@ interface RtcMsgVO {
   senderId: string;
   [key: string]: any;
 }
-const rtcCallTextMap = {
-  undefined: "",
-  [CallStatusEnum.CALLING]: "正在呼叫...",
-  [CallStatusEnum.ACCEPT]: "通话中",
-  [CallStatusEnum.END]: "通话结束",
-
-  [CallStatusEnum.REJECT]: "对方拒绝了呼叫",
-  [CallStatusEnum.CANCEL]: "对方取消了呼叫",
-  [CallStatusEnum.BUSY]: "对方无应答",
-  [CallStatusEnum.ERROR]: "通话错误中断",
-};
+const TURN_SERVER = import.meta.env.VITE_TURN_SERVER_URL;
 const MAX_TIME_OUT_SECONDS = 30; // 拨打 超时时间
 /**
  * 使用webRtc通话
@@ -72,6 +62,13 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       { urls: "stun:stun3.l.google.com:19302" },
     ],
   };
+  if (TURN_SERVER && configuration.iceServers) {
+    configuration.iceServers.push({
+      urls: TURN_SERVER,
+      username: import.meta.env.VITE_TURN_SERVER_USER,
+      credential: import.meta.env.VITE_TURN_SERVER_PWD,
+    });
+  }
 
   // 添加铃声相关状态
   const bellAudio = ref<HTMLAudioElement | null>(null);
@@ -460,6 +457,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       bellAudio.value = new Audio("/sound/bell.mp3");
       bellAudio.value!.loop = true;
       bellAudio.value?.play();
+      // 用户接受通话，继续原有流程
+      await nextTick();
+      await getDevices();
+      await getLocalStream(type);
 
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
@@ -498,10 +499,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         senderId: offer.senderId,
       };
 
-      // 用户接受通话，继续原有流程
-      await nextTick();
-      await getDevices();
-      await getLocalStream(type);
 
       // 2. 创建 RTCPeerConnection
       peerConnection.value = createPeerConnection(roomId);
