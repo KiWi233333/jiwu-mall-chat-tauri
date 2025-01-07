@@ -122,7 +122,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         clear();
         return true;
       }
-      console.log("结束通话 : ", rtcMsg.value.roomId, status);
+      // console.log("结束通话 : ", rtcMsg.value.roomId, status);
       if ([CallStatusEnum.END, CallStatusEnum.CANCEL, CallStatusEnum.REJECT, CallStatusEnum.ERROR].includes(status)) {
         const res = await hangUpRTCCall(rtcMsg.value.roomId, user.getToken);
         if (res.code !== StatusCode.SUCCESS) {
@@ -193,7 +193,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       const devices = await navigator.mediaDevices.enumerateDevices();
       audioDevices.value = devices.filter(device => device.kind === "audioinput");
       videoDevices.value = devices.filter(device => device.kind === "videoinput");
-      console.log(audioDevices.value, videoDevices.value);
+      // console.log(audioDevices.value, videoDevices.value);
 
       // 默认选择第一个设备
       if (audioDevices.value.length > 0 && !selectedAudioDevice.value && audioDevices.value?.[0]?.deviceId)
@@ -253,7 +253,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
 
       // 监听远程流
       pc.ontrack = (event) => {
-        console.log("收到远程流:", event);
+        // console.log("收到远程流:", event);
         if (event.streams[0]) {
           remoteStream.value = event.streams[0];
         }
@@ -267,7 +267,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       // };
       // 连接状态变化 "closed" | "connected" | "connecting" | "disconnected" | "failed" | "new";
       pc.onconnectionstatechange = (e) => {
-        console.log("RTC 连接状态变化: ", pc.connectionState);
+        // console.log("RTC 连接状态变化: ", pc.connectionState);
         switch (pc.connectionState) {
           case "new":
             break;
@@ -281,19 +281,22 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
             durationTimer.value = setInterval(() => {
               callDuration.value++;
             }, 1000);
+            updateChatRTCMessage(roomId, {
+              status: CallStatusEnum.ACCEPT,
+            }, user.getToken);
             break;
           case "disconnected":
             connectionStatus.value = CallStatusEnum.END;
+            ElMessage.error("RTC通讯连接失败!");
             setTimeout(async () => {
-              await endCall();
+              await endCall(CallStatusEnum.ERROR);
               ElMessage.closeAll();
             }, 500);
             break;
           case "closed":
-            connectionStatus.value = CallStatusEnum.ERROR;
-            ElMessage.error("RTC通讯连接失败!");
+            connectionStatus.value = CallStatusEnum.END;
             setTimeout(async () => {
-              await endCall();
+              await endCall(CallStatusEnum.END);
               ElMessage.closeAll();
             }, 500);
             break;
@@ -301,7 +304,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
             connectionStatus.value = CallStatusEnum.ERROR;
             ElMessage.error("RTC通讯连接失败!");
             setTimeout(async () => {
-              await endCall();
+              await endCall(CallStatusEnum.ERROR);
               ElMessage.closeAll();
             }, 500);
             break;
@@ -376,6 +379,15 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       }, user.getToken);
       if (res.code !== StatusCode.SUCCESS) {
         return false;
+      }
+      else {
+        const linkMsg = res?.data?.message?.body;
+        if (linkMsg?.callId) {
+          connectionStatus.value = CallStatusEnum.BUSY;
+          ElMessage.closeAll();
+          ElMessage.success("对方忙碌中...");
+          return true;
+        }
       }
 
       // 播放铃声
@@ -505,19 +517,13 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       // 4. 创建并发送 answer
       const answer = await peerConnection.value.createAnswer();
       await peerConnection.value.setLocalDescription(answer);
-      console.log(`${user.userInfo.username}：发送 answer 信令:`, answer);
-      // 5. 监听 ICE candidate
-      if (!roomId) {
-        ElMessage.error("房间号不存在，请重新连接！");
-        return false;
-      }
+      // console.log(`${user.userInfo.username}：发送 answer 信令:`, answer);
       // 监听 ICE 连接状态
       peerConnection.value.onicecandidate = async (event) => {
-        console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
+        // console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
         if (event.candidate && roomId) {
           try {
             const res = await updateChatRTCMessage(roomId, {
-              status: CallStatusEnum.ACCEPT,
               signalType: SignalTypeEnum.CANDIDATE,
               data: event.candidate,
             }, user.getToken);
@@ -531,6 +537,11 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           }
         }
       };
+      // 5. 监听 ICE candidate
+      if (!roomId) {
+        ElMessage.error("房间号不存在，请重新连接！");
+        return false;
+      }
       // 6. 发送 answer 信令到远端
       const res = await updateChatRTCMessage(roomId, {
         signalType: SignalTypeEnum.ANSWER,
@@ -556,7 +567,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           clearTimeout(callTimer.value);
           callTimer.value = null;
         }
-        console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
+        // console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
 
         // 2. 停止铃声
         if (bellAudio.value) {
@@ -575,11 +586,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           await peerConnection.value.setRemoteDescription(answer);
           // 5. 监听 ICE 连接状态
           peerConnection.value.onicecandidate = async (event) => {
-            console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
+            // console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
             if (event.candidate && roomId) {
               try {
                 const res = await updateChatRTCMessage(roomId, {
-                  status: CallStatusEnum.ACCEPT,
                   signalType: SignalTypeEnum.CANDIDATE,
                   data: event.candidate,
                 }, user.getToken);
@@ -607,7 +617,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
   async function handleCandidate({ data: candidate }: WSRtcCallMsg) {
     try {
       if (peerConnection.value && candidate && candidate.candidate) {
-        console.log("收到 candidate 信令:", candidate);
+        // console.log("收到 candidate 信令:", candidate);
         await peerConnection.value.addIceCandidate(candidate);
       }
     }
@@ -679,7 +689,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // 替换现有轨道
         const newVideoTrack = newStream.getVideoTracks()[0];
         const oldVideoTrack = localStream.value.getVideoTracks()[0];
-        console.log(oldVideoTrack, newVideoTrack);
+        // console.log(oldVideoTrack, newVideoTrack);
 
         if (newVideoTrack) {
           if (!oldVideoTrack) {

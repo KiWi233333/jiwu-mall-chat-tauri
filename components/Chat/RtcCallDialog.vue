@@ -68,8 +68,8 @@ const isConnectClose = computed(() => [undefined, CallStatusEnum.END, CallStatus
 // @unocss-include
 const isMaxVideoClass = ref<MaxVideoObjEnum>(MaxVideoObjEnum.CONTAIN); // 最大化视频
 const isSelfMinView = ref(false); // 切换视频流
-const minWindStream = computed(() => callType === CallTypeEnum.VIDEO ? isSelfMinView.value ? localStream.value : remoteStream.value : null); // 小窗口的视频流
-const maxWindStream = computed(() => callType === CallTypeEnum.VIDEO ? (!isSelfMinView.value ? localStream.value : remoteStream.value) : remoteStream.value); // 大窗口的视频流
+const minWindStream = computed(() => callType === CallTypeEnum.VIDEO ? (!isSelfMinView.value ? localStream.value : remoteStream.value) : null); // 小窗口的视频流
+const maxWindStream = computed(() => callType === CallTypeEnum.VIDEO ? (isSelfMinView.value ? localStream.value : remoteStream.value) : remoteStream.value); // 大窗口的视频流
 const audioVolume = ref(1); // 最小音量 默认扬声器音量
 const minWindStreamProps = computed(() => ({ muted: !isSelfMinView.value, volume: !isSelfMinView.value ? 0 : audioVolume.value })); // 非本人视频静音
 const maxWindStreamProps = computed(() => ({ muted: isSelfMinView.value, volume: isSelfMinView.value ? 0 : audioVolume.value }));// 本人视频静音

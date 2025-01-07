@@ -5,7 +5,7 @@
  * @param token 登录令牌
  */
 export function addChatRTCMessage(roomId: number, dto: AddChatRTCMessageDTO, token: string) {
-  return useHttp.post<Result<ChatMessageVO>>(
+  return useHttp.post<Result<ChatMessageVO<RtcBodyMsgVO>>>(
     `/chat/message/rtc/${roomId}`,
     {
       receiverIds: dto.receiverIds,
@@ -72,7 +72,7 @@ export interface AddChatRTCMessageDTO {
 // 修改消息DTO
 export interface UpdateChatRTCMessageDTO {
   status?: CallStatusEnum;
-  signalType: SignalTypeEnum;
+  signalType?: SignalTypeEnum;
   data?: any;
 }
 
