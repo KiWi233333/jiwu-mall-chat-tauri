@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from "element-plus";
+import type { Result } from "~/types/result";
 import { DeviceType, getRegisterCode, toLoginByPwd } from "~/composables/api/user";
 import { checkUsernameExists } from "~/composables/api/user/info";
-import type { Result } from "~/types/result";
 import { RegisterType } from "~/types/user/index.js";
 
 // 注册方式

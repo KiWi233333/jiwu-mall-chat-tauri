@@ -1,6 +1,6 @@
 
 <script lang="ts" setup>
-import { WsStatusEnum } from "~/composables/types/WsType";
+import { WsStatusEnum } from "~/types/chat/WsType";
 
 const user = useUserStore();
 const ws = useWs();

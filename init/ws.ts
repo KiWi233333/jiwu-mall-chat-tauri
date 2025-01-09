@@ -1,6 +1,6 @@
 import { sendNotification } from "@tauri-apps/plugin-notification";
-import { WsMsgBodyType, WsStatusEnum } from "~/composables/types/WsType";
 import { sendWebNotification } from "~/composables/utils/useWebToast";
+import { WsMsgBodyType, WsStatusEnum } from "~/types/chat/WsType";
 
 
 export async function useWsInit() {

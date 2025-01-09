@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { WSMsgDelete, WSMsgRecall } from "~/composables/types/WsType";
+import type { WSMsgDelete, WSMsgRecall } from "~/types/chat/WsType";
 
 const updateContactList: { [key: number]: boolean } = {};
 const chat = useChatStore();

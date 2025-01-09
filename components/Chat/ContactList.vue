@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { type ChatContactVO, RoomType } from "@/composables/api/chat/contact";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { WSMemberStatusEnum } from "~/composables/types/WsType";
+import { WSMemberStatusEnum } from "~/types/chat/WsType";
 
 const props = defineProps<{
   dto?: ContactPageDTO

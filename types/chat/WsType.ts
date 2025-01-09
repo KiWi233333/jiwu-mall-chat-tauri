@@ -1,5 +1,5 @@
 import type { Result } from "postcss";
-import type { ChatMessageVO } from "../api/chat/message";
+import type { ChatMessageVO } from "../../composables/api/chat/message";
 
 /**
  * ws 请求 消息类型 1用户认证、2心跳检测

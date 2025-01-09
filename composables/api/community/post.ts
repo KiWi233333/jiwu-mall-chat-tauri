@@ -1,5 +1,3 @@
-import type { isTrue, Result } from "@/types/result";
-
 /**
  * 获取帖子列表
  * @param page 页

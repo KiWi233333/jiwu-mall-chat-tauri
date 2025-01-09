@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { WsStatusEnum } from "~/composables/types/WsType";
+import { WsStatusEnum } from "~/types/chat/WsType";
 
 const isShow = ref(false);
 
@@ -236,7 +236,7 @@ onMounted(() => {
             <BtnElButton
               class="group ml-a" icon-class="i-solar:map-arrow-right-bold-duotone block mr-1"
               :disabled="!user.isLogin || isChat"
-              transition-icon round
+              round transition-icon
               type="info" @click=" onSubmit "
             >
               发送&nbsp;

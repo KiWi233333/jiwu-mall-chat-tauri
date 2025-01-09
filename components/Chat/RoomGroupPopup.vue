@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { WSOnlineOfflineNotify } from "~/composables/types/WsType";
+import type { WSOnlineOfflineNotify } from "~/types/chat/WsType";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from "~/composables/api/chat/room";
 

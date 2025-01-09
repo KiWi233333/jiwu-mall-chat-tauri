@@ -1,6 +1,3 @@
-import type { Result } from "@/types/result";
-import type { ChatRoomRoleEnum } from "./room";
-
 /**
  * 获取会话列表（游标）
  * @param dto 条件

@@ -1,5 +1,3 @@
-import type { Result } from "@/types/result";
-
 /**
  * 获取房间详细信息
  * @param id 房间号

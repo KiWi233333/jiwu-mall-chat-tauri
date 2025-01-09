@@ -1,5 +1,3 @@
-import type { Result } from "@/types/result";
-
 /**
  * 获取社区用户（分页）
  * @param page 页

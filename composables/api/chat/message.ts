@@ -1,8 +1,4 @@
 
-import type { Gender } from "@/types/index";
-import { type isTrue, type Result, StatusCode } from "@/types/result";
-
-
 /**
  * 获取消息列表（游标）
  * @param roomId 房间号
@@ -213,30 +209,6 @@ export interface RtcLiteBodyMsgVO {
   endTime?: number;
   // 通话时长文本
   durationText?: string;
-}
-
-/**
- * RTC消息 个人推送的
- */
-export interface RtcBodyMsgVO {
-  // 通话ID
-  callId?: number;
-  // 信令类型
-  signalType: SignalTypeEnum;
-  // 信令数据
-  data: any;
-  // 接收者ID列表
-  receiverIds: string[];
-  // 发送者ID
-  senderId?: string;
-  // 通话状态
-  status: CallStatusEnum;
-  // 通话类型
-  type: CallTypeEnum;
-  // 开始时间戳
-  startTime: number;
-  // 结束时间戳
-  endTime?: number;
 }
 
 export enum FileBodyMsgTypeEnum {

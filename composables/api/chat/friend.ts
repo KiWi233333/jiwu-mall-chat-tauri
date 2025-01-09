@@ -1,7 +1,3 @@
-import type { Gender } from "@/types/index";
-import type { isTrue, Result } from "@/types/result";
-import type { ChatOfflineType } from "./room";
-
 /**
  * 获取好友列表（游标）
  * @param pageSize 大小
