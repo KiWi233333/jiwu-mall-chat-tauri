@@ -314,7 +314,7 @@ defineExpose({
         class="btns max-w-22em w-full flex flex-wrap items-center justify-center gap-col-8 gap-row-6 px-12 py-6 sm:(gap-col-6 gap-row-6)"
       >
         <!-- 接听者的接听/拒绝按钮 -->
-        <template v-if="!isSender && connectionStatus === CallStatusEnum.CALLING">
+        <template v-if="!isSender && !isConnected && !isRtcConnecting">
           <!-- 接听按钮 -->
           <el-button
             style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;" type="success" circle size="large"
@@ -331,7 +331,7 @@ defineExpose({
           </el-button>
         </template>
         <!-- 控制按钮 -->
-        <template v-else-if="isSender || connectionStatus === CallStatusEnum.ACCEPT">
+        <template v-else-if="isSender || isConnected || isRtcConnecting">
           <!-- 麦克风控制 -->
           <el-dropdown trigger="hover" class="mini-hidden">
             <button
@@ -385,7 +385,7 @@ defineExpose({
             </template>
           </el-dropdown>
           <!-- 视频控制 -->
-          <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover" style="order: 3">
+          <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover" style="order: 3" class="mini-hidden">
             <button
               type="button" circle style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;transition: none;"
               class="cursor-pointer rounded-full border-none shadow-sm hover:op-80"

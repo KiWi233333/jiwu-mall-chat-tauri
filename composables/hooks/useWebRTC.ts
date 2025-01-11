@@ -230,11 +230,11 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       };
       if (!constraints.audio && !constraints.video) {
         ElMessage.error("没有可用的设备!");
-        return null;
+        return false;
       }
 
       localStream.value = await navigator.mediaDevices.getUserMedia(constraints);
-      return localStream.value;
+      return true;
     }
     catch (err) {
       console.warn("获取本地流失败:", err);
@@ -266,7 +266,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
 
       // 连接状态变化 "closed" | "connected" | "connecting" | "disconnected" | "failed" | "new";
       pc.onconnectionstatechange = (e) => {
-        // console.log("RTC 连接状态变化: ", pc.connectionState);
+        console.log("RTC 连接状态变化: ", pc.connectionState);
         switch (pc.connectionState) {
           case "new":
             break;
@@ -323,7 +323,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // console.log("收到消息:", event.data);
       };
       channel.value.onerror = (event) => {
-        console.error("信道出错:", event);
+        console.warn("信道出错:", event);
       };
       channel.value.onclose = () => {
         // console.log("信道已关闭");
@@ -543,7 +543,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       // 用户接受通话，继续原有流程
       await nextTick();
       await getDevices();
-      await getLocalStream(type);
+      const isLocalStreamOk = await getLocalStream(type);
 
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
@@ -574,7 +574,10 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         await endCall(CallStatusEnum.REJECT);
         return false;
       }
-
+      if (!isLocalStreamOk) {
+        await getDevices();
+        await getLocalStream(type);
+      }
       // 确认接听
       rtcMsg.value = {
         roomId,
