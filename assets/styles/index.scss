@@ -83,6 +83,7 @@
 // element-plus
 // 消息确认框
 .el-message-box {
+  --at-apply: "border-default-sm";
   .el-message-box__header {
     padding: 0 !important;
   }
