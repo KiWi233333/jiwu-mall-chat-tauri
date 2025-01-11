@@ -213,8 +213,8 @@ export async function useMsgBoxWebViewInit() {
     if (!win)
       return;
     const position = event.payload as LogicalPosition;
-    const winPosition = await win.position();
-    console.log("winPosition", winPosition);
+    // const winPosition = await win.position();
+    // console.log("winPosition", winPosition);
 
     const setting = useSettingStore();
     const screenSize = window.screen;
@@ -239,7 +239,6 @@ export async function useMsgBoxWebViewInit() {
       if (y + MSG_WEBVIEW_HEIGHT.value > screenSize.availHeight) {
         y = screenSize.availHeight - MSG_WEBVIEW_HEIGHT.value;
       }
-      console.log(x, y);
       await win.setPosition(new LogicalPosition(x, y));
     }
     else if (setting.osType === "macos") {
@@ -299,7 +298,7 @@ async function handleChannelMsg(event: MessageEvent) {
         if (p.roomId === chat.theContact.roomId)
           chat.theContact.unreadCount = 0;
       }).catch(() => {
-        console.log("readAllContact error");
+        console.warn("readAllContact error");
       });
       return p;
     });

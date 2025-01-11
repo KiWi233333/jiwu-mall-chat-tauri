@@ -1,3 +1,5 @@
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+
 interface RtcMsgVO {
   roomId: number;
   callType: CallTypeEnum;
@@ -14,6 +16,7 @@ const MAX_TIME_OUT_SECONDS = 30; // 拨打 超时时间
 export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, rejectCall }: { confirmCall: () => void, rejectCall: () => void }) => void) {
   const user = useUserStore();
   const chat = useChatStore();
+  const setting = useSettingStore();
   const ws = useWs();
   const rtcMsg = ref<Partial<RtcMsgVO>>({
     roomId: undefined,
@@ -54,6 +57,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
   // WebRTC 连接对象
   const peerConnection = ref<RTCPeerConnection | null>(null);
   const channel = ref<RTCDataChannel | null>(null);
+  const channelStatus = ref<RTCDataChannelState | undefined>(undefined);
   const configuration: RTCConfiguration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
@@ -62,6 +66,9 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       { urls: "stun:stun3.l.google.com:19302" },
     ],
   };
+  // 待发送ice列表
+  const pendingCandidates = ref<RTCIceCandidate[]>([]);
+
   if (TURN_SERVER && configuration.iceServers) {
     configuration.iceServers.push({
       urls: TURN_SERVER,
@@ -307,6 +314,30 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // @ts-expect-error
         rtcStatus.value = (e?.currentTarget?.connectionState || pc.connectionState) as RTCPeerConnectionState;
       };
+      // 创建信道
+      channel.value = pc.createDataChannel("chat");
+      channel.value.onopen = () => {
+        // console.log("信道已打开");
+      };
+      channel.value.onmessage = (event) => {
+        // console.log("收到消息:", event.data);
+      };
+      channel.value.onerror = (event) => {
+        console.error("信道出错:", event);
+      };
+      channel.value.onclose = () => {
+        // console.log("信道已关闭");
+      };
+      pc.onicecandidate = async (event) => {
+        if (event.candidate && roomId) {
+          try {
+            pendingCandidates.value.push(event.candidate);
+          }
+          catch (err) {
+            console.error("发送ICE候选者出错:", err);
+          }
+        }
+      };
       peerConnection.value = pc;
       return pc;
     }
@@ -316,7 +347,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       throw err;
     }
   };
-
 
   // 发起通话
   const startCall = async (roomId: number, type: CallTypeEnum, uidList?: string[]) => {
@@ -360,7 +390,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
 
       // 1. 创建 RTCPeerConnection
       const pc = createPeerConnection(roomId);
-
       // 创建并发送 offer
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
@@ -429,6 +458,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         callType: undefined,
         senderId: undefined,
       };
+      pendingCandidates.value = [];
       audioDevices.value = [];
       videoDevices.value = [];
       selectedAudioDevice.value = null;
@@ -441,10 +471,54 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       // 关闭连接
       peerConnection.value?.close();
       peerConnection.value = null;
+      channel.value?.close();
+      channel.value = null;
+      channelStatus.value = undefined;
     }
     catch (error) {
       console.error("清理资源失败:", error);
     }
+  }
+
+  // 监听 ICE 连接
+  async function lisenIceCandidate(roomId: number) {
+    if (!peerConnection.value) {
+      return;
+    }
+    // 交换信令后，发送 ICE candidate 信令
+    if (pendingCandidates.value.length > 0) {
+      for (const candidate of pendingCandidates.value) {
+        try {
+          updateChatRTCMessage(roomId, {
+            signalType: SignalTypeEnum.CANDIDATE,
+            data: candidate,
+          }, user.getToken).then(() => {
+          });
+        }
+        catch (err) {
+          console.error("发送ICE候选者出错:", err);
+        }
+      }
+      pendingCandidates.value = [];
+      peerConnection.value.onicecandidate = async (event) => {
+        // console.log(user.userInfo.username, "接收端 - 收到 ICE candidate 信令:", event.candidate);
+        if (event.candidate) {
+          try {
+            const res = await updateChatRTCMessage(roomId, {
+              signalType: SignalTypeEnum.CANDIDATE,
+              data: event.candidate,
+            }, user.getToken);
+
+            if (res.code !== StatusCode.SUCCESS) {
+              console.error("发送ICE候选者失败:", res.message);
+            }
+          }
+          catch (err) {
+            console.error("发送ICE候选者出错:", err);
+          }
+        }
+      };
+    };
   }
 
 
@@ -457,6 +531,15 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       bellAudio.value = new Audio("/sound/bell.mp3");
       bellAudio.value!.loop = true;
       bellAudio.value?.play();
+      // tauri显示窗口
+      if (setting.isDesktop) {
+        const win = await WebviewWindow.getByLabel("main");
+        if (!win)
+          return;
+        await win.unminimize();
+        await win.show();
+        await win.setFocus();
+      }
       // 用户接受通话，继续原有流程
       await nextTick();
       await getDevices();
@@ -511,25 +594,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       const answer = await peerConnection.value.createAnswer();
       await peerConnection.value.setLocalDescription(answer);
       // console.log(`${user.userInfo.username}：发送 answer 信令:`, answer);
-
-      peerConnection.value.onicecandidate = async (event) => {
-        // console.log(user.userInfo.username, "接收端 - 收到 ICE candidate 信令:", event.candidate);
-        if (event.candidate && roomId) {
-          try {
-            const res = await updateChatRTCMessage(roomId, {
-              signalType: SignalTypeEnum.CANDIDATE,
-              data: event.candidate,
-            }, user.getToken);
-
-            if (res.code !== StatusCode.SUCCESS) {
-              console.error("发送ICE候选者失败:", res.message);
-            }
-          }
-          catch (err) {
-            console.error("发送ICE候选者出错:", err);
-          }
-        }
-      };
       // 监听 ICE 连接状态
       // 5. 监听 ICE candidate
       if (!roomId) {
@@ -544,6 +608,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       if (res.code !== StatusCode.SUCCESS) {
         return false;
       }
+      lisenIceCandidate(roomId);
       connectionStatus.value = CallStatusEnum.ACCEPT;
     }
     catch (error) {
@@ -578,25 +643,27 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
           }
           // 4. 发起者 - 设置远程描述
           await peerConnection.value.setRemoteDescription(answer);
-          // 5. 监听 ICE 连接状态
-          peerConnection.value.onicecandidate = async (event) => {
-            // console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
-            if (event.candidate && roomId) {
-              try {
-                const res = await updateChatRTCMessage(roomId, {
-                  signalType: SignalTypeEnum.CANDIDATE,
-                  data: event.candidate,
-                }, user.getToken);
 
-                if (res.code !== StatusCode.SUCCESS) {
-                  console.error("发送ICE候选者失败:", res.message);
-                }
-              }
-              catch (err) {
-                console.error("发送ICE候选者出错:", err);
-              }
-            }
-          };
+          lisenIceCandidate(roomId);
+          //   // 5. 监听 ICE 连接状态
+          //   peerConnection.value.onicecandidate = async (event) => {
+          //     console.log(user.userInfo.username, "收到 ICE candidate 信令:", event.candidate);
+          //     if (event.candidate && roomId) {
+          //       try {
+          //         const res = await updateChatRTCMessage(roomId, {
+          //           signalType: SignalTypeEnum.CANDIDATE,
+          //           data: event.candidate,
+          //         }, user.getToken);
+
+        //         if (res.code !== StatusCode.SUCCESS) {
+        //           console.error("发送ICE候选者失败:", res.message);
+        //         }
+        //       }
+        //       catch (err) {
+        //         console.error("发送ICE候选者出错:", err);
+        //       }
+        //     }
+        //   };
         }
       }
     }
@@ -667,7 +734,6 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
       console.error("切换音频设备失败:", error);
     }
   }
-
 
   // 切换视频设备
   async function switchVideoDevice(deviceId: string) {

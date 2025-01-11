@@ -45,20 +45,16 @@ enum MaxVideoObjEnum {
   COVER = "object-cover",
   FILL = "object-fill",
 }
-const maxVideoObjMap = {
-  [MaxVideoObjEnum.CONTAIN]: {
-    className: MaxVideoObjEnum.CONTAIN,
-    detailText: "原始比例",
-  },
-  [MaxVideoObjEnum.COVER]: {
-    className: MaxVideoObjEnum.COVER,
-    detailText: "全面屏",
-  },
-  [MaxVideoObjEnum.FILL]: {
-    className: MaxVideoObjEnum.FILL,
-    detailText: "拉伸",
-  },
-};
+const maxVideoCoverList = [{
+  className: MaxVideoObjEnum.CONTAIN,
+  detailText: "原始比例",
+}, {
+  className: MaxVideoObjEnum.COVER,
+  detailText: "全面屏",
+}, {
+  className: MaxVideoObjEnum.FILL,
+  detailText: "拉伸",
+}];
 
 // 通话状态
 const isConnected = computed(() => connectionStatus.value === CallStatusEnum.ACCEPT || rtcStatus.value === "connected");
@@ -208,8 +204,8 @@ watch(isConnectClose, (val) => {
   }
 });
 // 结束通话
-function endCallFn() {
-  endCall(CallStatusEnum.END);
+function hanUpCall() {
+  endCall(connectionStatus.value === CallStatusEnum.CALLING ? CallStatusEnum.CANCEL : CallStatusEnum.END);
   show.value = false;
 }
 
@@ -220,7 +216,7 @@ function closeDialog() {
     cancelButtonText: "取消",
     type: "warning",
   }).then((action) => {
-    action === "confirm" && endCallFn();
+    action === "confirm" && hanUpCall();
   }).catch(() => {
   });
 }
@@ -236,7 +232,7 @@ defineExpose({
   connectionStatus,
   localStream,
   remoteStream,
-  endCallFn,
+  hanUpCall,
 });
 </script>
 
@@ -265,7 +261,7 @@ defineExpose({
         </span>
         <template v-else>
           <!-- 视频比例控制 -->
-          <el-dropdown trigger="hover">
+          <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
             <i
               :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-tabler:maximize' : 'i-tabler:minimize'"
               :title="isMaxVideoClass ? '视频还原' : '视频最大化'" p-2.6 btn-primary
@@ -274,7 +270,7 @@ defineExpose({
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-for="option in Object.values(maxVideoObjMap)" :key="option.detailText"
+                  v-for="option in maxVideoCoverList" :key="option.detailText"
                   @click.capture="isMaxVideoClass = option.className"
                 >
                   <i v-if="isMaxVideoClass === option.className" class="i-solar:check-circle-bold mr-2" />
@@ -283,10 +279,10 @@ defineExpose({
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span mx-a>
+          <span absolute-center-x>
             {{ rtcDescText }}
           </span>
-          <i i-carbon:subtract p-3 btn-primary title="缩小" @click.capture="isMinWind = true" />
+          <i title="缩小" class="i-carbon:subtract ml-a p-3 btn-primary" @click.capture="isMinWind = true" />
           <i i-carbon:close ml-2 p-3 btn-danger title="关闭" @click.capture="closeDialog" />
         </template>
       </h4>
@@ -297,10 +293,13 @@ defineExpose({
         {{ rtcDescText }}
       </div>
       <!-- 中间 头像和状态区域 -->
-      <div class="avatar-box my-a flex flex-col items-center truncate">
+      <div
+        class="avatar-box flex-row-c-c flex-1 flex-col truncate transition-all"
+      >
         <!-- 远程视频/头像显示 -->
         <div v-if="callType === CallTypeEnum.AUDIO || !remoteStream?.getVideoTracks()[0]?.enabled" class="relative flex-row-c-c flex-col">
           <CardElImage
+            :draggable="false"
             :src="BaseUrlImg + theContact.avatar"
             class="avatar mx-a h-20 w-20 select-none rounded-full shadow-lg border-default-hover"
           />
@@ -308,45 +307,41 @@ defineExpose({
             {{ theContact.name }}
           </div>
         </div>
-        <div v-if="!isConnected" class="rtc-desc mt-2 text-center text-sm">
-          {{ rtcDescText }}
-        </div>
       </div>
       <!-- 控制按钮区域 -->
       <div
         v-if="connectionStatus !== undefined"
-        class="btns mt-a max-w-22em flex flex-wrap items-center justify-center gap-col-8 gap-row-6 px-12 py-6 sm:(gap-col-6 gap-row-6)"
+        class="btns max-w-22em w-full flex flex-wrap items-center justify-center gap-col-8 gap-row-6 px-12 py-6 sm:(gap-col-6 gap-row-6)"
       >
         <!-- 接听者的接听/拒绝按钮 -->
         <template v-if="!isSender && connectionStatus === CallStatusEnum.CALLING">
           <!-- 接听按钮 -->
           <el-button
-            style="width: 3.2rem;height: 3.2rem;margin: 0;" type="success" circle size="large"
+            style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;" type="success" circle size="large"
             @click.capture="chat.confirmRtcFn.confirmCall()"
           >
-            <i class="i-solar:phone-calling-bold mt-1 p-3.5" />
+            <i class="i-solar:phone-calling-bold mt-1 p-[var(--mini-btn-icon-size,_0.875rem)]" />
           </el-button>
           <!-- 拒绝按钮 -->
           <el-button
-            style="width: 3.2rem;height: 3.2rem;margin: 0;" type="danger" circle size="large" title="挂断"
+            style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;" type="danger" circle size="large" title="挂断"
             @click.capture="chat.confirmRtcFn.rejectCall()"
           >
-            <i class="i-solar:end-call-bold mt-1 rotate-4 transform p-3.5" />
+            <i class="i-solar:end-call-bold mt-1 rotate-4 transform p-[var(--mini-btn-icon-size,_0.875rem)]" />
           </el-button>
         </template>
-
         <!-- 控制按钮 -->
         <template v-else-if="isSender || connectionStatus === CallStatusEnum.ACCEPT">
           <!-- 麦克风控制 -->
-          <el-dropdown trigger="hover">
+          <el-dropdown trigger="hover" class="mini-hidden">
             <button
               type="button"
-              style="width: 3.2rem;height: 3.2rem;margin: 0;"
+              style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;"
               class="cursor-pointer rounded-full border-none shadow-sm hover:op-80"
               :class="localStream?.getAudioTracks()[0]?.enabled ? '!bg-light !text-dark' : '!text-light !bg-[#222d2b60] '"
               :plain="localStream?.getAudioTracks()[0]?.enabled ? false : true" size="large" @click.capture="toggleMute"
             >
-              <i class="i-solar:microphone-3-bold p-3.5" />
+              <i class="i-solar:microphone-3-bold p-[var(--mini-btn-icon-size,_0.875rem)]" />
             </button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -362,25 +357,25 @@ defineExpose({
           </el-dropdown>
           <!-- 结束通话 -->
           <el-button
-            style="width: 3.2rem;height: 3.2rem;margin: 0;" type="danger"
+            style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;" type="danger"
             :style="{ order: callType === CallTypeEnum.VIDEO ? 4 : 1 }" circle size="large" title="挂断"
-            @click.capture="endCallFn"
+            @click.capture="hanUpCall"
           >
-            <i class="i-solar:end-call-broken p-3.5" />
+            <i class="i-solar:end-call-broken p-[var(--mini-btn-icon-size,_0.875rem)]" />
           </el-button>
           <!-- 扬声器控制 -->
-          <el-dropdown trigger="hover" style="order: 2">
+          <el-dropdown trigger="hover" style="order: 2" class="mini-hidden">
             <el-button
-              style="order: 2; width: 3.2rem;height: 3.2rem;margin: 0;" type="info" circle size="large"
+              style="order: 2; width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;" type="info" circle size="large"
               title="点击快速切换音量" :plain="audioVolume < 0.5" @click="audioVolume = audioVolume === 0 ? 1 : 0"
             >
               <i
-                class="p-3.5"
+                class="p-[var(--mini-btn-icon-size,_0.875rem)]"
                 :class="audioVolume === 0 ? 'i-solar:volume-cross-bold-duotone' : audioVolume < 0.5 ? 'i-solar:volume-loud-bold-duotone' : 'i-solar:volume-loud-bold '"
               />
             </el-button>
             <template #dropdown>
-              <div class="w-fit flex-row-c-c py-2 pl-4 pr-8">
+              <div class="w-fit flex-row-c-c py-1 pl-3 pr-6">
                 音量：
                 <el-slider
                   v-model.lazy="audioVolume" style="width: 12em;" :min="0" :max="1" :step="0.1"
@@ -392,12 +387,12 @@ defineExpose({
           <!-- 视频控制 -->
           <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover" style="order: 3">
             <button
-              type="button" circle style="width: 3.2rem;height: 3.2rem;margin: 0;transition: none;"
+              type="button" circle style="width: var(--mini-btn-size, 3.2rem);height: var(--mini-btn-size, 3.2rem);margin: 0;transition: none;"
               class="cursor-pointer rounded-full border-none shadow-sm hover:op-80"
               :class="localStream?.getVideoTracks()[0]?.enabled ? 'bg-light text-dark' : 'text-light bg-[#222d2b60] '"
               :plain="localStream?.getVideoTracks()[0]?.enabled ? false : true" size="large" @click="toggleVideo"
             >
-              <i class="i-solar:camera-bold p-3.5" />
+              <i class="i-solar:camera-bold p-[var(--mini-btn-icon-size,_0.875rem)]" />
             </button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -411,40 +406,6 @@ defineExpose({
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-        </template>
-      </div>
-      <!-- 控制按钮区域 mini -->
-      <div
-        v-if="connectionStatus !== undefined && isMinWind"
-        class="btns-mini bottom-4 left-0 mx-a w-full flex items-center justify-around px-4 !absolute"
-      >
-        <!-- 接听者的接听/拒绝按钮 -->
-        <template v-if="!isSender && connectionStatus === CallStatusEnum.CALLING">
-          <!-- 接听按钮 -->
-          <el-button
-            style="width: 2.2rem;height: 2.2rem;margin: 0;" type="success" circle size="large" class="shadow"
-            @click="chat.confirmRtcFn.confirmCall()"
-          >
-            <i class="i-solar:phone-calling-bold mt-1 p-2.8" />
-          </el-button>
-          <!-- 拒绝按钮 -->
-          <el-button
-            style="width: 2.2rem;height: 2.2rem;margin: 0;" type="danger" circle size="large" class="shadow"
-            title="挂断" @click="chat.confirmRtcFn.rejectCall()"
-          >
-            <i class="i-solar:end-call-bold mt-1 rotate-4 transform p-2.8" />
-          </el-button>
-        </template>
-        <!-- 控制按钮 -->
-        <template v-else-if="isSender || connectionStatus === CallStatusEnum.ACCEPT">
-          <!-- 结束通话 -->
-          <el-button
-            style="width: 2.2rem;height: 2.2rem;margin: 0;" type="danger"
-            :style="{ order: callType === CallTypeEnum.VIDEO ? 4 : 1 }" circle size="large" class="shadow" title="挂断"
-            @click="endCallFn"
-          >
-            <i class="i-solar:end-call-broken p-2.8" />
-          </el-button>
         </template>
       </div>
       <!-- 本地视频小窗口 -->
@@ -483,22 +444,10 @@ defineExpose({
 .bg-linear {
   background: linear-gradient(to bottom, rgba(20, 20, 20, 1), rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0));
 }
-// .btns {
-//   // --el-button-hover-text-color: #fff !important;
-//   // :deep(.el-button) {
-//   //   // &:hover {
-//   //   //   // background-color: none;
-//   //   // }
-//   // }
-// }
 
 .rtc-dialog {
   transition: width 0.2s, height 0.2s ease, transform 0.2s;
   height: 56vh;
-}
-
-.btns-mini {
-  display: none;
 }
 
 .rounded-dialog {
@@ -506,43 +455,50 @@ defineExpose({
 }
 
 .rtc-dialog {
+
+  width: 20rem;
   &.is-mini {
     width: 10rem;
     height: 14rem;
 
     .menu,
     .min-wind-stream,
-    .rtc-desc,
-    .btns {
+    .rtc-desc {
       display: none;
     }
-
     .avatar {
       width: 4rem;
       height: 4rem;
     }
 
-    .avatar-box {
-      margin: auto 0 !important;
-    }
-
     .username {
       font-size: 0.9rem;
+      margin-top: 0.5rem;
     }
 
     .menu-mini {
       display: block !important;
     }
 
-    .btns-mini {
-      display: flex;
+
+    .btns {
       opacity: 0;
       transition: opacity 0.2s;
     }
-
     &:hover {
-      .btns-mini {
+      .btns {
         opacity: 1;
+      }
+    }
+    .btns {
+      --mini-btn-size: 2.4rem;
+      --mini-btn-icon-size: .6rem;
+      gap: .6rem;
+      grid-gap: .6rem;
+      width: 100%;
+      padding: 0 0.875rem 0.875rem 0.875rem ;
+      .mini-hidden {
+        display: none;
       }
     }
   }
@@ -566,8 +522,7 @@ defineExpose({
     height: 14rem;
     .menu,
     .min-wind-stream,
-    .rtc-desc,
-    .btns {
+    .rtc-desc {
       display: none;
     }
     &.rounded-dialog {
@@ -579,10 +534,6 @@ defineExpose({
       height: 4rem;
     }
 
-    .avatar-box {
-      margin: auto 0 !important;
-    }
-
     .username {
       font-size: 0.9rem;
     }
@@ -590,7 +541,8 @@ defineExpose({
     .menu-mini {
       display: block !important;
     }
-    .btns-mini {
+
+    .btns {
       opacity: 1;
     }
   }

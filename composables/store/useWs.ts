@@ -268,7 +268,16 @@ export const useWs = defineStore(
       status.value = WsStatusEnum.SAFE_CLOSE;
       fullWsUrl.value = "";
       isWindBlur.value = false;
-      webSocketHandler.value = null;
+      try {
+        webSocketHandler.value?.removeAllListeners?.();
+        webSocketHandler.value?.close?.();
+        webSocketHandler.value?.disconnect?.();
+      }
+      catch (err) {
+      }
+      finally {
+        webSocketHandler.value = null;
+      }
     }
 
 

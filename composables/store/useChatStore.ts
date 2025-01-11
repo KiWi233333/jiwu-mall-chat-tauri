@@ -390,6 +390,12 @@ export const useChatStore = defineStore(
 
     // 打开通话
     async function openRtcCall(roomId: number, type: CallTypeEnum, confirmOption?: { message?: string, title?: string }) {
+      if (!roomId || !type)
+        return;
+      if (showRtcCall.value) {
+        ElMessage.warning("通话中，请勿重复发起 ~");
+        return;
+      }
       const {
         message = "是否确认发起通话？",
         title = type === CallTypeEnum.AUDIO ? "语音通话" : "视频通话",
