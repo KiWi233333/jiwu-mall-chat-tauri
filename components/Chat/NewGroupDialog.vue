@@ -138,7 +138,15 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="show" :title="form.roomId ? '邀请成员' : '新建群聊'" width="fit-content" class="overflow-hidden" center append-to-body>
+  <el-dialog
+    v-model="show"
+
+    :title="form.roomId ? '邀请成员' : '新建群聊'"
+    width="fit-content"
+    class="overflow-hidden"
+
+    center append-to-body destroy-on-close
+  >
     <el-form
       ref="formRef"
       label-position="top"
@@ -206,7 +214,7 @@ defineExpose({
         </div>
         <div
           v-if="showImg"
-          key="2" class="h-250px w-90vw flex-row-c-c flex-col md:w-400px sm:h-300px"
+          key="2" class="h-250px w-90vw flex-row-c-c flex-col md:w-280px sm:h-300px"
         >
           <!-- 选择头像 -->
           <el-form-item
@@ -227,7 +235,7 @@ defineExpose({
                 key="inputOssFileUploadRef"
                 :multiple="false"
                 :limit="1"
-                input-class="w-8rem h-8rem flex-row-c-c flex-shrink-0  card-default"
+                input-class="w-7rem h-7rem flex-row-c-c flex-shrink-0  card-default"
                 :upload-quality="0.4"
                 @error-msg="(msg:string) => {
                   ElMessage.error(msg)
@@ -240,10 +248,10 @@ defineExpose({
             </div>
           </el-form-item>
           <div mb-4 mt-a w-full flex-row-c-c>
-            <el-button class="w-1/5" @click="showImg = false">
+            <el-button class="mr-2 w-5rem" @click="showImg = false">
               上一步
             </el-button>
-            <el-button class="w-1/5" :type="form.roomId ? 'warning' : 'info'" @click=" addGroupApply()">
+            <el-button class="w-5rem" :type="form.roomId ? 'warning' : 'info'" @click=" addGroupApply()">
               完成
             </el-button>
           </div>

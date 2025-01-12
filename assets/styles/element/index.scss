@@ -73,13 +73,13 @@
     ),
   $messagebox: (
     "title-color": getCssVar("text-color-primary"),
-    "width": 320px,
+    "width": 300px,
     "border-radius": 12px,
     "font-size": getCssVar("font-size-large"),
     "content-font-size": getCssVar("font-size-base"),
     "content-color": getCssVar("text-color-regular"),
     "error-font-size": 14px,
-    "padding-primary": 1rem
+    "padding-primary": 16px
   ),
   $checkbox: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "border-radius": 4px),
   $radio: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "input-border-radius": 4px),

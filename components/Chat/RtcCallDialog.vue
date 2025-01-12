@@ -445,18 +445,14 @@ defineExpose({
   background: linear-gradient(to bottom, rgba(20, 20, 20, 1), rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0));
 }
 
-.rtc-dialog {
-  transition: width 0.2s, height 0.2s ease, transform 0.2s;
-  height: 56vh;
-}
-
 .rounded-dialog {
   border-radius: 0.6rem;
 }
 
 .rtc-dialog {
-
+  transition: width 0.2s, height 0.2s ease, transform 0.2s;
   width: 20rem;
+  height: 56vh;
   &.is-mini {
     width: 10rem;
     height: 14rem;
@@ -482,7 +478,7 @@ defineExpose({
 
 
     .btns {
-      opacity: 0;
+      opacity: 0.5;
       transition: opacity 0.2s;
     }
     &:hover {

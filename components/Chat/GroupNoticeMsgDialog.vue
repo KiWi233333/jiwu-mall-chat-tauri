@@ -41,9 +41,10 @@ async function addMsg() {
 
 <template>
   <el-dialog v-model="isShow" title="群广播消息" width="fit-content" center append-to-body>
-    <el-form v-if="isShow" ref="applyFormRef" :model="applyForm">
+    <el-form ref="applyFormRef" :model="applyForm">
       <el-form-item
         label=""
+        style="margin: 1rem 0;"
         prop="content"
         :rules="[{
                    min: 1,
@@ -67,8 +68,8 @@ async function addMsg() {
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="isShow = false">取消</el-button>
-        <el-button type="primary" @click="addMsg">
+        <el-button class="mr-4 w-5rem" @click="isShow = false">取消</el-button>
+        <el-button class="w-5rem" type="primary" @click="addMsg">
           发送
         </el-button>
       </span>

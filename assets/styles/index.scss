@@ -88,6 +88,7 @@
     padding: 0 !important;
   }
   .el-message-box__headerbtn {
+    display: none;
     top: 10px;
     right: 10px;
   }
@@ -95,12 +96,14 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin: 0.4em 0 0.8em;
+    margin: 0;
 
     .el-button {
-      min-width: 40%;
+      min-width: 46%;
       height: auto;
-      margin: 0 auto;
+    }
+    .el-button:first-child {
+      margin-right: auto;
     }
   }
 
@@ -139,6 +142,17 @@ body .el-message {
     border-radius: 4px;
     transform: scale(1.1);
   }
+}
+.el-dialog {
+  --at-apply: "border-default-sm";
+  .el-dialog__title {
+    font-size: 1rem;
+  }
+  .el-dialog__header.show-close {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
 }
 
 // 按钮
@@ -253,11 +267,6 @@ body .el-message {
     height: 2.4em !important;
     --at-apply: "!card-default-br";
   }
-}
-
-.el-dialog__header.show-close {
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
 }
 
 
