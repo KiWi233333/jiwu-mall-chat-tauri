@@ -5,7 +5,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { type as osType, platform } from "@tauri-apps/plugin-os";
 import { open } from "@tauri-apps/plugin-shell";
-import { restoreStateCurrent, saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
+import { restoreStateCurrent, StateFlags } from "@tauri-apps/plugin-window-state";
 import { useFlashTray } from "~/composables/tauri/window";
 
 /**
@@ -39,17 +39,9 @@ export async function userTauriInit() {
   }
   const isMobileSystem = ["android", "ios"].includes(setting.osType);
 
-  let stopDebounced = null;
   // 1、初始化窗口状态
   if (!isMobileSystem) { // 非移动端才有该功能
     restoreStateCurrent(StateFlags.ALL);
-    stopDebounced = watchDebounced(() => setting.isMobileSize, async () => {
-      setTimeout(async () => {
-        await saveWindowState(StateFlags.ALL);
-      }, 200);
-    }, {
-      debounce: 1000,
-    });
   }
 
 
@@ -93,7 +85,6 @@ export async function userTauriInit() {
   return () => {
     unListenRouter?.();
     unListenOpenUrl?.();
-    stopDebounced?.();
   };
 }
 
