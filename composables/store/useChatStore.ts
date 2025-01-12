@@ -59,7 +59,7 @@ export const useChatStore = defineStore(
       localStorage.setItem("unReadContactList", JSON.stringify(list));
       return list;
     });
-    const isNewMsg = computed(() => unReadContactList.value.length > 0);
+    const isNewMsg = computed(() => contactList.value.filter(p => p.unreadCount).length > 0);
     const isVisible = ref(false); // 是否可见
     const isMsgListScroll = ref(false); // 消息列表是否滚动
     const theContact = ref<ChatContactDetailVO>({
