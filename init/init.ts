@@ -100,7 +100,7 @@ export async function userTauriInit() {
 /**
  * 初始化用户信息
  */
-export async function useAuthInit() {
+export function useAuthInit() {
   const user = useUserStore();
   // 用于iframe嵌入快速登录
   const route = useRoute();

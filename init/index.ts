@@ -1,11 +1,15 @@
 
 import { useIframeInit } from "./iframe";
 import { useAuthInit, useMsgBoxWebViewInit, userTauriInit } from "./init";
-import { useHotkeyInit, useSettingInit, useSettingUnmounted, useWindowVisibilityInit, useWindowVisibilityInitUnmounted } from "./setting";
+import { useHotkeyInit, useSettingInit, useWindowVisibilityInit } from "./setting";
 import { useWsInit, useWSUnmounted } from "./ws";
 
 let unMountedMsgBoxWebView: (() => void) | undefined;
 let unMountedTauri: (() => void) | undefined;
+let unMountedSettingInit: (() => void) | undefined;
+let unMountedHotkeyInit: (() => void) | undefined;
+let unMoundtedIframeInit: (() => void) | undefined;
+let unMountedWindowVisibilityInit: (() => void) | undefined;
 
 
 /**
@@ -15,13 +19,13 @@ export async function useDefaultInit() {
   // 鉴权
   useAuthInit();
   // 初始化窗口可见性
-  useWindowVisibilityInit();
+  unMountedWindowVisibilityInit = useWindowVisibilityInit();
   // 设置配置
-  useSettingInit();
+  unMountedSettingInit = useSettingInit();
   // 初始化快捷键
-  useHotkeyInit();
+  unMountedHotkeyInit = useHotkeyInit();
   // iframe通信
-  useIframeInit();
+  unMoundtedIframeInit = useIframeInit();
 }
 
 /**
@@ -42,9 +46,12 @@ export async function useInit() {
 
 // 卸载
 export async function useUmounted() {
-  useSettingUnmounted?.();
   unMountedTauri?.();
   useWSUnmounted?.();
   unMountedMsgBoxWebView?.();
-  useWindowVisibilityInitUnmounted?.();
+
+  unMountedSettingInit?.();
+  unMountedHotkeyInit?.();
+  unMoundtedIframeInit?.();
+  unMountedWindowVisibilityInit?.();
 }

@@ -1,7 +1,36 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 
-export async function useSettingInit() {
+const dev = import.meta.env.MODE === "development";
+function onKeyDown(e: KeyboardEvent) {
+  const setting = useSettingStore();
+  // 关闭打印 搜索快捷键
+  const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
+  if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (!dev && isReload))
+    e.preventDefault();
+    // esc 最小化窗口
+  if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {
+    if (!setting.isWeb) {
+      e.preventDefault();
+      const appWindow = getCurrentWebviewWindow();
+      appWindow.minimize();
+    }
+  }
+}
+
+function onContextMenu(e: MouseEvent) {
+  e.preventDefault();
+}
+function onVisibilityChange() {
+  const chat = useChatStore();
+  const route = useRoute();
+  if (route.path === "/")
+    chat.isVisible = !document.hidden;
+  else
+    chat.isVisible = false;
+}
+
+export function useSettingInit() {
   const setting = useSettingStore();
   // 1、主题切换
   setting.isThemeChangeLoad = true;
@@ -14,11 +43,13 @@ export async function useSettingInit() {
   nextTick(() => {
     useModeToggle(setting.settingPage.modeToggle.value, undefined, true);
   });
-  window.addEventListener("keydown", (e) => {
+  // 主题切换快捷键
+  const onThemeKeyDown = (e: KeyboardEvent) => {
     if (setting.isThemeChangeLoad)
       return;
     keyToggleTheme(e);
-  });
+  };
+  window.addEventListener("keydown", onThemeKeyDown);
 
   // 2、获取版本更新
   const route = useRoute();
@@ -60,10 +91,11 @@ export async function useSettingInit() {
     setting.isThemeChangeLoad = false;
   }, 1000);
 
-  let timer: NodeJS.Timeout | null = null;
-  // 6、优化动画性能
+  // 6、窗口大小变化
   setting.isMobileSize = window.innerWidth < 640;
-  window.addEventListener("resize", () => {
+  let timer: NodeJS.Timeout | null = null;
+  function onResize() {
+    const setting = useSettingStore();
     if (timer)
       clearTimeout(timer); // 清除之前的定时器，避免重复触发
     const app = document.documentElement;
@@ -76,7 +108,8 @@ export async function useSettingInit() {
       setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
       timer = null;
     }, 150);
-  });
+  }
+  window.addEventListener("resize", onResize);
 
   // 7、页面加载完整后，滚动到底部
   setTimeout(() => {
@@ -92,14 +125,11 @@ export async function useSettingInit() {
   }
 
   // 8、自动重启
-  try {
-    const isAutoStart = await isAutoStartEnabled();
+  isAutoStartEnabled().then((isAutoStart) => {
     setting.settingPage.isAutoStart = isAutoStart;
-  }
-  catch (error) {
+  }).catch(() => {
     setting.settingPage.isAutoStart = false;
-    // console.warn(error);
-  }
+  });
   watch(() => setting.settingPage.isAutoStart, async (val) => {
     try {
       if (val)
@@ -111,6 +141,15 @@ export async function useSettingInit() {
       console.warn(error);
     }
   });
+
+  return () => {
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("keydown", onThemeKeyDown);
+    const setting = useSettingStore();
+    setting.appUploader.isCheckUpdatateLoad = false;
+    setting.appUploader.isUpdating = false;
+    setting.appUploader.isUpload = false;
+  };
 }
 
 function keyToggleTheme(e: KeyboardEvent) {
@@ -140,44 +179,18 @@ function keyToggleTheme(e: KeyboardEvent) {
 }
 
 /**
- * 卸载设置
- */
-export function useSettingUnmounted() {
-  window.removeEventListener("resize", () => {});
-  window.removeEventListener("contextmenu", () => {});
-  window.removeEventListener("keydown", () => {});
-  const setting = useSettingStore();
-  setting.appUploader.isCheckUpdatateLoad = false;
-  setting.appUploader.isUpdating = false;
-  setting.appUploader.isUpload = false;
-}
-
-
-const dev = import.meta.env.MODE === "development";
-/**
  * 初始化快捷键
  */
-export async function useHotkeyInit() {
-  const setting = useSettingStore();
+export function useHotkeyInit() {
   // 阻止默认行为，防止右键菜单弹出
-  window.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-  });
+  window.addEventListener("contextmenu", onContextMenu);
   // 快捷键阻止
-  window.addEventListener("keydown", (e) => {
-    // 关闭打印 搜索快捷键
-    const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
-    if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (!dev && isReload))
-      e.preventDefault();
-    // esc 最小化窗口
-    if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {
-      if (!setting.isWeb) {
-        e.preventDefault();
-        const appWindow = getCurrentWebviewWindow();
-        appWindow.minimize();
-      }
-    }
-  });
+  window.addEventListener("keydown", onKeyDown);
+
+  return () => {
+    window.removeEventListener("contextmenu", onContextMenu);
+    window.removeEventListener("keydown", onKeyDown);
+  };
 }
 
 
@@ -187,17 +200,8 @@ export async function useHotkeyInit() {
 export function useWindowVisibilityInit() {
   const chat = useChatStore();
   chat.isVisible = true;
-  document.addEventListener("visibilitychange", () => {
-    const route = useRoute();
-    if (route.path === "/")
-      chat.isVisible = !document.hidden;
-    else
-      chat.isVisible = false;
-  });
-}
-
-export function useWindowVisibilityInitUnmounted() {
-  const chat = useChatStore();
-  chat.isVisible = true;
-  document.removeEventListener("visibilitychange", () => {});
+  document.addEventListener("visibilitychange", onVisibilityChange);
+  return () => {
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+  };
 }

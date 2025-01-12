@@ -7,7 +7,7 @@ export function useIframeInit() {
   if (!window.parent || setting.appPlatform !== "web")
     return;
   // 监听消息
-  window.addEventListener("message", (event) => {
+  const onMessage = (event: MessageEvent) => {
     const { data } = event;
     if (data.type === IFRAME_TOGGLE_THEME_EVENT) {
       const {
@@ -17,7 +17,8 @@ export function useIframeInit() {
       if (["dark", "light", "auto"].includes(theme))
         useModeToggle(theme);
     }
-  }, false);
+  };
+  window.addEventListener("message", onMessage, false);
   // 发送切换主题
   watch(() => setting.settingPage.modeToggle.value, (theme) => {
     window?.parent?.postMessage({
@@ -28,4 +29,8 @@ export function useIframeInit() {
       },
     }, "*");
   });
+  return () => {
+    window.removeEventListener("message", onMessage, false);
+  };
 }
+
