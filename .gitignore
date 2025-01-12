@@ -16,3 +16,4 @@ debug.log
 debug.json
 errors.json 
 .idea
+.env.*.local
