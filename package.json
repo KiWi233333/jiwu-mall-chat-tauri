@@ -13,6 +13,8 @@
     "dev:ios": "tauri ios dev",
     "dev:nuxt": "nuxt dev --dotenv .env.development --host",
     "prod:nuxt": "nuxt dev --dotenv .env.production --host",
+    "dev-local:nuxt": "nuxt dev --dotenv .env.development.local --host",
+    "prod-local:nuxt": "nuxt dev --dotenv .env.production.local --host",
     "preview": "nuxt preview",
     "build": "nuxi generate --dotenv .env.production && tauri build",
     "build:nuxt": "nuxi generate --dotenv .env.production",
