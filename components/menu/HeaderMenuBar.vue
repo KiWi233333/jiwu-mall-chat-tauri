@@ -54,7 +54,7 @@ function reloadPage() {
       >
         <i i-solar-alt-arrow-left-line-duotone p-3 />
       </div>
-      <strong hidden sm:block>极物圈</strong>
+      <strong hidden sm:block>极物聊天</strong>
     </div>
     <!-- 拖拽区域 -->
     <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>

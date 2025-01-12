@@ -33,7 +33,7 @@ watchDebounced(
 
 useSeoMeta({
   title: "账户与安全 - 极物聊天",
-  description: "账户与安全 - 极物圈 开启你的极物之旅！",
+  description: "账户与安全 - 极物聊天 开启你的极物之旅！",
   keywords: appKeywords,
 });
 </script>

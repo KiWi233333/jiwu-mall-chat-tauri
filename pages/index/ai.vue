@@ -4,7 +4,7 @@ import { WsStatusEnum } from "~/types/chat/WsType";
 
 useSeoMeta({
   title: `极物AI - ${appName}`,
-  description: `${appName} - 极物圈 开启你的极物之旅！`,
+  description: `${appName} - 极物聊天 开启你的极物之旅！`,
   keywords: appKeywords,
 });
 const INIT_MSG = {
@@ -18,7 +18,7 @@ const INIT_MSG = {
     id: 1,
     roomId: 0,
     sendTime: new Date().getTime(),
-    content: "你好！欢迎光临极物圈，有什么可以帮您的吗？",
+    content: "你好！欢迎光临极物聊天，有什么可以帮您的吗？",
     type: MessageType.AI_CHAT,
     body: {
     },

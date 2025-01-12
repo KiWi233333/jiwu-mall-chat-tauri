@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { appKeywords } from "@/constants/index";
+import { appDescription, appKeywords } from "@/constants/index";
 
 useSeoMeta({
   title: "登录 - 极物聊天",
-  description: "极物 - 聊天 - 极物圈 开启你的极物之旅！",
+  description: appDescription,
   keywords: appKeywords,
 });
 const user = useUserStore();
