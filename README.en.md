@@ -56,6 +56,7 @@ Note: This account does not have permissions for uploading images, changing pass
 | Account & Security Module | Provides functions for account login, password change, account management, device security, and account online/offline | ✔ |
 | AI Shopping Module | AI shopping chat feature, providing product recommendations under "Jiwu Circle" | ✔ |
 | File Download Management Module | Supports local file download, open, and delete functions | ✔ |
+| Voice and Video Module | Based on WebRTC for voice and video chat functionality | ✔ |
 | Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
 
 ## Project Screenshots

@@ -423,6 +423,7 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
     }
     catch (err) {
       console.error("开始通话失败:", err);
+      ElMessage.error("RTC通讯连接失败!");
       clear();
       return false;
     }
@@ -632,10 +633,9 @@ export function useWebRTC(openDialog: (type: CallTypeEnum, { confirmCall, reject
         // console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
 
         // 2. 停止铃声
-        if (bellAudio.value) {
-          bellAudio.value.pause();
-          bellAudio.value = null;
-        }
+        bellAudio.value?.pause?.();
+        bellAudio.value!.loop = false;
+        bellAudio.value = null;
 
         // 3. 通知服务器通话已建立
         if (isSender.value) {
