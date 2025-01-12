@@ -17,7 +17,7 @@ export async function useWsInit() {
   const chat = useChatStore();
 
   const isReload = ref(false);
-  const worker = ref<Worker>();
+  const worker = shallowRef<Worker>();
 
   // 初始化 Web Worker
   async function reload() {
@@ -81,9 +81,7 @@ export async function useWsInit() {
       console.error(e);
       reload();
     };
-    setTimeout(() => {
-      isReload.value = false;
-    }, 500);
+    isReload.value = false;
   }
   // 自动重连
   watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
