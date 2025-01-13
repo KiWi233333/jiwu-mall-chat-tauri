@@ -114,11 +114,12 @@
   }
 
   .el-message-box__content {
-    margin: 1.2em 1em 0 1em;
+    font-size: 0.9rem;
+    margin-top: 1rem;
   }
 
   .el-message-box__title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
   }
 }

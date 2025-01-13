@@ -215,6 +215,7 @@ function closeDialog() {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
+    center: true,
   }).then((action) => {
     action === "confirm" && hanUpCall();
   }).catch(() => {
