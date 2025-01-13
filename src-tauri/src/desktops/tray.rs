@@ -29,7 +29,7 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
         .icon(app.default_window_icon().unwrap().clone())
         .title("极物聊天")
         .tooltip("极物聊天")
-        .menu_on_left_click(false)
+        .show_menu_on_left_click(false)
         .on_menu_event(move |app, event| match event.id().as_ref() {
             "setting" => {
                 let window = app.get_webview_window("main").unwrap();
