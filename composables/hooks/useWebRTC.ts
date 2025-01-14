@@ -43,8 +43,8 @@ export function useWebRTC(
   // 设备相关状态
   const audioDevices = ref<MediaDeviceInfo[]>([]);
   const videoDevices = ref<MediaDeviceInfo[]>([]);
-  const selectedAudioDevice = ref<string | null>(null);
-  const selectedVideoDevice = ref<string | null>(null);
+  const selectedAudioDevice = ref<string | null | undefined>(null);
+  const selectedVideoDevice = ref<string | null | undefined>(null);
   // 状态
   const connectionStatus = ref<CallStatusEnum | undefined>(undefined);
   const isSender = computed(() => rtcMsg.value.senderId === user.userId);
@@ -82,15 +82,6 @@ export function useWebRTC(
 
   // 添加铃声相关状态
   const bellAudio = ref<HTMLAudioElement | null>(null);
-  const isOpenBell = computed({
-    get: () => bellAudio.value?.played,
-    set: (value: boolean) => {
-      if (value)
-        bellAudio.value?.play();
-      else
-        bellAudio.value?.pause();
-    },
-  });
 
   // 添加计时器引用
   const callTimer = ref<NodeJS.Timeout | null>(null);
@@ -99,6 +90,13 @@ export function useWebRTC(
   const callDuration = ref(0);
   const durationTimer = ref<any>(null);
 
+  // 添加桌面共享相关状态
+  const isScreenSharing = ref(false);
+
+  /**
+   * 获取房间信息
+   * @param roomId 房间id
+   */
   function handleContactInfo(roomId: number) {
     if (chat.contactMap[roomId]) {
       theContact.value = chat.contactMap[roomId];
@@ -117,6 +115,22 @@ export function useWebRTC(
       });
     }
   }
+
+  /**
+   * 打开铃声
+   */
+  const startBell = () => {
+    bellAudio.value = new Audio("/sound/bell.mp3");
+    bellAudio.value!.loop = true;
+    bellAudio.value?.play?.();
+  };
+  /**
+   * 关闭铃声
+   */
+  const stopBell = () => {
+    bellAudio.value?.pause?.();
+    bellAudio.value = null;
+  };
 
   /**
    * 结束通话
@@ -198,14 +212,15 @@ export function useWebRTC(
   const getDevices = async () => {
     try {
       isDeviceLoad.value = true;
-      const devices = await navigator.mediaDevices.enumerateDevices();
+      const devices = await navigator.mediaDevices.enumerateDevices() || [];
+      if (devices.length === 0) {
+        return false;
+      }
       audioDevices.value = devices.filter(device => device.kind === "audioinput");
       videoDevices.value = devices.filter(device => device.kind === "videoinput");
-      // 默认选择第一个设备
-      if (audioDevices.value.length > 0 && !selectedAudioDevice.value && audioDevices.value?.[0]?.deviceId)
-        selectedAudioDevice.value = audioDevices.value[0].deviceId;
-      if (videoDevices.value.length > 0 && !selectedVideoDevice.value && videoDevices.value?.[0]?.deviceId)
-        selectedVideoDevice.value = videoDevices.value[0].deviceId;
+      // 默认选择 “default” | "第一个" 设备
+      selectedAudioDevice.value = audioDevices.value.find(device => device.deviceId === "default")?.deviceId || audioDevices.value?.[0]?.deviceId;
+      selectedVideoDevice.value = videoDevices.value.find(device => device.deviceId === "default")?.deviceId || videoDevices.value?.[0]?.deviceId;
       isDeviceLoad.value = false;
       return true;
     }
@@ -236,8 +251,14 @@ export function useWebRTC(
         ElMessage.error("没有可用的设备!");
         return false;
       }
-
       localStream.value = await navigator.mediaDevices.getUserMedia(constraints);
+      // 已默认选择设备，更新设备id
+      // if (localStream?.value?.getAudioTracks()?.[0]?.getSettings().deviceId) {
+      //   selectedAudioDevice.value = localStream?.value?.getAudioTracks()?.[0]?.getSettings().deviceId;
+      // }
+      // if (localStream.value?.getVideoTracks()?.[0]?.getSettings().deviceId) {
+      //   selectedVideoDevice.value = localStream.value?.getVideoTracks()?.[0]?.getSettings().deviceId;
+      // }
       return true;
     }
     catch (err) {
@@ -360,10 +381,9 @@ export function useWebRTC(
       }
       clear(); // 清理资源
       if (!await getDevices()) {
-        console.log(roomId, type, uidList);
+        ElMessage.error("获取设备失败!");
         return;
       }
-
       // 保存通话信息
       rtcMsg.value = {
         roomId,
@@ -420,9 +440,7 @@ export function useWebRTC(
       }
 
       // 播放铃声
-      bellAudio.value = new Audio("/sound/bell.mp3");
-      bellAudio.value.loop = true;
-      bellAudio.value.play();
+      startBell();
 
       // 开始通话
       connectionStatus.value = CallStatusEnum.CALLING;
@@ -439,10 +457,7 @@ export function useWebRTC(
   function clear() {
     try {
       // 停止铃声并重置
-      if (bellAudio.value) {
-        bellAudio.value.pause();
-        bellAudio.value = null;
-      }
+      stopBell();
       // 清除超时定时器
       if (callTimer.value) {
         clearTimeout(callTimer.value);
@@ -459,7 +474,14 @@ export function useWebRTC(
       [localStream.value, remoteStream.value].forEach((stream) => {
         stream?.getTracks().forEach(track => track.stop());
       });
-
+      channel.value?.close?.();
+      peerConnection.value?.close?.();
+    }
+    catch (error) {
+      ElMessage.error("部分资源清理失败!");
+      console.error("清理资源失败:", error);
+    }
+    finally {
       // 重置状态
       rtcMsg.value = {
         roomId: undefined,
@@ -471,21 +493,14 @@ export function useWebRTC(
       videoDevices.value = [];
       selectedAudioDevice.value = null;
       selectedVideoDevice.value = null;
-
       localStream.value = null;
       remoteStream.value = null;
       connectionStatus.value = undefined;
       rtcStatus.value = undefined;
       // 关闭连接
-      peerConnection.value?.close();
       peerConnection.value = null;
-      channel.value?.close();
       channel.value = null;
       channelStatus.value = undefined;
-    }
-    catch (error) {
-      ElMessage.error("清理资源失败!");
-      console.error("清理资源失败:", error);
     }
   }
 
@@ -537,9 +552,7 @@ export function useWebRTC(
       connectionStatus.value = CallStatusEnum.CALLING;
       await nextTick();
       // 开启铃声
-      bellAudio.value = new Audio("/sound/bell.mp3");
-      bellAudio.value!.loop = true;
-      bellAudio.value?.play();
+      startBell();
       // tauri显示窗口
       if (setting.isDesktop) {
         const win = await WebviewWindow.getByLabel("main");
@@ -549,16 +562,15 @@ export function useWebRTC(
         await win.show();
         await win.setFocus();
       }
+      // 用户接受通话，继续原有流程
+      getDevices().then(() => getLocalStream(type));
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
         // 添加确认和拒绝的方法
         const confirmCall = () => {
           resolve(true);
           connectionStatus.value = CallStatusEnum.ACCEPT;
-          if (bellAudio.value) { // 停止铃声
-            bellAudio.value.pause();
-            bellAudio.value = null;
-          }
+          stopBell(); // 停止铃声
         };
         const rejectCall = () => {
           resolve(false);
@@ -575,17 +587,17 @@ export function useWebRTC(
       // 用户接受通话，继续原有流程
       await nextTick();
       await getDevices();
-      const isLocalStreamOk = await getLocalStream(type);
-
+      let isLocalStreamOk = await getLocalStream(type);
 
       if (!userConfirmed) {
         // 用户拒绝或超时
         await endCall(CallStatusEnum.REJECT);
         return false;
       }
-      if (!isLocalStreamOk) {
+      if (!isLocalStreamOk) { // 重新获取
+        // getDevices().then(() => getLocalStream(type));
         await getDevices();
-        await getLocalStream(type);
+        isLocalStreamOk = await getLocalStream(type);
       }
       // 确认接听
       rtcMsg.value = {
@@ -593,7 +605,7 @@ export function useWebRTC(
         callType: type,
         senderId: offer.senderId,
       };
-
+      await nextTick();
 
       // 2. 创建 RTCPeerConnection
       peerConnection.value = createPeerConnection(roomId);
@@ -641,9 +653,7 @@ export function useWebRTC(
         // console.log(`${user.userInfo.username}收到 answer 信令:`, answer);
 
         // 2. 停止铃声
-        bellAudio.value?.pause?.();
-        bellAudio.value!.loop = false;
-        bellAudio.value = null;
+        stopBell();
 
         // 3. 通知服务器通话已建立
         if (isSender.value) {
@@ -728,8 +738,22 @@ export function useWebRTC(
   }
 
   // 切换视频设备
-  async function switchVideoDevice(deviceId: string) {
+  async function switchVideoDevice(deviceId: string, checkScreenSharing = false) {
     try {
+      // 前置校验
+      if (checkScreenSharing) {
+        ElMessageBox.confirm("切换设备会导致当前屏幕共享会话结束，是否继续？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then((action) => {
+          if (action === "confirm") {
+            switchVideoDevice(deviceId, false);
+          }
+        }).catch(() => {
+        });
+        return;
+      }
       selectedVideoDevice.value = deviceId;
       if (localStream.value && localStream.value.getVideoTracks().length > 0) {
         const newStream = await navigator.mediaDevices.getUserMedia({
@@ -777,6 +801,92 @@ export function useWebRTC(
     }
   }
 
+
+  // 停止桌面共享
+  const stopScreenShare = () => {
+    if (isScreenSharing.value) {
+      isScreenSharing.value = false;
+      // 停止当前的本地流
+      if (localStream.value) {
+        localStream.value.getTracks().forEach(track => track.stop());
+      }
+      if (!selectedVideoDevice.value || !rtcMsg.value.callType) {
+        return false;
+      }
+      // 切换到默认设备
+      getLocalStream(rtcMsg.value.callType);
+      // 切换原来的视频轨道
+      selectedVideoDevice.value && switchVideoDevice(selectedVideoDevice.value);
+      return true;
+    }
+    return false;
+  };
+
+  // 开始桌面共享
+  const startScreenShare = async () => {
+    try {
+      if (!navigator.mediaDevices.getDisplayMedia) {
+        ElNotification.warning({
+          title: "兼容提示",
+          message: "当前浏览器不支持桌面共享功能！",
+        });
+        return;
+      }
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true, // 如果需要共享音频
+      });
+      if (!screenStream) {
+        return;
+      }
+
+      // 停止当前的本地流
+      if (localStream.value) {
+        localStream.value.getTracks().forEach(track => track.stop());
+      }
+
+      // 替换本地流为桌面共享流
+      localStream.value = screenStream;
+      // 添加新的视频轨道到连接
+      screenStream.getTracks().forEach((track) => {
+        if (localStream.value) {
+          peerConnection.value?.addTrack(track, localStream.value);
+        }
+      });
+      // 远程替换为桌面共享流
+      const newVideoTrack = screenStream.getVideoTracks()[0];
+      const oldVideoTrack = localStream.value.getVideoTracks()[0];
+      if (!newVideoTrack) {
+        ElMessage.error("桌面共享失败，请检查权限设置!");
+        return;
+      }
+      newVideoTrack.onended = () => {
+        ElNotification.warning("屏幕共享已结束 ~");
+        stopScreenShare();
+      };
+      peerConnection.value?.getSenders().forEach((sender) => {
+        if (sender.track && sender.track.kind === "video") {
+          sender.replaceTrack(newVideoTrack);
+        }
+      });
+      oldVideoTrack && localStream.value.removeTrack(oldVideoTrack);
+      localStream.value.addTrack(newVideoTrack);
+      isScreenSharing.value = true; // 开始桌面共享
+    }
+    catch (error: any) {
+      console.error("开始桌面共享失败:", error);
+      isScreenSharing.value = false;
+      stopScreenShare();
+      if (error?.name === "NotAllowedError") {
+        ElNotification.warning({
+          message: "已取消屏幕共享...",
+        });
+        return;
+      }
+      ElMessage.error("桌面共享失败，请检查权限设置!");
+    }
+  };
+
   // 清理资源
   onUnmounted(() => {
     endCall();
@@ -805,7 +915,7 @@ export function useWebRTC(
     connectionStatus,
     localStream,
     remoteStream,
-    isOpenBell,
+    isScreenSharing, // 添加桌面共享状态
 
     // 方法
     startCall,
@@ -815,5 +925,7 @@ export function useWebRTC(
     switchAudioDevice,
     toggleVideo,
     switchVideoDevice,
+    startScreenShare, // 添加桌面共享方法
+    stopScreenShare, // 添加停止桌面共享方法
   };
 }

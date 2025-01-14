@@ -32,6 +32,10 @@ const {
   connectionStatus,
   localStream,
   remoteStream,
+  // 屏幕共享
+  isScreenSharing,
+  startScreenShare,
+  stopScreenShare,
 
   // 方法
   endCall,
@@ -70,6 +74,7 @@ const audioVolume = ref(1); // 最小音量 默认扬声器音量
 const minWindStreamProps = computed(() => ({ muted: !isSelfMinView.value, volume: !isSelfMinView.value ? 0 : audioVolume.value })); // 非本人视频静音
 const maxWindStreamProps = computed(() => ({ muted: isSelfMinView.value, volume: isSelfMinView.value ? 0 : audioVolume.value }));// 本人视频静音
 const isMinWind = ref(false); // 最小化
+const isMaxWind = ref(false); // 全屏|窗口通话
 
 // 拖拽
 const dragRef = ref<HTMLDivElement>();
@@ -242,8 +247,9 @@ defineExpose({
     v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-primary: 0;"
     class="rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark sm:(h-fit w-340px)"
     :style="style" :class="{
-      'is-mini active:cursor-move': isMinWind,
-      'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind,
+      'is-mini active:cursor-move': isMinWind && !isMaxWind,
+      'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind && !isMaxWind,
+      'is-max': isMaxWind,
     }"
   >
     <!-- 主内容 -->
@@ -254,7 +260,7 @@ defineExpose({
     >
       <!-- 头部 -->
       <h4
-        class="menu w-full flex cursor-move items-center p-4"
+        class="menu w-full flex items-center p-4"
         :class="{ 'bg-linear': callType === CallTypeEnum.VIDEO && isConnected }"
       >
         <span v-if="!isConnected" mx-a>
@@ -264,7 +270,7 @@ defineExpose({
           <!-- 视频比例控制 -->
           <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
             <i
-              :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-tabler:maximize' : 'i-tabler:minimize'"
+              :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-solar:scale-bold' : 'i-solar:scale-outline'"
               :title="isMaxVideoClass ? '视频还原' : '视频最大化'" p-2.6 btn-primary
               @click.capture="isMaxVideoClass = isMaxVideoClass === MaxVideoObjEnum.CONTAIN ? MaxVideoObjEnum.COVER : MaxVideoObjEnum.CONTAIN"
             />
@@ -280,11 +286,40 @@ defineExpose({
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span absolute-center-x>
+          <!-- 共享屏幕切换按钮 -->
+          <el-tooltip
+            v-if="callType === CallTypeEnum.VIDEO && isConnected"
+            :content="isScreenSharing ? '停止共享屏幕' : '共享屏幕'"
+            placement="bottom"
+          >
+            <i
+              :class="isScreenSharing ? 'i-solar:screencast-bold-duotone text-color-primary' : 'i-solar:screencast-outline'"
+              class="ml-4 p-2.8 sm:ml-3 btn-primary"
+              @click="isScreenSharing ? stopScreenShare() : startScreenShare()"
+            />
+          </el-tooltip>
+
+          <span max-w-full truncate absolute-center-x>
             {{ rtcDescText }}
           </span>
-          <i title="缩小" class="i-carbon:subtract ml-a p-3 btn-primary" @click.capture="isMinWind = true" />
-          <i i-carbon:close ml-2 p-3 btn-danger title="关闭" @click.capture="closeDialog" />
+          <!-- 操作按钮 -->
+          <i
+            title="缩小" class="i-carbon:subtract ml-a p-3 btn-primary" @click.capture="() => {
+              isMaxWind = false;
+              isMinWind = true;
+            }"
+          />
+          <i
+            :title="isMaxWind ? '最小化' : '全屏'"
+            :class="isMaxWind ? 'text-color-primary i-tabler:minimize' : 'i-tabler:maximize'"
+
+            ml-4 hidden p-2.6 sm:ml-3 sm:block btn-primary
+            @click.capture="() => {
+              isMinWind = false;
+              isMaxWind = !isMaxWind;
+            }"
+          />
+          <i i-carbon:close ml-4 p-3 sm:ml-3 btn-danger title="关闭" @click.capture="closeDialog" />
         </template>
       </h4>
       <div
@@ -399,7 +434,7 @@ defineExpose({
               <el-dropdown-menu>
                 <el-dropdown-item
                   v-for="device in videoDevices" :key="device.deviceId"
-                  @click="switchVideoDevice(device.deviceId)"
+                  @click="switchVideoDevice(device.deviceId, isScreenSharing)"
                 >
                   <i v-if="device.deviceId === selectedVideoDevice" class="i-solar:check-circle-bold mr-2" />
                   {{ device.label }}
@@ -442,6 +477,9 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+// 放大缩小transition
+$call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease;
+
 .bg-linear {
   background: linear-gradient(to bottom, rgba(20, 20, 20, 1), rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0));
 }
@@ -451,9 +489,10 @@ defineExpose({
 }
 
 .rtc-dialog {
-  transition: width 0.2s, height 0.2s ease, transform 0.2s;
-  width: 20rem;
-  height: 56vh;
+
+  transition: var(--call-wind-transition, width 0.2s, height 0.2s ease);
+  width: max(20vw, 25rem);
+  height: min(56vh, 36rem);
   &.is-mini {
     width: 10rem;
     height: 14rem;
@@ -499,6 +538,14 @@ defineExpose({
       }
     }
   }
+  &.is-max {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    transition: $call-wind-transition;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -506,6 +553,7 @@ defineExpose({
     position: fixed !important;
     top: 0;
     left: 0;
+    transition: $call-wind-transition;
     width: 100%;
     height: 100%;
 
@@ -517,6 +565,7 @@ defineExpose({
   .rtc-dialog.is-mobile-mini {
     width: 10rem;
     height: 14rem;
+    transition: width 0.2s, height 0.2s ease;
     .menu,
     .min-wind-stream,
     .rtc-desc {

@@ -106,12 +106,14 @@ export function useSettingInit() {
     timer = setTimeout(() => {
       if (app)
         app.classList.remove("stop-transition");
-      setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
-      timer = null;
-      if (setting.isDesktop) {
-        console.log("save window state");
-        saveWindowState(StateFlags.ALL); // 保存窗口状态
-      }
+      nextTick(() => {
+        setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
+        timer = null;
+        if (setting.isDesktop) {
+          console.log("save window state");
+          saveWindowState(StateFlags.ALL); // 保存窗口状态
+        }
+      });
     }, 200);
   }
   window.addEventListener("resize", onResize);
