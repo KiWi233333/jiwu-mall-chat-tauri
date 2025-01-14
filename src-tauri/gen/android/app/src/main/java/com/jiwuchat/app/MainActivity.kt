@@ -25,10 +25,13 @@ class MainActivity : TauriActivity() {
     }
 
     private fun requestPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA,
-        )
-        requestPermissionLauncher.launch(permissions)
+        requestPermissionLauncher.launch(arrayOf(
+          Manifest.permission.RECORD_AUDIO,
+          Manifest.permission.CAMERA,
+          Manifest.permission.WRITE_EXTERNAL_STORAGE,
+          Manifest.permission.READ_EXTERNAL_STORAGE,
+          Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+          Manifest.permission.FOREGROUND_SERVICE
+        ))
     }
 }

@@ -163,7 +163,10 @@ function keyToggleTheme(e: KeyboardEvent) {
     const dom = document.querySelector("#toggle-theme-btn");
     // 计算屏幕中心坐标
     const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
-    const xy = dom?.getBoundingClientRect();
+    const xy = dom?.getBoundingClientRect?.();
+    if (!xy) {
+      return;
+    }
     const colorMode = useColorMode();
     const mode = colorMode.value === "dark" ? "light" : "dark";
     const setting = useSettingStore();

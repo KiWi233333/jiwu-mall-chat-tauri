@@ -2,18 +2,31 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
   xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <!-- 网络权限 -->
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+  <!-- 音频权限 -->
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
-  <uses-permission android:name="android.permission.CAMERA" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+  <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
   <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_MICROPHONE" />
   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-  <uses-permission
-    android:name="android.permission.READ_EXTERNAL_STORAGE"
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+
+  <!-- 摄像头权限 -->
+  <uses-permission android:name="android.permission.CAMERA" />
+
+  <!-- 前台服务权限 -->
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <!-- 后台驻留权限 -->
+  <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+  <!-- 存储权限 -->
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
     android:maxSdkVersion="32" />
-  
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="32" />
 
   <!-- AndroidTV support -->
   <uses-feature
@@ -29,7 +42,6 @@
   <uses-feature
     android:name="android.hardware.microphone"
     android:required="false" />
-
   <application
     android:banner="@drawable/ic_transparent"
     android:icon="@mipmap/ic_launcher"
