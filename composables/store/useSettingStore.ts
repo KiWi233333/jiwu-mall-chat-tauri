@@ -11,6 +11,11 @@ import { open as openUrl } from "@tauri-apps/plugin-shell";
 import { check } from "@tauri-apps/plugin-updater";
 import { filename as windowStateFilename } from "@tauri-apps/plugin-window-state";
 import { acceptHMRUpdate, defineStore } from "pinia";
+
+/**
+ * 默认呼叫铃声
+ */
+export const DEFAULT_RTC_CALL_BELL_URL = "/sound/bell.mp3";
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useSettingStore = defineStore(
@@ -64,7 +69,9 @@ export const useSettingStore = defineStore(
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
       isTrayNotification: true as (boolean | undefined), // 托盘通知
+      rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL, // 呼叫铃声
     });
+    const isDefaultRtcCallBell = computed(() => settingPage.value.rtcCallBellUrl === DEFAULT_RTC_CALL_BELL_URL);
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
 
@@ -391,6 +398,7 @@ export const useSettingStore = defineStore(
         isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: false, // esc
         isTrayNotification: true, // 托盘通知
+        rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL, // 呼叫铃声铃声
       };
       loadSystemFonts();
       if (!isWeb.value) {
@@ -456,6 +464,7 @@ export const useSettingStore = defineStore(
       osType,
       isUseWebsocket,
       isWeb,
+      isDefaultRtcCallBell,
       // actions
       checkUpdates,
       checkMainWinVisible,

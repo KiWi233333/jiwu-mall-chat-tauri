@@ -120,7 +120,12 @@ export function useWebRTC(
    * 打开铃声
    */
   const startBell = () => {
-    bellAudio.value = new Audio("/sound/bell.mp3");
+    if (!setting.settingPage.rtcCallBellUrl) {
+      console.log("rtc通话已经静音");
+      bellAudio.value = null;
+      return;
+    }
+    bellAudio.value = new Audio(setting.settingPage.rtcCallBellUrl);
     bellAudio.value!.loop = true;
     bellAudio.value?.play?.();
   };
@@ -825,7 +830,7 @@ export function useWebRTC(
   // 开始桌面共享
   const startScreenShare = async () => {
     try {
-      if (!navigator.mediaDevices.getDisplayMedia) {
+      if (!navigator?.mediaDevices?.getDisplayMedia) {
         ElNotification.warning({
           title: "兼容提示",
           message: "当前浏览器不支持桌面共享功能！",

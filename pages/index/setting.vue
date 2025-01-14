@@ -157,6 +157,60 @@ async function openFileFolder() {
   }
   openFile(setting.appDataDownloadDirUrl);
 }
+
+// 切换默认铃声
+function toggleRtcCallBell() {
+  ElMessageBox.prompt("", {
+    title: "更改铃声",
+    inputType: "text",
+    inputValue: setting.settingPage.rtcCallBellUrl,
+    center: true,
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    inputErrorMessage: "请输入正确的铃声地址",
+    inputPlaceholder: "请输入铃声网络地址",
+    lockScroll: true,
+  }).then(({ value, action }) => {
+    const val = value?.trim();
+    if (action === "confirm") {
+      if (!val) {
+        setting.settingPage.rtcCallBellUrl = DEFAULT_RTC_CALL_BELL_URL;
+        return;
+      }
+      // 正则判断
+      const reg = /^https?:\/\/[^\s/$.?#].\S*$/;
+      if (DEFAULT_RTC_CALL_BELL_URL !== val && !reg.test(val)) {
+        ElMessage.error("请输入正确的铃声地址");
+        return;
+      }
+      setting.settingPage.rtcCallBellUrl = val;
+    }
+  });
+}
+
+// 播放默认铃声
+const audioRaw = ref<HTMLAudioElement>();
+function togglePlayRtcCallBell(url: string) {
+  if (!url)
+    return;
+  if (audioRaw.value) {
+    audioRaw.value.pause?.();
+    audioRaw.value.remove?.();
+    audioRaw.value = undefined;
+    return;
+  }
+  audioRaw.value = new Audio(url);
+  audioRaw.value.play();
+  audioRaw.value.onended = () => {
+    audioRaw.value?.remove?.();
+    audioRaw.value = undefined;
+  };
+}
+onDeactivated(() => {
+  audioRaw.value?.pause?.();
+  audioRaw.value?.remove?.();
+  audioRaw.value = undefined;
+});
 </script>
 
 <template>
@@ -294,6 +348,22 @@ async function openFileFolder() {
               {{ setting.appUploader.downloadedText || "- / - MB" }}
             </el-progress>
           </template>
+        </div>
+      </div>
+      <!-- 通话铃声 -->
+      <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
+        通话铃声
+        <div class="ml-a flex items-center gap-3" :title="setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声'">
+          <span class="cursor-pointer text-0.8rem tracking-0.1em op-0 btn-warning group-hover:op-100" @click="setting.settingPage.rtcCallBellUrl = DEFAULT_RTC_CALL_BELL_URL">恢复默认</span>
+          <small class="mr-2 max-w-50vw flex-1 truncate op-60">{{ setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声' }}</small>
+          <span class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="toggleRtcCallBell()">更改</span>
+          <span
+            class="cursor-pointer text-0.8rem tracking-0.1em btn-info"
+            :class="{ 'text-[var(--el-color-danger)] hover:text-[var(--el-color-danger)] ': audioRaw }"
+            @click="togglePlayRtcCallBell(setting.settingPage.rtcCallBellUrl)"
+          >
+            {{ audioRaw ? '停止' : '试听' }}
+          </span>
         </div>
       </div>
       <!-- 下载路径 -->
