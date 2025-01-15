@@ -57,7 +57,7 @@
 | 账号与安全模块 | 提供账号登录、修改密码、账号管理、设备安全、账号上下线等功能 | ✔ |
 | AI购物模块 | AI购物聊天功能，提供`极物圈`下的商品推荐 | ✔ |
 | 文件下载管理模块 | 支持文件本地下载、打开、删除等功能 | ✔ |
-| 语音视频模块 | 基于WebRTC的语音、视频聊天功能 | ✔ |
+| 语音视频模块 | 基于WebRTC的共享屏幕、语音、视频聊天功能 | ✔ |
 | 其他功能 | 全局夜间模式、字体、自定义下载路径、多系统支持、定制化设置等 | ✔ |
 
 ## 项目截图
@@ -75,7 +75,10 @@
 ![暗黑](./.doc/chat1.png)
 
 - 语音视频聊天 WebRTC
-![RTC通话](./.doc/rtc1.png)
+
+![语音视频聊天](./.doc/rtc1.png)
+
+![屏幕内容共享](./.doc/rtc3.png)
 
 - 聊天社交
 
@@ -98,6 +101,7 @@
  <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/rtc2.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
+ <img src="./.doc/rtc_remove_desktop.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
@@ -109,7 +113,7 @@
 ### 📦 安装依赖
 
 ```sh
-# node 版本 >= 16
+# node 版本 >= 18
 npm install -g pnpm
 
 pnpm install
@@ -183,7 +187,7 @@ pnpm config set registry https://registry.npmjs.org
 | 类型检查     | TypeScript         | 5.3.2        |
 | 样式处理     | Sass               | 1.77.6       |
 
-## 趋势
+## 🦾  趋势
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 

@@ -56,7 +56,7 @@ Note: This account does not have permissions for uploading images, changing pass
 | Account & Security Module | Provides functions for account login, password change, account management, device security, and account online/offline | ✔ |
 | AI Shopping Module | AI shopping chat feature, providing product recommendations under "Jiwu Circle" | ✔ |
 | File Download Management Module | Supports local file download, open, and delete functions | ✔ |
-| Voice and Video Module | Based on WebRTC for voice and video chat functionality | ✔ |
+| Voice and Video Module | Based on WebRTC for Screen Share, voice and video chat functionality | ✔ |
 | Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
 
 ## Project Screenshots
@@ -70,7 +70,10 @@ Note: This account does not have permissions for uploading images, changing pass
 ![Home](./.doc/chat.png)
 
 - Voice and Video Chat - WebRTC
+
 ![RTC Call](./.doc/rtc1.png)
+
+![Desktop Share](./.doc/rtc3.png)
 
 - Global Dark Mode Light / Dark
 
@@ -97,6 +100,7 @@ Note: This account does not have permissions for uploading images, changing pass
  <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
  <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
  <img src="./.doc/rtc2.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/rtc_remove_desktop.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
  <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
  <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
  <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
@@ -108,7 +112,7 @@ Note: This account does not have permissions for uploading images, changing pass
 ### 📦 Install Dependencies
 
 ```sh
-# Node version >= 16
+# Node version >= 18
 npm install -g pnpm
 
 pnpm install
@@ -183,11 +187,12 @@ pnpm config set registry https://registry.npmjs.org
 | Type Checking  | TypeScript        | 5.3.2    |
 | Style Processing | Sass             | 1.77.6   |
 
+
+## 🦾 Trends
+
+![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
+
 ## 💬 Contact
 
 - Email: [kiwi2333@qq.com](mailto:kiwi2333@qq.com)
 - QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qq&menu=yes)
-
-## Trends
-
-![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
