@@ -93,7 +93,7 @@ const { x, y, style } = useDraggable(dragRef, {
     const newX = Math.min(Math.max(position.x, 0), innerWidth - (dragRef?.value?.offsetWidth || 0));
     const newY = Math.min(Math.max(position.y, 0), innerHeight - (dragRef?.value?.offsetHeight || 0));
     if (dragRef.value) {
-      if (newX <= 20 || newY <= 20) {
+      if (newX <= 50 || newY <= 50) {
         //
       }
       else if (newX >= innerWidth - (dragRefStyle.value.maxWidth || dragRef.value.offsetWidth) || newY >= innerHeight - (dragRefStyle.value.maxHeight || dragRef.value.offsetHeight)) {
@@ -109,21 +109,39 @@ const { x, y, style } = useDraggable(dragRef, {
   },
   onEnd: (position) => {
     const { innerWidth, innerHeight } = window;
+    const dragRefElement = dragRef.value;
+    const dragRefWidth = dragRefElement?.offsetWidth || 0;
+    const dragRefHeight = dragRefElement?.offsetHeight || 0;
+    const maxWidth = dragRefStyle.value.maxWidth || dragRefWidth;
+    const maxHeight = dragRefStyle.value.maxHeight || dragRefHeight;
+
     // 限制不移出屏幕边缘
-    const newX = Math.min(Math.max(position.x, 0), innerWidth - (dragRef?.value?.offsetWidth || 0));
-    const newY = Math.min(Math.max(position.y, 0), innerHeight - (dragRef?.value?.offsetHeight || 0));
-    if (dragRef.value) {
+    const newX = Math.min(Math.max(position.x, 0), innerWidth - dragRefWidth);
+    const newY = Math.min(Math.max(position.y, 0), innerHeight - dragRefHeight);
+
+    if (dragRefElement) {
       if (setting.isMobileSize) {
         isMinWind.value = true;
       }
-      else if (newX <= 40 || newY <= 40) {
-        isMinWind.value = true;
-      }
-      else if (newX >= (innerWidth - dragRef.value.offsetWidth - 40) || newY >= (innerHeight - dragRef.value.offsetHeight - 40)) {
-        isMinWind.value = true;
-      }
       else {
-        isMinWind.value = false;
+        const isCloseToEdge = newX <= 50 || newY <= 50;
+        const isCloseToMaxEdge = newX >= innerWidth - maxWidth || newY >= innerHeight - maxHeight;
+        const isCloseToMinEdge = newX >= innerWidth - dragRefWidth - 50 || newY >= innerHeight - dragRefHeight - 50;
+        if (isCloseToEdge) {
+          isMinWind.value = true;
+          position.x = newX <= 50 ? 0 : newX;
+          position.y = newY <= 50 ? 0 : newY;
+        }
+        else if (isCloseToMaxEdge) {
+          position.x = newX + dragRefWidth + 60 >= innerWidth ? (innerWidth - dragRefWidth) : newX;
+          position.y = newY + dragRefHeight + 60 >= innerHeight ? (innerHeight - dragRefHeight) : newY;
+        }
+        else if (isCloseToMinEdge) {
+          isMinWind.value = true;
+        }
+        else {
+          isMinWind.value = false;
+        }
       }
     }
   },
@@ -278,7 +296,7 @@ defineExpose({
 <template>
   <div
     v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-primary: 0;"
-    class="rtc-dialog group rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark sm:(h-fit w-340px)"
+    class="rtc-dialog group rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
       'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind && !isMaxWind,
@@ -287,7 +305,6 @@ defineExpose({
   >
     <!-- 主内容 -->
     <div
-
       class="rounded-dialog relative z-2 h-full flex flex-col items-center gap-4 text-light shadow-lg"
       :class="{ 'bg-dark-6 bg-op-60 backdrop-blur': callType === CallTypeEnum.AUDIO || !isConnected }"
       @contextmenu="onMaxWindContextmenu"
@@ -306,9 +323,8 @@ defineExpose({
           <!-- 视频比例控制 -->
           <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
             <i
-
               :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-solar:scale-bold' : 'i-solar:scale-outline'"
-              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" p-2.6 btn-primary bg-color
+              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" bg-white p-2.6 btn-primary
               @click.capture="isMaxVideoClass = isMaxVideoClass === MaxVideoObjEnum.CONTAIN ? MaxVideoObjEnum.COVER : MaxVideoObjEnum.CONTAIN"
             />
             <template #dropdown>
@@ -481,17 +497,17 @@ defineExpose({
         </template>
       </div>
       <!-- 本地视频小窗口 -->
-      <div v-if="callType === CallTypeEnum.VIDEO" class="min-wind-stream absolute right-4 top-12">
+      <div v-if="callType === CallTypeEnum.VIDEO" class="min-wind-stream absolute right-4 top-14">
         <video
           v-show="minWindStream?.getVideoTracks()[0]?.enabled" :srcObject="minWindStream" autoplay
           :controls="false" title="点击切换" v-bind="minWindStreamProps"
-          class="h-24 w-16 cursor-pointer object-cover card-default-br border-default-hover"
+          class="h-24 w-16 cursor-pointer object-cover md:(h-30 w-20) card-default-br border-default-hover"
           @click="isSelfMinView = !isSelfMinView"
         />
         <CardElImage
           v-show="!minWindStream?.getVideoTracks()[0]?.enabled" title="点击切换"
           :src="isSelfMinView ? BaseUrlImg + user.userInfo.avatar : BaseUrlImg + theContact.avatar"
-          class="h-24 w-16 cursor-pointer select-none object-cover border-default card-default-br"
+          class="h-24 w-16 cursor-pointer select-none object-cover md:(h-30 w-20) border-default card-default-br"
           @click="isSelfMinView = !isSelfMinView"
         />
       </div>
@@ -517,7 +533,7 @@ defineExpose({
     <!-- 视频最大化 -->
     <div
       v-if="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()[0]?.enabled "
-      class="absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] pl-1 pt-1 op-100 transition-opacity btn-primary card-default-br sm:(op-0 group-hover:op-100)"
+      class="video-max absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] bg-dark-1 bg-op-50 pl-1 pt-1 op-100 backdrop-blur-12px backdrop-saturate-180 transition-opacity btn-primary sm:(op-0 group-hover:op-100)"
       @click="openMaxVideo"
     >
       <i
@@ -543,12 +559,13 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
 .rtc-dialog {
 
   transition: var(--call-wind-transition, width 0.2s, height 0.2s ease);
-  width: max(20vw, 25rem);
-  height: min(56vh, 36rem);
+  width: max(18vw, 24rem);
+  height: min(60vh, 40rem);
   &.is-mini {
     width: 10rem;
     height: 14rem;
 
+    .video-max,
     .menu,
     .min-wind-stream,
     .rtc-desc {

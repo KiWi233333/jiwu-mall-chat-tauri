@@ -87,10 +87,32 @@ export function useWebRTC(
 
   // 添加计时相关的变量
   const callDuration = ref(0);
-  const durationTimer = ref<any>(null);
+  const animationFrameId = ref<number | null>(null);
+  const startTime = ref<number>(0);
 
   // 添加桌面共享相关状态
   const isScreenSharing = ref(false);
+
+  // 开始计时的函数
+  const startCallTimer = () => {
+    startTime.value = performance.now();
+    const animate = (currentTime: number) => {
+      const elapsed = Math.floor((currentTime - startTime.value) / 1000);
+      callDuration.value = elapsed;
+      animationFrameId.value = requestAnimationFrame(animate);
+    };
+    animationFrameId.value = requestAnimationFrame(animate);
+  };
+
+  // 停止计时的函数
+  const stopCallTimer = () => {
+    if (animationFrameId.value) {
+      cancelAnimationFrame(animationFrameId.value);
+      animationFrameId.value = null;
+    }
+    callDuration.value = 0;
+    startTime.value = 0;
+  };
 
   /**
    * 获取房间信息
@@ -304,12 +326,7 @@ export function useWebRTC(
             break;
           case "connected":
             connectionStatus.value = CallStatusEnum.ACCEPT;
-            // 开始计时
-            callDuration.value = 0;
-            durationTimer.value = setInterval(() => {
-              callDuration.value++;
-            }, 1000);
-            // console.log("RTC 连接成功", CallStatusEnum.ACCEPT);
+            startCallTimer(); // 开始计时
             updateChatRTCMessage(roomId, {
               status: CallStatusEnum.ACCEPT,
             }, user.getToken);
@@ -385,16 +402,16 @@ export function useWebRTC(
         return false;
       }
       clear(); // 清理资源
+      if (!await getDevices()) {
+        ElMessage.error("获取设备失败!");
+        return;
+      }
       loading = ElLoading.service({
         lock: true,
         text: "正在获取设备...",
         background: "rgba(0, 0, 0, 0.1)",
         customClass: "backdrop-blur",
       });
-      if (!await getDevices()) {
-        ElMessage.error("获取设备失败!");
-        return;
-      }
       // 保存通话信息
       rtcMsg.value = {
         roomId,
@@ -470,18 +487,14 @@ export function useWebRTC(
         callTimer.value = null;
       }
       // 停止计时器
-      if (durationTimer.value) {
-        clearInterval(durationTimer.value);
-        durationTimer.value = null;
-        callDuration.value = 0;
-      }
-
-      // 停止并关闭媒体流
-      [localStream.value, remoteStream.value].forEach((stream) => {
-        stream?.getTracks().forEach(track => track.stop());
-      });
+      stopCallTimer();
+      // 关闭信道
       channel.value?.close?.();
+      // 关闭连接
       peerConnection.value?.close?.();
+      // 关闭媒体流
+      localStream.value?.getTracks().forEach(track => track.stop());
+      remoteStream.value?.getTracks().forEach(track => track.stop());
     }
     catch (error) {
       ElMessage.error("部分资源清理失败!");
