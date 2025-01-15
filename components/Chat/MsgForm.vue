@@ -23,6 +23,19 @@ const {
   reset: resetAudio,
   handlePlayAudio, // 播放录音
 } = useRecording();
+const pressHandleRef = ref<HTMLElement>();
+onLongPress(
+  pressHandleRef,
+  toggleChating,
+  {
+    delay: 300,
+    onMouseUp: toggleChating,
+    distanceThreshold: 12,
+    modifiers: {
+      stop: true,
+    },
+  },
+);
 
 // 表单
 const inputAllRef = ref(); // 输入框
@@ -562,7 +575,7 @@ watch(() => chat.theContact.roomId, () => {
       <div
         class="relative flex items-center gap-2 px-2 sm:(gap-4)"
       >
-        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="chat.msgForm.msgType !== MessageType.SOUND ? setting.isMobile ? '语音 Ctrl+T' : '语音' : '键盘'" placement="top">
+        <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="chat.msgForm.msgType !== MessageType.SOUND ? (setting.isMobileSize ? '语音' : '语音 Ctrl+T') : '键盘'" placement="top">
           <i
             :class="chat.msgForm.msgType !== MessageType.SOUND ? 'i-solar:microphone-3-broken hover:animate-pulse' : 'i-solar:keyboard-broken'"
             class="h-6 w-6 cursor-pointer btn-primary"
@@ -572,14 +585,14 @@ watch(() => chat.theContact.roomId, () => {
         <!-- 语音 -->
         <div v-show="chat.msgForm.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
           <BtnElButton
-            type="primary"
-            class="group tracking-0.1em hover:shadow-lg" :class="{ 'is-chating': isChating }"
-            style="padding: 0.8rem 3rem;" round size="small"
-            @click="toggleChating"
+            ref="pressHandleRef"
+            type="primary" class="group tracking-0.1em hover:shadow-lg"
+            :class="{ 'is-chating': isChating }" style="padding: 0.8rem 3rem;" round
+            size="small"
           >
             <i i-solar:soundwave-line-duotone class="icon" p-2.5 />
             <div class="text w-5rem truncate text-center transition-width group-hover:(w-6rem sm:w-9rem) sm:w-8rem">
-              <span class="chating-hidden">{{ isChating ? `正在输入 ${second}s` : '语音 Ctrl+T' }}</span>
+              <span class="chating-hidden">{{ isChating ? `正在输入 ${second}s` : (setting.isMobileSize ? '语音' : '语音 Ctrl+T') }}</span>
               <span hidden class="chating-show">停止录音 {{ second ? `${second}s` : '' }}</span>
             </div>
           </BtnElButton>
@@ -677,7 +690,7 @@ watch(() => chat.theContact.roomId, () => {
         v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
         style="padding: 0;margin: 0;"
-        class="input relative h-40 w-full"
+        class="input relative h-fit w-full"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
@@ -689,8 +702,8 @@ watch(() => chat.theContact.roomId, () => {
           :prefix="['@']"
           popper-class="at-select"
           :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"
-          :rows="6"
-          :maxlength="500"
+          :rows="setting.isMobileSize ? 4 : 6"
+          :maxlength="1000"
           :autosize="false"
           type="textarea"
           resize="none"
@@ -728,7 +741,7 @@ watch(() => chat.theContact.roomId, () => {
       <!-- 录音 -->
       <p
         v-if="chat.msgForm.msgType === MessageType.SOUND"
-        class="relative h-40 w-full flex-row-c-c overflow-hidden p-8 pt-2 text-wrap op-90"
+        class="relative h-40 w-full flex-row-c-c overflow-y-auto p-8 text-wrap op-90"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
