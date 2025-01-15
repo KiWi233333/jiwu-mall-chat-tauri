@@ -66,7 +66,6 @@ export function useWebRTC(
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
       { urls: "stun:stun2.l.google.com:19302" },
-      { urls: "stun:stun3.l.google.com:19302" },
     ],
   };
   // 待发送ice列表
@@ -380,11 +379,18 @@ export function useWebRTC(
 
   // 发起通话
   const startCall = async (roomId: number, type: CallTypeEnum, uidList?: string[]) => {
+    let loading: any;
     try {
       if (!roomId) {
         return false;
       }
       clear(); // 清理资源
+      loading = ElLoading.service({
+        lock: true,
+        text: "正在获取设备...",
+        background: "rgba(0, 0, 0, 0.1)",
+        customClass: "backdrop-blur",
+      });
       if (!await getDevices()) {
         ElMessage.error("获取设备失败!");
         return;
@@ -399,12 +405,6 @@ export function useWebRTC(
 
       // 填充房间信息 @unocss-include
       handleContactInfo(roomId);
-      const loading = ElLoading.service({
-        lock: true,
-        text: "正在获取设备...",
-        background: "rgba(0, 0, 0, 0.1)",
-        customClass: "backdrop-blur",
-      });
       // 设置30秒超时定时器
       callTimer.value = setTimeout(() => {
         if (connectionStatus.value === CallStatusEnum.CALLING) {
@@ -455,6 +455,7 @@ export function useWebRTC(
       console.error("开始通话失败:", err);
       ElMessage.error("RTC通讯连接失败!");
       clear();
+      loading.close();
       return false;
     }
   };
@@ -502,6 +503,20 @@ export function useWebRTC(
       remoteStream.value = null;
       connectionStatus.value = undefined;
       rtcStatus.value = undefined;
+      isScreenSharing.value = false;
+      theContact.value = {
+        activeTime: undefined,
+        avatar: undefined,
+        roomId: undefined,
+        hotFlag: undefined,
+        name: undefined,
+        text: undefined,
+        type: undefined,
+        selfExit: undefined,
+        unreadCount: undefined,
+        roomGroup: undefined,
+        member: undefined,
+      };
       // 关闭连接
       peerConnection.value = null;
       channel.value = null;

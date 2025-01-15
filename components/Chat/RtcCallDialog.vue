@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import ContextMenu from "@imengyu/vue3-context-menu";
+
 const {
   modelValue,
   callType,
@@ -20,8 +22,6 @@ const {
   callDuration,
   isSender,
   theContact,
-  // peerConnection,
-  // channel,
   // 设备相关
   audioDevices,
   selectedAudioDevice,
@@ -59,6 +59,7 @@ const maxVideoCoverList = [{
   className: MaxVideoObjEnum.FILL,
   detailText: "拉伸",
 }];
+const mainVideoRef = ref<HTMLVideoElement>();
 
 // 通话状态
 const isConnected = computed(() => connectionStatus.value === CallStatusEnum.ACCEPT || rtcStatus.value === "connected");
@@ -196,9 +197,8 @@ watch(() => modelValue, (val) => {
 function clearAll() {
   show.value = false;
   isSelfMinView.value = false;
+  isMaxWind.value = false;
   isMinWind.value = false;
-  // isMaxVideoClass.value = MaxVideoObjEnum.CONTAIN;
-  // audioVolume.value = 1;
 }
 
 watch(isConnectClose, (val) => {
@@ -227,6 +227,7 @@ function closeDialog() {
   });
 }
 
+// 双击屏幕
 function onDblClickWindow() {
   if (setting.isMobileSize) {
     x.value = 0;
@@ -234,6 +235,38 @@ function onDblClickWindow() {
     isMinWind.value = false;
   }
 }
+// 右键菜单
+const colorMode = useColorMode();
+function onMaxWindContextmenu(e: MouseEvent) {
+  e.stopPropagation();
+  e.preventDefault();
+  if (callType !== CallTypeEnum.VIDEO) {
+    return;
+  }
+  const opt = {
+    x: e.x,
+    zIndex: 2000,
+    y: e.y,
+    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    items: [
+      {
+        customClass: "group",
+        icon: " group-btn-warning i-tabler:arrows-maximize",
+        label: "全屏视频",
+        onClick: () => {
+          // 视频最大化
+          openMaxVideo();
+        },
+      },
+    ] as any,
+  };
+  ContextMenu.showContextMenu(opt);
+}
+async function openMaxVideo() {
+  mainVideoRef.value?.requestFullscreen && await mainVideoRef.value?.requestFullscreen?.();
+}
+
+
 defineExpose({
   connectionStatus,
   localStream,
@@ -245,7 +278,7 @@ defineExpose({
 <template>
   <div
     v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-primary: 0;"
-    class="rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark sm:(h-fit w-340px)"
+    class="rtc-dialog group rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
       'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind && !isMaxWind,
@@ -254,8 +287,11 @@ defineExpose({
   >
     <!-- 主内容 -->
     <div
+
       class="rounded-dialog relative z-2 h-full flex flex-col items-center gap-4 text-light shadow-lg"
       :class="{ 'bg-dark-6 bg-op-60 backdrop-blur': callType === CallTypeEnum.AUDIO || !isConnected }"
+      @contextmenu="onMaxWindContextmenu"
+      @dblclick.self="onMaxWindContextmenu"
       @dblclick.stop="onDblClickWindow"
     >
       <!-- 头部 -->
@@ -270,8 +306,9 @@ defineExpose({
           <!-- 视频比例控制 -->
           <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
             <i
+
               :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-solar:scale-bold' : 'i-solar:scale-outline'"
-              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" p-2.6 btn-primary
+              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" p-2.6 btn-primary bg-color
               @click.capture="isMaxVideoClass = isMaxVideoClass === MaxVideoObjEnum.CONTAIN ? MaxVideoObjEnum.COVER : MaxVideoObjEnum.CONTAIN"
             />
             <template #dropdown>
@@ -312,7 +349,6 @@ defineExpose({
           <i
             :title="isMaxWind ? '最小化' : '全屏'"
             :class="isMaxWind ? 'text-color-primary i-tabler:minimize' : 'i-tabler:maximize'"
-
             ml-4 hidden p-2.6 sm:ml-3 sm:block btn-primary
             @click.capture="() => {
               isMinWind = false;
@@ -464,13 +500,29 @@ defineExpose({
     <div class="rounded-dialog bg absolute left-0 top-0 z-0 h-full w-full overflow-hidden truncate">
       <video
         v-show="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()[0]?.enabled"
-        :srcObject="maxWindStream" autoplay :class="isMaxVideoClass" :controls="false" v-bind="maxWindStreamProps"
-        class="absolute left-0 top-0 mx-a h-full w-full"
+        ref="mainVideoRef"
+        :srcObject="maxWindStream"
+        autoplay
+        :class="isMaxVideoClass"
+        :controls="false"
+        disablepictureinpicture
+        v-bind="maxWindStreamProps" class="absolute left-0 top-0 mx-a h-full w-full"
       />
       <CardElImage
         v-show="!maxWindStream?.getVideoTracks()[0]?.enabled"
         :src="!isSelfMinView ? BaseUrlImg + user.userInfo.avatar : BaseUrlImg + theContact.avatar"
         class="absolute left-0 top-0 mx-a h-full w-full select-none filter-blur"
+      />
+    </div>
+    <!-- 视频最大化 -->
+    <div
+      v-if="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()[0]?.enabled "
+      class="absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] pl-1 pt-1 op-100 transition-opacity btn-primary card-default-br sm:(op-0 group-hover:op-100)"
+      @click="openMaxVideo"
+    >
+      <i
+        title="视频全屏"
+        i-tabler:maximize p-2.6
       />
     </div>
   </div>

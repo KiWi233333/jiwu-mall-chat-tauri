@@ -39,7 +39,7 @@ export async function useWsInit() {
         // 消息通知
         if (noticeType[msg.type]) {
           const body = msg.data as ChatMessageVO;
-          if (body.fromUser.userId === user.userId) { // 非当前用户消息通知
+          if (body.fromUser?.userId && body.fromUser?.userId === user?.userId) { // 非当前用户消息通知
             return;
           }
           // 聊天消息通知
