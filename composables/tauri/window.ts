@@ -13,7 +13,6 @@ export const windows_map = {
   },
 };
 
-
 export const TrayIconId = "tray_icon";
 /**
  * 显示或隐藏闪烁托盘图标。

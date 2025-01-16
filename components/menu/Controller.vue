@@ -24,7 +24,6 @@ async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
     isMaximized.value = isMax;
   };
   if (type === "close") {
-    await appWindow.minimize();
     await appWindow.hide();
   }
   if (type === "alwaysOnTop") {

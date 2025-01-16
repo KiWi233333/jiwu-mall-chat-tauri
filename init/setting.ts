@@ -3,7 +3,7 @@ import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as is
 import { saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
 
 const dev = import.meta.env.MODE === "development";
-function onKeyDown(e: KeyboardEvent) {
+async function onKeyDown(e: KeyboardEvent) {
   const setting = useSettingStore();
   // 关闭打印 搜索快捷键
   const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
@@ -14,7 +14,7 @@ function onKeyDown(e: KeyboardEvent) {
     if (!setting.isWeb) {
       e.preventDefault();
       const appWindow = getCurrentWebviewWindow();
-      appWindow.minimize();
+      await appWindow.hide();
     }
   }
 }
