@@ -34,7 +34,8 @@ Language: English | [Simplified Chinese](./README.md)
 
 JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + element-plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. It also supports AI shopping chat and global dark mode. Users can engage in real-time chat, share updates, and AI customer service Q&A through the app.
 
-## Multi-platform Support
+## One Code, Multi-platform Support
+
 ![Multi-platform Support](.doc/previews.png)
 
 ## Default Account
