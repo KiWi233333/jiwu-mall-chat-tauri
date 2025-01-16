@@ -376,6 +376,13 @@ onDeactivated(() => {
           <span class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="toggleRtcCallBell()">
             {{ setting.settingPage.rtcCallBellUrl ? '更改' : '添加' }}
           </span>
+          <!-- 关闭 -->
+          <span
+            v-if="setting.settingPage.rtcCallBellUrl"
+            class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="setting.settingPage.rtcCallBellUrl = undefined"
+          >
+            关闭
+          </span>
         </div>
       </div>
       <!-- 下载路径 -->

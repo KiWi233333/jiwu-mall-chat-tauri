@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 /**
- * 删除消息
+ * 撤回消息
  */
-defineProps<{
-  data: Partial<ChatMessageVO>
+const { data } = defineProps<{
+  data: ChatMessageVO<RecallBodyDTO>;
+  prevMsg?: Partial<ChatMessageVO<TextBodyMsgVO>>
 }>();
 </script>
 
 <template>
-  <span class="mx-a my-2 max-w-full truncate px-4 py-1 pt-1.4 text-wrap text-0.7rem font-500 op-60 !w-fit border-default !rounded-1em card-default">
+  <span class="recall mx-a my-2 max-w-full truncate px-4 text-wrap font-500 !w-fit text-mini-50">
     {{ data?.message?.content }}
   </span>
 </template>

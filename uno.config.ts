@@ -30,7 +30,7 @@ export default defineConfig({
     // 文本颜色
     ["text-default", "text-1em text-dark dark:text-white"],
     ["text-mini", "text-dark-50 dark:text-[#979898] text-xs"],
-    ["text-mini-50", "text-xs text-dark-50 dark:text-[#717171]"],
+    ["text-mini-50", "text-xs text-[#717171] dark:text-[#979898]"],
     ["text-color-primary", "text-[var(--el-color-primary)]"],
     ["text-small", "text-dark-50 dark:text-[#979898] text-sm"],
     ["text-small-50", "text-sm text-dark-50 dark:text-[#717171]"],

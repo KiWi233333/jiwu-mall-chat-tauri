@@ -324,7 +324,7 @@ defineExpose({
           <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
             <i
               :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-solar:scale-bold' : 'i-solar:scale-outline'"
-              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" bg-white p-2.6 btn-primary
+              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" class="bg-white p-2.6 text-white btn-primary"
               @click.capture="isMaxVideoClass = isMaxVideoClass === MaxVideoObjEnum.CONTAIN ? MaxVideoObjEnum.COVER : MaxVideoObjEnum.CONTAIN"
             />
             <template #dropdown>

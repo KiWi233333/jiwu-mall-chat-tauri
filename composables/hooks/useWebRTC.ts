@@ -119,8 +119,24 @@ export function useWebRTC(
    * @param roomId 房间id
    */
   function handleContactInfo(roomId: number) {
+    // 先清空
+    theContact.value = {
+      activeTime: undefined,
+      avatar: undefined,
+      roomId: undefined,
+      hotFlag: undefined,
+      name: undefined,
+      text: undefined,
+      type: undefined,
+      selfExit: undefined,
+      unreadCount: undefined,
+      roomGroup: undefined,
+      member: undefined,
+    };
     if (chat.contactMap[roomId]) {
-      theContact.value = chat.contactMap[roomId];
+      theContact.value = {
+        ...chat.contactMap[roomId],
+      };
     }
     else { // 房间信息不存在，请求接口获取
       getChatContactInfo(roomId, user.getToken)?.then((res) => {
@@ -517,19 +533,6 @@ export function useWebRTC(
       connectionStatus.value = undefined;
       rtcStatus.value = undefined;
       isScreenSharing.value = false;
-      theContact.value = {
-        activeTime: undefined,
-        avatar: undefined,
-        roomId: undefined,
-        hotFlag: undefined,
-        name: undefined,
-        text: undefined,
-        type: undefined,
-        selfExit: undefined,
-        unreadCount: undefined,
-        roomGroup: undefined,
-        member: undefined,
-      };
       // 关闭连接
       peerConnection.value = null;
       channel.value = null;

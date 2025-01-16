@@ -547,19 +547,19 @@ watch(() => chat.theContact.roomId, () => {
         </div>
       </div>
       <!-- 回复 -->
-      <el-form-item
+      <div
         v-if="chat.replyMsg?.fromUser"
         prop="body.replyMsgId"
-        class="w-full"
-        style="padding: 0.4rem;margin:0;margin-bottom:0.2rem;display: flex;"
+        class="w-full text-sm"
       >
-        <div class="w-full flex animate-[300ms_fade-in] items-center rounded-6px bg-[#ffffff9c] p-2 shadow backdrop-blur-10px border-default dark:bg-dark">
-          <el-tag effect="dark" class="mr-2">
+        <div class="w-full flex animate-[300ms_fade-in] items-center p-2 shadow card-default-br border-default-hover">
+          <el-tag effect="dark" size="small" class="mr-2 shrink-0">
             回复
-          </el-tag><ChatMsgContentCard class="w-4/5 truncate" :data="chat.replyMsg" />
-          <div class="i-solar:close-circle-bold ml-a h-6 w-6 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
+          </el-tag>
+          <ChatMsgContentCard class="max-w-4/5 truncate" :data="chat.replyMsg" />
+          <div class="i-solar:close-circle-bold ml-a h-5 w-5 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
         </div>
-      </el-form-item>
+      </div>
     </div>
     <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
@@ -694,7 +694,7 @@ watch(() => chat.theContact.roomId, () => {
           popper-class="at-select"
           :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="setting.isMobileSize ? 4 : 6"
-          :maxlength="1000"
+          :maxlength="500"
           :autosize="false"
           type="textarea"
           resize="none"

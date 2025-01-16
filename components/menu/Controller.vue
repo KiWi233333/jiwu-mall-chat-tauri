@@ -16,8 +16,9 @@ const isMaximized = ref(false);
 const isAlwaysOnTopVal = ref(false);
 async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
   const appWindow = getCurrentWindow();
-  if (type === "min")
+  if (type === "min") {
     await appWindow.minimize();
+  }
   if (type === "max") {
     await appWindow.toggleMaximize();
     const isMax = await appWindow.isMaximized();

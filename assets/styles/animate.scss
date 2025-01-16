@@ -936,3 +936,12 @@ html.stop-transition-all {
 }
 
 
+@keyframes popper-fade-anim {
+  from {
+    opacity: 0;
+    transform: scale(var(--popper-fade-anima-scale, 0.98)) translateY(var(--popper-fade-anima-translate, 2%));
+  }
+  to {
+    opacity: 1;
+  }
+}

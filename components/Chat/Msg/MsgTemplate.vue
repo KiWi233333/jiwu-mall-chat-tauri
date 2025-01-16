@@ -77,9 +77,10 @@ function onCopyMsg(msg?: string | null) {
       <small
         v-if="body?.reply"
         title="点击跳转"
-        class="max-w-50vw w-fit cursor-pointer truncate truncate px-2 text-0.75em op-80 sm:max-w-30em btn-primary border-default card-default"
+        class="max-w-20em flex-1 cursor-pointer truncate px-2 text-0.75em text-dark-2 sm:max-w-30em card-default dark:text-light-900 border-default-hover"
         @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
       >
+        <i class="i-solar:forward-2-bold-duotone mr-1 p-2" />
         {{ `${body.reply.nickName} : ${body.reply?.body || ''}` }}
       </small>
     </div>

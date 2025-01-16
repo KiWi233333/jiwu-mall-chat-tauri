@@ -4,7 +4,6 @@ import { MessageType } from "@/composables/api/chat/message";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { save } from "@tauri-apps/plugin-dialog";
 
-
 /**
  * 消息适配器
  */
@@ -225,7 +224,7 @@ function deleteMsg(roomId: number, msgId: number) {
       if (res.code === StatusCode.SUCCESS) {
         if (data.message.id === msgId) {
           data.message.type = MessageType.RECALL;
-          data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我删除了一条消息" : `"${data.fromUser.nickName}"删除了一条成员消息`}`;
+          data.message.content = `${data.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${data.fromUser.nickName}"删除了一条成员消息`}`;
           data.message.body = undefined;
         }
       }
@@ -234,18 +233,35 @@ function deleteMsg(roomId: number, msgId: number) {
 }
 
 // 格式化时间
+let cachedToday: Date | null = null;
+
 function formatDate(date: Date) {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  // const seconds = date.getSeconds().toString().padStart(2, '0');
-  const isSameDay = date.toDateString() === new Date().toDateString();
-  if (isSameDay)
-    return `${hours}:${minutes}`;
-  else
+  const now = new Date();
+  if (!cachedToday || now.getDate() !== cachedToday.getDate()) {
+    cachedToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diff = Math.floor((cachedToday.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  if (diff < 1) {
+    return `今天 ${hours}:${minutes}`;
+  }
+  else if (diff === 1) {
+    return `昨天 ${hours}:${minutes}`;
+  }
+  else if (diff === 2) {
+    return `前天 ${hours}:${minutes}`;
+  }
+  else {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+  }
 }
 // 是否显示时间
 const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
