@@ -94,6 +94,7 @@ export function useSettingInit() {
 
   // 6、窗口大小变化
   setting.isMobileSize = window.innerWidth < 640;
+  const saving = ref(false);
   let timer: NodeJS.Timeout | null = null;
   function onResize() {
     const setting = useSettingStore();
@@ -103,17 +104,20 @@ export function useSettingInit() {
     if (app)
       app.classList.add("stop-transition");
 
-    timer = setTimeout(() => {
+    timer = setTimeout(async () => {
       if (app)
         app.classList.remove("stop-transition");
-      nextTick(() => {
-        setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
-        timer = null;
-        if (setting.isDesktop) {
-          console.log("save window state");
-          saveWindowState(StateFlags.ALL); // 保存窗口状态
+      setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
+      timer = null;
+      if (setting.isDesktop) { // 迁移rust保存
+        console.log("save window state");
+        if (saving.value) {
+          return;
         }
-      });
+        saving.value = true;
+        await saveWindowState(StateFlags.ALL); // 保存窗口状态
+        saving.value = false;
+      }
     }, 200);
   }
   window.addEventListener("resize", onResize);
