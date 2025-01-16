@@ -271,16 +271,7 @@ async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: 
     emit("submit", res.data);
     // 消息阅读上报
     res.data.message.roomId && chat.setReadList(res.data.message.roomId);
-    if (typeof callback === "function") { // 执行回调
-      callback(res.data);
-    }
-    else {
-    // 发送消息后自动滚动到底部
-      await nextTick();
-      setTimeout(() => {
-        chat?.scrollBottom?.(false);
-      }, 300);
-    }
+    typeof callback === "function" && callback(res.data); // 执行回调
   }
   else if (res.message === "您和对方已不是好友！") {
     return;

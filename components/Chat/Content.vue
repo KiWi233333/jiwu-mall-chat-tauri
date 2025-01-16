@@ -1,16 +1,16 @@
 <script lang="ts" setup>
+import type { ChatMessageList } from "#components";
+
 defineProps<{
   roomId?: string
 }>();
 const chat = useChatStore();
+const ChatMessageListRef = ref<InstanceType<typeof ChatMessageList>>();
 // 发送信息后触发
-function onSendMsg(msg: ChatMessageVO) {
-  // ChatMessageListRef.value?.appendMsg(msg);
-  nextTick(() => {
-    setTimeout(() => {
-      chat.scrollBottom?.(false);
-    }, 300);
-  }); // 发送消息后自动滚动到底部
+async function onSendMsg(msg: ChatMessageVO) {
+  ChatMessageListRef.value?.appendMsg(msg);
+  await nextTick();
+  chat.scrollBottom?.(false);
 };
 </script>
 
@@ -19,7 +19,7 @@ function onSendMsg(msg: ChatMessageVO) {
     <!-- 房间信息 -->
     <ChatRoomInfo />
     <!-- 消息列表 -->
-    <ChatMessageList />
+    <ChatMessageList ref="ChatMessageListRef" />
     <!-- 发送 -->
     <ChatMsgForm class="flex-shrink-0" @submit="onSendMsg" />
   </div>

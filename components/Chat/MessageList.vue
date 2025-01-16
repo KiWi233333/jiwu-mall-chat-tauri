@@ -23,7 +23,6 @@ async function loadData(call?: (data?: Message[]) => void) {
     return;
   }
   isLoading.value = true;
-  isReload.value = false;
 
   getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
     if (roomId !== chat.theContact.roomId)
@@ -184,7 +183,6 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     // 2）更新消息列表
     if (p.message.roomId !== chat.theContact.roomId)
       continue;
-
     chat.setReadList(chat.theContact.roomId);
     // 3）本房间追加消息
     const msg = findMsg(p.message.id);
@@ -343,14 +341,14 @@ function updateContact(roomId: number, data: Partial<ChatContactVO>, callBack?: 
 
 // 添加消息到列表
 function appendMsg(data: ChatMessageVO) {
-  if (data)
+  if (data && data.message.id && !findMsg(data.message.id)) {
     chat.theContact.msgList.push(data);
+  }
 }
 function findMsg(msgId: number) {
-  for (const p of chat.theContact.msgList) {
-    if (p.message.id === msgId)
-      return p;
-  }
+  if (!msgId)
+    return undefined;
+  return chat.theContact.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
 }
 
 // 滚动
@@ -423,7 +421,7 @@ async function scrollTop(size: number, animated = false) {
     await nextTick();
     setTimeout(() => {
       chat.isMsgListScroll = false;
-    }, 400);
+    }, 300);
   }
   else {
     chat.isMsgListScroll = false;
@@ -473,7 +471,7 @@ defineExpose({
   >
     <div
       v-bind="$attrs"
-      class="msg-list flex flex-col op-0 transition-opacity transition-duration-200"
+      class="msg-list flex flex-col op-0 transition-(300 opacity)"
       :class="{ 'op-100': !isReload }"
     >
       <ListDisAutoIncre
@@ -497,6 +495,10 @@ defineExpose({
         />
       </ListDisAutoIncre>
     </div>
+    <!-- 骨架屏 -->
+    <!-- <div v-if="isReload" class="msg-list flex flex-col transition-(200 opacity)">
+      <ChatMsgSkeleton v-for="i in 10" :key="i" />
+    </div> -->
   </el-scrollbar>
 </template>
 
