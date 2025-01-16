@@ -2,6 +2,7 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { open as openFile } from "@tauri-apps/plugin-shell";
 import { MdPreview } from "md-editor-v3";
+import { DEFAULT_RTC_CALL_BELL_URL } from "~/composables/store/useSettingStore";
 import { appKeywords, appName } from "~/constants";
 import "md-editor-v3/lib/preview.css";
 
@@ -174,7 +175,8 @@ function toggleRtcCallBell() {
     const val = value?.trim();
     if (action === "confirm") {
       if (!val) {
-        setting.settingPage.rtcCallBellUrl = DEFAULT_RTC_CALL_BELL_URL;
+        ElNotification.warning("已关闭铃声！");
+        setting.settingPage.rtcCallBellUrl = undefined;
         return;
       }
       // 正则判断
@@ -190,7 +192,7 @@ function toggleRtcCallBell() {
 
 // 播放默认铃声
 const audioRaw = ref<HTMLAudioElement>();
-function togglePlayRtcCallBell(url: string) {
+function togglePlayRtcCallBell(url?: string) {
   if (!url)
     return;
   if (audioRaw.value) {
@@ -354,15 +356,25 @@ onDeactivated(() => {
       <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
         通话铃声
         <div class="ml-a flex items-center gap-3" :title="setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声'">
-          <span class="cursor-pointer text-0.8rem tracking-0.1em op-0 btn-warning group-hover:op-100" @click="setting.settingPage.rtcCallBellUrl = DEFAULT_RTC_CALL_BELL_URL">恢复默认</span>
-          <small class="mr-2 max-w-50vw flex-1 truncate op-60">{{ setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声' }}</small>
-          <span class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="toggleRtcCallBell()">更改</span>
           <span
-            class="cursor-pointer text-0.8rem tracking-0.1em btn-info"
-            :class="{ 'text-[var(--el-color-danger)] hover:text-[var(--el-color-danger)] ': audioRaw }"
+            v-if="!setting.isDefaultRtcCallBell"
+            class="cursor-pointer text-0.8rem tracking-0.1em op-0 btn-warning group-hover:op-100"
+            @click="setting.settingPage.rtcCallBellUrl = DEFAULT_RTC_CALL_BELL_URL"
+          >恢复默认</span>
+          <div
+            v-show="setting.settingPage.rtcCallBellUrl"
+            class="flex-row-c-c cursor-pointer text-sm"
+            :class="audioRaw ? 'text-[var(--el-color-danger)] hover:text-[var(--el-color-danger)]' : 'hover:text-[var(--el-color-info)] text-small'"
             @click="togglePlayRtcCallBell(setting.settingPage.rtcCallBellUrl)"
           >
-            {{ audioRaw ? '停止' : '试听' }}
+            <i
+              class="mr-2 p-2 text-0.8rem tracking-0.1em"
+              :class="audioRaw ? 'i-solar:pause-bold' : 'i-solar:play-bold'"
+            />
+            {{ setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声' }}
+          </div>
+          <span class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="toggleRtcCallBell()">
+            {{ setting.settingPage.rtcCallBellUrl ? '更改' : '添加' }}
           </span>
         </div>
       </div>
