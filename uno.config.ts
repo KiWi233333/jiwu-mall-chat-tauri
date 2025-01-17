@@ -27,6 +27,7 @@ export default defineConfig({
     ["bg-menu-color", "bg-white  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     ["text-color", "text-dark dark:text-white"],
+    ["bg-skeleton", "bg-gray-1 dark:bg-[#1f1f1f]"],
     // 文本颜色
     ["text-default", "text-1em text-dark dark:text-white"],
     ["text-mini", "text-dark-50 dark:text-[#979898] text-xs"],

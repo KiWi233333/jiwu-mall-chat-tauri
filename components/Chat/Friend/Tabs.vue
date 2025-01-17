@@ -43,11 +43,11 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
       <el-collapse v-model="activeNames.arr">
         <!-- 群聊 -->
         <el-collapse-item name="1" title="群聊">
-          <ChatFriendGroupList />
+          <LazyChatFriendGroupList type="group" />
         </el-collapse-item>
         <!-- 好友 -->
         <el-collapse-item name="2" title="好友">
-          <ChatFriendList />
+          <LazyChatFriendGroupList type="friend" />
         </el-collapse-item>
       </el-collapse>
     </el-scrollbar>

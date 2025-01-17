@@ -27,7 +27,6 @@ const setting = useSettingStore();
       <div class="h-full w-full flex-row-c-c" :class="errorRootClass">
         <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
-      te>
     </template>
   </el-image>
   <template v-else>

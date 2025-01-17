@@ -71,7 +71,7 @@ const chatRtcCallDialogRef = ref<any>();
         <!-- 聊天框 -->
         <ChatContent v-show="$route.path === '/'" v-if=" chat.theContact.roomId" class="flex-1 border-default-l" />
         <!-- 缓存内容 -->
-        <NuxtPage keepalive />
+        <NuxtPage />
       </div>
     </div>
     <div v-else class="relative h-full flex flex-col overflow-hidden" />

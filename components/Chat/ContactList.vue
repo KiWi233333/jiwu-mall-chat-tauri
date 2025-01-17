@@ -8,6 +8,7 @@ const props = defineProps<{
 }>();
 const [autoAnimateRef, enable] = useAutoAnimate();
 const isLoading = ref<boolean>(false);
+const isReload = ref(false);
 const user = useUserStore();
 const chat = useChatStore();
 const pageInfo = ref({
@@ -70,7 +71,7 @@ async function onChangeRoom(newRoomId?: number) {
   setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
-const isReload = ref(false);
+
 // 刷新
 async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
@@ -305,17 +306,21 @@ onBeforeUnmount(() => {
         <i i-carbon:add-large p-2 />
       </BtnElButton>
     </div>
+    <!-- 添加骨架屏 -->
+    <div v-if="isReload" class="animate-(fade-in duration-200)">
+      <ChatContactSkeleton v-for="i in 10" :key="i" />
+    </div>
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list">
-      <el-radio-group v-model="theContactId" class="w-full">
-        <ListAutoIncre
-          :immediate="true"
-          :auto-stop="false"
-          loading-class="op-0"
-          :no-more="pageInfo.isLast"
-          @load="loadData(dto)"
-        >
-          <div ref="autoAnimateRef" class="relative w-full flex flex-col">
+      <el-radio-group v-model="theContactId" class="relative w-full">
+        <div ref="autoAnimateRef" class="h-full">
+          <ListAutoIncre
+            :immediate="true"
+            :auto-stop="false"
+            loading-class="op-0"
+            :no-more="pageInfo.isLast"
+            @load="loadData(dto)"
+          >
             <el-radio
               v-for="room in chat.getContactList"
               :key="room.roomId"
@@ -351,15 +356,15 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </el-radio>
-          </div>
-          <template #done>
-            <div
-              class="mb-6 w-full text-center text-mini"
-            >
-              暂无更多
-            </div>
-          </template>
-        </ListAutoIncre>
+            <template #done>
+              <div
+                class="mb-6 w-full text-center text-mini"
+              >
+                暂无更多
+              </div>
+            </template>
+          </ListAutoIncre>
+        </div>
       </el-radio-group>
     </el-scrollbar>
     <!-- 新建群聊 -->

@@ -2,12 +2,6 @@
 const emit = defineEmits<{
   (e: "submit", data: ChatUserSeInfoVO): void
 }>();
-
-const [autoAnimateRef, enable] = useAutoAnimate({});
-onMounted(() => {
-  const setting = useSettingStore();
-  enable(!setting.settingPage.isCloseAllTransition);
-});
 // 搜索相关
 const searchKeyWords = ref<string>("");
 const isShowResult = ref<boolean>(false);
@@ -36,7 +30,7 @@ async function onSearch() {
     });
   }
 
-  await reSearch();
+  reSearch();
   // 1、请求
   // 添加记录
   if (
@@ -53,23 +47,30 @@ async function onSearch() {
 }
 
 async function onLoadMore() {
-  if (noMore.value || isLoading.value)
-    return;
-  isLoading.value = true;
-  page.value++;
-  const res = await getUserSeListByPage(page.value, size.value, {
-    keyWord: searchKeyWords.value,
-  }, user.getToken);
-  // 展示结果
-  searchPage.value = {
-    total: res.data.total,
-    pages: res.data.pages,
-    size: res.data.size,
-    current: res.data.current,
-  };
-  searchPageList.push(...res.data.records);
-  isLoading.value = false;
-  isShowResult.value = true;
+  try {
+    if (noMore.value || isLoading.value)
+      return;
+    isLoading.value = true;
+    page.value++;
+    const res = await getUserSeListByPage(page.value, size.value, {
+      keyWord: searchKeyWords.value,
+    }, user.getToken);
+    // 展示结果
+    searchPage.value = {
+      total: res.data.total,
+      pages: res.data.pages,
+      size: res.data.size,
+      current: res.data.current,
+    };
+    searchPageList.push(...res.data.records);
+  }
+  catch (e) {
+    console.error(e);
+  }
+  finally {
+    isLoading.value = false;
+    isShowResult.value = true;
+  }
 }
 
 /**
@@ -142,7 +143,7 @@ const timer = ref<any>();
         type="primary"
         class="w-5rem shadow"
         style=" position: relative;transition: 0.2s"
-        :loading="isLoading"
+        :disabled="isLoading"
         icon-class="i-solar:magnifer-outline mr-2"
         @focus="isShowModel = true"
         @click.self="onSearch"
@@ -190,21 +191,20 @@ const timer = ref<any>();
           :no-more="noMore"
           @load="onLoadMore"
         >
-          <div ref="autoAnimateRef" pt-4>
+          <div pt-4>
             <!-- 用户卡片 -->
             <div
               v-for="p in searchPageList"
               :key="p.id"
-              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 card-default hover:(bg-white op-100 shadow shadow-inset dark:bg-dark-9)"
+              data-fade
+              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 card-default hover:(bg-white op-100 shadow shadow-inset dark:bg-dark-9) border-default-hover"
               @click="emit('submit', p)"
             >
-              <div class="relative flex-row-c-c">
-                <CardElImage
-                  :src="BaseUrlImg + p.avatar" fit="cover"
-                  class="h-2em w-2em flex-shrink-0 overflow-auto object-cover border-default card-default"
-                />
-                <span class="g-avatar" />
-              </div>
+              <CardElImage
+                :src="BaseUrlImg + p.avatar"
+                fit="cover"
+                class="h-2.5rem w-2.5rem object-cover border-default card-default"
+              />
               <small>{{ p.nickname || p.username }}</small>
             </div>
           </div>
