@@ -8,6 +8,13 @@ interface RtcMsgVO {
 }
 const TURN_SERVER = import.meta.env.VITE_TURN_SERVER_URL;
 const MAX_TIME_OUT_SECONDS = 30; // 拨打 超时时间
+const configuration: RTCConfiguration = { // 默认配置
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+  ],
+};
 /**
  * 使用webRtc通话
  *
@@ -61,13 +68,6 @@ export function useWebRTC(
   const peerConnection = ref<RTCPeerConnection | null>(null);
   const channel = ref<RTCDataChannel | null>(null);
   const channelStatus = ref<RTCDataChannelState | undefined>(undefined);
-  const configuration: RTCConfiguration = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      { urls: "stun:stun2.l.google.com:19302" },
-    ],
-  };
   // 待发送ice列表
   const pendingCandidates = ref<RTCIceCandidate[]>([]);
 
