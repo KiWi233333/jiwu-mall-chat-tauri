@@ -16,6 +16,11 @@ import { acceptHMRUpdate, defineStore } from "pinia";
  * 默认呼叫铃声
  */
 export const DEFAULT_RTC_CALL_BELL_URL = "/sound/bell.mp3";
+export enum NotificationEnums {
+  SYSTEM = "system",
+  TRAY = "tray",
+  CLOSE = "close",
+}
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useSettingStore = defineStore(
@@ -68,7 +73,7 @@ export const useSettingStore = defineStore(
       isAutoStart: false, // 开机自启
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: false, // esc
-      isTrayNotification: true as (boolean | undefined), // 托盘通知
+      notificationType: NotificationEnums.TRAY as NotificationEnums, // 托盘通知
       rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL as string | undefined, // 呼叫铃声
     });
     const isDefaultRtcCallBell = computed(() => settingPage.value.rtcCallBellUrl === DEFAULT_RTC_CALL_BELL_URL);
@@ -397,7 +402,7 @@ export const useSettingStore = defineStore(
         isAutoStart: settingPage.value.isAutoStart, // 开机自启
         isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
         isEscMin: false, // esc
-        isTrayNotification: true, // 托盘通知
+        notificationType: isWeb.value ? NotificationEnums.SYSTEM : NotificationEnums.TRAY, // 托盘通知
         rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL, // 呼叫铃声铃声
       };
       loadSystemFonts();

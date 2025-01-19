@@ -42,11 +42,10 @@ export async function useWsInit() {
           if (body.fromUser?.userId && body.fromUser?.userId === user?.userId) { // 非当前用户消息通知
             return;
           }
-          // 聊天消息通知
-          if (setting.settingPage.isTrayNotification === undefined) // 关闭通知
+          // 系统通知
+          if (setting.settingPage.notificationType !== NotificationEnums.SYSTEM)
             return;
-
-          if (setting.settingPage.isTrayNotification === false || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
+          if (!setting.isWeb || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
             notification(body);
         }
       });

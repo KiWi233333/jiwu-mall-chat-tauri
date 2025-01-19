@@ -36,40 +36,28 @@ const notificationTypeList = computed(() => (setting.isMobile || setting.isWeb)
   ? [
       {
         label: "系统",
-        value: "system",
+        value: NotificationEnums.SYSTEM,
       },
       {
         label: "关闭",
-        value: false,
+        value: NotificationEnums.CLOSE,
       },
     ]
   : [
       {
         label: "托盘",
-        value: "tray",
+        value: NotificationEnums.TRAY,
       },
       {
         label: "系统",
-        value: "system",
+        value: NotificationEnums.SYSTEM,
       },
       {
         label: "关闭",
-        value: false,
+        value: NotificationEnums.CLOSE,
       },
     ],
 );
-const notificationType = computed({
-  get: () => setting.settingPage.isTrayNotification === undefined ? false : (setting.settingPage.isTrayNotification ? "tray" : "system"),
-  set: (val: string) => {
-    if (val === "system")
-      setting.settingPage.isTrayNotification = false;
-    else if (val === "tray")
-      setting.settingPage.isTrayNotification = true;
-    else
-      setting.settingPage.isTrayNotification = undefined;
-  },
-});
-
 
 // 主题
 const themeConfigList = setting.settingPage.modeToggle.list.map(item => ({
@@ -288,7 +276,7 @@ onDeactivated(() => {
       <div class="group h-8 flex-row-bt-c">
         消息通知
         <el-segmented
-          v-model="notificationType"
+          v-model="setting.settingPage.notificationType"
           class="inputs border-default"
           style="width:13rem;background-color: transparent;--el-segmented-item-selected-color: #fff;--el-border-radius-base: 2rem;"
           :options="notificationTypeList"

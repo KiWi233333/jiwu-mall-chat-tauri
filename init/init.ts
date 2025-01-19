@@ -29,6 +29,7 @@ export async function userTauriInit() {
     const osTypeName = osType();
     if (!osTypeName)
       return;
+    localStorage.setItem("osType", osTypeName); // 存储到本地
     setting.osType = osTypeName;
   }
   catch (error) {
@@ -75,9 +76,6 @@ export async function userTauriInit() {
   else {
     setting.sysPermission.isNotification = permissionGranted; // 更新通知权限状态
   }
-  if (["android", "ios"].includes(setting.appPlatform)) // 非桌面端
-    setting.settingPage.isTrayNotification = permissionGranted ? false : undefined;
-
   // 3、获取文件路径
   if (!await existsFile(setting.appDataDownloadDirUrl))
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
@@ -137,8 +135,8 @@ export async function useMsgBoxWebViewInit() {
   channel.addEventListener("message", handleChannelMsg);
   // 是否有新消息，控制图标闪烁
   const { start, stop, activeIcon, onlineUrl, offlineUrl } = await useFlashTray();
-  watchDebounced([isNewAllMsg, () => setting.settingPage.isTrayNotification], async ([newAllMsg, isTrayNotification], oldVal) => {
-    if (isTrayNotification !== true) {
+  watchDebounced([isNewAllMsg, () => setting.settingPage.notificationType], async ([newAllMsg, notificationType], oldVal) => {
+    if (notificationType !== NotificationEnums.TRAY) {
       stop();
       return;
     }
@@ -194,7 +192,7 @@ export async function useMsgBoxWebViewInit() {
   const trayMouseoverUnlisten = await listen("tray_mouseenter", async (event) => {
     if (!isNewAllMsg.value)
       return;
-    if (useSettingStore().settingPage.isTrayNotification !== true) { // 未开启托盘通知
+    if (useSettingStore().settingPage.notificationType !== NotificationEnums.TRAY) { // 未开启托盘通知
       return;
     }
     const win = await WebviewWindow.getByLabel("msgbox");
@@ -258,7 +256,7 @@ async function handleChannelMsg(event: MessageEvent) {
     return;
   // 是否托盘通知
   const setting = useSettingStore();
-  if (setting.settingPage.isTrayNotification !== true) {
+  if (setting.settingPage.notificationType !== NotificationEnums.TRAY) {
     return;
   }
   const { type, data } = payload;

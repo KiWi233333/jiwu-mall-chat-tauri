@@ -9,7 +9,7 @@
     width: 100vw;
   }
   /* loading */
-  #first-app-loading {
+  .first-app-loading {
     /* border: 1px solid #e5e7eb; */
     transition: all 0.3;
     position: fixed;
@@ -28,14 +28,13 @@
     letter-spacing: 0.3em;
     font-family: Alimama;
   }
-
-  #first-app-loading .flex-row-c-c {
+  .first-app-loading .flex-row-c-c {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  #first-app-loading h2 {
+  .first-app-loading h2 {
     padding: 0;
     margin: 0;
     /* animation: loading-fade-in-out 1.4s ease-in-out infinite; */
@@ -45,6 +44,11 @@
     background-color: #1a1a1a;
     color: #f3f3f3;
     border-color: #2d2d2d;
+  }
+
+  .desktop .first-app-loading,
+  .mobile .first-app-loading {
+    display: none !important;
   }
 
   /*
@@ -74,9 +78,17 @@
   <!-- 获取模式 -->
   <script>
     const mode = localStorage.getItem("vueuse-color-scheme");
+      const osType = window.localStorage.getItem("osType");
+      if (["windows", "macos", "linux"].includes(osType)) {
+        document.documentElement.classList.add("desktop");
+      } else if (["ios", "android"].includes(osType)) {
+        document.documentElement.classList.add("mobile");
+      } else {
+        document.documentElement.classList.add("web");
+      }
     if (mode) document.documentElement.classList.toggle(mode);
   </script>
-  <div id="first-app-loading">
+  <div class="first-app-loading">
     <h3 style="display: flex; align-items: center">
       <img src="/logo.png" style="width: 1.9rem; height: 1.9rem; margin-right: 0.6em" />
       极物聊天
