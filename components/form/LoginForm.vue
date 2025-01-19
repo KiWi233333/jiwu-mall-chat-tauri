@@ -297,7 +297,7 @@ const options = [
           v-model.trim="userForm.email"
           type="email"
           autocomplete="off"
-          prefix-icon="Message"
+          :prefix-icon="ElIconMessage"
           size="large"
           placeholder="请输入邮箱"
           @keyup.enter="getLoginCode(loginType)"
@@ -322,7 +322,7 @@ const options = [
       >
         <el-input
           v-model.trim="userForm.phone"
-          prefix-icon="Iphone"
+          :prefix-icon="ElIconIphone"
           size="large"
           type="tel"
           placeholder="请输入手机号"
@@ -346,7 +346,7 @@ const options = [
       >
         <el-input
           v-model.trim="userForm.code"
-          prefix-icon="ChatDotSquare"
+          :prefix-icon="ElIconChatDotSquare"
           autocomplete="off"
           size="large"
           placeholder="请输入验证码"
@@ -363,7 +363,7 @@ const options = [
         <el-input
           v-model.trim="userForm.username"
           autocomplete="off"
-          prefix-icon="user"
+          :prefix-icon="ElIconUser"
           size="large"
           placeholder="请输入用户名、手机号或邮箱"
           @keyup.enter="onLogin(formRef)"
@@ -379,7 +379,7 @@ const options = [
       >
         <el-input
           v-model.trim="userForm.password"
-          prefix-icon="Lock"
+          :prefix-icon="ElIconLock"
           autocomplete="off"
           size="large"
           placeholder="请输入密码"

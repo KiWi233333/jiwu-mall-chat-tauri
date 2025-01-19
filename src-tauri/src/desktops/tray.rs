@@ -91,10 +91,11 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
                 position,
                 rect: _,
             } => {
-                let app = tray.app_handle();
-                app.emit("tray_mouseenter", position).unwrap();
-                let msgbox = app.get_webview_window("msgbox").unwrap();
-                msgbox.set_focus().unwrap();
+    let app = tray.app_handle();
+    app.emit("tray_mouseenter", position).unwrap();
+    if let Some(msgbox) = app.get_webview_window("msgbox") {
+        msgbox.set_focus().unwrap();
+    }
             }
             TrayIconEvent::Leave {
                 id: _,

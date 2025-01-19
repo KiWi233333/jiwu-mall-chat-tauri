@@ -28,7 +28,7 @@ watch(() => setting.isWeb, async (isWeb) => {
     <a
       href="https://github.com/KiWi233333/jiwu-mall-chat-tauri"
       target="_blank"
-      class="h-2rem w-2rem flex-row-c-c rounded-full border-default card-default"
+      class="mr-2 h-2rem w-2rem flex-row-c-c rounded-full border-default card-default"
       v-bind="$attrs"
     >
       <svg height="20" width="20" aria-hidden="true" viewBox="0 0 24 24" version="1.1" data-view-component="true" class="fill-dark dark:fill-light">

@@ -174,7 +174,7 @@ export const useChatStore = defineStore(
           return false;
       }
       else if (setting.isDesktop) { // 桌面端
-        const win = await WebviewWindow.getByLabel("main");
+        const win = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
         if (!await win?.isFocused()) // 窗口未激活
           return false;
       }

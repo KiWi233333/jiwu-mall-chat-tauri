@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
+import { appName } from "~/constants";
 
 withDefaults(defineProps<{
   showMin?: boolean
@@ -11,11 +12,11 @@ withDefaults(defineProps<{
   showMax: true,
   showClose: true,
 });
+const appWindow = getCurrentWindow();
 
 const isMaximized = ref(false);
 const isAlwaysOnTopVal = ref(false);
 async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
-  const appWindow = getCurrentWindow();
   if (type === "min") {
     await appWindow.minimize();
   }
@@ -25,6 +26,19 @@ async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
     isMaximized.value = isMax;
   };
   if (type === "close") {
+    if (appWindow.label === LOGIN_WINDOW_LABEL) {
+      ElMessageBox.confirm(`确定要退出${appName}程序吗？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+        callback: (action: string) => {
+          if (action === "confirm") {
+            exitApp();
+          }
+        },
+      });
+      return;
+    }
     await appWindow.hide();
   }
   if (type === "alwaysOnTop") {
@@ -66,7 +80,8 @@ onMounted(async () => {
     <i class="i-carbon:subtract btn-primary" title="最小化" />
   </ElButton>
   <ElButton
-    v-if="showMax" text
+    v-if="showMax"
+    text
     size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('max')"
   >
     <i

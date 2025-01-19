@@ -354,11 +354,11 @@ function toLoginForm() {
     <!-- 验证码注册(客户端 ) -->
     <!-- 用户名 -->
     <el-form-item label="" prop="username" class="animated">
-      <el-input v-model.lazy="formUser.username" prefix-icon="user" size="large" placeholder="请输入用户名" />
+      <el-input v-model.lazy="formUser.username" :prefix-icon="ElIconUser" size="large" placeholder="请输入用户名" />
     </el-form-item>
     <!-- 邮箱 -->
     <el-form-item v-if="registerType === RegisterType.EMAIL" prop="email" class="animated">
-      <el-input v-model.trim="formUser.email" type="email" prefix-icon="Message" size="large" placeholder="请输入邮箱">
+      <el-input v-model.trim="formUser.email" type="email" :prefix-icon="ElIconMessage" size="large" placeholder="请输入邮箱">
         <template #append>
           <el-button type="primary" :disabled="emailCodeStorage > 0" @click="getRegCode(registerType)">
             {{ emailCodeStorage > 0 ? `${emailCodeStorage}s后重新发送` : "获取验证码" }}
@@ -368,7 +368,7 @@ function toLoginForm() {
     </el-form-item>
     <!-- 手机号 -->
     <el-form-item v-if="registerType === RegisterType.PHONE" type="tel" prop="phone" class="animated">
-      <el-input v-model.trim="formUser.phone" prefix-icon="Iphone" size="large" placeholder="请输入手机号">
+      <el-input v-model.trim="formUser.phone" :prefix-icon="ElIconIphone" size="large" placeholder="请输入手机号">
         <template #append>
           <el-button type="primary" :disabled="phoneCodeStorage > 0" @click="getRegCode(registerType)">
             {{ phoneCodeStorage > 0 ? `${phoneCodeStorage}s后重新发送` : "获取验证码" }}
@@ -378,7 +378,7 @@ function toLoginForm() {
     </el-form-item>
     <!-- 验证码 -->
     <el-form-item v-if="registerType === RegisterType.PHONE || registerType === RegisterType.EMAIL" prop="code" class="animated">
-      <el-input v-model.trim="formUser.code" prefix-icon="ChatDotSquare" size="large" placeholder="请输入验证码" />
+      <el-input v-model.trim="formUser.code" :prefix-icon="ElIconChatDotSquare" size="large" placeholder="请输入验证码" />
     </el-form-item>
     <!-- 密 码 -->
     <el-form-item
@@ -386,7 +386,7 @@ function toLoginForm() {
       type="password" show-password label="" prop="password" class="animated"
     >
       <el-input
-        v-model.trim="formUser.password" prefix-icon="Lock" size="large" placeholder="请输入密码（6-20位）" show-password
+        v-model.trim="formUser.password" :prefix-icon="ElIconLock" size="large" placeholder="请输入密码（6-20位）" show-password
         type="password"
       />
     </el-form-item>
@@ -396,11 +396,11 @@ function toLoginForm() {
       type="password" show-password label="" prop="secondPassword" class="animated"
     >
       <el-input
-        v-model.trim="formUser.secondPassword" prefix-icon="Lock" size="large" placeholder="再一次输入密码" show-password
+        v-model.trim="formUser.secondPassword" :prefix-icon="ElIconLock" size="large" placeholder="再一次输入密码" show-password
         type="password"
       />
     </el-form-item>
-    <el-form-item mt-1em>
+    <el-form-item style="margin: 0;">
       <BtnElButton type="info" class="submit w-full tracking-0.2em shadow" style="padding: 20px" @click="onRegister(formRef)">
         立即注册
       </BtnElButton>

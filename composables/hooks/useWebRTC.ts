@@ -591,7 +591,7 @@ export function useWebRTC(
       startBell();
       // tauri显示窗口
       if (setting.isDesktop) {
-        const win = await WebviewWindow.getByLabel("main");
+        const win = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
         if (!win)
           return;
         await win.unminimize();

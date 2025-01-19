@@ -27,7 +27,7 @@ export async function loginWin() {
 
 export async function mainWin() {
   await createWin({
-    label: "main",
+    label: MAIN_WINDOW_LABEL,
     title: "极物聊天",
     url: "/",
     width: 800,

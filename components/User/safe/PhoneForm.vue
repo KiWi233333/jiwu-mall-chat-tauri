@@ -112,7 +112,7 @@ async function getPhoneCode() {
     <el-form-item label="" prop="newPhone" class="animated">
       <el-input
         v-model.trim="form.newPhone"
-        prefix-icon="Iphone"
+        :prefix-icon="ElIconIphone"
         size="default"
         clearable
         type="tel"
@@ -134,7 +134,7 @@ async function getPhoneCode() {
     <el-form-item type="number" label="" prop="code" class="animated">
       <el-input
         v-model.trim="form.code"
-        prefix-icon="message"
+        :prefix-icon="ElIconMessage"
         size="default"
         type="number"
         placeholder="请输入验证码"

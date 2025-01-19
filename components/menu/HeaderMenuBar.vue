@@ -37,6 +37,15 @@ function reloadPage() {
     isPageReload.value = false;
   }, 500);
 }
+
+async function toggleTop(data: { onToggleWindow: (type: "close" | "alwaysOnTop" | "min" | "max") => Promise<{ isMaximized: boolean; isAlwaysOnTopVal: boolean; } | undefined> }) {
+  if (data.onToggleWindow) {
+    const val = await data.onToggleWindow("alwaysOnTop");
+    if (val) {
+      isTop.value = val.isAlwaysOnTopVal;
+    }
+  }
+}
 </script>
 
 <template>
@@ -89,7 +98,7 @@ function reloadPage() {
           class="cursor-pointer btn-danger"
           title="退出登录"
           transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-          circle plain i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+          plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
         />
       </div>
       <!-- 关闭按钮 -->
@@ -99,12 +108,7 @@ function reloadPage() {
             <ElButton
               text
               size="small"
-              style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="async () => {
-                if (data.onToggleWindow) {
-                  const val = await data.onToggleWindow('alwaysOnTop')
-                  isTop = val.isAlwaysOnTopVal
-                }
-              }"
+              style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="toggleTop(data)"
             >
               <i
                 :title="isTop ? '取消置顶' : '置顶'"

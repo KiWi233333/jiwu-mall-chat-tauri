@@ -199,7 +199,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
         <el-input
           v-model:model-value="checkTypeValue"
           disabled
-          prefix-icon="User"
+          :prefix-icon="ElIconUser"
           size="large"
           :placeholder="`请输入${chooseType === CheckTypeEnum.PHONE ? '手机号' : '邮箱'}`"
           required
@@ -219,7 +219,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
       >
         <el-input
           v-model.trim="userForm.code"
-          prefix-icon="Unlock"
+          :prefix-icon="ElIconUnlock"
           :maxlength="6"
           :minlength="6"
           size="large"
@@ -233,7 +233,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
       <el-form-item v-else type="password" label="旧密码" prop="password" class="animated">
         <el-input
           v-model.trim="userForm.password"
-          prefix-icon="Unlock"
+          :prefix-icon="ElIconUnlock"
           size="large"
           placeholder="请输入旧密码"
           required
@@ -247,7 +247,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
       >
         <el-input
           v-model.trim="userForm.newPassword"
-          prefix-icon="Unlock"
+          :prefix-icon="ElIconUnlock"
           size="large"
           placeholder="请输入新密码"
           required

@@ -1,90 +1,47 @@
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 
 pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
-    // 主窗口配置
-    let mut main_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-        .title("极物聊天")
-        .resizable(true)
-        .center()
-        .shadow(false)
-        .decorations(false)
-        .min_inner_size(375.0, 780.0)
-        .max_inner_size(1920.0, 1080.0)
-        .inner_size(1280.0, 860.0);
-
-    // 消息窗口配置
-    #[cfg(desktop)]
-    let mut msgbox_builder =
-        WebviewWindowBuilder::new(app, "msgbox", WebviewUrl::App("/msg".into()))
-            .title("消息通知")
-            .inner_size(240.0, 300.0)
-            .skip_taskbar(true)
-            .decorations(false)
+    // 只创建登录窗口
+    let mut login_builder =
+        WebviewWindowBuilder::new(app, "login", WebviewUrl::App("/login".into()))
+            .title("极物聊天 - 登录")
             .resizable(false)
-            .always_on_top(true)
+            .center()
             .shadow(false)
-            .position(-240.0, -300.0)
-            .visible(false);
+            .decorations(false)
+            .inner_size(380.0, 480.0)
+            .visible(true);
 
-    // Windows 和 Linux 平台特定配置
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     {
-        main_builder = main_builder.transparent(true);
-        msgbox_builder = msgbox_builder.transparent(true);
+        login_builder = login_builder.transparent(true);
     }
 
-    // macOS 平台特定配置
     #[cfg(target_os = "macos")]
     {
         use tauri::utils::TitleBarStyle;
-        main_builder = main_builder.title_bar_style(TitleBarStyle::Transparent);
-        msgbox_builder = msgbox_builder.title_bar_style(TitleBarStyle::Transparent);
+        login_builder = login_builder.title_bar_style(TitleBarStyle::Transparent);
     }
 
-    // 构建主窗口和消息窗口
-    let main_window = main_builder.build()?;
-    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
-    let msgbox_window = msgbox_builder.build()?;
+    let login_window = login_builder.build()?;
 
-    // 监听窗口事件
+    // 监听登录窗口事件
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
-    msgbox_window
+    login_window
         .clone()
         .on_window_event(move |event| match event {
             WindowEvent::CloseRequested { api, .. } => {
-                println!("关闭请求，窗口将最小化而不是关闭。");
                 api.prevent_close();
-            }
-            WindowEvent::Focused(focused) => {
-                if !*focused {
-                    msgbox_window
-                        .hide()
-                        .unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
-                }
-            }
-            _ => {}
-        });
-    // 监听窗口事件
-    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
-    main_window
-        .clone()
-        .on_window_event(move |event| match event {
-            WindowEvent::CloseRequested { api, .. } => {
-                println!("关闭请求，窗口将最小化而不是关闭。");
-                api.prevent_close();
-                #[cfg(any(target_os = "windows", target_os = "linux"))]
-                main_window.clone().hide().unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
             }
             _ => {}
         });
 
-    // 仅在构建 macOS 时设置背景颜色
     #[cfg(target_os = "macos")]
     {
         use cocoa::appkit::{NSColor, NSWindow};
         use cocoa::base::{id, nil};
 
-        let ns_window = main_window.clone().ns_window().unwrap() as id;
+        let ns_window_login = login_window.ns_window().unwrap() as id;
         unsafe {
             let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                 nil,
@@ -93,18 +50,25 @@ pub fn setup_desktop_window(app: &AppHandle) -> tauri::Result<()> {
                 163.5 / 255.0,
                 1.0,
             );
-            ns_window.setBackgroundColor_(bg_color);
+            ns_window_login.setBackgroundColor_(bg_color);
         }
     }
+
     Ok(())
 }
 
 #[cfg(desktop)]
 pub fn show_window(app: &AppHandle) {
     if let Some(window) = app.webview_windows().get("main") {
-            window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
-            window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
-            window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
+        window
+            .unminimize()
+            .unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
+        window
+            .show()
+            .unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+        window
+            .set_focus()
+            .unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
     } else {
         eprintln!("未找到窗口");
         // 创建窗口

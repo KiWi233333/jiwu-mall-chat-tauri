@@ -49,6 +49,7 @@ export async function userTauriInit() {
   const msgbox = WebviewWindow.getCurrent();
   if (msgbox.label === "msgbox" && useRoute().path !== "/msg") {
     navigateTo("/msg");
+    return;
   }
 
   // 监听open_url事件
@@ -81,7 +82,6 @@ export async function userTauriInit() {
   if (!await existsFile(setting.appDataDownloadDirUrl))
     setting.appDataDownloadDirUrl = `${await appDataDir()}\\downloads`;
 
-
   return () => {
     unListenRouter?.();
     unListenOpenUrl?.();
@@ -110,9 +110,6 @@ export function useAuthInit() {
     user.onCheckLogin();
   }
 }
-
-export const MSG_WEBVIEW_NAME = "msgbox";
-export const MSG_WEBVIEW_WIDTH = 240;
 
 /**
  * 初始化消息通知窗口 (仅限桌面端)
@@ -162,7 +159,7 @@ export async function useMsgBoxWebViewInit() {
   });
 
   // 判断是否已存在消息通知窗口
-  const webview = await WebviewWindow.getByLabel(MSG_WEBVIEW_NAME);
+  const webview = await WebviewWindow.getByLabel(MSGBOX_WINDOW_LABEL);
   if (!webview)
     return;
 
@@ -175,7 +172,7 @@ export async function useMsgBoxWebViewInit() {
   }
   // 监听点击事件消息通知事件
   const trayClickUnlisten = await listen("tray_click", async (event) => {
-    const win = await WebviewWindow.getByLabel("main");
+    const win = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
     if (!win)
       return;
 
@@ -265,16 +262,16 @@ async function handleChannelMsg(event: MessageEvent) {
     return;
   }
   const { type, data } = payload;
-  const win = await WebviewWindow?.getByLabel("main");
+  const mainWin = await WebviewWindow?.getByLabel(MAIN_WINDOW_LABEL);
   if (type === "readContact") { // 读取单个
     chat.setContact(chat.contactMap[data.roomId]);
     if (chat.theContact.roomId === data.roomId)
       chat.setReadList(data.roomId);
-    if (win) {
+    if (mainWin) {
       await navigateTo("/");
-      await win?.show();
-      await win.isMinimized() && await win.unminimize();
-      await win?.setFocus();
+      await mainWin?.show();
+      await mainWin.isMinimized() && await mainWin.unminimize();
+      await mainWin?.setFocus();
       chat.scrollBottom(false);
     }
   }

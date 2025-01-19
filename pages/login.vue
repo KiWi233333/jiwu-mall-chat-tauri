@@ -26,9 +26,9 @@ onMounted(() => {
     class="main-box relative overflow-hidden shadow bg-color"
     grid="~ cols-1 md:cols-2"
   >
-    <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex items-center gap-2 sm:w-50vw>
+    <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex cursor-move items-center gap-2 sm:w-50vw>
       <div ml-a flex p-2 sm:p-4>
-        <BtnAppDownload class="mr-2" />
+        <BtnAppDownload />
         <MenuController v-if="setting.isDesktop" key="header" :show-max="false" />
       </div>
     </div>
@@ -38,12 +38,15 @@ onMounted(() => {
     </div>
     <!-- 表单 -->
     <div
-      class="mt-a h-7/10 flex flex-col select-none rounded-t-8 pt-10 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color pt-24vh shadow-none) border-default-t bg-color-br"
-      data-tauri-drag-region
+      class="h-6/10 flex flex-row-c-c flex-col select-none rounded-t-8 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color shadow-none) bg-color-br"
+      :class="setting.isDesktop ? ' w-full h-full !rounded-0 animate-none pt-4' : 'h-7/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
       data-fade
     >
-      <div mx-a class="w-4/5 text-center sm:(w-3/5 text-left)">
-        <div key="login-bg" class="flex items-center gap-3 sm:(relative left-a top-a)">
+      <div class="mx-a w-85/100 text-center sm:(w-3/5 text-left)">
+        <div
+          v-if="!setting.isDesktop"
+          key="login-bg" class="left-6 top-6 mb-4 flex items-center gap-3 sm:(relative left-0 top-0 mb-6)"
+        >
           <ElImage
             src="/logo.png" class="h-2em w-2em"
           />
@@ -51,17 +54,20 @@ onMounted(() => {
             极物聊天
           </h4>
         </div>
-        <div ref="autoAnimateRef" class="relative mt-6 sm:mt-8">
-          <!-- 登录 -->
-          <FormLoginForm
-            v-if="user.showLoginForm"
-            key="login-form"
-          />
-          <!-- 注册 -->
-          <FormRegisterForm
-            v-else-if="user.showRegisterForm"
-            key="register-form"
-          />
+        <div key="login-bg" class="flex items-center gap-3 sm:(relative left-a top-a)" />
+        <div class="relative">
+          <TransitionGroup name="fade-list">
+            <!-- 登录 -->
+            <FormLoginForm
+              v-if="user.showLoginForm"
+              key="login-form"
+            />
+            <!-- 注册 -->
+            <FormRegisterForm
+              v-else-if="user.showRegisterForm"
+              key="register-form"
+            />
+          </TransitionGroup>
         </div>
       </div>
     </div>

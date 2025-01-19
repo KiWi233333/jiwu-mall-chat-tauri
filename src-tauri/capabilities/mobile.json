@@ -3,7 +3,8 @@
   "identifier": "mobile-capability",
   "windows": [
     "main",
-    "msgbox"
+    "msgbox",
+    "login"
   ],
   "platforms": ["iOS", "android"],
   "permissions": [

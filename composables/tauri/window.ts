@@ -1,17 +1,83 @@
 
+import { invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import { TrayIcon } from "@tauri-apps/api/tray";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+
+export const MAIN_WINDOW_LABEL = "main";
+export const LOGIN_WINDOW_LABEL = "login";
+export const MSGBOX_WINDOW_LABEL = "msgbox";
+
+/** 消息窗口的宽度 */
+export const MSG_WEBVIEW_WIDTH = 240;
+
+
+export const exitApp = () => invoke("exit_app");
 
 export const windows_map = {
   login: {
-    isOpen: false,
+    isOpen: true,
     url: "/login",
+    label: LOGIN_WINDOW_LABEL,
   },
   main: {
     isOpen: false,
     url: "",
+    label: MAIN_WINDOW_LABEL,
+  },
+  msgbox: {
+    isOpen: false,
+    url: "/msgbox",
+    label: MSGBOX_WINDOW_LABEL,
   },
 };
+
+export async function destroyWindow(label: "login" | "main" | "msgbox") {
+  const wind = await WebviewWindow.getByLabel(label);
+  if (wind) {
+    try {
+      await wind.destroy();
+      return true;
+    }
+    catch (err) {
+      return false;
+    }
+  }
+}
+
+/**
+ * 创建指定标签的窗口
+ * @param label 窗口标签
+ * @returns 是否创建成功
+ */
+export async function createWindow(label: "login" | "main" | "msgbox"): Promise<boolean> {
+  if (label === "login") {
+    return await invoke("create_login_window");
+  }
+  else if (label === "main") {
+    return await invoke("create_main_window");
+  }
+  else if (label === "msgbox") {
+    return await invoke("create_msgbox_window");
+  }
+  return false;
+}
+
+export async function showWindow(label: "login" | "main" | "msgbox") {
+  const wind = await WebviewWindow.getByLabel(label);
+  if (wind) {
+    await wind.show();
+    await wind.setFocus();
+    return wind;
+  }
+  else {
+    return null;
+  }
+}
+
+export async function hiddenWindow(label: "login" | "main" | "msgbox") {
+  return await invoke;
+}
 
 export const TrayIconId = "tray_icon";
 /**

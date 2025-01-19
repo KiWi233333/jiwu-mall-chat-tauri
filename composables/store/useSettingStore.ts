@@ -85,7 +85,7 @@ export const useSettingStore = defineStore(
         if (isWeb.value) {
           return true;
         }
-        const wind = await WebviewWindow.getByLabel("main");
+        const wind = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
         if (!wind)
           return true;
         return wind.isFocused();
