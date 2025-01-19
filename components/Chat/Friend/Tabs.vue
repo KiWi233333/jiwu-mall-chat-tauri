@@ -56,7 +56,7 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply:"h-2.6rem  flex-row-c-c rounded-6px w-2.6rem shadow-sm border-default"
+  --at-apply:"h-2.4rem  flex-row-c-c rounded-6px w-2.4rem shadow-sm border-default"
 }
 .card-item {
   --at-apply:"mb-5 flex flex-col"

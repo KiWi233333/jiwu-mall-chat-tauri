@@ -13,7 +13,7 @@ const {
   >
     <!-- 头像 -->
     <div
-      class="h-2.6rem w-2.6rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4"
+      class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4"
       :class="animteClass"
     />
     <!-- 信息 -->

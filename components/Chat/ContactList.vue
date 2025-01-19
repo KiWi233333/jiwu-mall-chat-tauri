@@ -338,8 +338,8 @@ onBeforeUnmount(() => {
                 class="flex gap-4 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
                 @contextmenu.stop="onContextMenu($event, room)"
               >
-                <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.6rem w-2.6rem flex-shrink-0">
-                  <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.6rem w-2.6rem object-cover card-default" />
+                <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.4rem w-2.4rem flex-shrink-0">
+                  <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.4rem w-2.4rem object-cover card-default" />
                 </el-badge>
                 <div class="flex flex-1 flex-col justify-between truncate">
                   <div flex truncate>

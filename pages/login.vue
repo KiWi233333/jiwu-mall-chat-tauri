@@ -28,7 +28,7 @@ onMounted(() => {
   >
     <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex items-center gap-2 sm:w-50vw>
       <div ml-a flex p-2 sm:p-4>
-        <BtnAppDownload />
+        <BtnAppDownload class="mr-2" />
         <MenuController v-if="setting.isDesktop" key="header" :show-max="false" />
       </div>
     </div>

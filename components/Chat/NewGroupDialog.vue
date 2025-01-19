@@ -140,11 +140,9 @@ defineExpose({
 <template>
   <el-dialog
     v-model="show"
-
     :title="form.roomId ? '邀请成员' : '新建群聊'"
     width="fit-content"
     class="overflow-hidden"
-
     center append-to-body destroy-on-close
   >
     <el-form
@@ -200,6 +198,11 @@ defineExpose({
                   <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
                 </div>
                 <span class="block max-w-18 truncate">{{ p.nickName || "未填写" }}</span>
+              </div>
+              <!-- 空白 -->
+              <div v-if="getCheckList.length <= 0" class="grid-area-[1/1/5/5] h-full w-full flex-row-c-c text-small">
+                <i i-solar:user-line-duotone mr-2 p-3 />
+                <p>未选择成员</p>
               </div>
             </div>
             <div mt-8 w-full flex-row-c-c>
@@ -275,7 +278,7 @@ defineExpose({
   // border-radius: 1rem;
 }
 .avatar-icon {
-  --at-apply:"h-2.6rem card-default  w-2.6rem flex-row-c-c rounded-6px  shadow-sm border-default"
+  --at-apply:"h-2.4rem card-default  w-2.4rem flex-row-c-c rounded-6px  shadow-sm border-default"
 }
 .item {
   --at-apply:"flex flex-col relative items-center gap-4 px-2 py-3.6 cursor-pointer rounded-6px hover:(bg-[#b8b8b818] ) transition-300"

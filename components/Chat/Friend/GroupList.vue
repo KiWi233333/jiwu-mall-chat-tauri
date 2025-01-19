@@ -15,7 +15,6 @@ const isLoading = ref<boolean>(false);
 const chat = useChatStore();
 const setting = useSettingStore();
 const user = useUserStore();
-const [autoAnimateRef, enable] = useAutoAnimate();
 
 const pageInfo = ref({
   cursor: null as null | string,
@@ -59,11 +58,6 @@ async function reloadData() {
   pageInfo.value.isLast = false;
   list.value = [];
   await loadData();
-  setTimeout(() => {
-    nextTick(() => {
-      enable(!setting.settingPage.isCloseAllTransition);
-    });
-  }, 40);
 }
 
 
@@ -95,9 +89,17 @@ else if (props.type === "friend") {
   });
 }
 
+// 首次加载动画
+const isFirstLoad = ref(false);
 onMounted(() => {
-  enable(!setting.settingPage.isCloseAllTransition);
   loadData();
+  isFirstLoad.value = true;
+});
+onUnmounted(() => {
+  isFirstLoad.value = false;
+});
+onDeactivated(() => {
+  isFirstLoad.value = false;
 });
 </script>
 
@@ -120,19 +122,18 @@ onMounted(() => {
       <div
         v-for="p in list"
         :key="p.id"
-        class="item animate-(fade-in duration-200)"
+        class="item"
+        :class="{ 'animate-(fade-in duration-200)': isFirstLoad }"
         @click="chat.setTheFriendOpt(
           type === 'friend' ? FriendOptType.User : FriendOptType.GroupFriend,
           type === 'friend' ? { id: (p as ChatUserFriendVO).userId } : p,
         )"
       >
-        <div class="avatar-icon">
-          <CardElImage
-            class="h-full w-full overflow-hidden rounded-6px"
-            :src="BaseUrlImg + p.avatar"
-            fit="cover"
-          />
-        </div>
+        <CardElImage
+          class="avatar-icon overflow-hidden rounded-6px"
+          :src="BaseUrlImg + p.avatar"
+          fit="cover"
+        />
         <span>{{ type === 'friend' ? (p as ChatUserFriendVO).nickName : (p as ChatContactVO).name || '未填写' }}</span>
       </div>
     </ListAutoIncre>
@@ -141,7 +142,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply: "h-2.6rem card-default w-2.6rem flex-row-c-c rounded-6px shadow-sm";
+  --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
   --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-[#b8b8b849]) transition-300";

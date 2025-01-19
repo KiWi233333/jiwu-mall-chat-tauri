@@ -111,7 +111,7 @@ function onArgeeFriend(applyId: number) {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply:"h-2.6rem card-default  w-2.6rem flex-row-c-c rounded-6px  shadow-sm border-default"
+  --at-apply:"h-2.4rem card-default  w-2.4rem flex-row-c-c rounded-6px  shadow-sm border-default"
 }
 .item {
   --at-apply:"flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-[#b8b8b849] ) transition-300";
