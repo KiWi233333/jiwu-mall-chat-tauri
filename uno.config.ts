@@ -33,6 +33,8 @@ export default defineConfig({
     ["text-mini", "text-dark-50 dark:text-[#979898] text-xs"],
     ["text-mini-50", "text-xs text-[#717171] dark:text-[#979898]"],
     ["text-color-primary", "text-[var(--el-color-primary)]"],
+    ["text-color-info", "text-[var(--el-color-info)]"],
+    ["text-color-success", "text-[var(--el-color-success)]"],
     ["text-small", "text-dark-50 dark:text-[#979898] text-sm"],
     ["text-small-50", "text-sm text-dark-50 dark:text-[#717171]"],
     ["text-small-color", "text-dark-50 dark:text-[#979898]"],

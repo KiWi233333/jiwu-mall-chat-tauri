@@ -1,9 +1,18 @@
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from "element-plus";
 import type { Result } from "~/types/result";
+import { MdPreview } from "md-editor-v3";
 import { DeviceType, getRegisterCode, toLoginByPwd } from "~/composables/api/user";
 import { checkUsernameExists } from "~/composables/api/user/info";
+import { appTerms } from "~/constants";
 import { RegisterType } from "~/types/user/index.js";
+import "md-editor-v3/lib/preview.css";
+
+const {
+  size = "large",
+} = defineProps<{
+  size?: "large" | "small" | "default"
+}>();
 
 // 注册方式
 const registerType = ref<number>(RegisterType.PHONE);
@@ -102,6 +111,22 @@ const rules = reactive<FormRules>({
     },
   ],
 });
+const agreeDetail = reactive({
+  value: false,
+  showDetail: false,
+  detail: appTerms,
+});
+const isAgreeTerm = computed({
+  get: () => agreeDetail.value,
+  set: (val: boolean) => {
+    if (val) {
+      agreeDetail.showDetail = true;
+    }
+    else {
+      agreeDetail.value = val;
+    }
+  },
+});
 
 // 验证码有效期
 const phoneTimer = ref(-1);
@@ -195,11 +220,17 @@ async function onRegister(formEl: FormInstance) {
     return;
   await formEl.validate((valid) => {
     isLoading.value = true;
-
-    if (valid)
+    if (valid) {
+      if (!agreeDetail.value) {
+        ElMessage.warning("请阅读并同意用户协议！");
+        agreeDetail.showDetail = true;
+        return;
+      }
       onRegisterHandle();
-    else
+    }
+    else {
       isLoading.value = false;
+    }
   });
 }
 async function onRegisterHandle() {
@@ -339,26 +370,22 @@ function toLoginForm() {
     <h4 mb-4 tracking-0.2em op-80>
       开启你的专属圈子✨
     </h4>
-    <p mb-4 text-0.8em tracking-0.1em op-70>
-      已有账户？
-      <span cursor-pointer color-emerald transition-300 hover:font-700 @click="toLoginForm">
-        立即登录
-      </span>
-    </p>
     <!-- 切换注册 -->
     <el-segmented
       v-model="registerType"
+      :size="size"
+      style=""
       class="toggle-btns grid grid-cols-3 mb-4 w-full gap-2 card-default dark:bg-dark-300"
       :options="options"
     />
     <!-- 验证码注册(客户端 ) -->
     <!-- 用户名 -->
     <el-form-item label="" prop="username" class="animated">
-      <el-input v-model.lazy="formUser.username" :prefix-icon="ElIconUser" size="large" placeholder="请输入用户名" />
+      <el-input v-model.lazy="formUser.username" :prefix-icon="ElIconUser" :size="size" placeholder="请输入用户名" />
     </el-form-item>
     <!-- 邮箱 -->
     <el-form-item v-if="registerType === RegisterType.EMAIL" prop="email" class="animated">
-      <el-input v-model.trim="formUser.email" type="email" :prefix-icon="ElIconMessage" size="large" placeholder="请输入邮箱">
+      <el-input v-model.trim="formUser.email" type="email" :prefix-icon="ElIconMessage" :size="size" placeholder="请输入邮箱">
         <template #append>
           <el-button type="primary" :disabled="emailCodeStorage > 0" @click="getRegCode(registerType)">
             {{ emailCodeStorage > 0 ? `${emailCodeStorage}s后重新发送` : "获取验证码" }}
@@ -368,7 +395,7 @@ function toLoginForm() {
     </el-form-item>
     <!-- 手机号 -->
     <el-form-item v-if="registerType === RegisterType.PHONE" type="tel" prop="phone" class="animated">
-      <el-input v-model.trim="formUser.phone" :prefix-icon="ElIconIphone" size="large" placeholder="请输入手机号">
+      <el-input v-model.trim="formUser.phone" :prefix-icon="ElIconIphone" :size="size" placeholder="请输入手机号">
         <template #append>
           <el-button type="primary" :disabled="phoneCodeStorage > 0" @click="getRegCode(registerType)">
             {{ phoneCodeStorage > 0 ? `${phoneCodeStorage}s后重新发送` : "获取验证码" }}
@@ -378,7 +405,7 @@ function toLoginForm() {
     </el-form-item>
     <!-- 验证码 -->
     <el-form-item v-if="registerType === RegisterType.PHONE || registerType === RegisterType.EMAIL" prop="code" class="animated">
-      <el-input v-model.trim="formUser.code" :prefix-icon="ElIconChatDotSquare" size="large" placeholder="请输入验证码" />
+      <el-input v-model.trim="formUser.code" :prefix-icon="ElIconChatDotSquare" :size="size" placeholder="请输入验证码" />
     </el-form-item>
     <!-- 密 码 -->
     <el-form-item
@@ -386,7 +413,7 @@ function toLoginForm() {
       type="password" show-password label="" prop="password" class="animated"
     >
       <el-input
-        v-model.trim="formUser.password" :prefix-icon="ElIconLock" size="large" placeholder="请输入密码（6-20位）" show-password
+        v-model.trim="formUser.password" :prefix-icon="ElIconLock" :size="size" placeholder="请输入密码（6-20位）" show-password
         type="password"
       />
     </el-form-item>
@@ -396,19 +423,72 @@ function toLoginForm() {
       type="password" show-password label="" prop="secondPassword" class="animated"
     >
       <el-input
-        v-model.trim="formUser.secondPassword" :prefix-icon="ElIconLock" size="large" placeholder="再一次输入密码" show-password
+        v-model.trim="formUser.secondPassword" :prefix-icon="ElIconLock" :size="size" placeholder="再一次输入密码" show-password
         type="password"
       />
     </el-form-item>
     <el-form-item style="margin: 0;">
-      <BtnElButton type="info" class="submit w-full tracking-0.2em shadow" style="padding: 20px" @click="onRegister(formRef)">
+      <BtnElButton type="info" class="submit w-full tracking-0.2em shadow" style="padding: 1.1em;font-size: 1rem;" @click="onRegister(formRef)">
         立即注册
       </BtnElButton>
     </el-form-item>
+    <div mt-3 flex items-center text-right text-xs sm:text-sm>
+      <el-checkbox v-model="isAgreeTerm" style="--el-color-primary: var(--el-color-info);padding: 0;font-size: inherit;opacity: 0.8;float: left; height: fit-content;">
+        同意并遵守
+        <span text-color-info>《用户协议》</span>
+      </el-checkbox>
+      <span ml-a cursor-pointer transition-300 btn-info @click="toLoginForm">
+        返回登录
+      </span>
+    </div>
+    <Teleport to="body">
+      <Transition name="popper-fade-up">
+        <div v-if="agreeDetail.showDetail" class="terms fixed left-0 top-0 z-1200 h-100vh w-100vw flex flex-col sm:(card-rounded-df left-50vw top-50vh h-500px w-400px border-default shadow-lg -translate-x-1/2 -translate-y-1/2) p-4 bg-color">
+          <h2 class="mb-4 text-center text-1.4rem">
+            用户协议
+          </h2>
+          <div class="flex-1 overflow-y-auto">
+            <MdPreview
+              language="zh-CN"
+              editor-id="notice-toast"
+              :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
+              :code-foldable="false"
+              code-theme="a11y"
+              class="!bg-transparent"
+              :model-value="agreeDetail.detail"
+            />
+          </div>
+          <div class="mt-2 mt-4 flex-row-c-c">
+            <BtnElButton
+              :icon="ElIconCheck"
+              type="info"
+              plain
+              @click="() => {
+                agreeDetail.showDetail = false;
+                agreeDetail.value = true;
+              }"
+            >
+              我已阅读并同意
+            </BtnElButton>
+          </div>
+        </div>
+      </Transition>
+      <div v-if="agreeDetail.showDetail" class="terms-overlay animate-[fade-in_0.3s_ease-in-out]" @click="agreeDetail.showDetail = false" />
+    </Teleport>
   </el-form>
 </template>
 
 <style scoped lang="scss">
+.terms-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1199;
+}
 .form {
   display: block;
   overflow: hidden;
@@ -439,17 +519,18 @@ function toLoginForm() {
 
 // 切换注册
 :deep(.toggle-btns.el-segmented) {
-  --el-segmented-item-selected-color: var(--el-text-color-primary);
-  // --el-segmented-item-selected-bg-color: #ffd100;
+  --el-segmented-item-selected-bg-color: var(--el-color-info);
   --el-border-radius-base: 6px;
   height: 2.6rem;
   padding: 0.4rem;
+  font-size: small;
   .el-segmented__item:hover:not(.is-selected) {
     background: transparent;
   }
 
   .el-segmented__item.is-selected {
     color: #fff;
+    font-weight: 600;
   }
 }
 
@@ -459,7 +540,7 @@ function toLoginForm() {
 
 .submit {
   font-size: 1.2em;
-  font-weight: 800;
+  font-weight: 600;
   transition: 0.3s;
   cursor: pointer;
 
@@ -469,7 +550,7 @@ function toLoginForm() {
 
     * {
       color: #fff;
-      font-weight: 800;
+      font-weight: 600;
       letter-spacing: 0.4em;
     }
   }

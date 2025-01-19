@@ -204,7 +204,7 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isLoading" class="mt-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
+  <main v-loading.fullscreen.lock="isLoading" class="mt-8 flex flex-1 flex-col p-4 md:p-6">
     <h3 flex items-center>
       系统设置
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
@@ -317,7 +317,7 @@ onDeactivated(() => {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                round plain
+                plain round
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -442,7 +442,6 @@ onDeactivated(() => {
 }
 
 :deep(.el-radio-group.inputs) {
-  border: 1px solid #7c7c7c33;
   border-radius: 1rem;
   width: 13rem;
   display: flex;

@@ -3,15 +3,26 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
 import { appName } from "~/constants";
 
-withDefaults(defineProps<{
+const {
+  size = "default",
+  showMin = true,
+  showMax = true,
+  showClose = true,
+} = defineProps<{
   showMin?: boolean
   showMax?: boolean
   showClose?: boolean
-}>(), {
-  showMin: true,
-  showMax: true,
-  showClose: true,
-});
+  size?: "small" | "default" | "" | undefined
+}>();
+const defaultSize = size === "default" || size === "" || size === undefined;
+const btnStyle = computed(() => ({
+  fontSize: defaultSize ? "1.2rem" : "1rem",
+  width: defaultSize ? "2.6rem" : "2rem",
+  height: defaultSize ? "1.8rem" : "1.5rem",
+  // font-size: 1.2rem;padding: 0;width: 2.6rem;height: 1.8rem;;
+  padding: 0,
+  margin: 0,
+}));
 const appWindow = getCurrentWindow();
 
 const isMaximized = ref(false);
@@ -75,14 +86,14 @@ onMounted(async () => {
   <slot name="start" :data="data" />
   <ElButton
     v-if="showMin"
-    text size="small" style="font-size: 1.4rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('min')"
+    text size="small" :style="btnStyle" @click="onToggleWindow('min')"
   >
     <i class="i-carbon:subtract btn-primary" title="最小化" />
   </ElButton>
   <ElButton
     v-if="showMax"
     text
-    size="small" style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;;;margin: 0;" @click="onToggleWindow('max')"
+    size="small" style="btnStyle" @click="onToggleWindow('max')"
   >
     <i
       :class="isMaximized ? 'i-tabler:minimize' : 'i-tabler:maximize'"
@@ -90,7 +101,7 @@ onMounted(async () => {
       btn-primary
     />
   </ElButton>
-  <ElButton v-if="showClose" text size="small" class="text-amber-1" style="font-size: 1.2rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="onToggleWindow('close')">
+  <ElButton v-if="showClose" text size="small" class="text-amber-1" :style="btnStyle" @click="onToggleWindow('close')">
     <i i-carbon:close btn-danger title="关闭" />
   </ElButton>
   <slot name="end" />

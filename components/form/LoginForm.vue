@@ -260,27 +260,9 @@ const options = [
     class="form"
   >
     <template v-if="!user.isLogin">
-      <h4 mb-4 tracking-0.2em op-80>
+      <h4 mb-8 tracking-0.2em op-80>
         聊你所想，聊天随心✨
       </h4>
-      <p
-        mb-4 text-0.8em tracking-0.1em op-70
-      >
-        还没有账户？
-        <span
-          cursor-pointer color-emerald transition-300 hover:font-700
-          @click="toRegister"
-        >
-          立即注册
-        </span>
-        <span
-          flex-1
-          class="transition-all btn-info"
-          @click="loginType = loginType === LoginType.ADMIN ? LoginType.PHONE : LoginType.ADMIN"
-        >
-          {{ loginType !== LoginType.ADMIN ? "管理员" : "用户" }}
-        </span>
-      </p>
       <!-- 切换登录 -->
       <el-segmented
         v-show="loginType !== LoginType.ADMIN"
@@ -389,7 +371,7 @@ const options = [
           @keyup.enter="onLogin(formRef)"
         />
       </el-form-item>
-      <el-form-item mt-5>
+      <el-form-item style="margin: 0;">
         <el-button
           type="primary"
           class="submit w-full tracking-0.2em shadow"
@@ -401,6 +383,26 @@ const options = [
           登录
         </el-button>
       </el-form-item>
+      <!-- 底部 -->
+      <div
+        class="mt-4 text-right text-xs sm:text-sm"
+      >
+        <el-checkbox v-model="autoLogin" class="mt-1" style="padding: 0;font-size: inherit;float: left; height: fit-content;">
+          记住我
+        </el-checkbox>
+        <span
+          class="mr-2 cursor-pointer border-r-(1px [var(--el-border-color-base)] solid) pr-2 transition-300"
+          @click="loginType = loginType === LoginType.ADMIN ? LoginType.PHONE : LoginType.ADMIN"
+        >
+          {{ loginType !== LoginType.ADMIN ? "切换管理" : "切换用户" }}
+        </span>
+        <span
+          cursor-pointer class="text-color-primary" transition-300
+          @click="toRegister"
+        >
+          注册账号
+        </span>
+      </div>
     </template>
     <template v-else>
       <div class="mt-16 flex-row-c-c flex-col gap-8">
@@ -414,21 +416,24 @@ const options = [
         </div>
         <div>
           <BtnElButton
+            style="width: 8em;"
             type="primary"
             transition-icon
             :loading="user.isOnLogining"
             icon-class="i-solar-alt-arrow-left-bold"
+            mr-2 sm:mr-4
             @click="navigateTo('/')"
           >
-            {{ user.isOnLogining ? "登录中..." : "前往" }}
+            {{ user.isOnLogining ? "登录中..." : "前往聊天" }}
           </BtnElButton>
           <BtnElButton
+            style="width: 8em;"
             type="danger"
             transition-icon plain
             icon-class="i-solar:logout-3-broken"
             @click="user.exitLogin"
           >
-            注销
+            退出登录
           </BtnElButton>
         </div>
       </div>
@@ -472,8 +477,7 @@ const options = [
 
 // 切换登录
 :deep(.toggle-login.el-segmented) {
-  --el-segmented-item-selected-color: var(--el-text-color-primary);
-  // --el-segmented-item-selected-bg-color: #ffd100;
+  --el-segmented-item-selected-bg-color: var(--el-color-primary);
   --el-border-radius-base: 6px;
   height: 2.6rem;
   padding: 0.4rem;
@@ -482,8 +486,12 @@ const options = [
   }
   .el-segmented__item.is-selected {
     color: #fff;
+    font-weight: 600;
   }
 
+  // .el-segmented__item-selected {
+  //   box-shadow: 0px 1px 100px rgba(213, 151, 255, 0.16) !;
+  // }
 }
 
 .dark .active {
@@ -492,7 +500,7 @@ const options = [
 
 .submit {
   font-size: 1.2em;
-  font-weight: 800;
+  font-weight: 600;
   transition: 0.3s;
   cursor: pointer;
 
@@ -502,7 +510,7 @@ const options = [
 
     * {
       color: #fff;
-      font-weight: 800;
+      font-weight: 600;
       letter-spacing: 0.4em;
     }
   }

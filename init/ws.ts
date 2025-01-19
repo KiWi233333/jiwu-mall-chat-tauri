@@ -30,6 +30,7 @@ export async function useWsInit() {
     worker.value?.terminate?.(); // 关闭 WebSocket 连接
     await ws?.close?.(false); // 关闭 WebSocket 连接
     if (!user?.getTokenFn()) {
+      isReload.value = false;
       return;
     }
     worker.value = new Worker("/useWsWorker.js");

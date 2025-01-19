@@ -255,7 +255,6 @@ html.stop-transition-all {
   z-index: -1;
 }
 
-
 // item动画
 .fade-list-move,
 .fade-list-enter-active,
@@ -273,13 +272,11 @@ html.stop-transition-all {
   z-index: -1;
 }
 
-
-
 // group动画
 .group-list-move,
 .group-list-enter-active,
 .group-list-leave-active {
-  transition:  0.3s $animate-cubic-bount;
+  transition: 0.3s $animate-cubic-bount;
   transition-property: opacity, transform;
 }
 
@@ -852,6 +849,22 @@ html.stop-transition-all {
   }
 }
 
+@keyframes latter-slice-blur-top {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    filter: blur(0.8em);
+  }
+
+  80%  {
+    filter: none;
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
 /* sky-loading 骨架屏 */
 .sky-loading {
   background-color: #edededb4;
@@ -935,7 +948,6 @@ html.stop-transition-all {
   position: absolute;
 }
 
-
 @keyframes popper-fade-anim {
   from {
     opacity: 0;
@@ -944,4 +956,21 @@ html.stop-transition-all {
   to {
     opacity: 1;
   }
+}
+
+.popper-blur-move,
+.popper-blur-enter-active,
+.popper-blur-leave-active {
+  transition-duration: $transition-delay;
+  transition-property: opacity, filter;
+}
+
+
+.popper-blur-enter-from,
+.popper-blur-leave-to {
+  opacity: 0;
+  filter: blur(6px);
+}
+.popper-blur-leave-active {
+  position: absolute;
 }

@@ -130,11 +130,6 @@ export function useSettingInit() {
     });
   }, 0);
 
-  // 消息通知
-  if (setting.isWeb) {
-    setting.settingPage.isTrayNotification = false;
-  }
-
   // 8、自动重启
   isAutoStartEnabled().then((isAutoStart) => {
     setting.settingPage.isAutoStart = isAutoStart;
