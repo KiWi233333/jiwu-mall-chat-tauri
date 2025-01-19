@@ -1,5 +1,3 @@
-use crate::commands::{exist_file, mkdir_file, remove_file, exit_app};
-
 pub fn setup_mobile() {
     println!("App from Mobile!");
     tauri::Builder::default()
@@ -15,10 +13,10 @@ pub fn setup_mobile() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            exist_file,
-            remove_file,
-            mkdir_file,
-            exit_app
+            crate::mobiles::commands::exist_file,
+            crate::mobiles::commands::remove_file,
+            crate::mobiles::commands::mkdir_file,
+            crate::mobiles::commands::exit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
