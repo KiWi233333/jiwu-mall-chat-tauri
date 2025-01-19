@@ -28,8 +28,8 @@ export default defineNuxtConfig({
     prefetch: true,
     prefetchOn: { visibility: true },
   },
-  // spa情况下loading状态
-  // spaLoadingTemplate: "./app/spa-loading-template.html",
+  // spa情况下loading状态 web端使用 "./app/spa-loading-template.html"，桌面端使用 "./app/desktop-loading-template.html"
+  spaLoadingTemplate: import.meta.env.SPA_LOADING_PATH || false,
   // 模块
   modules: [
     // 工具

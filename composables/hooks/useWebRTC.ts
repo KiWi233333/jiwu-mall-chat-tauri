@@ -212,10 +212,10 @@ export function useWebRTC(
 
 
   /**
-   * 通话消息
+   * 通话消息 事件
    */
-  watch(() => ws.wsMsgList.rtcMsg.length, (val) => {
-  // 通话消息 type=1
+  mitter.on(MittEventType.RTC_CALL, (val) => {
+    // 通话消息 type=1
     if (val) {
       // 遍历所有消息
       ws.wsMsgList.rtcMsg.forEach((msg) => {
@@ -246,9 +246,11 @@ export function useWebRTC(
       });
       ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
     }
-  }, {
-    immediate: false,
   });
+  onUnmounted(() => {
+    mitter.off(MittEventType.RTC_CALL);
+  });
+
 
   // 获取设备列表
   const getDevices = async () => {

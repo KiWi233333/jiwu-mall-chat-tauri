@@ -51,16 +51,13 @@ export async function destroyWindow(label: "login" | "main" | "msgbox") {
  * @returns 是否创建成功
  */
 export async function createWindow(label: "login" | "main" | "msgbox"): Promise<boolean> {
-  if (label === "login") {
-    return await invoke("create_login_window");
+  try {
+    return await invoke(`create_${label}_window`);
   }
-  else if (label === "main") {
-    return await invoke("create_main_window");
+  catch (err) {
+    console.warn(err);
+    return false;
   }
-  else if (label === "msgbox") {
-    return await invoke("create_msgbox_window");
-  }
-  return false;
 }
 
 export async function showWindow(label: "login" | "main" | "msgbox") {

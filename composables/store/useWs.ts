@@ -5,6 +5,33 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../../types/chat/WsType";
 
 
+export interface WsMsgItemMap {
+  newMsg: ChatMessageVO[];
+  onlineNotice: WSOnlineOfflineNotify[];
+  recallMsg: WSMsgRecall[];
+  deleteMsg: WSMsgDelete[];
+  applyMsg: WSFriendApply[];
+  memberMsg: WSMemberChange[];
+  tokenMsg: object[];
+  rtcMsg: WSRtcCallMsg[];
+  other: object[];
+}
+
+/**
+ * 消息类型映射
+ */
+const wsMsgMap: Record<WsMsgBodyType, keyof WsMsgItemMap> = {
+  [WsMsgBodyType.MESSAGE]: "newMsg",
+  [WsMsgBodyType.ONLINE_OFFLINE_NOTIFY]: "onlineNotice",
+  [WsMsgBodyType.RECALL]: "recallMsg",
+  [WsMsgBodyType.DELETE]: "deleteMsg",
+  [WsMsgBodyType.APPLY]: "applyMsg",
+  [WsMsgBodyType.MEMBER_CHANGE]: "memberMsg",
+  [WsMsgBodyType.TOKEN_EXPIRED_ERR]: "tokenMsg",
+  [WsMsgBodyType.RTC_CALL]: "rtcMsg",
+};
+
+
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useWs = defineStore(
@@ -15,7 +42,7 @@ export const useWs = defineStore(
     const isWindBlur = ref(false);
     const status = ref<WsStatusEnum>(WsStatusEnum.CLOSE);
     // 未消费信箱
-    const wsMsgList = ref({
+    const wsMsgList = ref<WsMsgItemMap>({
       /**
        * 常规消息
        */
@@ -84,7 +111,7 @@ export const useWs = defineStore(
         webSocketHandler?.value?.addEventListener("error", (e: Event) => {
           status.value = WsStatusEnum.CLOSE;
           webSocketHandler.value = null;
-          console.log(e);
+          // console.log(e);
         });
         // 4、关闭监听
         webSocketHandler.value.addEventListener("close", (e: Event) => {
@@ -106,18 +133,6 @@ export const useWs = defineStore(
         call();
     }
 
-
-    const wsMsgMap = {
-      [WsMsgBodyType.MESSAGE]: "newMsg",
-      [WsMsgBodyType.ONLINE_OFFLINE_NOTIFY]: "onlineNotice",
-      [WsMsgBodyType.RECALL]: "recallMsg",
-      [WsMsgBodyType.DELETE]: "deleteMsg",
-      [WsMsgBodyType.APPLY]: "applyMsg",
-      [WsMsgBodyType.MEMBER_CHANGE]: "memberMsg",
-      [WsMsgBodyType.TOKEN_EXPIRED_ERR]: "tokenMsg",
-      [WsMsgBodyType.RTC_CALL]: "rtcMsg",
-    };
-
     // 接收消息
     function onMessage(call: (data: WsMsgBodyVO) => void) {
       if (!webSocketHandler.value)
@@ -127,16 +142,15 @@ export const useWs = defineStore(
         webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
           if (event && !event.data)
             return false;
-
-          // 这里需要处理一下，因为有时候会收到空数据
           try {
-            const data = JSON.parse(event.data);
+            const data = JSON.parse(event.data) as Result<WsMsgBodyVO>;
             if (data) {
-              const cts = data.data as WsMsgBodyVO;
+              const cts = data.data;
               const body = cts.data;
-              if (wsMsgMap[cts.type] !== undefined)
-              // @ts-expect-error
+              if (wsMsgMap[cts.type] !== undefined) { // 处理消息
                 wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
+                mitter.emit(resolteChatPath(cts.type), body);
+              }
               call(cts);
             }
           }
@@ -147,7 +161,6 @@ export const useWs = defineStore(
       }
       else { // rust ws
         webSocketHandler.value.addListener((msg: BackMessage) => {
-          console.log(msg);
           if ("WebSocket protocol error: Connection reset without closing handshake".includes(msg?.data?.toString() || "")) {
             status.value = WsStatusEnum.SAFE_CLOSE;
             webSocketHandler.value = null;
@@ -168,13 +181,14 @@ export const useWs = defineStore(
 
             // 这里需要处理一下，因为有时候会收到空数据
             try {
-              const data = JSON.parse(String(msg.data));
+              const data = JSON.parse(String(msg.data)) as Result<WsMsgBodyVO>;
               if (data) {
-                const cts = data.data as WsMsgBodyVO;
+                const cts = data.data;
                 const body = cts.data;
-                if (wsMsgMap[cts.type] !== undefined)
-                  // @ts-expect-error
+                if (wsMsgMap[cts.type] !== undefined) { // 处理消息
                   wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
+                  mitter.emit(resolteChatPath(cts.type), body);
+                }
                 call(cts);
               }
             }
@@ -193,19 +207,15 @@ export const useWs = defineStore(
 
     // 关闭
     async function close(isConfirm = true) {
-      if (!webSocketHandler.value)
-        return;
       if (!isConfirm) {
         try {
-          await webSocketHandler.value?.close?.();
           await webSocketHandler.value?.disconnect?.();
-          webSocketHandler.value = null; // 清空 WebSocket 连接
-          status.value = WsStatusEnum.SAFE_CLOSE;
+          await webSocketHandler.value?.close?.();
         }
         catch (err) {
-          status.value = WsStatusEnum.SAFE_CLOSE;
         }
         finally {
+          webSocketHandler.value = null; // 清空 WebSocket 连接
           status.value = WsStatusEnum.SAFE_CLOSE;
         }
         return;
@@ -253,22 +263,8 @@ export const useWs = defineStore(
 
     // 清除
     function resetStore() {
-      close(false);
-      wsMsgList.value = {
-        newMsg: [],
-        onlineNotice: [],
-        recallMsg: [],
-        deleteMsg: [],
-        applyMsg: [],
-        memberMsg: [],
-        rtcMsg: [],
-        tokenMsg: [],
-        other: [],
-      };
-      status.value = WsStatusEnum.SAFE_CLOSE;
-      fullWsUrl.value = "";
-      isWindBlur.value = false;
       try {
+        close(false);
         webSocketHandler.value?.removeAllListeners?.();
         webSocketHandler.value?.close?.();
         webSocketHandler.value?.disconnect?.();
@@ -276,6 +272,20 @@ export const useWs = defineStore(
       catch (err) {
       }
       finally {
+        wsMsgList.value = {
+          newMsg: [],
+          onlineNotice: [],
+          recallMsg: [],
+          deleteMsg: [],
+          applyMsg: [],
+          memberMsg: [],
+          rtcMsg: [],
+          tokenMsg: [],
+          other: [],
+        };
+        status.value = WsStatusEnum.SAFE_CLOSE;
+        fullWsUrl.value = "";
+        isWindBlur.value = false;
         webSocketHandler.value = null;
       }
     }

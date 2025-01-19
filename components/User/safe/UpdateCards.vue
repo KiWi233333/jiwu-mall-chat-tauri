@@ -2,23 +2,6 @@
 const user = useUserStore();
 const showMarkPhone = ref(true);
 
-async function toExistLogin() {
-  ElMessageBox.confirm("是否确认退出登录？", "退出登录", {
-    confirmButtonText: "确认退出",
-    confirmButtonClass: "el-button--danger",
-    lockScroll: false,
-    cancelButtonText: "取消",
-    center: true,
-
-  }).then(async (action) => {
-    if (action === "confirm") {
-      await user.callbackUserExit(user.getToken);
-      setTimeout(() => {
-        user.$reset();
-      }, 50);
-    }
-  });
-}
 /**
  * 重新加载用户信息
  */
@@ -144,7 +127,7 @@ const form = ref({
             style="margin-left: 1rem"
             class="cursor-pointer transition-300 hover:text-[var(--el-color-primar)y]"
             type="danger"
-            @click="toExistLogin"
+            @click="user.exitLogin"
           >
             退出登录
           </el-text>

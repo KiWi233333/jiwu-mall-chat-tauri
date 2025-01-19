@@ -298,8 +298,13 @@ onDeactivated(() => {
       <div v-if="setting.isDesktop" class="group h-8 flex-row-bt-c">
         ESC关闭
         <el-switch
-          v-model="setting.settingPage.isEscMin" size="large" active-text="开启" inactive-text="关闭"
-          inline-prompt @change="(val) => setting.settingPage.isEscMin = !!val"
+          v-model="setting.settingPage.isEscMin"
+          size="large"
+          active-text="开启"
+          inactive-text="关闭"
+          :active-value="true"
+          :inactive-value="false"
+          inline-prompt @change="(val: string | number | boolean) => setting.settingPage.isEscMin = !!val"
         />
       </div>
       <!-- 自启动 -->
@@ -353,7 +358,7 @@ onDeactivated(() => {
         </div>
       </div>
       <!-- 通话铃声 -->
-      <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
+      <div id="chat-bell" class="group h-8 flex-row-bt-c">
         通话铃声
         <div class="ml-a flex items-center gap-3" :title="setting.isDefaultRtcCallBell ? '默认铃声' : '自定义铃声'">
           <span

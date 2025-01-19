@@ -125,38 +125,63 @@ watch(() => chat.theContact.roomId, (val, oldVal) => {
 }, {
   immediate: true,
 });
+
+// /**
+//  * 新消息
+//  */
+// watch(() => ws.wsMsgList.newMsg.length, () => {
+//   if (ws.wsMsgList.newMsg)
+//   resolveNewMsg([data]);
+
+// }, {
+//   immediate: false,
+// });
+// /**
+//  * 撤回消息
+//  */
+// watch(() => ws.wsMsgList.recallMsg.length, () => {
+//   // 2、撤回消息
+//   resolveRevokeMsg(ws.wsMsgList.recallMsg);
+// }, {
+//   immediate: false,
+// });
+// /**
+//  * 删除消息
+//  */
+// watch(() => ws.wsMsgList.deleteMsg.length, () => {
+//   // 3、删除消息
+//   resolveDeleteMsg(ws.wsMsgList.deleteMsg);
+// }, {
+//   immediate: false,
+// });
+
+// 监听消息
+onMounted(() => {
+  // 1、新消息 type=1
+  mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
+    console.log("new message", data);
+    resolveNewMsg([data]);
+  });
+  // 2、撤回消息 type=2
+  mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
+    resolveRevokeMsg(ws.wsMsgList.recallMsg);
+  });
+  // 3、删除消息 type=3
+  mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
+    resolveDeleteMsg([data]);
+  });
+});
+// 移除监听
+function removeListeners() {
+  mitter.off(MittEventType.MESSAGE);
+  mitter.off(MittEventType.RECALL);
+  mitter.off(MittEventType.DELETE);
+}
+onUnmounted(removeListeners);
+// onDeactivated(removeListeners);
 onBeforeMount(() => {
   // 监听消息
   chat.setReadList(chat.theContact.roomId);
-});
-
-/**
- * 新消息
- */
-watch(() => ws.wsMsgList.newMsg.length, () => {
-  // 1、新消息 type=1
-  if (ws.wsMsgList.newMsg)
-    resolveNewMsg(ws.wsMsgList.newMsg);
-}, {
-  immediate: false,
-});
-/**
- * 撤回消息
- */
-watch(() => ws.wsMsgList.recallMsg.length, () => {
-  // 2、撤回消息
-  resolveRevokeMsg(ws.wsMsgList.recallMsg);
-}, {
-  immediate: false,
-});
-/**
- * 删除消息
- */
-watch(() => ws.wsMsgList.deleteMsg.length, () => {
-  // 3、删除消息
-  resolveDeleteMsg(ws.wsMsgList.deleteMsg);
-}, {
-  immediate: false,
 });
 /**
  * 新消息处理
@@ -188,7 +213,7 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     const msg = findMsg(p.message.id);
     if (!msg) {
       chat.theContact.msgList.push(p);
-      p.message.type === MessageType.RTC && handleRTCMsg(p);
+      p.message.type === MessageType.RTC && handleRTCMsg(p); // 处理rtc消息 多一步滚动
     }
   }
   ws.wsMsgList.newMsg.splice(0);

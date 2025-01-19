@@ -127,9 +127,12 @@ pub fn show_window(app: &AppHandle) {
             window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
             window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
             window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
-    } else {
-        eprintln!("未找到窗口");
-        // 创建窗口
+    } else if let Some(window) = app.webview_windows().get("login") {
+        window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
+        window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+        window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
+    }else {
         setup_desktop_window(app).unwrap_or_else(|e| eprintln!("创建窗口时出错: {:?}", e));
+
     }
 }

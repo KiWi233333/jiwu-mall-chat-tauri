@@ -9,6 +9,7 @@ import {
 import { LoginType } from "~/types/user/index.js";
 
 const user = useUserStore();
+const setting = useSettingStore();
 const loginType = useLocalStorage<LoginType>("loginType", LoginType.EMAIL);
 const isLoading = ref<boolean>(false);
 const autoLogin = ref<boolean>(true);

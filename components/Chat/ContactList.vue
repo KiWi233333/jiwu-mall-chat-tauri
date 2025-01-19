@@ -206,8 +206,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 }
 
 const ws = useWs();
-// 成员变动消息
-const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len: number) => {
+async function watchMemberChange(len: number) {
   if (!len)
     return;
   // 成员变动消息
@@ -262,10 +261,11 @@ const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, async (len
     }
     ws.wsMsgList.memberMsg.splice(0);
   }
-}, {
+}
+// 成员变动消息
+const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
   immediate: false,
 });
-
 // 初始化
 reload();
 onMounted(() => {

@@ -323,9 +323,9 @@ function exitGroup() {
                 :src="BaseUrlImg + p.avatar" fit="cover"
                 class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto object-cover border-default card-default"
               />
-              <small v-else class="w-2.4remcard-default h-2.4rem text-center leading-2.4rem border-default">
+              <div v-else class="h-2.4rem w-2.4rem text-center leading-2.4rem border-default card-default text-small">
                 <i class="i-solar-user-line-duotone p-2.5 op-80" />
-              </small>
+              </div>
               <span class="g-avatar" />
             </div>
             <small mx-a mt-2 w-5em truncate text-center>{{ p.nickName }}</small>

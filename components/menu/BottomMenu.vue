@@ -25,11 +25,18 @@ watch(() => route.path, (newVal, oldVal) => {
     getApplyCount();
   }
 });
-watch(() => ws.wsMsgList.applyMsg.length, (newVal, oldVal) => {
+
+const unWatchDebounced = watchDebounced(() => ws.wsMsgList.applyMsg.length, (newVal, oldVal) => {
   getApplyCount();
+}, {
+  debounce: 300,
 });
 
 onMounted(() => {
+  // mitt 事件监听
+  // mitter.on(MittEventType.APPLY, (data) => {
+  //   getApplyCount();
+  // });
   getApplyCount();
 });
 onActivated(() => {
@@ -40,6 +47,7 @@ onDeactivated(() => {
 });
 onBeforeUnmount(() => {
   getApplyCount();
+  unWatchDebounced();
 });
 
 // @unocss-include
@@ -49,7 +57,6 @@ const menuList = [
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold-duotone",
-    // tipValue: computed(() => ws.wsMsgList.newMsg.length) as { value: number },
     tipValue: computed(() => chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0)),
     isDot: false,
   },

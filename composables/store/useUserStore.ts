@@ -114,8 +114,8 @@ export const useUserStore = defineStore(
       })
         .then(() => {
           callbackUserExit(token.value);
-          if (document)
-            ElMessage.success("退出成功！");
+          // if (document)
+          //   ElMessage.success("退出成功！");
         })
         .catch(() => { });
     }

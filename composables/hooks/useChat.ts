@@ -273,10 +273,12 @@ export function useLoadAtUserList() {
 
   // 加载用户
   const ws = useWs();
-  watch(() => ws.wsMsgList.memberMsg.length, (len) => {
+  watchDebounced(() => ws.wsMsgList.memberMsg.length, (len) => {
     if (!len)
       return;
     loadUser();
+  }, {
+    debounce: 500,
   });
   onMounted(() => {
     loadUser();

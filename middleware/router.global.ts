@@ -4,60 +4,90 @@ import { type } from "@tauri-apps/plugin-os";
 export default defineNuxtRouteMiddleware((to, from) => {
   if (from.path === "/msg")
     abortNavigation();
-
   if (to.path !== "/msg") {
     const user = useUserStore();
-    // 未登录
-    if (!user.isLogin) {
-      loadLoginWindow();
-      if (to.path !== "/login") {
-        return "/login";
+    // console.log(user.isLogin, "来自", from.path, "去往", to.path);
+    if (checkDesktop()) { // 桌面端
+      if (!user.isLogin) {
+        loadLoginWindow();
+        if (from.path !== "/login") {
+          return abortNavigation();
+        }
+      }
+      // 已登录
+      if (user.isLogin && to.path === "/login") {
+        return "/";
+      }
+      else if (user.isLogin && to.path !== "/login") {
+        loadMainWindow();
       }
     }
-    // 已登录
-    if (user.isLogin && to.path === "/login") {
-      abortNavigation();
-    }
-    else if (user.isLogin && to.path !== "/login") {
-      loadMainWindow();
+    else { // 移动、web端
+      if (to.path !== "/login") {
+        if (!user.isLogin) {
+          user.showLoginForm = true;
+          return "/login";
+        }
+      }
+      else {
+        if (user.isLogin)
+          return from.path && from.path !== "/login" ? from.path : "/";
+      }
     }
   }
 });
 
-const isLoad = ref(false);
-async function loadLoginWindow() {
-  try {
-    if (checkDesktop()) {
-      isLoad.value = true;
-      abortNavigation();
-      // 关闭当前
+const isLoadWind = ref(false);
+const step = ref("login");
+/**
+ * 加载登录页
+ */
+function loadLoginWindow() {
+  if (isLoadWind.value || step.value === "login") {
+    return;
+  }
+  isLoadWind.value = true;
+  abortNavigation();
+  // 关闭当前
+  (async () => {
+    try {
+      step.value = "login";
       await createWindow("login");
-      destroyWindow("main");
-      destroyWindow("msgbox");
+      await destroyWindow("msgbox");
+      await destroyWindow("main");
     }
-  }
-  catch (error) {
-  }
-  finally {
-    isLoad.value = false;
-  }
+    catch (e) {
+      console.error(e);
+    }
+    finally {
+      isLoadWind.value = false;
+    }
+  })();
 }
 
-async function loadMainWindow() {
-  try {
-    isLoad.value = true;
-    if (checkDesktop()) {
-      abortNavigation();
-      destroyWindow("login");
+/**
+ * 加载主页
+ */
+function loadMainWindow() {
+  if (isLoadWind.value || step.value === "main") {
+    return;
+  }
+  isLoadWind.value = true;
+  abortNavigation();
+  (async () => {
+    try {
+      step.value = "main";
       await createWindow("msgbox");
       await createWindow("main");
+      await destroyWindow("login");
     }
-  }
-  catch (error) {
-  }
-  finally {
-    isLoad.value = false;
-  }
+    catch (e) {
+      console.error(e);
+    }
+    finally {
+      isLoadWind.value = false;
+    }
+  })();
 }
 
 function checkDesktop() {
