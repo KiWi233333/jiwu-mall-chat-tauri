@@ -40,7 +40,10 @@ onMounted(() => {
   <div
     class="main-box relative overflow-hidden shadow bg-color"
     grid="~ cols-1 md:cols-2"
-    :class="{ 'img-none': setting.isDesktop }"
+    :class="{
+      'img-none is-desktop': setting.isDesktop,
+      'show-register': user.showRegisterForm,
+    }"
   >
     <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex cursor-move items-center gap-2 sm:w-50vw>
       <div ml-a flex p-2 sm:p-4>
@@ -65,12 +68,11 @@ onMounted(() => {
     >
       <div class="mx-a w-85/100 text-center sm:(w-3/5 text-left)">
         <div
-          v-if="!setting.isDesktop"
           key="login-bg"
-          class="absolute left-6 top-6 mb-4 flex items-center gap-3 sm:(static left-4 top-4 mb-6)"
+          class="login-logo absolute left-6 top-6 mb-4 flex items-center gap-3 sm:(static mb-6)"
         >
-          <ElImage src="/logo.png" class="h-8 w-8" />
-          <h3 class="font-bold tracking-0.2em">
+          <ElImage src="/logo.png" class="logo h-8 w-8" />
+          <h3 class="app-name font-bold tracking-0.2em">
             {{ appName }}
           </h3>
         </div>
@@ -85,6 +87,7 @@ onMounted(() => {
             <FormLoginForm
               v-if="user.showLoginForm"
               key="login-form"
+              class="login-form"
             />
             <!-- 注册 -->
             <FormRegisterForm
@@ -107,6 +110,31 @@ onMounted(() => {
     background-position: top center;
     background-size: contain;
     overflow: hidden;
+  }
+}
+.is-desktop {
+  .login-logo {
+    --at-apply: 'static mb-4 p-0  flex-row-c-c';
+    .logo {
+      --at-apply: 'w-7 h-7';
+    }
+    .app-name {
+      --at-apply: 'text-1em';
+    }
+  }
+  .login-form {
+    --at-apply: 'pb-6';
+  }
+}
+.show-register {
+  .login-logo {
+    --at-apply: 'hidden';
+    .logo {
+      --at-apply: 'w-6 h-6';
+    }
+    .app-name {
+      --at-apply: 'text-1em';
+    }
   }
 }
 </style>
