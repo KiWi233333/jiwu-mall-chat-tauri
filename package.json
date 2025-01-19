@@ -18,7 +18,7 @@
     "preview": "nuxt preview",
     "build": "nuxi generate --dotenv .env.production && tauri build",
     "build:nuxt": "nuxi generate --dotenv .env.production",
-    "build:nuxt:local": "nuxi generate --dotenv .env.production.local",
+    "build-local:nuxt": "nuxi generate --dotenv .env.production.local",
     "build:nuxt:test": "nuxi build --dotenv .env.production",
     "build:tauri": "tauri build",
     "build:android": "tauri android build --apk",

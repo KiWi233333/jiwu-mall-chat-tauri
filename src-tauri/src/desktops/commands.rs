@@ -147,7 +147,6 @@ pub async fn create_login_window(app_handle: AppHandle) -> tauri::Result<()> {
                 .center()
                 .shadow(false)
                 .decorations(false)
-                .drag_and_drop(true)
                 .inner_size(380.0, 480.0)
                 .visible(true);
     
