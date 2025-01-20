@@ -218,7 +218,7 @@ body .el-message {
   margin: 4px 2px;
 }
 .mx-context-menu {
-  --popper-fade-anima-scale: 0.90;
+  --popper-fade-anima-scale: 0.9;
   --at-apply: "!border-default animate-[popper-fade-anim_0.15s]";
   .mx-icon-placeholder {
     i {
@@ -245,8 +245,19 @@ body .el-message {
 //   }
 //   //这里篇幅有限，完整的每个部件的样式请在 ContextMenu.scss 中查看
 // }
-.el-loading-mask.is-fullscreen {
-  border-radius: 6px;
+.el-loading-mask {
+  *.is-fullscreen {
+    border-radius: 6px;
+  }
+
+  .el-loading-spinner {
+    .circular {
+      animation-duration: 2s;
+    }
+    .el-loading-text {
+      color: var(--el-color-base) !important;
+    }
+  }
 }
 .dark {
   .el-loading-mask {

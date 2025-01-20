@@ -36,9 +36,9 @@ function onBack(rollback?: string) {
       <div class="mx-a flex-row-c-c opacity-90">
         <slot name="footer">
           <BtnElButton
-
             type="danger"
-            transition-icon plain
+            transition-icon
+            plain
             icon-class="i-solar:alt-arrow-left-line-duotone mr-2"
             @click="onBack($route.query?.rollback ? String($route.query?.rollback) : '')"
           >
