@@ -16,7 +16,7 @@ struct Payload {
 
 pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     let setting = MenuItemBuilder::with_id("setting", "设置").build(app)?;
-    let to_host = MenuItemBuilder::with_id("to_host", "官网").build(app)?;
+    let to_host = MenuItemBuilder::with_id("to_host", "博客").build(app)?;
     let restart = MenuItemBuilder::with_id("restart", "重启").build(app)?;
     let quit = MenuItemBuilder::with_id("quit", "退出").build(app)?;
 
@@ -51,7 +51,7 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
                     .emit(
                         "open_url",
                         Payload {
-                            message: "https://jiwu.kiwi2333.top".into(),
+                            message: "https://kiwi233.top".into(),
                         },
                     )
                     .unwrap();

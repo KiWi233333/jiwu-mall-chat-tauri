@@ -28,12 +28,13 @@ impl AppBuilder {
         self.setup.replace(Box::new(setup));
         self
     }
+}
 
-    pub fn run(self) {
-        #[cfg(desktop)]
-        desktops::setup::setup_desktop();
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    #[cfg(desktop)]
+    desktops::setup::setup_desktop();
 
-        #[cfg(mobile)]
-        mobiles::setup::setup_mobile();
-    }
+    #[cfg(mobile)]
+    mobiles::setup::setup_mobile();
 }
