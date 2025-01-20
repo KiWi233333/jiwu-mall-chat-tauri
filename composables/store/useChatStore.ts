@@ -117,7 +117,7 @@ export const useChatStore = defineStore(
         msgList: theContact.value.msgList || [],
         unreadMsgList: theContact.value.unreadMsgList || [],
       };
-
+      useSettingStore().isOpenContact = false; // 关闭会话面板
       try {
         const user = useUserStore();
         const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type);

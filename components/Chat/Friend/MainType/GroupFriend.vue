@@ -51,7 +51,6 @@ function exitRoom(roomId: number) {
 };
 
 // 群聊申请
-const isShowApply = ref(false);
 const roomId = computed(() => data.data.roomId);
 watch(roomId, val => loadData(val));
 
@@ -107,7 +106,6 @@ const loadingIcon = `
       <!-- 按钮 -->
       <div flex-row-c-c gap-4>
         <BtnElButton
-          v-if="isOnGroup"
           icon-class="i-solar:exit-outline p-2 mr-2"
           class="op-80"
           type="danger"
@@ -117,7 +115,6 @@ const loadingIcon = `
           退出群聊&ensp;
         </BtnElButton>
         <BtnElButton
-          v-if="isOnGroup"
           icon-class="i-solar:chat-line-line-duotone p-2 mr-2"
           class="border-default"
           type="info"
@@ -125,7 +122,7 @@ const loadingIcon = `
         >
           发消息&ensp;
         </BtnElButton>
-        <BtnElButton
+        <!-- <BtnElButton
           v-else
           icon-class="i-solar:user-plus-bold p-2 mr-2"
           class="op-80"
@@ -133,7 +130,7 @@ const loadingIcon = `
           @click="isShowApply = true"
         >
           添加群聊&ensp;
-        </BtnElButton>
+        </BtnElButton> -->
       </div>
     </div>
   </div>

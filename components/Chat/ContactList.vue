@@ -327,11 +327,6 @@ onBeforeUnmount(() => {
               aria-selected="true"
               style="border-radius: 0;"
               :value="room.roomId"
-              @click="() => {
-                if (theContactId === room.roomId) {
-                  setting.isOpenContact = false;
-                }
-              }"
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"
