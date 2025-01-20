@@ -164,7 +164,7 @@ function toggleRtcCallBell() {
     if (action === "confirm") {
       if (!val) {
         ElNotification.warning("已关闭铃声！");
-        setting.settingPage.rtcCallBellUrl = undefined;
+        setting.settingPage.rtcCallBellUrl = "";
         return;
       }
       // 正则判断
@@ -317,7 +317,7 @@ onDeactivated(() => {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                plain round
+                round plain
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -372,7 +372,7 @@ onDeactivated(() => {
           <!-- 关闭 -->
           <span
             v-if="setting.settingPage.rtcCallBellUrl"
-            class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="setting.settingPage.rtcCallBellUrl = undefined"
+            class="cursor-pointer text-0.8rem tracking-0.1em btn-warning" @click="setting.settingPage.rtcCallBellUrl = ''"
           >
             关闭
           </span>

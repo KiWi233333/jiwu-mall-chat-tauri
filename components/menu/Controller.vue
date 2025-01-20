@@ -16,9 +16,9 @@ const {
 }>();
 const defaultSize = size === "default" || size === "" || size === undefined;
 const btnStyle = computed(() => ({
-  fontSize: defaultSize ? "1.2rem" : "1rem",
-  width: defaultSize ? "2.6rem" : "2rem",
-  height: defaultSize ? "1.8rem" : "1.5rem",
+  fontSize: defaultSize ? "1.2em" : "1em",
+  width: defaultSize ? "2.6em" : "2em",
+  height: defaultSize ? "1.8em" : "1.5em",
   // font-size: 1.2rem;padding: 0;width: 2.6rem;height: 1.8rem;;
   padding: 0,
   margin: 0,
@@ -93,7 +93,7 @@ onMounted(async () => {
   <ElButton
     v-if="showMax"
     text
-    size="small" style="btnStyle" @click="onToggleWindow('max')"
+    size="small" :style="btnStyle" @click="onToggleWindow('max')"
   >
     <i
       :class="isMaximized ? 'i-tabler:minimize' : 'i-tabler:maximize'"

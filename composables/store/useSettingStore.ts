@@ -74,7 +74,7 @@ export const useSettingStore = defineStore(
       isCloseAllTransition: false, // 是否关闭所有动画效果，包括页面切换动画和组件动画。
       isEscMin: true, // esc
       notificationType: NotificationEnums.TRAY as NotificationEnums, // 托盘通知
-      rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL as string | undefined, // 呼叫铃声
+      rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL as string, // 呼叫铃声
     });
     const isDefaultRtcCallBell = computed(() => settingPage.value.rtcCallBellUrl === DEFAULT_RTC_CALL_BELL_URL);
     const isChatFold = ref(false);
