@@ -11,6 +11,7 @@ async function toggleFn(e: MouseEvent) {
 
 <template>
   <div
+    id="toggle-theme-btn"
     class="flex-row-c-c cursor-pointer"
     @click="toggleFn"
   >

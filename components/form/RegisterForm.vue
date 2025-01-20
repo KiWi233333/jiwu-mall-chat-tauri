@@ -219,18 +219,17 @@ async function onRegister(formEl: FormInstance) {
   if (!formEl)
     return;
   await formEl.validate((valid) => {
-    isLoading.value = true;
-    if (valid) {
-      if (!agreeDetail.value) {
-        ElMessage.warning("请阅读并同意用户协议！");
-        agreeDetail.showDetail = true;
-        return;
-      }
-      onRegisterHandle();
-    }
-    else {
+    if (!valid) {
       isLoading.value = false;
+      return;
     }
+    if (!agreeDetail.value) {
+      ElMessage.warning("请阅读并同意用户协议！");
+      agreeDetail.showDetail = true;
+      return;
+    }
+    isLoading.value = true;
+    onRegisterHandle();
   });
 }
 async function onRegisterHandle() {
@@ -275,10 +274,10 @@ async function onRegisterHandle() {
       const token = res.data;
       ElMessage.success({
         message: "恭喜，注册成功 🎉",
-        duration: 3000,
+        duration: 2000,
       });
       // 登录
-      let count = 3;
+      let count = 2;
       const timers = setInterval(() => {
         isLoading.value = true;
         loadingText.value = `${count}s后自动登录...`;
@@ -308,13 +307,9 @@ async function onRegisterHandle() {
 
 async function toLogin(token?: string) {
   if (token) {
-    store.$patch({
-      token,
-      showLoginForm: false,
-      showRegisterForm: false,
-      isLogin: true,
-    });
-    // 登录
+    // 登录成功
+    await store.onUserLogin(token, true);
+    await navigateTo("/");
     store.onUserLogin(token, true);
     ElMessage.success({
       message: "登录成功！",
@@ -443,8 +438,8 @@ function toLoginForm() {
     </div>
     <Teleport to="body">
       <Transition name="popper-fade-up">
-        <div v-if="agreeDetail.showDetail" class="terms fixed left-0 top-0 z-1200 h-100vh w-100vw flex flex-col sm:(card-rounded-df left-50vw top-50vh h-500px w-400px border-default shadow-lg -translate-x-1/2 -translate-y-1/2) p-4 bg-color">
-          <h3 class="mb-4 text-center text-1.2rem">
+        <div v-if="agreeDetail.showDetail" class="terms fixed left-0 top-0 z-1200 h-100vh w-100vw flex flex-col sm:(card-rounded-df left-50vw top-50vh h-500px w-400px border-default shadow-lg -translate-x-1/2 -translate-y-1/2) p-4 card-default bg-color">
+          <h3 class="mb-4 text-center text-1rem">
             用户协议
           </h3>
           <div
@@ -452,6 +447,7 @@ function toLoginForm() {
           >
             <MdPreview
               language="zh-CN"
+              style="font-size: 0.8rem;"
               editor-id="notice-toast"
               :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
               :code-foldable="false"
@@ -465,7 +461,7 @@ function toLoginForm() {
               :icon="ElIconCheck"
               type="info"
               plain
-              @click="() => {
+              @click.stop="() => {
                 agreeDetail.showDetail = false;
                 agreeDetail.value = true;
               }"
@@ -475,15 +471,16 @@ function toLoginForm() {
           </div>
         </div>
       </Transition>
-      <div v-if="agreeDetail.showDetail" class="terms-overlay animate-[fade-in_0.3s_ease-in-out]" @click="agreeDetail.showDetail = false" />
+      <div
+        v-if="agreeDetail.showDetail" class="terms-overlay hidden animate-[fade-in_0.3s_ease-in-out] sm:block" @click.self="() => {
+          agreeDetail.showDetail = false
+        }"
+      />
     </Teleport>
   </el-form>
 </template>
 
 <style scoped lang="scss">
-:deep(.md-editor-preview) {
-  font-size: 0.8em;
-}
 .terms-overlay {
   position: fixed;
   top: 0;

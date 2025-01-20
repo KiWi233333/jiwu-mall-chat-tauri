@@ -29,7 +29,12 @@ onMounted(() => {
     }"
   >
     <div data-tauri-drag-region absolute right-0 z-1000 w-100vw flex cursor-move items-center gap-2 sm:w-50vw>
-      <div ml-a flex p-2 sm:p-4>
+      <div class="group ml-a flex p-2 sm:p-4">
+        <BtnTheme
+          class="mr-2"
+          :class="setting.isDesktop ? 'scale-90 op-50 group-hover:op-100' : ' h-2rem w-2rem rounded-1/2 card-default border-default' "
+          title="切换主题"
+        />
         <BtnAppDownload />
         <MenuController v-if="setting.isDesktop" key="header" :size="setting.isDesktop ? 'small' : ''" :show-max="false" />
       </div>
@@ -45,8 +50,8 @@ onMounted(() => {
     </div>
     <!-- 表单 -->
     <div
-      class="flex flex-row-c-c flex-col select-none rounded-t-8 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 bg-color shadow-none) bg-color-br"
-      :class="setting.isDesktop ? 'w-full h-full !bg-color !rounded-0 animate-none pt-4' : 'h-fit py-10 min-h-6/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
+      class="flex flex-row-c-c flex-col select-none rounded-t-8 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 shadow-none) bg-color"
+      :class="setting.isDesktop ? 'w-full h-full !rounded-0 animate-none pt-4' : 'h-fit py-10 min-h-6/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
       data-fade
     >
       <div class="mx-a w-85/100 text-center sm:(w-3/5 text-left)">

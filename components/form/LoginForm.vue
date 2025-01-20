@@ -215,16 +215,14 @@ async function onLogin(formEl: any | undefined) {
       // 登录成功
       if (res.data) {
         await store.onUserLogin(res.data, autoLogin.value);
-        setTimeout(async () => {
-          done();
-          await navigateTo("/", { replace: true });
-        }, 500);
+        done();
+        await navigateTo("/");
       }
       // 登录失败
       else {
         ElMessage.error({
           message: res.message,
-          duration: 3000,
+          duration: 2000,
         });
         // store
         store.$patch({
@@ -267,7 +265,7 @@ const options = [
       <el-segmented
         v-show="loginType !== LoginType.ADMIN"
         v-model="loginType"
-        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default dark:bg-dark-300" :options="options"
+        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default bg-color" :options="options"
       />
       <!-- 验证码登录(客户端 ) -->
       <!-- 邮箱登录 -->
@@ -488,10 +486,6 @@ const options = [
     color: #fff;
     font-weight: 600;
   }
-
-  // .el-segmented__item-selected {
-  //   box-shadow: 0px 1px 100px rgba(213, 151, 255, 0.16) !;
-  // }
 }
 
 .dark .active {

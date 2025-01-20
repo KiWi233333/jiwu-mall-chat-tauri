@@ -34,44 +34,23 @@
 }
 
 // 文本折叠
-.text-overflow-2 {
+@mixin text-overflow($lines) {
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: $lines;
   -webkit-box-orient: vertical;
 }
 
-.text-overflow-3 {
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-.text-overflow-4 {
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
+// 使用循环生成类
+@for $i from 1 through 10 {
+  .text-overflow-#{$i} {
+    @include text-overflow($i);
+  }
 }
 
 .text-overflow-h {
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: var(--h);
-  -webkit-box-orient: vertical;
-}
-
-.text-overflow-5 {
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
+  @include text-overflow(var(--h));
 }
 // 渐变背景
 .bg-linear {
