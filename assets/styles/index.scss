@@ -174,39 +174,14 @@ body .el-message {
   border-radius: 0.3rem;
 }
 /**  ------------------------------vuepress-markdown---------------------------------------  **/
-.v-md-editor,
-.vuepress-markdown-body {
-  font-family: inherit !important;
-  padding: 1rem;
-  border-radius: 8px;
-
-  &,
-  * {
-    color: var(--el-color-black);
-    background-color: #fff;
-  }
-}
-
-.dark {
-  .v-md-editor,
-  .vuepress-markdown-body {
-    &,
-    * {
-      color: #fff;
-      background-color: transparent;
-
-      .v-md-editor__toolbar-item:hover {
-        color: #000;
-      }
-
-      .v-md-editor__menu--list {
-        background-color: transparent;
-        border-radius: 6px;
-      }
+.md-editor {
+  .md-editor-preview-wrapper {
+    font-size: inherit;
+    .md-editor-preview {
+      font-size: inherit;
     }
   }
 }
-
 .transition-200,
 .transition-300,
 .transition {

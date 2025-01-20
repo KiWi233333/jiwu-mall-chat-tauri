@@ -385,7 +385,7 @@ const options = [
       </el-form-item>
       <!-- 底部 -->
       <div
-        class="mt-4 text-right text-xs sm:text-sm"
+        class="mt-2 text-right text-0.8em sm:mt-4 sm:text-sm"
       >
         <el-checkbox v-model="autoLogin" class="mt-1" style="padding: 0;font-size: inherit;float: left; height: fit-content;">
           记住我

@@ -432,7 +432,7 @@ function toLoginForm() {
         立即注册
       </BtnElButton>
     </el-form-item>
-    <div mt-3 flex items-center text-right text-xs sm:text-sm>
+    <div mt-3 flex items-center text-right text-0.8em sm:text-sm>
       <el-checkbox v-model="isAgreeTerm" style="--el-color-primary: var(--el-color-info);padding: 0;font-size: inherit;opacity: 0.8;float: left; height: fit-content;">
         同意并遵守
         <span text-color-info>《用户协议》</span>
@@ -444,10 +444,12 @@ function toLoginForm() {
     <Teleport to="body">
       <Transition name="popper-fade-up">
         <div v-if="agreeDetail.showDetail" class="terms fixed left-0 top-0 z-1200 h-100vh w-100vw flex flex-col sm:(card-rounded-df left-50vw top-50vh h-500px w-400px border-default shadow-lg -translate-x-1/2 -translate-y-1/2) p-4 bg-color">
-          <h2 class="mb-4 text-center text-1.4rem">
+          <h3 class="mb-4 text-center text-1.2rem">
             用户协议
-          </h2>
-          <div class="flex-1 overflow-y-auto">
+          </h3>
+          <div
+            class="flex-1 overflow-y-auto"
+          >
             <MdPreview
               language="zh-CN"
               editor-id="notice-toast"
@@ -479,6 +481,9 @@ function toLoginForm() {
 </template>
 
 <style scoped lang="scss">
+:deep(.md-editor-preview) {
+  font-size: 0.8em;
+}
 .terms-overlay {
   position: fixed;
   top: 0;
