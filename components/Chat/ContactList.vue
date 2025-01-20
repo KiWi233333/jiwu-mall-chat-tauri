@@ -313,14 +313,14 @@ onBeforeUnmount(() => {
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list">
       <el-radio-group v-model="theContactId" class="relative w-full">
-        <div ref="autoAnimateRef" class="h-full">
-          <ListAutoIncre
-            :immediate="true"
-            :auto-stop="false"
-            loading-class="op-0"
-            :no-more="pageInfo.isLast"
-            @load="loadData(dto)"
-          >
+        <ListAutoIncre
+          :immediate="true"
+          :auto-stop="false"
+          loading-class="op-0"
+          :no-more="pageInfo.isLast"
+          @load="loadData(dto)"
+        >
+          <div ref="autoAnimateRef" class="h-full">
             <el-radio
               v-for="room in chat.getContactList"
               :key="room.roomId"
@@ -335,7 +335,7 @@ onBeforeUnmount(() => {
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"
-                class="flex gap-4 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
+                class="flex gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
                 @contextmenu.stop="onContextMenu($event, room)"
               >
                 <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.4rem w-2.4rem flex-shrink-0">
@@ -346,7 +346,7 @@ onBeforeUnmount(() => {
                     <p truncate>
                       {{ room.name }}
                     </p>
-                    <span ml-a mt-a hidden w-7em flex-shrink-0 truncate text-right text-0.8em sm:block text-mini-50>
+                    <span ml-a mt-a w-6em flex-shrink-0 truncate text-right text-mini>
                       {{ getTime(room.activeTime) }}
                     </span>
                   </div>
@@ -356,15 +356,15 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </el-radio>
-            <template #done>
-              <div
-                class="mb-6 w-full text-center text-mini"
-              >
-                暂无更多
-              </div>
-            </template>
-          </ListAutoIncre>
-        </div>
+          </div>
+        </ListAutoIncre>
+        <template #done>
+          <div
+            class="mb-6 w-full text-center text-mini"
+          >
+            暂无更多
+          </div>
+        </template>
       </el-radio-group>
     </el-scrollbar>
     <!-- 新建群聊 -->

@@ -126,40 +126,10 @@ watch(() => chat.theContact.roomId, (val, oldVal) => {
   immediate: true,
 });
 
-// /**
-//  * 新消息
-//  */
-// watch(() => ws.wsMsgList.newMsg.length, () => {
-//   if (ws.wsMsgList.newMsg)
-//   resolveNewMsg([data]);
-
-// }, {
-//   immediate: false,
-// });
-// /**
-//  * 撤回消息
-//  */
-// watch(() => ws.wsMsgList.recallMsg.length, () => {
-//   // 2、撤回消息
-//   resolveRevokeMsg(ws.wsMsgList.recallMsg);
-// }, {
-//   immediate: false,
-// });
-// /**
-//  * 删除消息
-//  */
-// watch(() => ws.wsMsgList.deleteMsg.length, () => {
-//   // 3、删除消息
-//   resolveDeleteMsg(ws.wsMsgList.deleteMsg);
-// }, {
-//   immediate: false,
-// });
-
 // 监听消息
 onMounted(() => {
   // 1、新消息 type=1
   mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
-    console.log("new message", data);
     resolveNewMsg([data]);
   });
   // 2、撤回消息 type=2
@@ -184,7 +154,7 @@ onBeforeMount(() => {
   chat.setReadList(chat.theContact.roomId);
 });
 /**
- * 新消息处理
+ * 1. 新消息处理
  * @param list 原始列表
  */
 async function resolveNewMsg(list: ChatMessageVO[]) {
@@ -217,17 +187,6 @@ async function resolveNewMsg(list: ChatMessageVO[]) {
     }
   }
   ws.wsMsgList.newMsg.splice(0);
-}
-
-// 处理rtc消息
-function handleRTCMsg(msg: ChatMessageVO) {
-  const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
-  // 更新滚动位置
-  if (msg.message.roomId === chat.theContact.roomId && rtcMsg.senderId === user.userInfo.id) {
-    nextTick(() => {
-      chat.scrollBottom(true);
-    });
-  }
 }
 
 // 计算消息内容
@@ -270,8 +229,20 @@ function getSecondsText(second?: number) {
   }
 }
 
+// 2. 处理rtc消息
+function handleRTCMsg(msg: ChatMessageVO) {
+  const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
+  // 更新滚动位置
+  if (msg.message.roomId === chat.theContact.roomId && rtcMsg.senderId === user.userInfo.id) {
+    nextTick(() => {
+      chat.scrollBottom(true);
+    });
+  }
+}
+
+
 /**
- * 撤回消息处理
+ * 3. 撤回消息处理
  * @param list 列表
  */
 function resolveRevokeMsg(list: WSMsgRecall[]) {
@@ -306,7 +277,7 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
 }
 
 /**
- * 删除消息处理
+ * 4. 删除消息处理
  * @param list 列表
  */
 function resolveDeleteMsg(list: WSMsgDelete[]) {

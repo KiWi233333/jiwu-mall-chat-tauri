@@ -162,7 +162,7 @@ export const useUserStore = defineStore(
         useChatStore().resetStore();
         useWs().resetStore();
         await nextTick();
-        // await navigateTo("/login");
+        await navigateTo("/login");
       }
     }
     /**
