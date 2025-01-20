@@ -6,7 +6,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return abortNavigation();
   if (to.path !== "/msg") {
     const user = useUserStore();
-    // console.log(user.isLogin, "来自", from.path, "去往", to.path);
     if (checkDesktop()) { // 桌面端
       if (!user.isLogin) {
         loadLoginWindow();
@@ -15,11 +14,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
         if ((from.path === "/login" && to.path !== "/login")) // 登录页面进出禁止
           return abortNavigation();
       }
-      else if (user.isLogin && to.path === "/login") { // 已登录
-        return from.path !== "/login" ? abortNavigation() : "/";
-      }
-      else if (user.isLogin && to.path !== "/login") {
-        loadMainWindow();
+      else {
+        if ((from.path !== "/login" && to.path === "/login")) // 主页页面进出禁止
+          return abortNavigation();
+        if ((from.path === "/login")) // 登录页面进出禁止
+          loadMainWindow();
       }
     }
     else { // 移动、web端
@@ -37,34 +36,21 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
 });
 
-const isLoadWind = ref(false);
-const step = ref("login");
 /**
  * 加载登录页
  */
 function loadLoginWindow() {
-  if (isLoadWind.value || step.value === "login") {
-    return;
-  }
-  isLoadWind.value = true;
   // 关闭当前
   (async () => {
     try {
-      step.value = "login";
       await createWindow("login");
-      console.log("login");
-
-      setTimeout(async () => {
-        console.log("销毁");
-        await destroyWindow("msgbox");
-        await destroyWindow("main");
-      }, 300);
+      setTimeout(() => {
+        destroyWindow("msgbox");
+        destroyWindow("main");
+      }, 500);
     }
     catch (e) {
       console.error(e);
-    }
-    finally {
-      isLoadWind.value = false;
     }
   })();
 }
@@ -72,28 +58,17 @@ function loadLoginWindow() {
 /**
  * 加载主页
  */
-function loadMainWindow() {
-  if (isLoadWind.value || step.value === "main") {
-    return;
+async function loadMainWindow() {
+  try {
+    await createWindow("msgbox");
+    await createWindow("main");
+    setTimeout(() => {
+      destroyWindow("login");
+    }, 1000);
   }
-  isLoadWind.value = true;
-  abortNavigation();
-  (async () => {
-    try {
-      step.value = "main";
-      await createWindow("msgbox");
-      await createWindow("main");
-      setTimeout(async () => {
-        await destroyWindow("login");
-      }, 300);
-    }
-    catch (e) {
-      console.error(e);
-    }
-    finally {
-      isLoadWind.value = false;
-    }
-  })();
+  catch (e) {
+    console.error(e);
+  }
 }
 
 function checkDesktop() {
