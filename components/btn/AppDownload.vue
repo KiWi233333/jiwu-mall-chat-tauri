@@ -2,13 +2,22 @@
 const setting = useSettingStore();
 const downloadUrl = ref();
 const latestVersion = ref<AppPlatformsJSON>();
-watch(() => setting.isWeb, async (isWeb) => {
-  if (!isWeb)
-    return;
+onMounted(async () => {
   const res = await getLatestVersion();
   if (res) {
-    const ua = navigator.userAgent;
     latestVersion.value = res;
+  }
+});
+watch([() => setting.isWeb, () => setting.isMobileSize], async ([isWeb, isMobileSize]) => {
+  if (!isWeb)
+    return;
+  if (latestVersion.value) {
+    const ua = navigator.userAgent;
+    const res = latestVersion.value;
+    if (isMobileSize) {
+      downloadUrl.value = `${BaseUrlAppFile}/app/${res.version}/JiwuChat_${res.version}.apk`;
+      return;
+    }
     if (ua.toLowerCase().includes("windows"))
       downloadUrl.value = res.platforms["windows-x86_64"].url;
     else if (ua.toLowerCase().includes("macos"))
