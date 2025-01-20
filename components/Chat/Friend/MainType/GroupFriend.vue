@@ -2,14 +2,16 @@
 /**
  * 群聊适配器
  */
-const props = defineProps<{
+const {
+  data,
+} = defineProps<{
   data: TheFriendOpt<ChatContactVO>
 }>();
-const data = toRef(props.data);
 const isLoading = ref(false);
 const isOnGroup = ref<boolean | undefined>(false);
 const room = ref<Partial<ChatRoomInfoVO>>({});
-const store = useUserStore();
+const user = useUserStore();
+const chat = useChatStore();
 
 // 加载房间数据
 async function loadData(val: number) {
@@ -18,14 +20,13 @@ async function loadData(val: number) {
   isOnGroup.value = false;
   isLoading.value = true;
   // 获取房间信息
-  const res = await getRoomGroupInfo(val, store.getToken);
+  const res = await getRoomGroupInfo(val, user.getToken);
   if (res.code === StatusCode.SUCCESS)
     room.value = res.data;
   isLoading.value = false;
   // 确认是否为在群
   isOnGroup.value = true; // 假设用户已经在群中，根据实际情况进行判断
 }
-const chat = useChatStore();
 
 // 退出群聊
 function exitRoom(roomId: number) {
@@ -38,7 +39,7 @@ function exitRoom(roomId: number) {
     type: "warning",
     callback: async (action: string) => {
       if (action === "confirm") {
-        const res = await exitRoomGroup(roomId, store.getToken);
+        const res = await exitRoomGroup(roomId, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("退出成功！");
           chat.setTheFriendOpt(FriendOptType.Empty, {});
@@ -51,17 +52,15 @@ function exitRoom(roomId: number) {
 
 // 群聊申请
 const isShowApply = ref(false);
-const roomId = computed(() => {
-  return data.value.data.roomId;
-});
-watch(roomId, val => loadData(val), { immediate: true });
+const roomId = computed(() => data.data.roomId);
+watch(roomId, val => loadData(val));
 
 
 // 去发消息
 async function toSend(roomId: number) {
   if (!isOnGroup.value)
     return;
-  const res = await getChatContactInfo(roomId, store.getToken, RoomType.GROUP);
+  const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
   if (!res)
     return;
   if (res && res.code !== StatusCode.SUCCESS)
@@ -93,7 +92,7 @@ const loadingIcon = `
     >
       <!-- 顶部 -->
       <div
-        flex items-center gap-4 p-2
+        absolute left-0 top-0 w-full flex items-center gap-4 p-3 px-5 shadow bg-color
       >
         <CardElImage
           :src="BaseUrlImg + data.data.avatar" fit="cover"
@@ -103,7 +102,7 @@ const loadingIcon = `
         <small op-60 el-color-info>在线：{{ room.onlineNum || "0" }}</small>
       </div>
       <!-- 群成员 -->
-      <ChatRoomGroupGrid class="mx-a mt-8 max-h-50vh sm:w-2/3" :data="data.data" />
+      <ChatRoomGroupGrid class="mx-a mt-24 max-h-50vh sm:w-2/3" :data="data.data" />
       <div class="mx-a my-6 w-4/5 border-0 border-b-1px sm:(my-10 w-3/5) border-default" />
       <!-- 按钮 -->
       <div flex-row-c-c gap-4>
@@ -115,7 +114,7 @@ const loadingIcon = `
           plain
           @click="exitRoom(roomId)"
         >
-          退出&ensp;
+          退出群聊&ensp;
         </BtnElButton>
         <BtnElButton
           v-if="isOnGroup"

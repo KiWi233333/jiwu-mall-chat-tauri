@@ -96,6 +96,7 @@ onMounted(async () => {
     size="small" :style="btnStyle" @click="onToggleWindow('max')"
   >
     <i
+      class="text-0.8em"
       :class="isMaximized ? 'i-tabler:minimize' : 'i-tabler:maximize'"
       :title="isMaximized ? '还原' : '最大化'"
       btn-primary

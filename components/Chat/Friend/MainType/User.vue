@@ -151,7 +151,7 @@ const loadingIcon = `
     element-loading-background="transparent"
     :class="{ 'op-100': !isLoading }"
     v-bind="$attrs"
-    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-18 op-0 transition-120 bg-color sm:px-1/4"
+    class="md:1/6 mt-24 h-full w-full flex flex-1 flex-col gap-6 px-10 op-0 transition-120 bg-color sm:px-1/4"
   >
     <!-- 信息 -->
     <div flex gap-4 pb-6 border-default-b>
@@ -197,7 +197,7 @@ const loadingIcon = `
       </p>
       <p mt-6 truncate text-sm>
         <i class="i-tabler:calendar mr-3 p-2" />
-        好友生日还有：{{ getBirthdayCount || ' - ' }}天
+        距离生日还有：{{ getBirthdayCount || ' - ' }}天
       </p>
       <p v-if="isFrend" mt-6 truncate text-sm>
         <i class="i-carbon:phone-incoming mr-3 p-2" />

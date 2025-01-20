@@ -101,7 +101,7 @@ function onArgeeFriend(applyId: number) {
         </div>
       </div>
       <template #done>
-        <div class="py-1rem text-center op-70">
+        <div class="py-1rem text-center text-mini">
           {{ list.length ? "没有更多了" : "快去认识其他人" }}
         </div>
       </template>
@@ -111,9 +111,9 @@ function onArgeeFriend(applyId: number) {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply:"h-2.4rem card-default  w-2.4rem flex-row-c-c rounded-6px  shadow-sm border-default"
+  --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply:"flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-[#b8b8b849] ) transition-300";
+  --at-apply: " flex items-center gap-4 p-3 cursor-pointer rounded-6px mt-2 hover:(bg-menu-color) transition-300";
 }
 </style>

@@ -7,6 +7,20 @@ useSeoMeta({
   keywords: appKeywords,
 });
 const chat = useChatStore();
+const theFriendOpt = computed({
+  get: () => chat.theFriendOpt,
+  set: (val) => {
+    chat.theFriendOpt = val;
+  },
+});
+const { history, undo, clear } = useRefHistory(theFriendOpt, {
+  deep: true,
+  capacity: 10,
+});
+async function clearHistory() {
+  chat.showTheFriendPanel = false;
+  clear?.();
+}
 </script>
 
 <template>
@@ -21,8 +35,16 @@ const chat = useChatStore();
     :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
   >
     <div
-      class="i-carbon:close absolute right-4 top-4 z-1000 block p-3 sm:hidden btn-danger"
-      title="关闭" @click="chat.showTheFriendPanel = false"
+      v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
+      class="i-solar:alt-arrow-left-line-duotone absolute right-16 top-4 z-1000 hidden p-3 sm:block btn-danger"
+      title="关闭"
+      @click="undo()"
+    />
+    <div
+      v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
+      class="i-carbon:close absolute right-4 top-4 z-1000 block p-3 btn-danger"
+      title="关闭"
+      @click="clearHistory"
     />
     <!-- 面板 -->
     <ChatFriendMainType
