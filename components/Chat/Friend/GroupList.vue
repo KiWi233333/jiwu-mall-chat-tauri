@@ -145,6 +145,6 @@ onDeactivated(() => {
   --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-[#b8b8b849]) transition-300";
+  --at-apply: "border-(1px solid transparent) flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(border-default bg-menu-color) transition-300";
 }
 </style>

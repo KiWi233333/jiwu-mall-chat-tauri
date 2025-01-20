@@ -19,6 +19,7 @@ const loadingIcon = `
     v-loading.fullscreen.lock="!user.isLogin"
     class="h-full flex flex-col !overflow-hidden"
     element-loading-text="退出登录中..."
+    element-loading-background="transparent"
     :element-loading-spinner="loadingIcon"
   >
     <div

@@ -12,7 +12,6 @@ const { text, pretext, icon } = defineProps<{
       {{ pretext }}
     </div>
     <div
-
       v-copying.toast="text" ml-a
       inline
     >
