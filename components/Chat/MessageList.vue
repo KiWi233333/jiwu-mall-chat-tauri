@@ -98,12 +98,7 @@ function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => vo
   // 重新拉取会话
   getChatContactInfo(roomId, user.getToken)?.then((res) => {
     if (res.code === StatusCode.SUCCESS) {
-      if (chat.contactMap[roomId]) { // 更新
-        chat.contactMap[roomId] = res.data;
-      }
-      else {
-        chat.getContactList.unshift(res.data as ChatContactVO); // 追加前置
-      }
+      chat.contactMap[roomId] = res.data as ChatContactVO; // 追加前置
       callBack && callBack(res.data as ChatContactVO);
     }
   }).catch(() => {
@@ -258,13 +253,9 @@ function resolveRevokeMsg(list: WSMsgRecall[]) {
     const msg = findMsg(p.msgId);
     const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${msg.fromUser.nickName}"`}撤回了一条消息`;
     // 更新会话列表
-    for (let k = 0; k < chat.getContactList.length; k++) {
-      const r = chat.getContactList[k];
-      if (r && r.roomId === p.roomId) {
-        r.text = msgContent;
-        break;
-      }
-    }
+    const targetContact = chat.contactMap[p.roomId];
+    if (targetContact)
+      targetContact.text = msgContent;
     if (msg) {
       msg.message.type = MessageType.RECALL;
       msg.message.content = msgContent;
@@ -294,13 +285,9 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
     const msgContent = `${p.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${msg.fromUser.nickName}"删除了一条成员消息`}`;
 
     // 更新会话列表
-    for (let k = 0; k < chat.getContactList.length; k++) {
-      const r = chat.getContactList[k];
-      if (r && p && r.roomId === p.roomId) {
-        r.text = msgContent;
-        break;
-      }
-    }
+    const targetContact = chat.contactMap[p.roomId];
+    if (targetContact)
+      targetContact.text = msgContent;
     if (msg) {
       msg.message.type = MessageType.DELETE;
       msg.message.content = msgContent;
@@ -314,25 +301,20 @@ function resolveDeleteMsg(list: WSMsgDelete[]) {
 
 // 更新会话
 function updateContact(roomId: number, data: Partial<ChatContactVO>, callBack?: (contact: ChatContactVO) => void) {
-  let isExist = false;
   if (updateContactList[roomId])
     return;
   updateContactList[roomId] = true;
-  for (let i = 0; i < chat.getContactList.length; i++) {
-    const p = chat.getContactList[i];
-    if (p && p.roomId === roomId) {
-      p.text = data.text || p.text;
-      p.unreadCount = data.unreadCount !== undefined ? data.unreadCount : p.unreadCount;
-      p.activeTime = data.activeTime !== undefined ? data.activeTime : p.activeTime;
-      p.avatar = data.avatar !== undefined ? data.avatar : p.avatar;
-      callBack && callBack(p);
-      isExist = true;
-      delete updateContactList[roomId];
-      break;
-    }
+  if (chat.contactMap[roomId]) {
+    chat.contactMap[roomId].text = data.text || chat.contactMap[roomId].text;
+    chat.contactMap[roomId].unreadCount = data.unreadCount !== undefined ? data.unreadCount : chat.contactMap[roomId].unreadCount;
+    chat.contactMap[roomId].activeTime = data.activeTime !== undefined ? data.activeTime : chat.contactMap[roomId].activeTime;
+    chat.contactMap[roomId].avatar = data.avatar !== undefined ? data.avatar : chat.contactMap[roomId].avatar;
+    callBack && callBack(chat.contactMap[roomId]);
+    delete updateContactList[roomId]; // 删除正在修改的load
   }
-  if (!isExist)
+  else {
     reloadContact(roomId);
+  }
 }
 
 // 添加消息到列表
@@ -433,7 +415,7 @@ const onScroll = useDebounceFn((e) => {
       chat.setReadList(chat.theContact.roomId);
     }
   }
-}, 500);
+}, 300);
 
 // 绑定事件
 chat.scrollBottom = scrollBottom;

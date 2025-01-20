@@ -141,12 +141,8 @@ export function useWebRTC(
     else { // 房间信息不存在，请求接口获取
       getChatContactInfo(roomId, user.getToken)?.then((res) => {
         if (res.code === StatusCode.SUCCESS) {
-          if (chat.contactMap[roomId]) { // 更新
-            chat.contactMap[roomId] = res.data;
-          }
-          else {
-            chat.getContactList.unshift(res.data as ChatContactVO); // 追加前置
-          }
+          chat.contactMap[roomId] = res.data as ChatContactVO; // 追加前置
+          theContact.value = JSON.parse(JSON.stringify(res.data)); // 赋值
         }
       }).catch(() => {
       });
