@@ -2,21 +2,21 @@ import { type } from "@tauri-apps/plugin-os";
 
 // 路由中间件
 export default defineNuxtRouteMiddleware((to, from) => {
-  if (from.path === "/msg")
-    abortNavigation();
+  if ((from.path !== "/msg" && to.path === "/msg")) // 消息页面进出禁止
+    return abortNavigation();
   if (to.path !== "/msg") {
     const user = useUserStore();
     // console.log(user.isLogin, "来自", from.path, "去往", to.path);
     if (checkDesktop()) { // 桌面端
       if (!user.isLogin) {
         loadLoginWindow();
-        if (from.path !== "/login") {
+        if ((from.path !== "/login" && to.path === "/login")) // 登录页面进出禁止
           return abortNavigation();
-        }
+        if ((from.path === "/login" && to.path !== "/login")) // 登录页面进出禁止
+          return abortNavigation();
       }
-      // 已登录
-      if (user.isLogin && to.path === "/login") {
-        return "/";
+      else if (user.isLogin && to.path === "/login") { // 已登录
+        return from.path !== "/login" ? abortNavigation() : "/";
       }
       else if (user.isLogin && to.path !== "/login") {
         loadMainWindow();
@@ -47,14 +47,18 @@ function loadLoginWindow() {
     return;
   }
   isLoadWind.value = true;
-  abortNavigation();
   // 关闭当前
   (async () => {
     try {
       step.value = "login";
       await createWindow("login");
-      await destroyWindow("msgbox");
-      await destroyWindow("main");
+      console.log("login");
+
+      setTimeout(async () => {
+        console.log("销毁");
+        await destroyWindow("msgbox");
+        await destroyWindow("main");
+      }, 300);
     }
     catch (e) {
       console.error(e);
@@ -79,7 +83,9 @@ function loadMainWindow() {
       step.value = "main";
       await createWindow("msgbox");
       await createWindow("main");
-      await destroyWindow("login");
+      setTimeout(async () => {
+        await destroyWindow("login");
+      }, 300);
     }
     catch (e) {
       console.error(e);
