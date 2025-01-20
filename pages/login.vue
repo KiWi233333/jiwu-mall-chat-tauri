@@ -55,9 +55,10 @@ onMounted(() => {
           key="login-bg"
           class="flex items-center gap-3 sm:(relative left-a top-a)"
         />
-        <div data-fades style="--anima: latter-blur-top;">
+        <div data-fades>
           <div
             key="login-bg"
+            style="--anima: blur-in;"
             class="login-logo absolute left-6 top-6 mb-4 flex items-center gap-3 sm:(static mb-6)"
           >
             <ElImage src="/logo.png" class="logo h-8 w-8" />
@@ -69,12 +70,14 @@ onMounted(() => {
           <FormLoginForm
             v-if="user.showLoginForm"
             key="login-form"
+            style="--anima: blur-in;"
             class="login-form"
           />
           <!-- 注册 -->
           <FormRegisterForm
             v-else-if="user.showRegisterForm"
             key="register-form"
+            style="--anima: blur-in;"
             :size="setting.isDesktop ? 'default' : 'large'"
             class="register-form"
           />
@@ -101,7 +104,7 @@ onMounted(() => {
       --at-apply: 'w-7 h-7';
     }
     .app-name {
-      --at-apply: 'text-1em';
+      --at-apply: 'text-1.2em';
     }
   }
   .login-form {

@@ -146,7 +146,7 @@ html.stop-transition-all {
 @keyframes blur-in {
   0% {
     transition: $transition-delay;
-    opacity: 0.8;
+    opacity: 0;
     filter: blur(2px);
   }
   100% {
