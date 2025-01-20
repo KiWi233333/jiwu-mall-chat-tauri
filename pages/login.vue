@@ -14,25 +14,8 @@ definePageMeta({
 
 const setting = useSettingStore();
 
-const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => {
   user.showLoginForm = true;
-  enable(!setting.settingPage.isCloseAllTransition);
-  // 初始化自动登录
-  if (user.isLogin && !user.isOnLogining) {
-    // user.isOnLogining = true;
-    // setTimeout(async () => {
-    //   if (setting.isDesktop) {
-    //     await destroyWindow("login");
-    //     await createWindow("msgbox");
-    //     createWindow("main");
-    //   }
-    //   else {
-    //     await navigateTo("/", { replace: true });
-    //   }
-    //   user.isOnLogining = false;
-    // }, 1500);
-  }
 });
 </script>
 
@@ -68,34 +51,33 @@ onMounted(() => {
     >
       <div class="mx-a w-85/100 text-center sm:(w-3/5 text-left)">
         <div
-          key="login-bg"
-          class="login-logo absolute left-6 top-6 mb-4 flex items-center gap-3 sm:(static mb-6)"
-        >
-          <ElImage src="/logo.png" class="logo h-8 w-8" />
-          <h3 class="app-name font-bold tracking-0.2em">
-            {{ appName }}
-          </h3>
-        </div>
-        <div
           v-if="setting.isDesktop"
           key="login-bg"
           class="flex items-center gap-3 sm:(relative left-a top-a)"
         />
-        <div class="relative">
-          <TransitionGroup name="blur-list" type="animation">
-            <!-- 登录 -->
-            <FormLoginForm
-              v-if="user.showLoginForm"
-              key="login-form"
-              class="login-form"
-            />
-            <!-- 注册 -->
-            <FormRegisterForm
-              v-else-if="user.showRegisterForm"
-              key="register-form"
-              :size="setting.isDesktop ? 'default' : 'large'"
-            />
-          </TransitionGroup>
+        <div data-fades style="--anima: latter-blur-top;">
+          <div
+            key="login-bg"
+            class="login-logo absolute left-6 top-6 mb-4 flex items-center gap-3 sm:(static mb-6)"
+          >
+            <ElImage src="/logo.png" class="logo h-8 w-8" />
+            <h3 class="app-name font-bold tracking-0.2em">
+              {{ appName }}
+            </h3>
+          </div>
+          <!-- 登录 -->
+          <FormLoginForm
+            v-if="user.showLoginForm"
+            key="login-form"
+            class="login-form"
+          />
+          <!-- 注册 -->
+          <FormRegisterForm
+            v-else-if="user.showRegisterForm"
+            key="register-form"
+            :size="setting.isDesktop ? 'default' : 'large'"
+            class="register-form"
+          />
         </div>
       </div>
     </div>

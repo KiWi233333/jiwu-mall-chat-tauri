@@ -309,8 +309,7 @@ html.stop-transition-all {
 }
 
 .blur-list-leave-active {
-  position: absolute;
-  z-index: -1;
+  position: absolute !important;
 }
 
 // 放大消失动画
@@ -884,6 +883,19 @@ html.stop-transition-all {
   100% {
     transform: none;
     filter: none;
+  }
+}
+/* 渐进动画 下进入 */
+@keyframes latter-blur-top {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5em);
+    filter: blur(0.8em);
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
   }
 }
 
