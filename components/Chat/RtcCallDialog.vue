@@ -281,7 +281,17 @@ function onMaxWindContextmenu(e: MouseEvent) {
   ContextMenu.showContextMenu(opt);
 }
 async function openMaxVideo() {
-  mainVideoRef.value?.requestFullscreen && await mainVideoRef.value?.requestFullscreen?.();
+  // @ts-expect-error
+  const reqFullscreen = mainVideoRef.value?.requestFullscreen || mainVideoRef.value?.webkitRequestFullscreen || mainVideoRef.value?.mozRequestFullScreen || mainVideoRef.value?.msRequestFullscreen;
+  if (!reqFullscreen) {
+    ElNotification.warning({
+      title: "兼容性",
+      message: "当前浏览器不支持全屏",
+      duration: 2000,
+    });
+    return;
+  }
+  await reqFullscreen?.();
 }
 
 
