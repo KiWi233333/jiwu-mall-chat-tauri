@@ -291,6 +291,28 @@ html.stop-transition-all {
   z-index: -1;
 }
 
+// blur 列表动画
+.blur-list-move,
+.blur-list-enter-active,
+.blur-list-leave-active {
+  transition-duration: $transition-delay;
+  transition-timing-function: $animate-cubic;
+  transition-property: opacity, transform, filter;
+}
+
+.blur-list-enter-from,
+.blur-list-leave-to {
+  opacity: 0;
+  filter: blur(6px);
+  // transform: scale(0.98) translateY(-2%);
+  // transform-origin: center top;
+}
+
+.blur-list-leave-active {
+  position: absolute;
+  z-index: -1;
+}
+
 // 放大消失动画
 .scale-pop-move,
 .scale-pop-enter-active,
@@ -927,7 +949,7 @@ html.stop-transition-all {
   transform-origin: center top;
 }
 .popper-fade-down-leave-active {
-  position: absolute;
+  position: absolute !important;
 }
 
 .popper-fade-up-move,

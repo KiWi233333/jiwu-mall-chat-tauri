@@ -82,7 +82,7 @@ onMounted(() => {
           class="flex items-center gap-3 sm:(relative left-a top-a)"
         />
         <div class="relative">
-          <TransitionGroup name="popper-blur">
+          <TransitionGroup name="blur-list" type="animation">
             <!-- 登录 -->
             <FormLoginForm
               v-if="user.showLoginForm"

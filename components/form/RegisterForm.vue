@@ -367,7 +367,7 @@ function toLoginForm() {
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
     <small v-if="isLoading" class="z-999 absolute-center-center">{{ loadingText }}</small>
-    <h4 mb-4 tracking-0.2em op-80>
+    <h4 mb-4 tracking-0.2em op-80 sm:mb-6>
       开启你的专属圈子✨
     </h4>
     <!-- 切换注册 -->

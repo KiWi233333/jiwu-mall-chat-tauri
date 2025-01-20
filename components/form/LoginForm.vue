@@ -261,7 +261,7 @@ const options = [
   >
     <template v-if="!user.isLogin">
       <div mb-4 text-sm tracking-0.2em op-80>
-        &emsp;聊你所想，聊天随心✨
+        聊你所想，聊天随心✨
       </div>
       <!-- 切换登录 -->
       <el-segmented
