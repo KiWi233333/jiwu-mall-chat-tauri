@@ -74,6 +74,8 @@ Note: This account does not have permissions for uploading images, changing pass
 
 ![RTC Call](./.doc/rtc1.png)
 
+- Voice and Video Chat - Desktop Share
+
 ![Desktop Share](./.doc/rtc3.png)
 
 - Global Dark Mode Light / Dark
