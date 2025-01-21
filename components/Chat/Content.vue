@@ -5,10 +5,9 @@ defineProps<{
   roomId?: string
 }>();
 const chat = useChatStore();
-const ChatMessageListRef = ref<InstanceType<typeof ChatMessageList>>();
 // 发送信息后触发
 async function onSendMsg(msg: ChatMessageVO) {
-  ChatMessageListRef.value?.appendMsg(msg);
+  chat?.appendMsg(msg);
   await nextTick();
   chat.scrollBottom?.(false);
 };
@@ -19,7 +18,7 @@ async function onSendMsg(msg: ChatMessageVO) {
     <!-- 房间信息 -->
     <ChatRoomInfo />
     <!-- 消息列表 -->
-    <ChatMessageList ref="ChatMessageListRef" />
+    <ChatMessageList />
     <!-- 发送 -->
     <ChatMsgForm class="flex-shrink-0" @submit="onSendMsg" />
   </div>

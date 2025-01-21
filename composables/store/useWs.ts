@@ -87,7 +87,6 @@ export const useWs = defineStore(
     async function initDefault(call: () => any) {
       const setting = useSettingStore();
       const user = useUserStore();
-
       if (!user.getToken) {
         webSocketHandler.value?.close?.();
         webSocketHandler.value?.disconnect?.();
@@ -111,7 +110,6 @@ export const useWs = defineStore(
         webSocketHandler?.value?.addEventListener("error", (e: Event) => {
           status.value = WsStatusEnum.CLOSE;
           webSocketHandler.value = null;
-          // console.log(e);
         });
         // 4、关闭监听
         webSocketHandler.value.addEventListener("close", (e: Event) => {
@@ -139,7 +137,7 @@ export const useWs = defineStore(
         return;
       const setting = useSettingStore();
       if (setting.isUseWebsocket) {
-        webSocketHandler.value.addEventListener("message", (event: MessageEvent) => {
+        webSocketHandler.value.onmessage = (event: MessageEvent) => {
           if (event && !event.data)
             return false;
           try {
@@ -157,7 +155,7 @@ export const useWs = defineStore(
           catch (err) {
             return null;
           }
-        });
+        };
       }
       else { // rust ws
         webSocketHandler.value.addListener((msg: BackMessage) => {

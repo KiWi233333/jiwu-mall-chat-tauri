@@ -90,12 +90,9 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     }
     await loadData(dto || props.dto);
     await nextTick();
-    enable(!setting.settingPage.isCloseAllTransition);
-    // if (setting.isMobileSize) { // 默认选中第一个
-    //   if (chat.contactList?.[0]?.roomId) {
-    //     theContactId.value = chat.contactList[0].roomId;
-    //   }
-    // }
+    setTimeout(() => {
+      enable(!setting.settingPage.isCloseAllTransition);
+    }, 0);
   }
   else if (roomId) { // 刷新某一房间
     refreshItem(roomId);
@@ -327,7 +324,7 @@ onBeforeUnmount(() => {
           :immediate="true" :auto-stop="false" loading-class="op-0" :no-more="pageInfo.isLast"
           @load="loadData(dto)"
         >
-          <div ref="autoAnimateRef" class="relative h-full">
+          <div ref="autoAnimateRef" class="h-full">
             <el-radio
               v-for="room in chat.getContactList" :key="room.roomId" aria-selected="true"
               style="border-radius: 0;" :value="room.roomId"

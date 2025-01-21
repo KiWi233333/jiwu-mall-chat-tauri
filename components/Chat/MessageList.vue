@@ -1,16 +1,13 @@
 <script lang="ts" setup>
-import type { WSMsgDelete, WSMsgRecall } from "~/types/chat/WsType";
-
-const updateContactList: { [key: number]: boolean } = {};
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
-const ws = useWs();
 const pageInfo = ref({
   cursor: null as null | string,
   isLast: true,
   size: 20,
 });
+const theRequest = ref<Promise<any> | null>(null);
 const isReload = ref(false);
 /**
  * 加载数据
@@ -56,8 +53,6 @@ async function loadData(call?: (data?: Message[]) => void) {
     pageInfo.value.cursor = null;
   });
 }
-
-const theRequest = ref<Promise<any> | null>(null);
 // 重新加载
 function reload(roomId: number) {
   // 重置滚动位置
@@ -93,20 +88,6 @@ function reload(roomId: number) {
   ;
 }
 
-// 重新加载会话列表
-function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => void) {
-  // 重新拉取会话
-  getChatContactInfo(roomId, user.getToken)?.then((res) => {
-    if (res.code === StatusCode.SUCCESS) {
-      chat.contactMap[roomId] = res.data as ChatContactVO; // 追加前置
-      callBack && callBack(res.data as ChatContactVO);
-    }
-  }).catch(() => {
-  }).finally(() => {
-    delete updateContactList[roomId];
-  });
-}
-
 // 监听房间
 watch(() => chat.theContact.roomId, (val, oldVal) => {
   if (val) {
@@ -121,213 +102,6 @@ watch(() => chat.theContact.roomId, (val, oldVal) => {
   immediate: true,
 });
 
-// 监听消息
-onMounted(() => {
-  // 1、新消息 type=1
-  mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
-    resolveNewMsg([data]);
-  });
-  // 2、撤回消息 type=2
-  mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
-    resolveRevokeMsg(ws.wsMsgList.recallMsg);
-  });
-  // 3、删除消息 type=3
-  mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
-    resolveDeleteMsg([data]);
-  });
-});
-// 移除监听
-function removeListeners() {
-  mitter.off(MittEventType.MESSAGE);
-  mitter.off(MittEventType.RECALL);
-  mitter.off(MittEventType.DELETE);
-}
-onUnmounted(removeListeners);
-// onDeactivated(removeListeners);
-onBeforeMount(() => {
-  // 监听消息
-  chat.setReadList(chat.theContact.roomId);
-});
-/**
- * 1. 新消息处理
- * @param list 原始列表
- */
-async function resolveNewMsg(list: ChatMessageVO[]) {
-  for (let i = 0; i < list.length; i++) {
-    const p = list[i];
-    if (!p)
-      continue;
-    const body = getBody(p) || "";
-    // 1）更新会话列表
-    updateContact(p.message.roomId, {
-      // text: `${p.fromUser.nickName}：${body}`,
-    }, (contact) => {
-      // 添加未读数量
-      if (p.fromUser.userId !== user.userInfo.id)
-        contact.unreadCount += 1;
-      contact.text = contact.type === RoomType.GROUP ? `${p.fromUser.nickName}: ${body}` : body;
-      contact.activeTime = Date.now();
-      if (p.message.roomId === chat.theContact.roomId && p.fromUser.userId !== user.userInfo.id)
-        chat.theContact.unreadCount += 1;
-    });
-    // 2）更新消息列表
-    if (p.message.roomId !== chat.theContact.roomId)
-      continue;
-    chat.setReadList(chat.theContact.roomId);
-    // 3）本房间追加消息
-    const msg = findMsg(p.message.id);
-    if (!msg) {
-      chat.theContact.msgList.push(p);
-      p.message.type === MessageType.RTC && handleRTCMsg(p); // 处理rtc消息 多一步滚动
-    }
-  }
-  ws.wsMsgList.newMsg.splice(0);
-}
-
-// 计算消息内容
-function getBody(msg: ChatMessageVO) {
-  if (msg.message.type === MessageType.SOUND) {
-    const _msg = msg as ChatMessageVO<SoundBodyMsgVO>;
-    return `[语音] ${getSecondsText(_msg?.message?.body?.second || 0)}`;
-  }
-  else if (msg.message.type === MessageType.IMG) {
-    const _msg = msg as ChatMessageVO<ImgBodyMsgVO>;
-    return `[图片] ${_msg?.message.content}`;
-  }
-  else if (msg.message.type === MessageType.FILE) {
-    const _msg = msg as ChatMessageVO<FileBodyMsgVO>;
-    return `[${_msg.message.body?.fileName || "文件"}] ${_msg?.message.content}`;
-  }
-  else if (msg.message.type === MessageType.VIDEO) {
-    const _msg = msg as ChatMessageVO<ImgBodyMsgVO>;
-    return `[视频] ${_msg?.message.content}`;
-  }
-  else if (msg.message.type === MessageType.RTC) {
-    const _msg = msg as ChatMessageVO<RtcLiteBodyMsgVO>;
-    return `[${_msg.message.body?.typeText || "通讯聊天"}] ${_msg?.message.content}`;
-  }
-
-  return msg.message.content;
-}
-
-// 计算语音消息文本
-function getSecondsText(second?: number) {
-  if (!second)
-    return "";
-  if (second < 60) {
-    return `${second}"`;
-  }
-  else if (second < 3600) {
-    const minute = Math.floor(second / 60);
-    const second_ = second % 60;
-    return `${minute}'${second_}"`;
-  }
-}
-
-// 2. 处理rtc消息
-function handleRTCMsg(msg: ChatMessageVO) {
-  const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
-  // 更新滚动位置
-  if (msg.message.roomId === chat.theContact.roomId && rtcMsg.senderId === user.userInfo.id) {
-    nextTick(() => {
-      chat.scrollBottom(true);
-    });
-  }
-}
-
-
-/**
- * 3. 撤回消息处理
- * @param list 列表
- */
-function resolveRevokeMsg(list: WSMsgRecall[]) {
-  for (let i = 0; i < list.length; i++) {
-    const p = list[i];
-    if (!p)
-      return;
-    if (p.roomId !== chat.theContact.roomId) {
-      reloadContact(p.roomId);
-      continue;
-    }
-    // 本房间修改状态
-    const msg = findMsg(p.msgId);
-    const msgContent = `${msg.fromUser.userId === user.userInfo.id ? "我" : `"${msg.fromUser.nickName}"`}撤回了一条消息`;
-    // 更新会话列表
-    const targetContact = chat.contactMap[p.roomId];
-    if (targetContact)
-      targetContact.text = msgContent;
-    if (msg) {
-      msg.message.type = MessageType.RECALL;
-      msg.message.content = msgContent;
-      msg.message.body = undefined;
-      ws.wsMsgList.recallMsg = ws.wsMsgList.recallMsg.filter(k => k.msgId !== p.msgId);
-    }
-  }
-  // 消费消息
-  ws.wsMsgList.deleteMsg.splice(0);
-}
-
-/**
- * 4. 删除消息处理
- * @param list 列表
- */
-function resolveDeleteMsg(list: WSMsgDelete[]) {
-  for (let i = 0; i < list.length; i++) {
-    const p = list[i];
-    if (!p)
-      return;
-    if (p.roomId !== chat.theContact.roomId) {
-      reloadContact(p.roomId);
-      continue;
-    }
-    // 本房间修改状态
-    const msg = findMsg(p.msgId);
-    const msgContent = `${p.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${msg.fromUser.nickName}"删除了一条成员消息`}`;
-
-    // 更新会话列表
-    const targetContact = chat.contactMap[p.roomId];
-    if (targetContact)
-      targetContact.text = msgContent;
-    if (msg) {
-      msg.message.type = MessageType.DELETE;
-      msg.message.content = msgContent;
-      msg.message.body = undefined;
-      ws.wsMsgList.deleteMsg = ws.wsMsgList.deleteMsg.filter(k => k.msgId !== p.msgId);
-    }
-  }
-  // 消费消息
-  ws.wsMsgList.deleteMsg.splice(0);
-}
-
-// 更新会话
-function updateContact(roomId: number, data: Partial<ChatContactVO>, callBack?: (contact: ChatContactVO) => void) {
-  if (updateContactList[roomId])
-    return;
-  updateContactList[roomId] = true;
-  if (chat.contactMap[roomId]) {
-    chat.contactMap[roomId].text = data.text || chat.contactMap[roomId].text;
-    chat.contactMap[roomId].unreadCount = data.unreadCount !== undefined ? data.unreadCount : chat.contactMap[roomId].unreadCount;
-    chat.contactMap[roomId].activeTime = data.activeTime !== undefined ? data.activeTime : chat.contactMap[roomId].activeTime;
-    chat.contactMap[roomId].avatar = data.avatar !== undefined ? data.avatar : chat.contactMap[roomId].avatar;
-    callBack && callBack(chat.contactMap[roomId]);
-    delete updateContactList[roomId]; // 删除正在修改的load
-  }
-  else {
-    reloadContact(roomId);
-  }
-}
-
-// 添加消息到列表
-function appendMsg(data: ChatMessageVO) {
-  if (data && data.message.id && !findMsg(data.message.id)) {
-    chat.theContact.msgList.push(data);
-  }
-}
-function findMsg(msgId: number) {
-  if (!msgId)
-    return undefined;
-  return chat.theContact.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
-}
 
 // 滚动
 const scrollbarRef = ref();
@@ -417,26 +191,41 @@ const onScroll = useDebounceFn((e) => {
   }
 }, 300);
 
-// 绑定事件
-chat.scrollBottom = scrollBottom;
-chat.scrollReplyMsg = scrollReplyMsg;
-chat.saveScrollTop = saveScrollTop;
-chat.scrollTop = scrollTop;
-
+// 绑定事件 MSG_LIST_SCROLL
+onMounted(() => {
+  mitter.on(MittEventType.MSG_LIST_SCROLL, ({ type, payload }) => {
+    switch (type) {
+      case "scrollBottom":
+        scrollBottom(payload?.animate);
+        break;
+      case "scrollReplyMsg":
+        scrollReplyMsg(payload?.msgId, payload.gapCount, payload?.animate);
+        break;
+      case "saveScrollTop":
+        saveScrollTop();
+        break;
+      case "scrollTop":
+        scrollTop(payload?.size, payload?.animate);
+        break;
+    }
+  });
+});
 onBeforeUnmount(() => {
   timer.value && clearTimeout(timer.value);
   timer.value = null;
+  // 解绑事件
+  mitter.off(MittEventType.MSG_LIST_SCROLL);
 });
 onDeactivated(() => {
   timer.value && clearTimeout(timer.value);
   timer.value = null;
+  // 解绑事件
+  mitter.off(MittEventType.MSG_LIST_SCROLL);
 });
 
 // 暴露
 defineExpose({
   reload,
-  appendMsg,
-  findMsg,
 });
 </script>
 
