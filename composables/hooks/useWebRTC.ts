@@ -603,7 +603,11 @@ export function useWebRTC(
       // 获取房间信息
       handleContactInfo(roomId);
       // 用户接受通话，继续原有流程
-      getDevices().then(() => getLocalStream(type));
+      let isLocalStreamOk = false;
+      getDevices().then(async () => {
+        await getLocalStream(type);
+        isLocalStreamOk = true;
+      });
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
         // 添加确认和拒绝的方法
@@ -613,8 +617,6 @@ export function useWebRTC(
           resolve(true);
         };
         const rejectCall = () => {
-          connectionStatus.value = CallStatusEnum.REJECT;
-          endCall(CallStatusEnum.REJECT);
           resolve(false); // 拒绝
         };
         openDialog(type, { confirmCall, rejectCall });
@@ -624,11 +626,9 @@ export function useWebRTC(
       });
       // 用户接受通话，继续原有流程
       await nextTick();
-      await getDevices();
-      let isLocalStreamOk = await getLocalStream(type);
-
       if (!userConfirmed) {
         // 用户拒绝或超时
+        connectionStatus.value = CallStatusEnum.REJECT;
         await endCall(CallStatusEnum.REJECT);
         return false;
       }
