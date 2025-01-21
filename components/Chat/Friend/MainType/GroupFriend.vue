@@ -138,4 +138,3 @@ const loadingIcon = `
 
 <style lang="scss" scoped>
 </style>
-

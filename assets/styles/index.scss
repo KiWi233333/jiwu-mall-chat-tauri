@@ -152,6 +152,19 @@ body .el-message {
 .el-overlay {
   border-radius: 0.3rem;
 }
+
+
+.el-dropdown-menu {
+  .el-dropdown-menu__item {
+    --at-apply: "h-fit mx-1 transition-100 rounded-1";
+    &:not(.is-disabled) {
+      &:hover,
+      &:focus {
+        --at-apply: "bg-[var(--el-color-primary)] text-color shadow";
+      }
+    }
+  }
+}
 /**  ------------------------------vuepress-markdown---------------------------------------  **/
 .md-editor {
   .md-editor-preview-wrapper {

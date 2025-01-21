@@ -206,6 +206,10 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 }
 
 const ws = useWs();
+// 成员变动消息
+const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
+  immediate: false,
+});
 async function watchMemberChange(len: number) {
   if (!len)
     return;
@@ -262,13 +266,17 @@ async function watchMemberChange(len: number) {
     ws.wsMsgList.memberMsg.splice(0);
   }
 }
-// 成员变动消息
-const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
-  immediate: false,
-});
-// 初始化
-reload();
+
+// 跳转好友页面
+function toFriendPage() {
+  setTimeout(() => {
+    navigateTo("/friend");
+  }, 200);
+}
+
 onMounted(() => {
+  // 初始化
+  reload();
   enable(false);
 });
 onBeforeUnmount(() => {
@@ -287,24 +295,26 @@ onBeforeUnmount(() => {
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
-        id="search-contact"
-        v-model.lazy="chat.searchKeyWords"
-        class="mr-2"
-        type="text"
-        clearable
-        autocomplete="off"
-        :prefix-icon="ElIconSearch"
-        minlength="2"
-        maxlength="30"
-        placeholder="搜索"
+        id="search-contact" v-model.lazy="chat.searchKeyWords" class="mr-2" type="text" clearable
+        autocomplete="off" :prefix-icon="ElIconSearch" minlength="2" maxlength="30" placeholder="搜索"
       />
-      <BtnElButton
-        plain
-        style="width: 2rem;transition: 200ms;"
-        @click="showDialog = true"
-      >
-        <i i-carbon:add-large p-2 />
-      </BtnElButton>
+      <!-- 添加 -->
+      <el-dropdown placement="bottom-end" popper-class="dropdown-btns" trigger="click">
+        <BtnElButton plain style="width: 2rem;transition: 200ms;">
+          <i i-carbon:add-large p-2 />
+        </BtnElButton>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item :icon="ElIconUser" @click="toFriendPage">
+              添加好友
+            </el-dropdown-item>
+            <!-- divided -->
+            <el-dropdown-item divided :icon="ElIconPlus" @click="showDialog = true">
+              新建群聊
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
     <!-- 添加骨架屏 -->
     <div v-if="isReload" class="animate-(fade-in duration-200)">
@@ -314,27 +324,27 @@ onBeforeUnmount(() => {
     <el-scrollbar wrap-class="w-full h-full" class="contact-list">
       <el-radio-group v-model="theContactId" class="relative w-full">
         <ListAutoIncre
-          :immediate="true"
-          :auto-stop="false"
-          loading-class="op-0"
-          :no-more="pageInfo.isLast"
+          :immediate="true" :auto-stop="false" loading-class="op-0" :no-more="pageInfo.isLast"
           @load="loadData(dto)"
         >
-          <div ref="autoAnimateRef" class="h-full">
+          <div ref="autoAnimateRef" class="relative h-full">
             <el-radio
-              v-for="room in chat.getContactList"
-              :key="room.roomId"
-              aria-selected="true"
-              style="border-radius: 0;"
-              :value="room.roomId"
+              v-for="room in chat.getContactList" :key="room.roomId" aria-selected="true"
+              style="border-radius: 0;" :value="room.roomId"
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"
                 class="flex gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
                 @contextmenu.stop="onContextMenu($event, room)"
               >
-                <el-badge :hidden="!room.unreadCount" :max="99" :value="room.unreadCount" class="h-2.4rem w-2.4rem flex-shrink-0">
-                  <CardElImage :src="BaseUrlImg + room.avatar" fit="cover" class="h-2.4rem w-2.4rem object-cover card-default" />
+                <el-badge
+                  :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
+                  class="h-2.4rem w-2.4rem flex-shrink-0"
+                >
+                  <CardElImage
+                    :src="BaseUrlImg + room.avatar" fit="cover"
+                    class="h-2.4rem w-2.4rem object-cover card-default"
+                  />
                 </el-badge>
                 <div class="flex flex-1 flex-col justify-between truncate">
                   <div flex truncate>
@@ -346,7 +356,8 @@ onBeforeUnmount(() => {
                     </span>
                   </div>
                   <small
-                    overflow-hidden truncate op-70 :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                    overflow-hidden truncate op-70
+                    :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
                   >{{ room.text }}</small>
                 </div>
               </div>
@@ -354,9 +365,7 @@ onBeforeUnmount(() => {
           </div>
         </ListAutoIncre>
         <template #done>
-          <div
-            class="mb-6 w-full text-center text-mini"
-          >
+          <div class="mb-6 w-full text-center text-mini">
             暂无更多
           </div>
         </template>
@@ -377,7 +386,8 @@ onBeforeUnmount(() => {
     margin: 0;
     width: 100%;
   }
-  :deep(.el-radio){
+
+  :deep(.el-radio) {
     width: 100%;
     height: fit-content;
     display: block;
@@ -386,16 +396,20 @@ onBeforeUnmount(() => {
     transition: 200ms border;
     margin: 0;
     margin-bottom: 0.5rem;
+
     &.is-checked {
       .group {
         background-color: var(--el-color-primary-light-9);
       }
+
       background-color: #7c7c7c1a;
     }
+
     .el-radio__input {
       display: none;
       border-color: transparent;
     }
+
     .el-radio__label {
       padding: 0;
     }
