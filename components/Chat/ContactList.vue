@@ -90,9 +90,7 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     }
     await loadData(dto || props.dto);
     await nextTick();
-    setTimeout(() => {
-      enable(!setting.settingPage.isCloseAllTransition);
-    }, 0);
+    enable(!setting.settingPage.isCloseAllTransition);
   }
   else if (roomId) { // 刷新某一房间
     refreshItem(roomId);
@@ -271,9 +269,9 @@ function toFriendPage() {
   }, 200);
 }
 
+// 初始化
+reload();
 onMounted(() => {
-  // 初始化
-  reload();
   enable(false);
 });
 onBeforeUnmount(() => {

@@ -43,11 +43,9 @@ function loadLoginWindow() {
   // 关闭当前
   (async () => {
     try {
-      await createWindow("login");
-      setTimeout(() => {
-        destroyWindow("msgbox");
-        destroyWindow("main");
-      }, 500);
+      await createWindow(LOGIN_WINDOW_LABEL);
+      await destroyWindow(MSGBOX_WINDOW_LABEL);
+      await destroyWindow(MAIN_WINDOW_LABEL);
     }
     catch (e) {
       console.error(e);
@@ -60,11 +58,9 @@ function loadLoginWindow() {
  */
 async function loadMainWindow() {
   try {
-    await createWindow("msgbox");
-    await createWindow("main");
-    setTimeout(() => {
-      destroyWindow("login");
-    }, 1000);
+    await createWindow(MSGBOX_WINDOW_LABEL);
+    await createWindow(MAIN_WINDOW_LABEL);
+    await destroyWindow(LOGIN_WINDOW_LABEL);
   }
   catch (e) {
     console.error(e);
