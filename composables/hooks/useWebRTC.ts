@@ -118,7 +118,7 @@ export function useWebRTC(
    * 获取房间信息
    * @param roomId 房间id
    */
-  function handleContactInfo(roomId: number) {
+  async function handleContactInfo(roomId: number) {
     // 先清空
     theContact.value = {
       activeTime: undefined,
@@ -139,13 +139,11 @@ export function useWebRTC(
       };
     }
     else { // 房间信息不存在，请求接口获取
-      getChatContactInfo(roomId, user.getToken)?.then((res) => {
-        if (res.code === StatusCode.SUCCESS) {
-          chat.contactMap[roomId] = res.data as ChatContactVO; // 追加前置
-          theContact.value = JSON.parse(JSON.stringify(res.data)); // 赋值
-        }
-      }).catch(() => {
-      });
+      const res = await getChatContactInfo(roomId, user.getToken);
+      if (res && res.code === StatusCode.SUCCESS) {
+        chat.contactMap[roomId] = res.data as ChatContactVO; // 追加前置
+        theContact.value = JSON.parse(JSON.stringify(res.data)); // 赋值
+      }
     }
   }
 
@@ -584,6 +582,12 @@ export function useWebRTC(
   async function handleOffer({ data: offer, type, roomId }: WSRtcCallMsg) {
     try {
       connectionStatus.value = CallStatusEnum.CALLING;
+      // 预备接听
+      rtcMsg.value = {
+        roomId,
+        callType: type,
+        senderId: offer.senderId,
+      };
       await nextTick();
       // 开启铃声
       startBell();
@@ -596,23 +600,23 @@ export function useWebRTC(
         await win.show();
         await win.setFocus();
       }
+      // 获取房间信息
+      handleContactInfo(roomId);
       // 用户接受通话，继续原有流程
       getDevices().then(() => getLocalStream(type));
       // 等待用户确认接听
       const userConfirmed = await new Promise((resolve) => {
         // 添加确认和拒绝的方法
         const confirmCall = () => {
-          resolve(true);
           connectionStatus.value = CallStatusEnum.ACCEPT;
           stopBell(); // 停止铃声
+          resolve(true);
         };
         const rejectCall = () => {
-          resolve(false);
           connectionStatus.value = CallStatusEnum.REJECT;
           endCall(CallStatusEnum.REJECT);
+          resolve(false); // 拒绝
         };
-        // 获取房间信息
-        handleContactInfo(roomId);
         openDialog(type, { confirmCall, rejectCall });
 
         // 30秒超时自动拒绝
@@ -633,12 +637,6 @@ export function useWebRTC(
         await getDevices();
         isLocalStreamOk = await getLocalStream(type);
       }
-      // 确认接听
-      rtcMsg.value = {
-        roomId,
-        callType: type,
-        senderId: offer.senderId,
-      };
       await nextTick();
 
       // 2. 创建 RTCPeerConnection
