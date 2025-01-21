@@ -439,7 +439,7 @@ function exitGroup() {
               />
               <small
                 v-else
-                class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+                class="h-2.4rem w-2.4rem flex-row-c-c flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
               >
                 <i class="i-solar-user-line-duotone p-2.5 op-80" />
               </small>
@@ -533,7 +533,7 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain @click="exitGroup()">
+    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round @click="exitGroup()">
       <span>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>

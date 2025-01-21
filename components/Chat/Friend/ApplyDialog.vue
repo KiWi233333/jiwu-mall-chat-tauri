@@ -25,8 +25,12 @@ const user = useUserStore();
 // 好友申请
 async function addFrendApplyById() {
   applyFormRef?.value?.validate(async (valid: boolean) => {
-    if (!valid || !props.userId)
+    if (!valid)
       return;
+    if (!props.userId) {
+      ElMessage.warning("请先选择好友！");
+      return;
+    }
     // 请求
     const res = await addFriendApply({
       ...applyForm.value,

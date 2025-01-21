@@ -116,6 +116,9 @@ function deleteFriend(userId: string) {
 
 // 好友申请
 const isShowApply = ref(false);
+function handleApplyFriend(userId: string) {
+  isShowApply.value = true;
+}
 // 执行最后一次
 watch(userId, (val: string) => {
   loadData(val);
@@ -237,13 +240,13 @@ const loadingIcon = `
         key="add"
         icon-class="i-solar:user-plus-bold p-2 mr-2"
         type="primary"
-        @click="isShowApply = true"
+        @click="handleApplyFriend(userId)"
       >
         添加好友&ensp;
       </BtnElButton>
     </div>
     <!-- 好友申请 -->
-    <ChatFriendApplyDialog v-model:show="isShowApply" :target-user-info-id="userId" @submit="chat.setTheFriendOpt(FriendOptType.Empty, {})" />
+    <ChatFriendApplyDialog v-model:show="isShowApply" :user-id="userId" @submit="chat.setTheFriendOpt(FriendOptType.Empty, {})" />
   </div>
 </template>
 
