@@ -326,6 +326,7 @@ onBeforeUnmount(() => {
             <el-radio
               v-for="room in chat.getContactList" :key="room.roomId" aria-selected="true"
               style="border-radius: 0;" :value="room.roomId"
+              @click="() => setting.isOpenContact = false"
             >
               <div
                 :class="{ 'shadow-inset': room.roomId === theContactId }"

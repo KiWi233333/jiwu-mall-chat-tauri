@@ -179,19 +179,17 @@ export const useChatStore = defineStore(
       }
     }
     // 监听 新消息
-    onMounted(() => {
-      // 1、新消息 type=1
-      mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
-        resolveNewMsg([data]);
-      });
-      // 2、撤回消息 type=2
-      mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
-        resolveRevokeMsg(ws.wsMsgList.recallMsg);
-      });
-      // 3、删除消息 type=3
-      mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
-        resolveDeleteMsg([data]);
-      });
+    // 1、新消息 type=1
+    mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
+      resolveNewMsg([data]);
+    });
+    // 2、撤回消息 type=2
+    mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
+      resolveRevokeMsg(ws.wsMsgList.recallMsg);
+    });
+    // 3、删除消息 type=3
+    mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
+      resolveDeleteMsg([data]);
     });
     // 移除监听
     function removeListeners() {

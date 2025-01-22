@@ -147,6 +147,7 @@ const activeMenu = computed({
             :value="p.tipValue?.value || 0"
             :hidden="!p.tipValue.value"
             :max="99"
+            :offset="[-15, 2]"
             class="h-full w-full flex-row-c-c flex-col"
             :is-dot="p.isDot"
           >

@@ -200,8 +200,8 @@ defineExpose({
                 <span class="block max-w-18 truncate">{{ p.nickName || "未填写" }}</span>
               </div>
               <!-- 空白 -->
-              <div v-if="getCheckList.length <= 0" class="grid-area-[1/1/5/5] h-full w-full flex-row-c-c text-small">
-                <i i-solar:user-line-duotone mr-2 p-3 />
+              <div v-if="getCheckList.length <= 0" class="grid-area-[1/1/5/5] h-full w-full flex-row-c-c text-small-50">
+                <i i-solar:user-plus-broken mr-2 p-2.5 />
                 <p>未选择成员</p>
               </div>
             </div>
