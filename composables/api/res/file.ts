@@ -124,11 +124,7 @@ export async function downloadFile(url: string, fileName: string, options: {
     dir = newDir;
   }
 
-  let finalFullPath = targetPath || `${dir}\\${fileName}`;
-  // 适配andorid和linux
-  if (setting.osType === "android" || setting.osType === "linux") {
-    finalFullPath = finalFullPath.replace(/\\/g, "/");
-  }
+  const finalFullPath = computedPath(targetPath || `${dir}\\${fileName}`);
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
@@ -166,8 +162,22 @@ export async function downloadFile(url: string, fileName: string, options: {
   }
 }
 
+
 /**
- * 下载文件 by streamSaver
+ * 计算路径
+ * @param path 路径
+ * @returns 新的路径
+ */
+export function computedPath(path: string) {
+  const setting = useSettingStore();
+  if (["andriod", "linux"].includes(setting.osType)) { // 安卓 linux
+    return path.replace(/\\/g, "/");
+  }
+  return path;
+}
+
+/**
+ * 下载文件 by streamSaver web端
  * https://segmentfault.com/a/1190000044342886
  * @param url 下载地址
  * @param fileName 下载后的文件名
@@ -176,6 +186,13 @@ export async function downloadFile(url: string, fileName: string, options: {
  */
 export function downloadFileByStreamSaver(url: string, fileName: string, callback?: (progress: number) => void) {
   const progress = ref(0);
+  // 若不支持
+  if (!window?.WritableStream) {
+    window.open(url);
+    return {
+      progress,
+    };
+  }
   let writer: WritableStreamDefaultWriter<Uint8Array>;
   // 【步骤1】创建一个文件，该文件支持写入操作
   const fileStream = streamSaver.createWriteStream(fileName); // 这里传入的是下载后的文件名，这个名字可以自定义

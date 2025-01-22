@@ -192,7 +192,7 @@ export const useSettingStore = defineStore(
         ElMessage.error("选择路径不存在，请重新选择！");
         return;
       }
-      appDataDownloadDirUrl.value = setting.isDesktop ? path : path.split("\\").slice(0, -1).join("\\"); // 兼容移动端
+      appDataDownloadDirUrl.value = computedPath(setting.isDesktop ? path : path.split("\\").slice(0, -1).join("\\")); // 兼容移动端
       ElMessage.success("下载路径已更改！");
       return appDataDownloadDirUrl.value;
     }
@@ -205,7 +205,7 @@ export const useSettingStore = defineStore(
         return;
       }
       // 去除文件名
-      const folderPath = item.localPath.split("\\").slice(0, -1).join("\\");
+      const folderPath = computedPath(item.localPath.split("\\").slice(0, -1).join("\\"));
       try {
         if (!await existsFile(folderPath)) {
           ElMessage.error("文件夹不存在！");
