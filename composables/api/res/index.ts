@@ -1,7 +1,6 @@
 import type { EpPropMergeType } from "element-plus/lib/utils";
 import type { Config, Extra, UploadProgress } from "qiniu-js/esm/upload/base";
 import type { PartialObserver } from "qiniu-js/esm/utils/observable";
-import type { StringLiteralLike } from "typescript";
 import * as qiniu from "qiniu-js";
 
 /**
@@ -157,7 +156,11 @@ export interface AppVersionInfoVO {
   /**
    * TAURI Updater内容
    */
-  updaterInfo?: StringLiteralLike
+  updaterJson?: AppPlatformsJSON
+  /**
+   * 创建时间
+   */
+  createTime: string
 }
 
 
@@ -174,6 +177,7 @@ export function getLatestVersion() {
 export interface AppPlatformsJSON {
   version: string
   notes?: string
+  pub_date?: string
   platforms: AppPlatforms
 }
 export interface AppPlatforms {
