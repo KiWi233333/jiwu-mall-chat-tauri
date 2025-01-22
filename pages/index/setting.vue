@@ -128,8 +128,8 @@ onMounted(async () => {
   // 公告列表
   if (setting.isDesktop) {
     const update = (await check()) as Update;
-    if (!noticeList.value.find(item => item.version === update?.version)) {
-      getNewVersionInfo(update.version);
+    if (update && !noticeList.value.find(item => item.version === update?.version)) {
+      getNewVersionInfo(update?.version);
     }
   }
   // 检查更新
@@ -346,7 +346,7 @@ onDeactivated(() => {
       <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
         关于更新
         <div class="ml-a flex items-center gap-4">
-          <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">v{{ setting.appUploader.version }}版本公告</span>
+          <span v-if="setting.appUploader.version" class="text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">v{{ setting.appUploader.version }}版本公告</span>
           <template v-if="setting.isDesktop">
             <el-badge
               v-if="!setting.appUploader.isUpdating"
@@ -356,7 +356,7 @@ onDeactivated(() => {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                plain round
+                round plain
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -460,7 +460,7 @@ onDeactivated(() => {
           preview-theme="smart-blue"
           :code-foldable="false"
           code-theme="a11y"
-          class="mt-2 text-1em !bg-transparent"
+          class="mt-2 px-4 text-1em !bg-transparent"
           :model-value="notice"
         />
       </div>
@@ -479,20 +479,21 @@ onDeactivated(() => {
       <template #header>
         <h3>&emsp;更新日志 </h3>
       </template>
-      <div class="max-h-60vh min-h-40vh w-90vw overflow-y-auto sm:w-400px">
-        <el-timeline style="max-width: 600px">
+      <div class="max-h-40vh min-h-30vh w-88vw animate-[blur-in_.6s] overflow-y-auto pl-4 sm:max-h-60vh sm:w-400px">
+        <el-timeline style="max-width: 100%;">
           <el-timeline-item
-            v-for="activity in noticeList.sort((a, b) => dayjs(b.createTime).diff(dayjs(a.createTime)))"
-            :key="activity.notice"
-            :color="getIsNewVersion(activity.version) ? 'var(--el-color-primary)' : ''"
+            v-for="(item, i) in noticeList.sort((a, b) => dayjs(b.createTime).diff(dayjs(a.createTime)))"
+            :key="item.notice"
+            :color="i === 0 ? 'var(--el-color-primary)' : ''"
           >
             <div class="text-xl font-bold">
-              v{{ activity.version }}
+              v{{ item.version }}
+              <small v-if="item.version === setting.appUploader.version" class="!text-color-info text-mini">当前</small>
               <div class="mt-2 text-mini">
-                {{ activity.createTime }}
+                {{ item.createTime }}
               </div>
             </div>
-            <div v-if="activity.notice" class="relative max-h-20em truncate">
+            <div v-if="item.notice" class="relative max-h-20em truncate">
               <MdPreview
                 language="zh-CN"
                 editor-id="notice-toast"
@@ -500,13 +501,13 @@ onDeactivated(() => {
                 :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
                 :code-foldable="false"
                 code-theme="a11y"
-                style="font-size: 12px;"
+                style="font-size: 12px;padding:0;"
                 class="text-overflow-2 mt-2 op-60 transition-opacity !bg-transparent hover:op-100"
-                :model-value="activity.notice"
+                :model-value="item.notice"
               />
               <div
                 class="linear-bt absolute bottom-0 left-0 w-full cursor-pointer py-2 text-center hover:text-color-info text-small"
-                @click="showVersionNotice(activity.version)"
+                @click="showVersionNotice(item.version)"
               >
                 查看更多
               </div>
@@ -576,6 +577,12 @@ onDeactivated(() => {
 
   .el-input__inner {
     padding-left: 0.5rem;
+  }
+}
+:deep(.md-editor-preview-wrapper) {
+  padding: 0;
+  h1 {
+    font-size: 1.6em;
   }
 }
 :deep(.notice-toast-preview-wrapper) {

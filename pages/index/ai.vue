@@ -202,7 +202,6 @@ function handleNewChat() {
   });
 }
 
-const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(() => active());
 onActivated(() => active());
 function active() {
@@ -215,8 +214,6 @@ function active() {
   nextTick(() => {
     scrollBottom(false);
   });
-  // 切换页面时关闭动画
-  enable(!setting.settingPage.isCloseAllTransition);
 }
 </script>
 
@@ -229,7 +226,7 @@ function active() {
     </p>
     <!-- 内容 -->
     <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="bg-light card-default dark:bg-dark-9">
-      <div ref="autoAnimateRef" relative flex flex-col>
+      <div relative flex flex-col>
         <!-- 消息适配器 -->
         <ChatMsgMain
           v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
