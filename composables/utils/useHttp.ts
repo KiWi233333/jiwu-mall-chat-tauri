@@ -65,7 +65,7 @@ export function httpRequest<T = unknown>(
         ElMessage.error({
           grouping: true,
           repeatNum: 0,
-          message: "请求出错，请重试！",
+          message: "请求出错，请稍后重试！",
         });
       })();
     },

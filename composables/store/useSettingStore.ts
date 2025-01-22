@@ -222,12 +222,23 @@ export const useSettingStore = defineStore(
      * 检查更新
      * @returns 是否更新
      */
-    async function checkUpdates(checkLog = false) {
+    async function checkUpdates(checkLog = false, {
+      handleUploadInfo,
+      handleOnUpload,
+    }: {
+      handleUploadInfo?: (update: Update) => void,
+      handleOnUpload?: (update: Update) => void,
+    } = {
+
+    }) {
       appUploader.value.isCheckUpdatateLoad = true;
       try {
         if (isWeb.value || isMobile.value)
           return false;
         const update = (await check()) as Update;
+        if (!update) {
+          handleUploadInfo && handleUploadInfo(update);
+        }
         appUploader.value.isUpload = !!update?.available;
         appUploader.value.isCheckUpdatateLoad = false;
         if (!appUploader.value.isUpload || !update.version) {
@@ -239,6 +250,7 @@ export const useSettingStore = defineStore(
             ElMessage.info("当前版本已是最新版本！");
           return false;
         }
+        appUploader.value.newVersion = update?.version; // 新版本号
         // 检查是否忽略当前版本
         if (!checkLog && appUploader.value.ignoreVersion.includes(update.version))
           return false;
@@ -248,6 +260,7 @@ export const useSettingStore = defineStore(
           center: true,
           callback: async (action: Action) => {
             if (action === "confirm") {
+              handleOnUpload && handleOnUpload(update);
               appUploader.value.isUpdating = true;
               try {
                 appUploader.value.contentLength = 0;

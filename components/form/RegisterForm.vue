@@ -42,13 +42,11 @@ const rules = reactive<FormRules>({
       message: "英文开头、字母数字下划线组成",
       trigger: "change",
     },
-    { min: 6, max: 30, message: "长度在6-30个字符！", trigger: "change" },
+    { min: 6, max: 30, message: "长度在6-30个字符！", trigger: "blur" },
     {
-      asyncValidator: async () => {
-        return await checkUsername();
-      },
+      asyncValidator: checkUsername,
       message: "该用户名已被使用！",
-      trigger: "change",
+      trigger: "blur",
     },
   ],
   password: [

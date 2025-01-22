@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { getVersion } from "@tauri-apps/api/app";
 import { open as openFile } from "@tauri-apps/plugin-shell";
+import { check, type Update } from "@tauri-apps/plugin-updater";
+import { dayjs } from "element-plus";
 import { MdPreview } from "md-editor-v3";
 import { DEFAULT_RTC_CALL_BELL_URL } from "~/composables/store/useSettingStore";
 import { appKeywords, appName } from "~/constants";
@@ -88,42 +90,79 @@ const theme = computed({
 const showNotice = ref(false);
 const notice = ref<string>("# 暂无内容");
 
+// 显示新版本 + 当前版本 更新时间线
+const showUpateNoticeLine = ref(false);
+const noticeList = ref<UpdateNoticeItem[]>([]);
+interface UpdateNoticeItem {
+  version: string;
+  notice: string;
+  createTime: string;
+}
+function getIsNewVersion(version: string) {
+  const v = version.replaceAll("v", "");
+  return noticeList.value.find(item => item.version === v)?.createTime || "";
+}
+
 // 更新
 onMounted(async () => {
   setting.loadSystemFonts();
   if (setting.isWeb)
     return;
-  // setting.appUploader.isUpdating = false;
-
-  const v = await getVersion();
+  noticeList.value = [];
+  const version = await getVersion();
   // 公告
-  if (v) {
-    getVersionNotice(v).then((res) => {
+  if (version) {
+    getVersionNotice(version).then((res) => {
       if (res.code !== StatusCode.SUCCESS)
         ElMessage.closeAll("error");
+      noticeList.value.push({
+        createTime: res.data?.createTime && dayjs(res.data?.createTime).format("YYYY-MM-DD HH:mm:ss"),
+        version: res.data.version,
+        notice: res.data.notice || "",
+      });
+
       if (res?.data?.notice)
         notice.value = (res.data.notice || "");
     });
   }
+  // 公告列表
+  if (setting.isDesktop) {
+    const update = (await check()) as Update;
+    if (!noticeList.value.find(item => item.version === update?.version)) {
+      getNewVersionInfo(update.version);
+    }
+  }
   // 检查更新
-  setting.appUploader.version = v;
-  if (!setting.appUploader.isCheckUpdatateLoad)
-    setting.checkUpdates();
+  setting.appUploader.version = version;
+  if (!setting.appUploader.isCheckUpdatateLoad) {
+    setting.checkUpdates(false);
+  }
 });
+
+// 获取新版本公告
+async function getNewVersionInfo(newVersion: string) {
+  if (newVersion) {
+    // 请求获取新公告
+    const res = await getVersionNotice(newVersion);
+    if (res.code !== StatusCode.SUCCESS)
+      ElMessage.closeAll("error");
+    if (setting.appUploader.version !== res.data.version) {
+      noticeList.value.push({
+        createTime: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm:ss"),
+        version: res.data.version,
+        notice: res.data.notice || "",
+      });
+    }
+    if (res?.data?.notice)
+      notice.value = (res.data.notice || "");
+  }
+}
 
 // 公告
 function showVersionNotice(version: string) {
   const v = version.replaceAll("v", "");
-  getVersionNotice(v).then((res) => {
-    if (res.code !== StatusCode.SUCCESS) {
-      ElMessage.closeAll("error");
-      ElMessage.warning(res.message);
-      return;
-    }
-    if (res?.data?.notice)
-      notice.value = (res.data.notice || "");
-    showNotice.value = true;
-  });
+  notice.value = noticeList.value.find(item => item.version === v)?.notice || "";
+  showNotice.value = true;
 }
 
 // 打开下载文件夹
@@ -307,7 +346,7 @@ onDeactivated(() => {
       <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
         关于更新
         <div class="ml-a flex items-center gap-4">
-          <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showVersionNotice(setting.appUploader.version)">v{{ setting.appUploader.version }}版本公告</span>
+          <span v-if="setting.appUploader.version && !setting.appUploader.isUpdating" class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">v{{ setting.appUploader.version }}版本公告</span>
           <template v-if="setting.isDesktop">
             <el-badge
               v-if="!setting.appUploader.isUpdating"
@@ -317,7 +356,7 @@ onDeactivated(() => {
             >
               <ElButton
                 class="flex-row-c-c cursor-pointer transition-all"
-                round plain
+                plain round
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -431,6 +470,71 @@ onDeactivated(() => {
         </el-button>
       </div>
     </el-dialog>
+    <!-- 版本的时间线 -->
+    <el-dialog
+      v-model="showUpateNoticeLine"
+      center
+      width="fit-content"
+    >
+      <template #header>
+        <h3>&emsp;更新日志 </h3>
+      </template>
+      <div class="max-h-60vh min-h-40vh w-90vw overflow-y-auto sm:w-400px">
+        <el-timeline style="max-width: 600px">
+          <el-timeline-item
+            v-for="activity in noticeList.sort((a, b) => dayjs(b.createTime).diff(dayjs(a.createTime)))"
+            :key="activity.notice"
+            :color="getIsNewVersion(activity.version) ? 'var(--el-color-primary)' : ''"
+          >
+            <div class="text-xl font-bold">
+              v{{ activity.version }}
+              <div class="mt-2 text-mini">
+                {{ activity.createTime }}
+              </div>
+            </div>
+            <div v-if="activity.notice" class="relative max-h-20em truncate">
+              <MdPreview
+                language="zh-CN"
+                editor-id="notice-toast"
+                show-code-row-number
+                :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+                :code-foldable="false"
+                code-theme="a11y"
+                style="font-size: 12px;"
+                class="text-overflow-2 mt-2 op-60 transition-opacity !bg-transparent hover:op-100"
+                :model-value="activity.notice"
+              />
+              <div
+                class="linear-bt absolute bottom-0 left-0 w-full cursor-pointer py-2 text-center hover:text-color-info text-small"
+                @click="showVersionNotice(activity.version)"
+              >
+                查看更多
+              </div>
+            </div>
+            <div v-else class="text-small">
+              暂无更新日志
+            </div>
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+      <div class="mt-2 mt-4 flex-row-c-c">
+        <BtnElButton class="w-6rem" @click="showUpateNoticeLine = false">
+          关&nbsp;闭
+        </BtnElButton>
+        <BtnElButton
+          class="w-6rem"
+          type="primary"
+          :loading="setting.appUploader.isCheckUpdatateLoad || setting.appUploader.isUpdating"
+          @click="setting.checkUpdates(true, {
+            handleOnUpload: () => {
+              showUpateNoticeLine = false
+            },
+          })"
+        >
+          {{ setting.appUploader.isUpdating ? '正在更新' : '检查更新' }}
+        </BtnElButton>
+      </div>
+    </el-dialog>
   </main>
 </template>
 
@@ -477,6 +581,24 @@ onDeactivated(() => {
 :deep(.notice-toast-preview-wrapper) {
   .task-list-item-checkbox[type="checkbox"] {
     display: none !important;
+  }
+}
+
+.linear-bt {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 1) 100%);
+}
+.dark .linear-bt {
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0) 0%, rgba(20, 20, 20, 0.8) 50%, rgba(20, 20, 20, 1) 100%);
+}
+
+:deep(.el-timeline-item){
+  .el-timeline-item__tail {
+    left: 5px;
+    top:0.3em;
+  }
+  .el-timeline-item__node--normal {
+    left: 0;
+    top: 0.3em;
   }
 }
 </style>
