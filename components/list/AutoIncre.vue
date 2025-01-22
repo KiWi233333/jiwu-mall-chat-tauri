@@ -26,7 +26,8 @@ const showLoad = computed(() => !props.noMore);
 // 刷新
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
-  ([obj]) => {
+  (arr) => {
+    const obj = arr[arr.length - 1];
     isSee.value = !!obj?.isIntersecting;
     callBack();
   },

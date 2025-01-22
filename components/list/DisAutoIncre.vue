@@ -25,17 +25,17 @@ enum LoadingClassEnum {
   "load-chaotic-orbit",
   "load-db-rule",
 }
-const isLoaing = ref(false);
 // 停止加载
 const loadMoreRef = ref();
 const isIntersecting = ref(false);
 // 定时器
-let timer: any = null;
+const timer = shallowRef<any>();
 
 // 刷新
 const { stop, isSupported } = useIntersectionObserver(
   loadMoreRef,
-  ([obj]) => {
+  (arr) => {
+    const obj = arr[arr.length - 1];
     isIntersecting.value = !!obj?.isIntersecting;
   },
   {
@@ -45,7 +45,7 @@ const { stop, isSupported } = useIntersectionObserver(
 
 function callBack() {
   if (props.noMore && props.autoStop) {
-    clearInterval(timer);
+    clearInterval(timer.value);
     stop && stop();
   }
   else {
@@ -55,18 +55,17 @@ function callBack() {
 watch(isIntersecting, (val) => {
   if (val) {
     callBack && callBack();
-    timer = setInterval(callBack, props.delay);
+    timer.value = setInterval(callBack, props.delay);
   }
   else {
-    clearInterval(timer);
+    clearInterval(timer.value);
   }
 }, {
-  immediate: props.immediate,
 });
 if (props.immediate) {
-  clearInterval(timer);
+  clearInterval(timer.value);
   callBack && callBack();
-  timer = setInterval(callBack, props.delay);
+  timer.value = setInterval(callBack, props.delay);
 }
 
 // 展示加载
@@ -81,9 +80,9 @@ watch(() => props.noMore, (val) => {
     stop && stop();
 });
 onUnmounted(() => {
-  clearInterval(timer);
+  clearInterval(timer.value);
   stop();
-  timer = null;
+  timer.value = null;
 });
 defineExpose({
   stop,
@@ -94,11 +93,11 @@ defineExpose({
 <template>
   <!-- 加载 -->
   <div
-    v-if="showLoad" relative pt-4
+    v-if="showLoad" relative
+    pt-4
   >
     <div
-      ref="loadMoreRef"
-      key="loadMoreRef" absolute top-0 w-full py-4
+      ref="loadMoreRef" key="loadMoreRef" absolute top-0 w-full py-4
       :style="{ height: `${thresholdHeight}px` }"
     >
       <slot name="load">
@@ -117,9 +116,5 @@ defineExpose({
       </div>
     </slot>
   </div>
-  <!-- 调试 -->
-  <!-- <div fixed bottom-400px>
-    {{ isIntersecting }}
-  </div> -->
   <slot name="default" />
 </template>
