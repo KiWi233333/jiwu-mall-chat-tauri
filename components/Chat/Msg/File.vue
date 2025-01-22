@@ -21,10 +21,11 @@ function onDownloadFile(url: string, fileName: string) {
     setting.showDownloadPanel = true;
     return;
   }
-  if (item) {
+  if (item) { // 存在文件则打开
     setting.openFileByDefaultApp(item);
     return;
   }
+  // 下载文件
   downloadFile(url, fileName, {
     mimeType: body?.mimeType,
   }, (val) => {

@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
-        id="search-contact" v-model.lazy="chat.searchKeyWords" class="mr-2" type="text" clearable
+        id="search-contact" v-model.lazy="chat.searchKeyWords" name="search-content" class="mr-2" type="text" clearable
         autocomplete="off" :prefix-icon="ElIconSearch" minlength="2" maxlength="30" placeholder="搜索"
       />
       <!-- 添加 -->

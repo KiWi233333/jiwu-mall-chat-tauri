@@ -132,7 +132,7 @@ export const useSettingStore = defineStore(
         // 是否存在
         const isExists = await existsFile(file.localPath);
         if (checked && !isExists) {
-          ElMessage.warning("文件已不存在，请手动删除！");
+          ElMessage.warning("文件已不存在，请重新删除记录！");
           file.status = FileStatus.NOT_FOUND;
           return;
         }
@@ -155,7 +155,7 @@ export const useSettingStore = defineStore(
       // 是否存在
       const isExists = await existsFile(item.localPath);
       if (!item.localPath || !isExists) {
-        ElMessage.warning("文件已不存在，请手动删除！");
+        ElMessage.warning("文件已不存在，请重新删除记录！");
         item.status = FileStatus.NOT_FOUND;
         return;
       }
@@ -194,6 +194,7 @@ export const useSettingStore = defineStore(
       }
       appDataDownloadDirUrl.value = setting.isDesktop ? path : path.split("\\").slice(0, -1).join("\\"); // 兼容移动端
       ElMessage.success("下载路径已更改！");
+      return appDataDownloadDirUrl.value;
     }
 
     // 打开文件所在文件夹

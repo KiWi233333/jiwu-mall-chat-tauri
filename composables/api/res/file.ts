@@ -113,15 +113,27 @@ export async function downloadFile(url: string, fileName: string, options: {
   }
   if (!setting.checkDownloadPath())
     return;
-  const dir = setting.appDataDownloadDirUrl;
+  let dir = setting.appDataDownloadDirUrl;
   const existsDir = await existsFile(dir);
-  if (!existsDir)
-    await mkdirFile(dir);
+  if (!existsDir) {
+    // 选择下载目录
+    const newDir = await setting.changeDownloadDir();
+    if (!newDir) {
+      return ElMessage.warning("请选择下载目录");
+    }
+    dir = newDir;
+  }
+
+  let finalFullPath = targetPath || `${dir}\\${fileName}`;
+  // 适配andorid和linux
+  if (setting.osType === "android" || setting.osType === "linux") {
+    finalFullPath = finalFullPath.replace(/\\/g, "/");
+  }
   // 文件下载
   setting.fileDownloadMap[url] = {
     url,
     fileName,
-    localPath: targetPath || `${dir}\\${fileName}`,
+    localPath: finalFullPath,
     currentSize: 0,
     totalSize: 0,
     status: FileStatus.DOWNLOADING,
@@ -133,7 +145,7 @@ export async function downloadFile(url: string, fileName: string, options: {
   try {
     await download(
       url,
-      targetPath || `${dir}\\${fileName}`,
+      finalFullPath,
       ({ progress, total }) => {
         currentSize += progress;
         setting.fileDownProgressCallback(url, currentSize, total);
@@ -146,6 +158,10 @@ export async function downloadFile(url: string, fileName: string, options: {
   }
   catch (error) {
     console.warn(error);
+    ElNotification.warning({
+      title: "下载失败",
+      message: "文件下载失败，请稍后重试",
+    });
     setting.fileDownloadMap[url]!.status = FileStatus.ERROR;
   }
 }

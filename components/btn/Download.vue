@@ -124,9 +124,10 @@ onMounted(() => {
                   </small>
                 </p>
               </div>
-              <div v-if="[FileStatus.DOWNLOADED, FileStatus.NOT_FOUND].includes(p.status as any)" flex gap-3>
+              <div v-if="[FileStatus.DOWNLOADED, FileStatus.NOT_FOUND, FileStatus.ERROR].includes(p.status as any)" flex gap-3>
                 <i
-                  i-solar-folder-with-files-line-duotone block h-4 w-4 btn-primary
+                  v-if="p.status === FileStatus.DOWNLOADED" i-solar-folder-with-files-line-duotone block h-4 w-4
+                  btn-primary
                   title="打开所在文件夹"
                   @click.stop.prevent="setting.openFileFolder(p)"
                 />

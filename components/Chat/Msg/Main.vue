@@ -3,6 +3,7 @@ import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, Cha
 import { MessageType } from "@/composables/api/chat/message";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { save } from "@tauri-apps/plugin-dialog";
+import { appName } from "~/constants";
 
 /**
  * 消息适配器
@@ -86,19 +87,21 @@ function onContextMenu(e: MouseEvent, item: ChatMessageVO) {
         icon: "i-solar-download-minimalistic-broken group-btn-info",
         onClick: async () => {
           let path: string | undefined | null = "";
+          const fileName = path.split("\\").pop() || `${Date.now()}.png`;
           if (!setting.isWeb) {
             path = await save({
+              title: setting.isDesktop ? `${appName} - 保存图片` : undefined,
               filters: [
                 {
                   name: "图片文件",
                   extensions: ["png", "jpeg", "jpg", "svg", "webp"],
                 },
               ],
+              defaultPath: fileName,
             });
             if (!path)
               return;
           }
-          const fileName = path.split("\\").pop() || `${Math.random().toString(36)}.png`;
           // 下载图片
           downloadFile(BaseUrlFile + item.message.body.url, fileName, {
             targetPath: path,
