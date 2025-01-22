@@ -281,9 +281,7 @@ function onMaxWindContextmenu(e: MouseEvent) {
   ContextMenu.showContextMenu(opt);
 }
 async function openMaxVideo() {
-  // @ts-expect-error
-  const reqFullscreen = mainVideoRef.value?.requestFullscreen || mainVideoRef.value?.webkitRequestFullscreen || mainVideoRef.value?.mozRequestFullScreen || mainVideoRef.value?.msRequestFullscreen;
-  if (!reqFullscreen) {
+  if (!mainVideoRef.value?.requestFullscreen) {
     ElNotification.warning({
       title: "兼容性",
       message: "当前浏览器不支持全屏",
@@ -291,7 +289,7 @@ async function openMaxVideo() {
     });
     return;
   }
-  await reqFullscreen?.();
+  mainVideoRef.value?.requestFullscreen();
 }
 
 
@@ -305,7 +303,7 @@ defineExpose({
 
 <template>
   <div
-    v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-primary: 0;"
+    v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-info: 0;"
     class="rtc-dialog group rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
@@ -331,10 +329,10 @@ defineExpose({
         </span>
         <template v-else>
           <!-- 视频比例控制 -->
-          <el-dropdown v-if="callType === CallTypeEnum.VIDEO" trigger="hover">
+          <el-dropdown v-if="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()?.[0]?.enabled" trigger="hover">
             <i
               :class="isMaxVideoClass === MaxVideoObjEnum.COVER ? 'i-solar:scale-bold' : 'i-solar:scale-outline'"
-              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" class="bg-white p-2.6 text-white btn-primary"
+              :title="isMaxVideoClass ? '视频还原' : '视频最大化'" class="bg-white p-2.6 text-white btn-info"
               @click.capture="isMaxVideoClass = isMaxVideoClass === MaxVideoObjEnum.CONTAIN ? MaxVideoObjEnum.COVER : MaxVideoObjEnum.CONTAIN"
             />
             <template #dropdown>
@@ -356,26 +354,25 @@ defineExpose({
             placement="bottom"
           >
             <i
-              :class="isScreenSharing ? 'i-solar:screencast-bold-duotone text-color-primary' : 'i-solar:screencast-outline'"
-              class="ml-4 p-2.8 sm:ml-3 btn-primary"
+              :class="isScreenSharing ? 'i-solar:screencast-bold-duotone text-color-info' : 'i-solar:screencast-outline'"
+              class="ml-4 p-2.8 sm:ml-3 btn-info"
               @click="isScreenSharing ? stopScreenShare() : startScreenShare()"
             />
           </el-tooltip>
-
           <span max-w-full truncate absolute-center-x>
             {{ rtcDescText }}
           </span>
           <!-- 操作按钮 -->
           <i
-            title="缩小" class="i-carbon:subtract ml-a p-3 btn-primary" @click.capture="() => {
+            title="缩小" class="i-carbon:subtract ml-a p-3 btn-info" @click.capture="() => {
               isMaxWind = false;
               isMinWind = true;
             }"
           />
           <i
             :title="isMaxWind ? '最小化' : '全屏'"
-            :class="isMaxWind ? 'text-color-primary i-tabler:minimize' : 'i-tabler:maximize'"
-            ml-4 hidden p-2.6 sm:ml-3 sm:block btn-primary
+            :class="isMaxWind ? 'text-color-info i-tabler:minimize' : 'i-tabler:maximize'"
+            ml-4 hidden p-2.6 sm:ml-3 sm:block btn-info
             @click.capture="() => {
               isMinWind = false;
               isMaxWind = !isMaxWind;
@@ -395,7 +392,7 @@ defineExpose({
         class="avatar-box flex-row-c-c flex-1 flex-col truncate transition-all"
       >
         <!-- 远程视频/头像显示 -->
-        <div v-if="callType === CallTypeEnum.AUDIO || !remoteStream?.getVideoTracks()[0]?.enabled" class="relative flex-row-c-c flex-col">
+        <div v-if="callType === CallTypeEnum.AUDIO || !maxWindStream?.getVideoTracks()?.[0]?.enabled" class="relative flex-row-c-c flex-col">
           <CardElImage
             :draggable="false"
             :src="BaseUrlImg + theContact.avatar"
@@ -543,7 +540,7 @@ defineExpose({
     <!-- 视频最大化 -->
     <div
       v-if="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()[0]?.enabled "
-      class="video-max absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] bg-dark-1 bg-op-50 pl-1 pt-1 op-100 backdrop-blur-12px backdrop-saturate-180 transition-opacity btn-primary sm:(op-0 group-hover:op-100)"
+      class="video-max absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] bg-dark-1 bg-op-50 pl-1 pt-1 op-100 backdrop-blur-12px backdrop-saturate-180 transition-opacity btn-info sm:(op-0 group-hover:op-100)"
       @click="openMaxVideo"
     >
       <i
