@@ -97,6 +97,21 @@ export function deleteContact(roomId: number, token: string) {
   );
 }
 
+/**
+ * 置顶会话
+ * @param roomId 房间号
+ * @param isPin 是否置顶
+ * @param token 身份
+ * @returns 影响
+ */
+export function pinContact(roomId: number, isPin: isTrue, token: string) {
+  return useHttp.put<Result<WSPinContactMsg>>(
+    `/chat/contact/pin/${roomId}/${isPin}`,
+    { },
+    { headers: { Authorization: token } },
+  );
+}
+
 
 export interface ContactPageDTO {
   pageSize: number
@@ -144,6 +159,12 @@ export interface ChatContactVO {
   unreadCount: number
 
   selfExit?: number
+
+  /**
+   * 置顶时间
+   */
+  pinTime?: number
+
   [property: string]: any
 
 }

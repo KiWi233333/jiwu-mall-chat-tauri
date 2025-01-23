@@ -51,10 +51,20 @@ export const useChatStore = defineStore(
     const contactList = computed(() => Object.values(contactMap.value));
     const searchKeyWords = ref("");
     const getContactList = computed(() => {
-      if (searchKeyWords.value)
-        return Object.values(contactMap.value).sort((a, b) => b.activeTime - a.activeTime).filter(item => item.name.toLocaleLowerCase().includes(searchKeyWords.value.toLocaleLowerCase()));
-      else
-        return Object.values(contactMap.value).sort((a, b) => b.activeTime - a.activeTime);
+      const contacts = Object.values(contactMap.value);
+      const sortedContacts = contacts.sort((a, b) => {
+        const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
+        if (pinDiff !== 0)
+          return pinDiff; // 如果 pinTime 不同，直接返回结果
+        return b.activeTime - a.activeTime; // 否则按 activeTime 排序
+      });
+      if (searchKeyWords.value) {
+        const lowerCaseSearchKey = searchKeyWords.value.toLowerCase(); // 避免重复调用 toLowerCase
+        return sortedContacts.filter(item =>
+          item.name.toLowerCase().includes(lowerCaseSearchKey),
+        );
+      }
+      return sortedContacts;
     });
     const unReadContactList = computed(() => {
       const list = contactList.value.filter(p => p.unreadCount);
@@ -187,11 +197,15 @@ export const useChatStore = defineStore(
     });
     // 2、撤回消息 type=2
     mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
-      resolveRevokeMsg(ws.wsMsgList.recallMsg);
+      resolveRevokeMsg([data]);
     });
     // 3、删除消息 type=3
     mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
       resolveDeleteMsg([data]);
+    });
+    // 4、置顶会话消息
+    mitter.on(MittEventType.PIN_CONTACT, (data: WSPinContactMsg) => {
+      resolvePinContact(data);
     });
     // 移除监听
     function removeListeners() {
@@ -349,6 +363,32 @@ export const useChatStore = defineStore(
       // 消费消息
       ws.wsMsgList.deleteMsg.splice(0);
     }
+
+    /**
+     * 5. 置顶会话消息处理
+     * @param data 数据
+     */
+    function resolvePinContact(data: WSPinContactMsg) {
+      if (data.roomId !== theContact.value.roomId) {
+        reloadContact(data.roomId);
+        return;
+      }
+      // 本房间修改状态
+      if (contactMap.value[data.roomId]) {
+        contactMap.value[data.roomId]!.pinTime = data.pinTime;
+      }
+      else { // 主动拉取
+        reloadContact(data.roomId);
+      }
+    }
+
+    async function setPinContact(roomId: number, isPin: isTrue, callBack?: (contact: ChatContactVO) => void) {
+      const res = await pinContact(roomId, isPin, user.getToken);
+      if (res.code === StatusCode.SUCCESS && res.data) {
+        resolvePinContact(res.data);
+      }
+    }
+
     // 添加消息到列表
     function appendMsg(data: ChatMessageVO) {
       if (data && data.message.id && !findMsg(data.message.id)) {
@@ -387,7 +427,7 @@ export const useChatStore = defineStore(
           if (action === "confirm") {
             const res = await deleteContact(roomId, user.getToken);
             if (res.code === StatusCode.SUCCESS) {
-              ElNotification.success("操作成功！");
+              ElMessage.success("删除成功！");
               removeContact(roomId);
               successCallBack && successCallBack();
             }
@@ -416,7 +456,7 @@ export const useChatStore = defineStore(
           if (action === "confirm") {
             const res = await exitRoomGroup(roomId, user.getToken);
             if (res.code === StatusCode.SUCCESS) {
-              ElNotification.success("操作成功！");
+              ElMessage.success("退出成功！");
               successCallBack && successCallBack();
             }
           }
@@ -775,6 +815,7 @@ export const useChatStore = defineStore(
       openRtcCall,
       rollbackCall,
       useChatWebRTC,
+      setPinContact,
       appendMsg,
       confirmRtcFn,
       // dom

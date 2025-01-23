@@ -92,6 +92,10 @@ export enum WsMsgBodyType {
    * 实时通话
    */
   RTC_CALL = 9,
+  /**
+   * 置顶通知
+   */
+  PIN_CONTACT = 10,
 
 }
 
@@ -164,6 +168,13 @@ export enum WSMemberStatusEnum {
   DEL = 3, // 删除群聊
 }
 
+export interface WSPinContactMsg {
+  // 置顶通知类型定义
+  pinTime: number
+  roomId: number
+  isPin: isTrue
+}
+
 export interface WsMsgDataTypeMap<T> {
   [WsMsgBodyType.MESSAGE]: ChatMessageVO
   [WsMsgBodyType.ONLINE_OFFLINE_NOTIFY]: WSOnlineOfflineNotify
@@ -173,4 +184,5 @@ export interface WsMsgDataTypeMap<T> {
   [WsMsgBodyType.MEMBER_CHANGE]: WSMemberChange
   [WsMsgBodyType.TOKEN_EXPIRED_ERR]: null
   [WsMsgBodyType.RTC_CALL]: WSRtcCallMsg
+  [WsMsgBodyType.PIN_CONTACT]: WSPinContactMsg
 }

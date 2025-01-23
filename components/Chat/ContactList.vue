@@ -131,65 +131,62 @@ const ChatNewGroupDialogRef = ref();
 const colorMode = useColorMode();
 function onContextMenu(e: MouseEvent, item: ChatContactVO) {
   e.preventDefault();
+  const isPin = !!chat.contactMap?.[item.roomId]?.pinTime;
   const opt = {
     x: e.x,
     y: e.y,
     theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
     items: [
+      { // 置顶功能
+        customClass: "group",
+        icon: isPin ? "i-solar:pin-bold-duotone group-btn-info group-hover:i-solar:pin-outline" : "i-solar:pin-outline group-btn-info group-hover:i-solar:pin-bold-duotone",
+        label: isPin ? "取消置顶" : "置顶",
+        onClick: () => {
+          chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE, (res) => {
+          });
+        },
+      },
+      {
+        customClass: "group",
+        icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
+        label: "不显示聊天",
+        onClick: () => {
+          chat.deleteContactConfirm(item.roomId, () => {
+          });
+        },
+      },
     ] as any,
   };
   // 群聊
   if (item.type === RoomType.GROUP) {
-    opt.items = [
-      {
-        customClass: "group",
-        icon: "i-solar:user-speak-broken group-btn-warning group-hover:i-solar:user-speak-bold-duotone",
-        label: "邀请好友",
-        onClick: () => {
-          ChatNewGroupDialogRef.value?.reload && ChatNewGroupDialogRef.value?.reload();
-          if (ChatNewGroupDialogRef.value?.form) {
-            ChatNewGroupDialogRef.value.form.roomId = item.roomId;
-            showDialog.value = true;
-          }
-        },
+    // 在第一个后插入
+    opt.items.splice(1, 0, {
+      customClass: "group",
+      icon: "i-solar:user-speak-broken group-btn-warning group-hover:i-solar:user-speak-bold-duotone",
+      label: "邀请好友",
+      onClick: () => {
+        ChatNewGroupDialogRef.value?.reload && ChatNewGroupDialogRef.value?.reload();
+        if (ChatNewGroupDialogRef.value?.form) {
+          ChatNewGroupDialogRef.value.form.roomId = item.roomId;
+          showDialog.value = true;
+        }
       },
-      {
-        customClass: "group",
-        icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
-        label: "删除聊天",
-        onClick: () => {
-          chat.deleteContactConfirm(item.roomId, () => {
-          });
-        },
-      },
-    ];
+    });
   }
   else if (item.type === RoomType.SELFT) {
-    opt.items = [
-      {
-        customClass: "group",
-        icon: "i-solar:user-outline group-btn-info group-hover:i-solar:user-bold-duotone",
-        label: "联系TA",
-        onClick: () => {
-          chat.setTheFriendOpt(FriendOptType.Empty);
-          navigateTo("/friend");
-        },
+    opt.items.splice(1, 0, {
+      customClass: "group",
+      icon: "i-solar:user-outline group-btn-info group-hover:i-solar:user-bold-duotone",
+      label: "联系TA",
+      onClick: () => {
+        chat.setTheFriendOpt(FriendOptType.Empty);
+        navigateTo("/friend");
       },
-      {
-        customClass: "group",
-        icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
-        label: "删除聊天",
-        onClick: () => {
-          chat.deleteContactConfirm(item.roomId, () => {
-          });
-        },
-      },
-    ];
+    });
   }
 
   ContextMenu.showContextMenu(opt);
 }
-
 const ws = useWs();
 // 成员变动消息
 const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
@@ -316,11 +313,14 @@ onBeforeUnmount(() => {
             <el-radio
               v-for="room in chat.getContactList" :key="room.roomId" aria-selected="true"
               style="border-radius: 0;" :value="room.roomId"
+              :class="{
+                'is-pin': room.pinTime,
+              }"
               @click="() => setting.isOpenContact = false"
             >
               <div
-                :class="{ 'shadow-inset': room.roomId === theContactId }"
                 class="flex gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
+
                 @contextmenu.stop="onContextMenu($event, room)"
               >
                 <el-badge
@@ -334,17 +334,24 @@ onBeforeUnmount(() => {
                 </el-badge>
                 <div class="flex flex-1 flex-col justify-between truncate">
                   <div flex truncate>
-                    <p truncate>
+                    <p truncate font-400>
                       {{ room.name }}
                     </p>
-                    <span ml-a mt-a w-6em flex-shrink-0 truncate text-right text-mini>
+                    <span ml-a w-6em flex-shrink-0 text-right text-10px text-mini>
                       {{ getTime(room.activeTime) }}
                     </span>
                   </div>
-                  <small
-                    overflow-hidden truncate op-70
-                    :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
-                  >{{ room.text }}</small>
+                  <p mt-1 flex text-small>
+                    <small
+                      class="max-w-4/5 truncate"
+                      :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                    >
+                      {{ room.text }}
+                    </small>
+                    <small v-if="room.pinTime" class="ml-a">
+                      置顶
+                    </small>
+                  </p>
                 </div>
               </div>
             </el-radio>
@@ -381,13 +388,12 @@ onBeforeUnmount(() => {
     border: none;
     transition: 200ms border;
     margin: 0;
-    margin-bottom: 0.5rem;
+
+    &.is-pin {
+      --at-apply: "bg-light-700 dark:bg-dark";
+    }
 
     &.is-checked {
-      .group {
-        background-color: var(--el-color-primary-light-9);
-      }
-
       background-color: #7c7c7c1a;
     }
 

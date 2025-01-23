@@ -10,6 +10,7 @@ export enum MittEventType {
   TOKEN_EXPIRED_ERR = "chat-token-expired-err",
   DELETE = "chat-delete",
   RTC_CALL = "chat-rtc-call",
+  PIN_CONTACT = "chat-pin-contact",
   OTHER = "chat-other",
   // 组件滚动事件
   MSG_LIST_SCROLL = "msg-list-scroll",
@@ -33,6 +34,7 @@ type EventPayloadMap = {
   [MittEventType.TOKEN_EXPIRED_ERR]: object;
   [MittEventType.DELETE]: WSMsgDelete;
   [MittEventType.RTC_CALL]: WSRtcCallMsg;
+  [MittEventType.PIN_CONTACT]: WSPinContactMsg;
   [MittEventType.OTHER]: object;
   // 消息列表组件事件
   [MittEventType.MSG_LIST_SCROLL]: MSG_LIST_SCROLL_EVENT_PLAOYLOAD;
@@ -53,6 +55,7 @@ const eventAndWsMap: Readonly<Record<WsMsgBodyType, MittEventType>> = {
   [WsMsgBodyType.TOKEN_EXPIRED_ERR]: MittEventType.TOKEN_EXPIRED_ERR,
   [WsMsgBodyType.DELETE]: MittEventType.DELETE,
   [WsMsgBodyType.RTC_CALL]: MittEventType.RTC_CALL,
+  [WsMsgBodyType.PIN_CONTACT]: MittEventType.PIN_CONTACT,
 } as const;
 
 export function resolteChatPath(type: WsMsgBodyType): MittEventType {

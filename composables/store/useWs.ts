@@ -1,4 +1,4 @@
-import type { WSFriendApply, WSMemberChange, WsMsgBodyVO, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WsSendMsgDTO } from "../../types/chat/WsType";
+import type { WSFriendApply, WSMemberChange, WsMsgBodyVO, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WSPinContactMsg, WsSendMsgDTO } from "../../types/chat/WsType";
 import type { ChatMessageVO } from "../api/chat/message";
 import BackWebSocket, { type Message as BackMessage } from "@tauri-apps/plugin-websocket";
 import { acceptHMRUpdate, defineStore } from "pinia";
@@ -14,6 +14,7 @@ export interface WsMsgItemMap {
   memberMsg: WSMemberChange[];
   tokenMsg: object[];
   rtcMsg: WSRtcCallMsg[];
+  pinContactMsg: WSPinContactMsg[];
   other: object[];
 }
 
@@ -29,6 +30,7 @@ const wsMsgMap: Record<WsMsgBodyType, keyof WsMsgItemMap> = {
   [WsMsgBodyType.MEMBER_CHANGE]: "memberMsg",
   [WsMsgBodyType.TOKEN_EXPIRED_ERR]: "tokenMsg",
   [WsMsgBodyType.RTC_CALL]: "rtcMsg",
+  [WsMsgBodyType.PIN_CONTACT]: "pinContactMsg",
 };
 
 
@@ -76,8 +78,9 @@ export const useWs = defineStore(
        */
       rtcMsg: [] as WSRtcCallMsg[],
       /**
-       * 其他
+       * 置顶联系人消息 WsMsgBodyType.PIN_CONTACT
        */
+      pinContactMsg: [] as WSPinContactMsg[],
       other: [] as object[],
     });
     const reload = () => { };
@@ -279,6 +282,7 @@ export const useWs = defineStore(
           memberMsg: [],
           rtcMsg: [],
           tokenMsg: [],
+          pinContactMsg: [],
           other: [],
         };
         status.value = WsStatusEnum.SAFE_CLOSE;

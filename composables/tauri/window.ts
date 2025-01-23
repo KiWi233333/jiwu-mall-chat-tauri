@@ -89,15 +89,15 @@ export async function useFlashTray() {
   const onlineUrl = await resolveResource("./res/online.png");
   const offlineUrl = await resolveResource("./res/offline.png");
   const msgUrl = await resolveResource("./res/msg.png");
+  const tray = await TrayIcon.getById(TrayIconId).catch((err) => {
+    console.error("获取托盘图标失败", err);
+  });
   async function setTrayIcon(icon: string | null) {
-    const tray = await TrayIcon.getById(TrayIconId).catch((err) => {
-      console.error("获取托盘图标失败", err);
-    });
     try {
       if (!tray)
         return;
       if (icon === null)
-        icon = setting.osType === "linux" ? activeIcon.value : null;
+        icon = setting.osType === "linux" ? activeIcon.value : null; // 兼容Linux系统
       tray?.setIcon(icon);
     }
     catch (err) {
