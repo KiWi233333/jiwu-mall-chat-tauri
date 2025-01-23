@@ -6,7 +6,9 @@ import { WSMemberStatusEnum } from "~/types/chat/WsType";
 const props = defineProps<{
   dto?: ContactPageDTO
 }>();
-const [autoAnimateRef, enable] = useAutoAnimate();
+const [autoAnimateRef, enable] = useAutoAnimate({
+  duration: 200,
+});
 const isLoading = ref<boolean>(false);
 const isReload = ref(false);
 const user = useUserStore();
@@ -32,9 +34,9 @@ async function loadData(dto?: ContactPageDTO) {
     return;
   }
   if (data && data.list) {
-    data.list.forEach((p: ChatContactVO) => {
-      chat.contactMap[p.roomId] = p;
-    });
+    for (const item of data.list) {
+      chat.contactMap[item.roomId] = item;
+    }
   }
   pageInfo.value.isLast = data.isLast;
   pageInfo.value.cursor = data.cursor;
@@ -42,13 +44,6 @@ async function loadData(dto?: ContactPageDTO) {
   return data.list;
 }
 const setting = useSettingStore();
-const nowDate = Date.now();
-function getTime(time: string | number) {
-  return (nowDate - +time) > 24 * 3600
-    ? useDateFormat(time, "YYYY-MM-DD").value.toString()
-    : useDateFormat(time, "HH:mm:ss").value.toString()
-  ;
-}
 // 会话store
 const contact = useChatStore();
 // 改变当前会话
@@ -71,14 +66,13 @@ async function onChangeRoom(newRoomId?: number) {
   setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
-
 // 刷新
 async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
     return;
+  enable(false);
   isReload.value = true;
   if (isAll) {
-    enable(false);// 首次不开启动画
     chat.contactMap = {};
     pageInfo.value.cursor = null;
     pageInfo.value.isLast = false;
@@ -90,7 +84,9 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     }
     await loadData(dto || props.dto);
     await nextTick();
-    enable(!setting.settingPage.isCloseAllTransition);
+    setTimeout(() => {
+      enable(!setting.settingPage.isCloseAllTransition);
+    }, 800);
   }
   else if (roomId) { // 刷新某一房间
     refreshItem(roomId);
@@ -142,7 +138,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         icon: isPin ? "i-solar:pin-bold-duotone group-btn-info group-hover:i-solar:pin-outline" : "i-solar:pin-outline group-btn-info group-hover:i-solar:pin-bold-duotone",
         label: isPin ? "取消置顶" : "置顶",
         onClick: () => {
-          chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE, (res) => {
+          chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE, () => {
           });
         },
       },
@@ -256,10 +252,8 @@ function toFriendPage() {
   }, 200);
 }
 
-// 初始化
-reload();
 onMounted(() => {
-  enable(false);
+  reload();
 });
 onBeforeUnmount(() => {
   stopWatch?.();
@@ -309,18 +303,19 @@ onBeforeUnmount(() => {
           :immediate="true" :auto-stop="false" loading-class="op-0" :no-more="pageInfo.isLast"
           @load="loadData(dto)"
         >
-          <div ref="autoAnimateRef" class="h-full">
+          <div ref="autoAnimateRef">
             <el-radio
-              v-for="room in chat.getContactList" :key="room.roomId" aria-selected="true"
+              v-for="room in chat.getContactList"
+              :key="room.roomId"
               style="border-radius: 0;" :value="room.roomId"
               :class="{
                 'is-pin': room.pinTime,
               }"
+              class="relative"
               @click="() => setting.isOpenContact = false"
             >
               <div
                 class="flex gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
-
                 @contextmenu.stop="onContextMenu($event, room)"
               >
                 <el-badge
@@ -337,18 +332,18 @@ onBeforeUnmount(() => {
                     <p truncate font-400>
                       {{ room.name }}
                     </p>
-                    <span ml-a w-6em flex-shrink-0 text-right text-10px text-mini>
-                      {{ getTime(room.activeTime) }}
+                    <span ml-a w-fit flex-shrink-0 text-right text-10px text-mini>
+                      {{ formatContactDate(room.activeTime) }}
                     </span>
                   </div>
                   <p mt-1 flex text-small>
                     <small
-                      class="max-w-4/5 truncate"
+                      class="flex-1 truncate"
                       :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
                     >
                       {{ room.text }}
                     </small>
-                    <small v-if="room.pinTime" class="ml-a">
+                    <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-[var(--el-color-primary-light-3)] dark:text-light-500">
                       置顶
                     </small>
                   </p>
@@ -390,7 +385,7 @@ onBeforeUnmount(() => {
     margin: 0;
 
     &.is-pin {
-      --at-apply: "bg-light-700 dark:bg-dark";
+      --at-apply: "bg-light-500 dark:bg-dark";
     }
 
     &.is-checked {

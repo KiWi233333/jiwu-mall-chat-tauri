@@ -2,13 +2,11 @@
 const setting = useSettingStore();
 const downloadUrl = ref();
 const latestVersion = ref<AppPlatformsJSON>();
-onMounted(async () => {
-  const res = await getLatestVersion();
-  if (res) {
-    latestVersion.value = res;
-  }
-});
-watch([() => setting.isWeb, () => setting.isMobileSize], async ([isWeb, isMobileSize]) => {
+const res = await getLatestVersion();
+if (res) {
+  latestVersion.value = res;
+}
+watch([() => setting.isWeb, () => setting.isMobileSize, latestVersion], async ([isWeb, isMobileSize]) => {
   if (!isWeb)
     return;
   if (latestVersion.value) {
