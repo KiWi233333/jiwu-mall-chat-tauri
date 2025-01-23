@@ -305,7 +305,7 @@ export function deleteFriendById(targetUid: string, token: string) {
   );
 }
 // 好友菜单面板
-export interface TheFriendOpt<T = object> {
+export interface TheFriendOpt<T = any> {
   type: FriendOptType;
   data: T;
 }

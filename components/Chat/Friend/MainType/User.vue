@@ -230,7 +230,7 @@ const loadingIcon = `
         key="send"
         icon-class="i-solar:chat-line-bold p-2 mr-2"
         style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
-        type="success"
+        type="primary"
         @click="toSend(userId)"
       >
         发送消息&ensp;

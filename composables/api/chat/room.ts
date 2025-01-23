@@ -220,6 +220,8 @@ export interface ChatRoomInfoVO {
    * 房间id
    */
   roomId?: number | null
+
+  role: ChatRoomRoleEnum
 }
 
 export interface ChatATMemberVO {

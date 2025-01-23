@@ -91,6 +91,7 @@ else if (props.type === "friend") {
 
 // 首次加载动画
 const isFirstLoad = ref(false);
+const isFriendPanel = computed(() => props.type === "friend");
 onMounted(() => {
   loadData();
   isFirstLoad.value = true;
@@ -104,7 +105,9 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <div>
+  <div
+    :class="{ 'animate-(fade-in duration-200)': isFirstLoad }"
+  >
     <ListAutoIncre
       :immediate="immediate"
       :auto-stop="autoStop"
@@ -123,10 +126,10 @@ onDeactivated(() => {
         v-for="p in list"
         :key="p.id"
         class="item"
-        :class="{ 'animate-(fade-in duration-200)': isFirstLoad }"
+        :class="{ focus: (isFriendPanel ? chat.theFriendOpt?.data?.id === p.userId : chat.theFriendOpt?.data?.roomId === p.roomId) }"
         @click="chat.setTheFriendOpt(
-          type === 'friend' ? FriendOptType.User : FriendOptType.GroupFriend,
-          type === 'friend' ? { id: (p as ChatUserFriendVO).userId } : p,
+          isFriendPanel ? FriendOptType.User : FriendOptType.GroupFriend,
+          isFriendPanel ? { id: (p as ChatUserFriendVO).userId } : p,
         )"
       >
         <CardElImage
@@ -134,7 +137,7 @@ onDeactivated(() => {
           :src="BaseUrlImg + p.avatar"
           fit="cover"
         />
-        <span>{{ type === 'friend' ? (p as ChatUserFriendVO).nickName : (p as ChatContactVO).name || '未填写' }}</span>
+        <span>{{ isFriendPanel ? (p as ChatUserFriendVO).nickName : (p as ChatContactVO).name || '未填写' }}</span>
       </div>
     </ListAutoIncre>
   </div>
@@ -145,6 +148,9 @@ onDeactivated(() => {
   --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "border-(1px solid transparent) flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(border-default bg-menu-color) transition-300";
+  --at-apply: "border-(1px solid transparent) flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(border-default bg-menu-color) ";
+  &.focus {
+    --at-apply: "border-default bg-menu-color ";
+  }
 }
 </style>

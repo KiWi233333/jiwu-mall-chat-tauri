@@ -73,10 +73,19 @@ async function addFrendApplyById() {
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="isShowApply = false">取消</el-button>
-        <el-button type="primary" @click="addFrendApplyById">
+        <BtnElButton
+          style="transition: .2s; width: 7em;letter-spacing: 1px;"
+          @click="isShowApply = false"
+        >
+          取消
+        </BtnElButton>
+        <BtnElButton
+          type="primary"
+          style="transition: .2s; width: 7em;letter-spacing: 1px;"
+          @click="addFrendApplyById"
+        >
           发起申请
-        </el-button>
+        </BtnElButton>
       </span>
     </template>
   </el-dialog>
