@@ -276,7 +276,7 @@ onBeforeUnmount(() => {
   >
     <!-- 搜索群聊 -->
     <div
-      class="trnasition-200 h-18 flex-row-c-c px-4 transition-height"
+      class="h-18 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
@@ -301,12 +301,12 @@ onBeforeUnmount(() => {
         </template>
       </el-dropdown>
     </div>
-    <!-- 添加骨架屏 -->
-    <div v-if="isReload" class="animate-(fade-in duration-200)">
-      <ChatContactSkeleton v-for="i in 10" :key="i" />
-    </div>
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list">
+      <!-- 添加骨架屏 -->
+      <div v-if="isReload" class="animate-(fade-in duration-200) overflow-y-auto">
+        <ChatContactSkeleton v-for="i in 10" :key="i" />
+      </div>
       <el-radio-group v-model="theContactId" class="relative w-full">
         <ListAutoIncre
           :immediate="true" :auto-stop="false" loading-class="op-0" :no-more="pageInfo.isLast"
