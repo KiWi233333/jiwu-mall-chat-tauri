@@ -1,7 +1,7 @@
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity $transition-delay ease;
+  transition: opacity $transition-delay ease-in-out;
 }
 
 .fade-enter-from,
@@ -273,22 +273,20 @@ html.stop-transition-all {
 }
 
 // group动画
-.group-list-move,
+.group-list-move, /* 对移动中的元素应用的过渡 */
 .group-list-enter-active,
 .group-list-leave-active {
-  transition: 0.3s $animate-cubic-bount;
-  transition-property: opacity, transform;
+  transition: all 0.3s;
 }
 
 .group-list-enter-from,
 .group-list-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: translateY(1em);
 }
 
 .group-list-leave-active {
   position: absolute;
-  z-index: -1;
 }
 
 // blur 列表动画
@@ -877,7 +875,7 @@ html.stop-transition-all {
     filter: blur(0.8em);
   }
 
-  80%  {
+  80% {
     filter: none;
   }
   100% {
@@ -998,7 +996,6 @@ html.stop-transition-all {
   transition-duration: $transition-delay;
   transition-property: opacity, filter;
 }
-
 
 .popper-blur-enter-from,
 .popper-blur-leave-to {

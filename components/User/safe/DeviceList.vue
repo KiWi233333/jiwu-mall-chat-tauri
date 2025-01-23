@@ -4,9 +4,9 @@ import { getLoginDeviceList, toUserOffline } from "@/composables/api/user/safe";
 const [autoAnimateRef, enable] = useAutoAnimate({
   duration: 200,
 });
+const setting = useSettingStore();
 onMounted(() => {
-  const setting = useSettingStore();
-  enable(!setting.settingPage.isCloseAllTransition);
+  enable(false);
 });
 const user = useUserStore();
 const isLoading = ref<boolean>(false);
@@ -27,9 +27,10 @@ async function reload() {
     return;
   deviceList.value.splice(0);
   const flag = await getDeviceList();
+  ElMessage.success(flag ? "刷新成功🎉！" : "刷新失败，请稍后重试！");
   setTimeout(() => {
-    ElMessage.success(flag ? "刷新成功🎉！" : "刷新失败，请稍后重试！");
-  }, 300);
+    enable(!setting.settingPage.isCloseAllTransition);
+  }, 500);
 }
 
 // 用户下线
@@ -88,12 +89,12 @@ const loadingIcon = `
       <!-- 列表 -->
       <div
         ref="autoAnimateRef"
-        class="relative grid grid-cols-1 gap-2 pb-4rem lg:grid-cols-3 sm:grid-cols-2"
+        class="relative grid grid-cols-1 items-start gap-2 pb-4rem lg:grid-cols-3 sm:grid-cols-2"
       >
         <UserSafeDeviceCard
           v-for="p in deviceList"
           :key="p.id"
-          class="cursor-pointer active:scale-97 hover:(border-[var(--el-color-info)] border-solid shadow)"
+          class="relative h-fit cursor-pointer active:scale-97 hover:(border-[var(--el-color-info)] border-solid shadow)"
           :data="p"
         >
           <div />
@@ -102,6 +103,7 @@ const loadingIcon = `
             size="small"
             type="danger"
             style="padding: 0 8px"
+            class="position-absolute bottom-0 right-0"
             plain
             @click="exitLogin(p.userAgentString)"
           >

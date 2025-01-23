@@ -235,37 +235,6 @@ function deleteMsg(roomId: number, msgId: number) {
   });
 }
 
-// 格式化时间
-let cachedToday: Date | null = null;
-
-function formatDate(date: Date) {
-  const now = new Date();
-  if (!cachedToday || now.getDate() !== cachedToday.getDate()) {
-    cachedToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  }
-
-  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const diff = Math.floor((cachedToday.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
-
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-
-  if (diff < 1) {
-    return `今天 ${hours}:${minutes}`;
-  }
-  else if (diff === 1) {
-    return `昨天 ${hours}:${minutes}`;
-  }
-  else if (diff === 2) {
-    return `前天 ${hours}:${minutes}`;
-  }
-  else {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
-  }
-}
 // 是否显示时间
 const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 
@@ -284,7 +253,7 @@ function onClickAvatar() {
 
 <template>
   <p v-if="showTime" w-full py-2 text-center text-0.8em op-60>
-    {{ formatDate(new Date(data.message.sendTime)) }}
+    {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component
     :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"

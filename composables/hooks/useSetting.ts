@@ -19,11 +19,14 @@ export function useSettingNotice({
   // 显示新版本 + 当前版本 更新时间线
   const showUpateNoticeLine = ref(false);
 
-
   // 公告
-  function showVersionNotice(version: string) {
+  async function showVersionNotice(version: string) {
     const v = version.replaceAll("v", "");
-
+    const res = await getVersionNotice(v);
+    if (res.code !== StatusCode.SUCCESS)
+      return;
+    if (res?.data?.notice)
+      notice.value = (res.data.notice || "");
     showNotice.value = true;
   }
 

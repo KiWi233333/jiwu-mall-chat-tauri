@@ -29,7 +29,6 @@ watch(() => route.path, (newVal, oldVal) => {
 watch(() => ws.wsMsgList.applyMsg.length, (newVal, oldVal) => {
   getApplyCount();
 });
-
 onMounted(() => {
   getApplyCount();
 });
@@ -39,10 +38,6 @@ onActivated(() => {
 onDeactivated(() => {
   getApplyCount();
 });
-onBeforeUnmount(() => {
-  getApplyCount();
-});
-
 // @unocss-include
 const menuList: MenuItem[] = [
   {

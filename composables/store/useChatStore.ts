@@ -214,11 +214,6 @@ export const useChatStore = defineStore(
       mitter.off(MittEventType.DELETE);
     }
     onUnmounted(removeListeners);
-    // onDeactivated(removeListeners);
-    onBeforeMount(() => {
-      // 监听消息
-      setReadList(theContact.value.roomId);
-    });
     /**
      * 1. 新消息处理
      * @param list 原始列表
@@ -427,7 +422,6 @@ export const useChatStore = defineStore(
           if (action === "confirm") {
             const res = await deleteContact(roomId, user.getToken);
             if (res.code === StatusCode.SUCCESS) {
-              ElMessage.success("删除成功！");
               removeContact(roomId);
               successCallBack && successCallBack();
             }
@@ -456,7 +450,7 @@ export const useChatStore = defineStore(
           if (action === "confirm") {
             const res = await exitRoomGroup(roomId, user.getToken);
             if (res.code === StatusCode.SUCCESS) {
-              ElMessage.success("退出成功！");
+              ElMessage.success(isTheGroupOwner ? "群聊已解散！" : "退出群聊成功！");
               successCallBack && successCallBack();
             }
           }

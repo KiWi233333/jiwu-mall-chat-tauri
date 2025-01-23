@@ -1,3 +1,5 @@
+import { dayjs } from "element-plus";
+
 export function useCheckXXSText(text: string): string {
   //  https://github.com/leizongmin/js-xss/blob/master/README.zh.md
   text = text
@@ -240,5 +242,84 @@ export function moveDom(target: HTMLDivElement, options: {
     endCalllback && endCalllback(left, top);
     document.removeEventListener(moveEvt, moveFun);
     document.removeEventListener(endEvt, endFun);
+  }
+}
+
+let cachedToday: Date | null = null;
+// 格式化时间
+export function formatFriendlyDate(date: Date | number | string): string {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
+  if (typeof date === "number") {
+    date = new Date(date);
+  }
+  if (!(date instanceof Date)) {
+    date = dayjs(date).toDate();
+  }
+  const now = new Date();
+  if (!cachedToday || now.getDate() !== cachedToday.getDate()) {
+    cachedToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diff = Math.floor((cachedToday.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  if (diff < 1) {
+    return `今天 ${hours}:${minutes}`;
+  }
+  else if (diff === 1) {
+    return `昨天 ${hours}:${minutes}`;
+  }
+  else if (diff === 2) {
+    return `前天 ${hours}:${minutes}`;
+  }
+  else {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+  }
+}
+
+// 格式化时间
+export function formatContactDate(date: Date | number | string): string {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
+  if (typeof date === "number") {
+    date = new Date(date);
+  }
+  if (!(date instanceof Date)) {
+    date = dayjs(date).toDate();
+  }
+  const now = new Date();
+  if (!cachedToday || now.getDate() !== cachedToday.getDate()) {
+    cachedToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diff = Math.floor((cachedToday.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  if (diff < 1) {
+    return `今天 ${hours}:${minutes}`;
+  }
+  else if (diff === 1) {
+    return `昨天 ${hours}:${minutes}`;
+  }
+  else if (diff === 2) {
+    return `前天 ${hours}:${minutes}`;
+  }
+  else {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 }

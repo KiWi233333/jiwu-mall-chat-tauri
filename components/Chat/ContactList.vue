@@ -6,19 +6,16 @@ import { WSMemberStatusEnum } from "~/types/chat/WsType";
 const props = defineProps<{
   dto?: ContactPageDTO
 }>();
-const [autoAnimateRef, enable] = useAutoAnimate({
-  duration: 200,
-});
 const isLoading = ref<boolean>(false);
-const isReload = ref(false);
+const setting = useSettingStore();
 const user = useUserStore();
 const chat = useChatStore();
+const isReload = ref(false);
 const pageInfo = ref({
   cursor: null as null | string,
   isLast: false,
   size: 20,
 });
-
 /**
  * 加载会话列表
  */
@@ -43,13 +40,10 @@ async function loadData(dto?: ContactPageDTO) {
   isLoading.value = false;
   return data.list;
 }
-const setting = useSettingStore();
-// 会话store
-const contact = useChatStore();
 // 改变当前会话
 const theContactId = computed({
   get() {
-    return contact.theContact.roomId;
+    return chat.theContact.roomId;
   },
   set(contactId: number) {
     onChangeRoom(contactId);
@@ -57,12 +51,12 @@ const theContactId = computed({
 });
 // 切换房间
 async function onChangeRoom(newRoomId?: number) {
-  if (!newRoomId)
+  if (!newRoomId || chat.theContact.roomId === newRoomId)
     return;
   const item = chat.contactMap[newRoomId];
   if (!item)
     return;
-  await contact.setContact(item); // 提前设置当前会话
+  await chat.setContact(item); // 提前设置当前会话
   setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
@@ -70,7 +64,6 @@ chat.onChangeRoom = onChangeRoom;
 async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
     return;
-  enable(false);
   isReload.value = true;
   if (isAll) {
     chat.contactMap = {};
@@ -83,10 +76,6 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
       setting.isOpenContactSearch = true;// 打开搜索框
     }
     await loadData(dto || props.dto);
-    await nextTick();
-    setTimeout(() => {
-      enable(!setting.settingPage.isCloseAllTransition);
-    }, 800);
   }
   else if (roomId) { // 刷新某一房间
     refreshItem(roomId);
@@ -117,7 +106,7 @@ async function refreshItem(roomId: number) {
     delete isLoadRoomMap[roomId];
   }
 }
-contact.onReloadContact = reload;
+chat.onReloadContact = reload;
 
 // 添加群聊
 const showDialog = ref(false);
@@ -252,9 +241,8 @@ function toFriendPage() {
   }, 200);
 }
 
-onMounted(() => {
-  reload();
-});
+
+reload();
 onBeforeUnmount(() => {
   stopWatch?.();
 });
@@ -293,71 +281,72 @@ onBeforeUnmount(() => {
       </el-dropdown>
     </div>
     <!-- 会话列表 -->
-    <el-scrollbar wrap-class="w-full h-full" class="contact-list">
+    <el-scrollbar wrap-class="w-full h-full" class="contact-list" wrapper-class="relative">
       <!-- 添加骨架屏 -->
       <div v-if="isReload" class="animate-(fade-in duration-200) overflow-y-auto">
         <ChatContactSkeleton v-for="i in 10" :key="i" />
       </div>
-      <el-radio-group v-model="theContactId" class="relative w-full">
-        <ListAutoIncre
-          :immediate="true" :auto-stop="false" loading-class="op-0" :no-more="pageInfo.isLast"
-          @load="loadData(dto)"
-        >
-          <div ref="autoAnimateRef">
-            <el-radio
-              v-for="room in chat.getContactList"
-              :key="room.roomId"
-              style="border-radius: 0;" :value="room.roomId"
-              :class="{
-                'is-pin': room.pinTime,
-              }"
-              class="relative"
-              @click="() => setting.isOpenContact = false"
+      <ListAutoIncre
+        :immediate="true"
+        :auto-stop="false"
+        loading-class="op-0"
+        :no-more="pageInfo.isLast"
+        @load="loadData(dto)"
+      >
+        <ListTransitionGroup :immediate="false">
+          <div
+            v-for="room in chat.getContactList"
+            :key="room.roomId"
+            class="contact w-full text-sm"
+            :class="{
+              'is-pin': room.pinTime,
+              'is-checked': room.roomId === theContactId,
+            }"
+            @contextmenu.stop="onContextMenu($event, room)"
+            @click="onChangeRoom(room.roomId)"
+          >
+            <div
+              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
             >
-              <div
-                class="flex gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
-                @contextmenu.stop="onContextMenu($event, room)"
+              <el-badge
+                :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
+                class="h-2.4rem w-2.4rem flex-shrink-0"
               >
-                <el-badge
-                  :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
-                  class="h-2.4rem w-2.4rem flex-shrink-0"
-                >
-                  <CardElImage
-                    :src="BaseUrlImg + room.avatar" fit="cover"
-                    class="h-2.4rem w-2.4rem object-cover card-default"
-                  />
-                </el-badge>
-                <div class="flex flex-1 flex-col justify-between truncate">
-                  <div flex truncate>
-                    <p truncate font-400>
-                      {{ room.name }}
-                    </p>
-                    <span ml-a w-fit flex-shrink-0 text-right text-10px text-mini>
-                      {{ formatContactDate(room.activeTime) }}
-                    </span>
-                  </div>
-                  <p mt-1 flex text-small>
-                    <small
-                      class="flex-1 truncate"
-                      :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
-                    >
-                      {{ room.text }}
-                    </small>
-                    <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-[var(--el-color-primary-light-3)] dark:text-light-500">
-                      置顶
-                    </small>
+                <CardElImage
+                  :src="BaseUrlImg + room.avatar" fit="cover"
+                  class="h-2.4rem w-2.4rem object-cover card-default"
+                />
+              </el-badge>
+              <div class="flex flex-1 flex-col justify-between truncate">
+                <div flex truncate>
+                  <p truncate font-400>
+                    {{ room.name }}
                   </p>
+                  <span ml-a w-fit flex-shrink-0 text-right text-10px text-mini>
+                    {{ formatContactDate(room.activeTime) }}
+                  </span>
                 </div>
+                <p mt-1 flex text-small>
+                  <small
+                    class="flex-1 truncate"
+                    :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                  >
+                    {{ room.text }}
+                  </small>
+                  <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-[var(--el-color-primary-light-3)] dark:text-light-500">
+                    置顶
+                  </small>
+                </p>
               </div>
-            </el-radio>
+            </div>
           </div>
-        </ListAutoIncre>
+        </ListTransitionGroup>
         <template #done>
-          <div class="mb-6 w-full text-center text-mini">
-            暂无更多
+          <div class="my-4 w-full text-center text-mini">
+            {{ pageInfo.isLast ? '没有更多了' : '' }}
           </div>
         </template>
-      </el-radio-group>
+      </ListAutoIncre>
     </el-scrollbar>
     <!-- 新建群聊 -->
     <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showDialog" />
@@ -366,39 +355,13 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .contact-list {
-
-  :deep(.el-radio-group) {
-    display: block;
-    padding: 0;
-    font-size: 1rem;
-    margin: 0;
-    width: 100%;
-  }
-
-  :deep(.el-radio) {
-    width: 100%;
-    height: fit-content;
-    display: block;
-    padding: 0;
-    border: none;
-    transition: 200ms border;
-    margin: 0;
-
+  .contact {
     &.is-pin {
       --at-apply: "bg-light-500 dark:bg-dark";
     }
 
     &.is-checked {
       background-color: #7c7c7c1a;
-    }
-
-    .el-radio__input {
-      display: none;
-      border-color: transparent;
-    }
-
-    .el-radio__label {
-      padding: 0;
     }
   }
 }

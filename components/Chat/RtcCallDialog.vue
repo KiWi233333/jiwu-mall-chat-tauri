@@ -43,7 +43,15 @@ const {
   toggleVideo,
   switchAudioDevice,
   switchVideoDevice,
+  unMounted,
 } = chat.useChatWebRTC();
+
+// 清理资源
+onUnmounted(() => {
+  unMounted();
+});
+
+
 enum MaxVideoObjEnum {
   CONTAIN = "object-contain",
   COVER = "object-cover",
@@ -304,7 +312,7 @@ defineExpose({
 <template>
   <div
     v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-info: 0;"
-    class="rtc-dialog group rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
+    class="group rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
       'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind && !isMaxWind,

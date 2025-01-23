@@ -33,10 +33,6 @@ const unWatchDebounced = watchDebounced(() => ws.wsMsgList.applyMsg.length, (new
 });
 
 onMounted(() => {
-  // mitt 事件监听
-  // mitter.on(MittEventType.APPLY, (data) => {
-  //   getApplyCount();
-  // });
   getApplyCount();
 });
 onActivated(() => {
@@ -46,10 +42,8 @@ onDeactivated(() => {
   getApplyCount();
 });
 onBeforeUnmount(() => {
-  getApplyCount();
   unWatchDebounced();
 });
-
 // @unocss-include
 const menuList = [
   {

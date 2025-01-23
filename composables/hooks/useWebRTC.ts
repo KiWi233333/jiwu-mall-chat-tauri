@@ -241,10 +241,6 @@ export function useWebRTC(
       ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
     }
   });
-  onUnmounted(() => {
-    mitter.off(MittEventType.RTC_CALL);
-  });
-
 
   // 获取设备列表
   const getDevices = async () => {
@@ -919,13 +915,12 @@ export function useWebRTC(
     }
   };
 
-  // 清理资源
-  onUnmounted(() => {
+
+  function unMounted() {
+    mitter.off(MittEventType.RTC_CALL);
     endCall();
-  });
-  onDeactivated(() => {
-    endCall();
-  });
+  }
+
 
   return {
     theContact,
@@ -959,5 +954,6 @@ export function useWebRTC(
     switchVideoDevice,
     startScreenShare, // 添加桌面共享方法
     stopScreenShare, // 添加停止桌面共享方法
+    unMounted,
   };
 }

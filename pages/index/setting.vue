@@ -151,10 +151,10 @@ const {
         />
       </div>
       <!-- 更新 -->
-      <div v-if="!setting.isWeb" class="group h-8 flex-row-bt-c">
+      <div class="group h-8 flex-row-bt-c">
         关于更新
-        <div class="ml-a flex items-center gap-4">
-          <span v-if="setting.appUploader.version" class="text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">v{{ setting.appUploader.version }}版本公告</span>
+        <div class="ml-a flex items-center gap-2 sm:gap-4">
+          <span class="text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">{{ setting.appUploader.version ? `v${setting.appUploader.version}` : "" }} 更新日志</span>
           <template v-if="setting.isDesktop">
             <el-badge
               v-if="!setting.appUploader.isUpdating"
@@ -163,8 +163,9 @@ const {
               :value="+setting.appUploader.isUpload"
             >
               <ElButton
+                v-if="setting.isDesktop"
                 class="flex-row-c-c cursor-pointer transition-all"
-                round plain
+                plain round
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"
@@ -238,7 +239,7 @@ const {
     <div class="btns mt-a flex flex-col items-center gap-4 sm:flex-row">
       <BtnElButton
         class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
-
+        style="--el-color-primary: var(--el-color-danger);--el-button-hover-border-color: var(--el-color-danger);background-color: transparent;"
         @click="setting.reset()"
       >
         重置
@@ -360,6 +361,7 @@ const {
           关&nbsp;闭
         </BtnElButton>
         <BtnElButton
+          v-if="setting.isDesktop"
           class="w-6rem"
           type="primary"
           :loading="setting.appUploader.isCheckUpdatateLoad || setting.appUploader.isUpdating"
