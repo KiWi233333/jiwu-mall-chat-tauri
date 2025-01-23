@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-import { getVersion } from "@tauri-apps/api/app";
-import { open as openFile } from "@tauri-apps/plugin-shell";
-import { check, type Update } from "@tauri-apps/plugin-updater";
-import { dayjs } from "element-plus";
 import { MdPreview } from "md-editor-v3";
 import { DEFAULT_RTC_CALL_BELL_URL } from "~/composables/store/useSettingStore";
 import { appKeywords, appName } from "~/constants";
@@ -15,235 +11,47 @@ useSeoMeta({
   keywords: appKeywords,
 });
 
-const isLoading = ref(false);
 const user = useUserStore();
 const setting = useSettingStore();
-// 字体监听
-watchDebounced(
-  () => setting.settingPage.fontFamily.value,
-  (val: string) => {
-    if (val && document) {
-      isLoading.value = true;
-      localStorage.setItem("--font-family", val);
-      document.documentElement.style.setProperty("--font-family", val);
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 300);
-    }
-  },
-);
 
-// 通知
-const notificationTypeList = computed(() => (setting.isMobile || setting.isWeb)
-  ? [
-      {
-        label: "系统",
-        value: NotificationEnums.SYSTEM,
-      },
-      {
-        label: "关闭",
-        value: NotificationEnums.CLOSE,
-      },
-    ]
-  : [
-      {
-        label: "托盘",
-        value: NotificationEnums.TRAY,
-      },
-      {
-        label: "系统",
-        value: NotificationEnums.SYSTEM,
-      },
-      {
-        label: "关闭",
-        value: NotificationEnums.CLOSE,
-      },
-    ],
-);
+// 默认
+const {
+  isFullLoading,
+  notificationTypeList,
+  changeAnimateMode,
+  openFileFolder,
+} = useSettingDefault();
+
+// 公告
+const {
+  showNotice,
+  notice,
+  showUpateNoticeLine,
+  showVersionNotice,
+  handleCheckUpadate,
+  isNoMore,
+  versionList,
+  loadVersionPage,
+  reloadVersionPage,
+} = useSettingNotice();
 
 // 主题
-const themeConfigList = setting.settingPage.modeToggle.list.map(item => ({
-  ...item,
-  label: item.name,
-  value: item.value,
-}));
-const thePostion = ref({
-  clientX: 0,
-  clientY: 0,
-});
-function isColseChange(val: any) {
-  if (val)
-    document.documentElement.classList.add("stop-transition-all");
-  else
-    document.documentElement.classList.remove("stop-transition-all");
-}
-const colorMode = useColorMode();
-const theme = computed({
-  get: () => setting.settingPage.modeToggle.value,
-  set: (val: string) => {
-    useModeToggle(val, thePostion.value as MouseEvent);
-    setting.settingPage.modeToggle.value = val;
-  },
-});
+const {
+  theme,
+  themeConfigList,
+  thePostion,
+} = useSettingTheme();
 
-// 公告
-const showNotice = ref(false);
-const notice = ref<string>("# 暂无内容");
-
-// 显示新版本 + 当前版本 更新时间线
-const showUpateNoticeLine = ref(false);
-const noticeList = ref<UpdateNoticeItem[]>([]);
-interface UpdateNoticeItem {
-  version: string;
-  notice: string;
-  createTime: string;
-}
-function getIsNewVersion(version: string) {
-  const v = version.replaceAll("v", "");
-  return noticeList.value.find(item => item.version === v)?.createTime || "";
-}
-
-// 更新
-onMounted(async () => {
-  setting.loadSystemFonts();
-  if (setting.isWeb)
-    return;
-  noticeList.value = [];
-  const version = await getVersion();
-  // 公告
-  if (version) {
-    getVersionNotice(version).then((res) => {
-      if (res.code !== StatusCode.SUCCESS)
-        ElMessage.closeAll("error");
-      noticeList.value.push({
-        createTime: res.data?.createTime && dayjs(res.data?.createTime).format("YYYY-MM-DD HH:mm:ss"),
-        version: res.data.version,
-        notice: res.data.notice || "",
-      });
-
-      if (res?.data?.notice)
-        notice.value = (res.data.notice || "");
-    });
-  }
-  // 公告列表
-  if (setting.isDesktop) {
-    const update = (await check()) as Update;
-    if (update && !noticeList.value.find(item => item.version === update?.version)) {
-      getNewVersionInfo(update?.version);
-    }
-  }
-  // 检查更新
-  setting.appUploader.version = version;
-  if (!setting.appUploader.isCheckUpdatateLoad) {
-    setting.checkUpdates(false);
-  }
-});
-
-// 获取新版本公告
-async function getNewVersionInfo(newVersion: string) {
-  if (newVersion) {
-    // 请求获取新公告
-    const res = await getVersionNotice(newVersion);
-    if (res.code !== StatusCode.SUCCESS)
-      ElMessage.closeAll("error");
-    if (setting.appUploader.version !== res.data.version) {
-      noticeList.value.push({
-        createTime: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm:ss"),
-        version: res.data.version,
-        notice: res.data.notice || "",
-      });
-    }
-    if (res?.data?.notice)
-      notice.value = (res.data.notice || "");
-  }
-}
-
-// 公告
-function showVersionNotice(version: string) {
-  const v = version.replaceAll("v", "");
-  notice.value = noticeList.value.find(item => item.version === v)?.notice || "";
-  showNotice.value = true;
-}
-
-// 打开下载文件夹
-async function openFileFolder() {
-  if (!await existsFile(setting.appDataDownloadDirUrl)) {
-    ElMessageBox.confirm("下载目录不存在，是否创建？", {
-      title: "提示",
-      center: true,
-      confirmButtonText: "创建",
-      cancelButtonText: "取消",
-      confirmButtonClass: "el-button-warning",
-      lockScroll: true,
-      callback: async (action: string) => {
-        if (action === "confirm") {
-          mkdirFile(setting.appDataDownloadDirUrl);
-        }
-      },
-    });
-    return;
-  }
-  openFile(setting.appDataDownloadDirUrl);
-}
-
-// 切换默认铃声
-function toggleRtcCallBell() {
-  ElMessageBox.prompt("", {
-    title: "更改铃声",
-    inputType: "text",
-    inputValue: setting.settingPage.rtcCallBellUrl,
-    center: true,
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    inputErrorMessage: "请输入正确的铃声地址",
-    inputPlaceholder: "请输入铃声网络地址",
-    lockScroll: true,
-  }).then(({ value, action }) => {
-    const val = value?.trim();
-    if (action === "confirm") {
-      if (!val) {
-        ElNotification.warning("已关闭铃声！");
-        setting.settingPage.rtcCallBellUrl = "";
-        return;
-      }
-      // 正则判断
-      const reg = /^https?:\/\/[^\s/$.?#].\S*$/;
-      if (DEFAULT_RTC_CALL_BELL_URL !== val && !reg.test(val)) {
-        ElMessage.error("请输入正确的铃声地址");
-        return;
-      }
-      setting.settingPage.rtcCallBellUrl = val;
-    }
-  });
-}
-
-// 播放默认铃声
-const audioRaw = ref<HTMLAudioElement>();
-function togglePlayRtcCallBell(url?: string) {
-  if (!url)
-    return;
-  if (audioRaw.value) {
-    audioRaw.value.pause?.();
-    audioRaw.value.remove?.();
-    audioRaw.value = undefined;
-    return;
-  }
-  audioRaw.value = new Audio(url);
-  audioRaw.value.play();
-  audioRaw.value.onended = () => {
-    audioRaw.value?.remove?.();
-    audioRaw.value = undefined;
-  };
-}
-onDeactivated(() => {
-  audioRaw.value?.pause?.();
-  audioRaw.value?.remove?.();
-  audioRaw.value = undefined;
-});
+// 铃声
+const {
+  audioRaw,
+  togglePlayRtcCallBell,
+  toggleRtcCallBell,
+} = useSettingBell();
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isLoading" class="mt-8 flex flex-1 flex-col p-4 md:p-6">
+  <main v-loading.fullscreen.lock="isFullLoading" class="mt-8 flex flex-1 flex-col p-4 md:p-6">
     <h3 flex items-center>
       系统设置
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
@@ -257,7 +65,7 @@ onDeactivated(() => {
           v-model="setting.settingPage.fontFamily.value"
           allow-create
           style="width: 13rem;" :teleported="false"
-          :disabled="isLoading"
+          :disabled="isFullLoading"
           placement="bottom-end"
           class="inputs"
           fit-input-width
@@ -294,7 +102,7 @@ onDeactivated(() => {
         >
           <el-switch
             v-model="setting.settingPage.isCloseAllTransition" size="large" active-text="开启"
-            inactive-text="关闭" inline-prompt @change="isColseChange"
+            inactive-text="关闭" inline-prompt @change="changeAnimateMode"
           />
         </el-tooltip>
       </div>
@@ -456,7 +264,7 @@ onDeactivated(() => {
           language="zh-CN"
           editor-id="notice-toast"
           show-code-row-number
-          :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+          :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
           preview-theme="smart-blue"
           :code-foldable="false"
           code-theme="a11y"
@@ -474,50 +282,79 @@ onDeactivated(() => {
     <el-dialog
       v-model="showUpateNoticeLine"
       center
+      destroy-on-close
       width="fit-content"
     >
       <template #header>
-        <h3>&emsp;更新日志 </h3>
+        <h3>
+          更新日志
+          <i i-solar:notebook-bold ml-2 p-2.5 />
+        </h3>
       </template>
-      <div class="max-h-40vh min-h-30vh w-88vw animate-[blur-in_.6s] overflow-y-auto pl-4 sm:max-h-60vh sm:w-400px">
+      <el-scrollbar wrap-class="w-88vw animate-[blur-in_.6s] overflow-y-auto max-h-40vh min-h-30vh sm:max-h-60vh md:w-420px sm:w-380px max-w-90vw">
         <el-timeline style="max-width: 100%;">
-          <el-timeline-item
-            v-for="(item, i) in noticeList.sort((a, b) => dayjs(b.createTime).diff(dayjs(a.createTime)))"
-            :key="item.notice"
-            :color="i === 0 ? 'var(--el-color-primary)' : ''"
+          <ListAutoIncre
+            :immediate="true"
+            :auto-stop="true"
+            :no-more="isNoMore"
+            @load="loadVersionPage"
           >
-            <div class="text-xl font-bold">
-              v{{ item.version }}
-              <small v-if="item.version === setting.appUploader.version" class="!text-color-info text-mini">当前</small>
-              <div class="mt-2 text-mini">
-                {{ item.createTime }}
+            <el-timeline-item
+              v-for="(item, i) in versionList"
+              :key="item.notice"
+              :color="i === 0 ? 'var(--el-color-primary)' : ''"
+              class="group"
+            >
+              <div class="flex items-center text-xl font-bold">
+                v{{ item.version }}
+                <el-tag v-if="item.version === setting.appUploader.version" type="primary" effect="dark" size="small" class="ml-2 text-xs text-dark">
+                  当前
+                </el-tag>
+                <el-tag v-else-if="item.isLatest" type="danger" effect="dark" size="small" class="ml-2 text-xs text-dark">
+                  有新版本
+                </el-tag>
+                <div class="ml-a mt-2 font-400 text-mini">
+                  {{ item.createTime }}
+                </div>
               </div>
-            </div>
-            <div v-if="item.notice" class="relative max-h-20em truncate">
-              <MdPreview
-                language="zh-CN"
-                editor-id="notice-toast"
-                show-code-row-number
-                :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
-                :code-foldable="false"
-                code-theme="a11y"
-                style="font-size: 12px;padding:0;"
-                class="text-overflow-2 mt-2 op-60 transition-opacity !bg-transparent hover:op-100"
-                :model-value="item.notice"
-              />
               <div
-                class="linear-bt absolute bottom-0 left-0 w-full cursor-pointer py-2 text-center hover:text-color-info text-small"
+                v-if="item.notice"
+                class="relative max-h-12em cursor-pointer truncate sm:max-h-16em"
+                :class="{ '!max-h-28em': item.isLatest }"
                 @click="showVersionNotice(item.version)"
               >
-                查看更多
+                <MdPreview
+                  language="zh-CN"
+                  editor-id="notice-toast"
+                  show-code-row-number
+                  :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
+                  :code-foldable="false"
+                  code-theme="a11y"
+                  preview-theme="smart-blue"
+                  style="font-size: 12px;background-color: transparent;"
+                  class="mt-2 card-rounded-df px-4 op-60 shadow-sm shadow-inset transition-opacity hover:op-100 !border-default-hover"
+                  :model-value="item.notice.substring(0, 300)"
+                />
+                <div
+                  class="linear-bt absolute bottom-0 left-0 w-full pt-6 text-center hover:text-color-info text-mini"
+                >
+                  <span op-0 transition-opacity group-hover:op-100>
+                    查看更多
+                  </span>
+                </div>
               </div>
-            </div>
-            <div v-else class="text-small">
-              暂无更新日志
-            </div>
-          </el-timeline-item>
+              <div v-else class="text-small">
+                暂无更新日志
+              </div>
+            </el-timeline-item>
+            <template #done>
+              <div class="py-1rem text-center text-mini">
+                {{ versionList.length ? "没有更多了" : "快去认识其他人" }}
+              </div>
+            </template>
+          </ListAutoIncre>
         </el-timeline>
-      </div>
+      </el-scrollbar>
       <div class="mt-2 mt-4 flex-row-c-c">
         <BtnElButton class="w-6rem" @click="showUpateNoticeLine = false">
           关&nbsp;闭
@@ -526,11 +363,7 @@ onDeactivated(() => {
           class="w-6rem"
           type="primary"
           :loading="setting.appUploader.isCheckUpdatateLoad || setting.appUploader.isUpdating"
-          @click="setting.checkUpdates(true, {
-            handleOnUpload: () => {
-              showUpateNoticeLine = false
-            },
-          })"
+          @click="handleCheckUpadate"
         >
           {{ setting.appUploader.isUpdating ? '正在更新' : '检查更新' }}
         </BtnElButton>

@@ -165,12 +165,13 @@ body .el-message {
     }
   }
 }
-/**  ------------------------------vuepress-markdown---------------------------------------  **/
+/**  ------------------------------markdown---------------------------------------  **/
+
 .md-editor {
+
   .md-editor-preview-wrapper {
-    font-size: inherit;
-    .md-editor-preview {
-      font-size: inherit;
+    img { 
+      --at-apply: "card-default border-default";
     }
   }
 }
