@@ -140,7 +140,6 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
   };
   // 群聊
   if (item.type === RoomType.GROUP) {
-    // 是否群主
     opt.items = [
       {
         customClass: "group",
@@ -155,31 +154,13 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         },
       },
       {
-        icon: "i-solar:logout-3-broken group-btn-error group-hover:i-solar:logout-3-bold-duotone",
-        label: "退出群聊",
         customClass: "group",
+        icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
+        label: "删除聊天",
         onClick: () => {
-          ElMessageBox.confirm("是否退出该群聊？", {
-            confirmButtonText: "退出",
-            cancelButtonText: "取消",
-            center: true,
-            title: "提醒",
-            lockScroll: false,
-            type: "warning",
-            callback: async (action: string) => {
-              if (action === "confirm") {
-                const res = await exitRoomGroup(item.roomId, user.getToken);
-                if (res.code === StatusCode.SUCCESS) {
-                  ElNotification.success("退出成功！");
-                  if (chat.theContact.roomId === item.roomId)
-                    chat.setContact();
-                  await chat.removeContact(item.roomId);
-                }
-              }
-            },
+          chat.deleteContactConfirm(item.roomId, () => {
           });
         },
-
       },
     ];
   }
@@ -192,6 +173,15 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         onClick: () => {
           chat.setTheFriendOpt(FriendOptType.Empty);
           navigateTo("/friend");
+        },
+      },
+      {
+        customClass: "group",
+        icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
+        label: "删除聊天",
+        onClick: () => {
+          chat.deleteContactConfirm(item.roomId, () => {
+          });
         },
       },
     ];

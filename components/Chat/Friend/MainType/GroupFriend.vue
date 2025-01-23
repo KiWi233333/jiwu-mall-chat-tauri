@@ -12,6 +12,7 @@ const isOnGroup = ref<boolean | undefined>(false);
 const room = ref<Partial<ChatRoomInfoVO>>({});
 const user = useUserStore();
 const chat = useChatStore();
+const isGroupOwner = computed(() => room.value.role === ChatRoomRoleEnum.OWNER);
 
 // 加载房间数据
 async function loadData(val: number) {
@@ -28,31 +29,9 @@ async function loadData(val: number) {
   isOnGroup.value = true; // 假设用户已经在群中，根据实际情况进行判断
 }
 
-// 退出群聊
-function exitRoom(roomId: number) {
-  ElMessageBox.confirm("是否退出该群聊？", {
-    confirmButtonText: "退出",
-    cancelButtonText: "取消",
-    center: true,
-    title: "提醒",
-    lockScroll: false,
-    type: "warning",
-    callback: async (action: string) => {
-      if (action === "confirm") {
-        const res = await exitRoomGroup(roomId, user.getToken);
-        if (res.code === StatusCode.SUCCESS) {
-          ElNotification.success("退出成功！");
-          chat.setTheFriendOpt(FriendOptType.Empty, {});
-          chat.setDelGroupId(roomId); // 清除房间
-        }
-      }
-    },
-  });
-};
-
 // 群聊申请
 const roomId = computed(() => data.data.roomId);
-watch(roomId, val => loadData(val));
+watch(roomId, val => loadData(val), { immediate: true });
 
 
 // 去发消息
@@ -106,31 +85,27 @@ const loadingIcon = `
       <!-- 按钮 -->
       <div flex-row-c-c gap-4>
         <BtnElButton
-          icon-class="i-solar:exit-outline p-2 mr-2"
-          class="op-80"
-          type="danger"
+          key="delete"
+          icon-class="i-solar:trash-bin-trash-outline p-2 mr-2"
+          style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;--el-color-primary: var(--el-color-danger);"
           plain
-          @click="exitRoom(roomId)"
+          class="mr-4 op-60 hover:op-100"
+          @click="chat.exitGroupConfirm(chat.theContact.roomId, isGroupOwner, () => {
+            chat.setTheFriendOpt(FriendOptType.Empty, {});
+            chat.setDelGroupId(roomId); // 清除房间
+          })"
         >
-          退出群聊&ensp;
+          {{ isGroupOwner ? "解散群聊" : "退出群聊" }}&ensp;
         </BtnElButton>
         <BtnElButton
-          icon-class="i-solar:chat-line-line-duotone p-2 mr-2"
-          class="border-default"
-          type="info"
+          key="send"
+          icon-class="i-solar:chat-line-bold p-2 mr-2"
+          style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
+          type="primary"
           @click="toSend(roomId)"
         >
-          发消息&ensp;
+          发送消息&ensp;
         </BtnElButton>
-        <!-- <BtnElButton
-          v-else
-          icon-class="i-solar:user-plus-bold p-2 mr-2"
-          class="op-80"
-          type="primary"
-          @click="isShowApply = true"
-        >
-          添加群聊&ensp;
-        </BtnElButton> -->
       </div>
     </div>
   </div>

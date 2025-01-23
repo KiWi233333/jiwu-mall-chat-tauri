@@ -91,9 +91,10 @@ const userStore = useUserStore();
 
 // 删除好友
 function deleteFriend(userId: string) {
-  ElMessageBox.confirm("是否删除该好友？", {
+  ElMessageBox.confirm("是否删除该好友，对应聊天会话也会被删除？", {
     title: "删除提示",
     type: "warning",
+    customClass: "text-center",
     confirmButtonText: "删除",
     confirmButtonClass: "el-button--danger",
     center: true,
@@ -101,12 +102,19 @@ function deleteFriend(userId: string) {
     lockScroll: false,
     callback: async (action: string) => {
       if (action === "confirm") {
+        const contactInfoRes = await getSelfContactInfoByFriendUid(userId, store.getToken);
+        if (!contactInfoRes)
+          return;
+        if (contactInfoRes && contactInfoRes.code !== StatusCode.SUCCESS)
+          return ElMessage.error(contactInfoRes ? contactInfoRes.message : "没有找到对应好友！");
+
         const res = await deleteFriendById(userId, store.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("删除成功！");
           chat.setTheFriendOpt(FriendOptType.Empty, {});
-          chat.setDelUserId(userId);
-          chat.setIsAddNewFriend(true);
+          chat.setDelUserId(userId);// 删除的好友 好友列表也前端移除
+          chat.setIsAddNewFriend(true);// 设置未非好友
+          chat.removeContact(contactInfoRes.data.roomId); // 清除对应会话
         }
         chat.setIsAddNewFriend(true);
       }

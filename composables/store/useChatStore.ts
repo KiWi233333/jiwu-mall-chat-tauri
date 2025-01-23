@@ -367,8 +367,42 @@ export const useChatStore = defineStore(
       recallMsgMap.value[msg.message.roomId] = JSON.parse(JSON.stringify(msg));
       return true;
     }
-    function exitGroupConfirm(roomId: number, isTheGroupOwner: boolean = false, token: string, callBack: () => void) {
-      // 退出群聊
+
+    /**
+     * 删除会话（不影响接收）
+     * @param roomId 房间id
+     * @param successCallBack
+     */
+    function deleteContactConfirm(roomId: number, successCallBack: () => void) {
+      ElMessageBox.confirm("是否删除该聊天（非聊天记录）？", {
+        title: "提示",
+        center: true,
+        type: "warning",
+        confirmButtonText: "删除",
+        confirmButtonLoadingIcon: defaultLoadingIcon,
+        confirmButtonClass: "el-button--danger",
+        cancelButtonText: "取消",
+        lockScroll: false,
+        callback: async (action: string) => {
+          if (action === "confirm") {
+            const res = await deleteContact(roomId, user.getToken);
+            if (res.code === StatusCode.SUCCESS) {
+              ElNotification.success("操作成功！");
+              removeContact(roomId);
+              successCallBack && successCallBack();
+            }
+          }
+        },
+      });
+    }
+
+    /**
+     * 退出群聊
+     * @param roomId 房间id
+     * @param isTheGroupOwner 是否是群主
+     * @param successCallBack 回调
+     */
+    function exitGroupConfirm(roomId: number, isTheGroupOwner: boolean = false, successCallBack: () => void) {
       ElMessageBox.confirm(isTheGroupOwner ? "是否解散该群聊？" : "是否退出该群聊？", {
         title: "提示",
         center: true,
@@ -383,7 +417,7 @@ export const useChatStore = defineStore(
             const res = await exitRoomGroup(roomId, user.getToken);
             if (res.code === StatusCode.SUCCESS) {
               ElNotification.success("操作成功！");
-              callBack && callBack();
+              successCallBack && successCallBack();
             }
           }
         },
@@ -724,6 +758,7 @@ export const useChatStore = defineStore(
       setContact,
       setRecallMsg,
       removeContact,
+      deleteContactConfirm,
       exitGroupConfirm,
       setReadList,
       clearAllUnread,

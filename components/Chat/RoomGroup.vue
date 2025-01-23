@@ -6,7 +6,6 @@ import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum, ChatRoomRoleEnumMap } from 
 const chatRoomRoleEnumMap = ChatRoomRoleEnumMap;
 const ws = useWs();
 const chat = useChatStore();
-const setting = useSettingStore();
 const isLoading = ref<boolean>(false);
 const memberScrollbarRef = ref();
 const user = useUserStore();
@@ -379,27 +378,6 @@ function onAdd() {
     showAddDialog.value = true;
   }
 };
-
-
-// 退出群聊
-function exitGroup() {
-  ElMessageBox.confirm(isTheGroupOwner.value ? "是否解散该群聊？" : "是否退出该群聊？", {
-    center: true,
-    confirmButtonText: isTheGroupOwner.value ? "解散" : "退出",
-    cancelButtonText: "取消",
-    lockScroll: false,
-    callback: async (action: string) => {
-      if (action === "confirm") {
-        const res = await exitRoomGroup(chat.theContact.roomId, user.getToken);
-        if (res.code === StatusCode.SUCCESS) {
-          ElNotification.success("操作成功！");
-          chat.setContact();
-          chat.removeContact(chat.theContact.roomId);
-        }
-      }
-    },
-  });
-}
 </script>
 
 <template>
@@ -530,11 +508,16 @@ function exitGroup() {
         />
       </div>
     </div>
-    <btn-el-button class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round @click="exitGroup()">
+    <BtnElButton
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken sm:mr-2" type="danger" plain round
+      @click="chat.exitGroupConfirm(chat.theContact.roomId, isTheGroupOwner, () => {
+        chat.removeContact(chat.theContact.roomId);
+      })"
+    >
       <span hidden sm:block>
         {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
       </span>
-    </btn-el-button>
+    </BtnElButton>
     <!-- 邀请进群 -->
     <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showAddDialog" />
     <!-- 好友申请 -->

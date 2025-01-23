@@ -5,8 +5,8 @@ import { dayjs } from "element-plus";
  * 文本消息
  */
 const { data } = defineProps<{
-  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO>
-  prevMsg: Partial<ChatMessageVO<TextBodyMsgVO>>
+  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO>
+  prevMsg?: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
 defineEmits(["clickAvatar"]);

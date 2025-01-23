@@ -20,56 +20,6 @@ export function getChatContactPage(dto: ContactPageDTO, token: string) {
   );
 }
 
-export interface ContactPageDTO {
-  pageSize: number
-  cursor?: string | null | undefined
-  type?: RoomType | null | undefined
-}
-
-/**
- * 会话VO
- *
- * ChatContactVO
- */
-export interface ChatContactVO {
-  /**
-   * 房间最后活跃时间(用来排序)
-   */
-  activeTime: number
-  /**
-   * 会话头像
-   */
-  avatar: string
-  /**
-   * 是否全员展示的会话 0否 1是
-   */
-  hotFlag: number
-  /**
-   * 会话名称
-   */
-  name: string
-  /**
-   * 房间id
-   */
-  roomId: number
-  /**
-   * 最新消息
-   */
-  text: string
-  /**
-   * 房间类型 1群聊 2单聊 3AI聊
-   */
-  type: RoomType
-  /**
-   * 未读数
-   */
-  unreadCount: number
-
-  selfExit?: number
-  [property: string]: any
-
-}
-
 export enum RoomType {
   /**
    * 群聊
@@ -82,13 +32,6 @@ export enum RoomType {
 
   AICHAT = 3,
 }
-
-export const RoomTypeTextMap = {
-  [RoomType.GROUP]: "群聊",
-  [RoomType.SELFT]: "单聊",
-  [RoomType.AICHAT]: "AI聊",
-};
-
 
 /**
  * 会话详情
@@ -139,6 +82,77 @@ export function getSelfContactInfoByFriendUid(friendId: string, token: string) {
     },
   );
 }
+
+/**
+ * 删除会话
+ * @param roomId 房间号
+ * @param token 身份
+ * @returns 影响
+ */
+export function deleteContact(roomId: number, token: string) {
+  return useHttp.deleted<Result<number>>(
+    `/chat/contact/${roomId}`,
+    {},
+    { headers: { Authorization: token } },
+  );
+}
+
+
+export interface ContactPageDTO {
+  pageSize: number
+  cursor?: string | null | undefined
+  type?: RoomType | null | undefined
+}
+
+/**
+ * 会话VO
+ *
+ * ChatContactVO
+ */
+export interface ChatContactVO {
+  /**
+   * 房间最后活跃时间(用来排序)
+   */
+  activeTime: number
+  /**
+   * 会话头像
+   */
+  avatar: string
+  /**
+   * 是否全员展示的会话 0否 1是
+   */
+  hotFlag: number
+  /**
+   * 会话名称
+   */
+  name: string
+  /**
+   * 房间id
+   */
+  roomId: number
+  /**
+   * 最新消息
+   */
+  text: string
+  /**
+   * 房间类型 1群聊 2单聊 3AI聊
+   */
+  type: RoomType
+  /**
+   * 未读数
+   */
+  unreadCount: number
+
+  selfExit?: number
+  [property: string]: any
+
+}
+
+export const RoomTypeTextMap = {
+  [RoomType.GROUP]: "群聊",
+  [RoomType.SELFT]: "单聊",
+  [RoomType.AICHAT]: "AI聊",
+};
 
 
 export interface ChatContactDetailVO extends ChatContactVO {
