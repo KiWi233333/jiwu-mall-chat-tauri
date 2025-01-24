@@ -51,13 +51,13 @@ const theContactId = computed({
 });
 // 切换房间
 async function onChangeRoom(newRoomId?: number) {
+  setting.isOpenContact = false;
   if (!newRoomId || chat.theContact.roomId === newRoomId)
     return;
   const item = chat.contactMap[newRoomId];
   if (!item)
     return;
   await chat.setContact(item); // 提前设置当前会话
-  setting.isOpenContact = false;
 }
 chat.onChangeRoom = onChangeRoom;
 // 刷新
