@@ -3,10 +3,11 @@ import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 
 /**
- * 文本消息
+ * AI消息
  */
 const props = defineProps<{
   data: ChatMessageVO<TextBodyMsgVO>
+  prevMsg: ChatMessageVO
   index: number
 }>();
 
@@ -16,25 +17,16 @@ const colorMode = useColorMode();
 
 
 <template>
-  <div
+  <ChatMsgTemplate
+    :prev-msg="prevMsg"
+    :index="index"
+    :data="data"
     v-bind="$attrs"
-    :label="data.roomId"
-    class="msg !pr-4"
-    :class="{
-      self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
-    }"
   >
-    <!-- 头像 -->
-    <CardElImage :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default" />
-    <!-- 消息体 -->
-    <div class="flex flex-col">
-      <!-- 昵称 -->
-      <small class="nickname">
-        {{ data.fromUser.nickName }}
-      </small>
+    <template #body>
       <!-- 内容 -->
       <template v-if="data.fromUser.userId === user.userInfo.id">
-        <p class="msg-popper mt-2 text-0.7rem">
+        <p class="msg-popper mt-2">
           {{ data.message?.content }}
         </p>
       </template>
@@ -47,11 +39,12 @@ const colorMode = useColorMode();
         preview-theme="smart-blue"
         code-theme="a11y"
         :code-foldable="false"
-        class="msg-popper markdown mt-2 text-1em sm:max-w-40rem"
+        style="font-size: 1em;padding: 0.4em 0.8em;"
+        class="msg-popper markdown mt-2 sm:max-w-40rem"
         :model-value="data.message?.content || ''"
       />
-    </div>
-  </div>
+    </template>
+  </ChatMsgTemplate>
 </template>
 
 <style lang="scss" scoped>

@@ -43,6 +43,7 @@ defineExpose({
 });
 
 const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url]);
+// ctx-name="file"
 </script>
 
 <template>
@@ -55,25 +56,26 @@ const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url])
     <template #body>
       <!-- 文件 -->
       <div
+        ctx-name="file"
         :title="fileName"
         class="file max-w-14em w-fit flex flex-row-reverse cursor-pointer gap-3 p-3 shadow-sm transition-all !items-center border-default hover:border-[var(--el-color-primary)] card-default bg-color hover:shadow-lg"
         @click="onDownloadFile(BaseUrlFile + body.url, fileName)"
       >
-        <img :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="file-icon h-8 w-8 object-contain">
-        <div>
-          <p class="text-overflow-2 text-sm leading-4">
+        <img ctx-name="file" :src="body.mimeType ? FILE_TYPE_ICON_MAP[body.mimeType] : FILE_TYPE_ICON_DEFAULT" class="file-icon h-8 w-8 object-contain">
+        <div ctx-name="file">
+          <p ctx-name="file" class="text-overflow-2 text-sm leading-4">
             {{ fileName }}
           </p>
-          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status !== undefined" class="float-left mr-2 mt-2 text-xs op-60">
+          <small v-if="body?.url && setting.fileDownloadMap[BaseUrlFile + body.url]?.status !== undefined" ctx-name="file" class="float-left mr-2 mt-2 text-xs op-60">
             <i :class="fileItem?.status !== undefined ? DownFileStatusIconMap[fileItem?.status] : ''" p-2 />&nbsp;{{ fileItem ? DownFileTextMap[fileItem?.status] : "" }}
           </small>
-          <small class="float-right mt-2 text-xs op-60">
+          <small ctx-name="file" class="float-right mt-2 text-xs op-60">
             {{ formatFileSize(body.size || 0) }}
           </small>
         </div>
       </div>
       <!-- 内容 -->
-      <p v-if="data.message?.content?.trim()" class="msg-popper">
+      <p v-if="data.message?.content?.trim()" class="msg-popper" ctx-name="content">
         {{ data.message.content }}
       </p>
     </template>

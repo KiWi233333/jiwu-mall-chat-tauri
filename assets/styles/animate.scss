@@ -1005,3 +1005,45 @@ html.stop-transition-all {
 .popper-blur-leave-active {
   position: absolute;
 }
+
+// svg路径动画
+@keyframes svg-path-anima {
+  0% {
+    stroke-dashoffset: 1px;
+    stroke-dasharray: 0 var(--dash, 300%);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  35% {
+    stroke-dasharray: var(--dash, 300%) 0;
+    fill: transparent;
+  }
+
+  50% {
+    stroke-dasharray: var(--dash, 300%) 0;
+    fill: var(--anima-color, currentColor);
+  }
+
+  55% {
+    fill: transparent;
+  }
+
+  95%,
+  100% {
+    stroke-dasharray: 0 var(--dash, 300%);
+  }
+}
+.svg-path-anima,
+.svg-path-anima path {
+  fill: transparent;
+  stroke-dashoffset: 1px;
+  stroke-dasharray: var(--anima-dash, 300%) 0;
+  animation: svg-path-anima var(--anima-duration, 6s) ease forwards;
+  animation-iteration-count: var(--anima-iteration, infinite);
+  animation-delay: var(--anima-delay, 0s);
+  stroke: var(--anima-color, currentColor);
+}

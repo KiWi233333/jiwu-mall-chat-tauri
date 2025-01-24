@@ -124,13 +124,16 @@ body .el-message {
   }
 }
 .el-dialog {
+  .el-dialog__headerbtn {
+    height: 64px;
+  }
   --at-apply: "border-default-sm";
   .el-dialog__title {
     font-size: 1rem;
   }
   .el-dialog__header.show-close {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -153,7 +156,6 @@ body .el-message {
   border-radius: 0.3rem;
 }
 
-
 .el-dropdown-menu {
   .el-dropdown-menu__item {
     --at-apply: "h-fit mx-1 transition-100 rounded-1";
@@ -168,9 +170,8 @@ body .el-message {
 /**  ------------------------------markdown---------------------------------------  **/
 
 .md-editor {
-
   .md-editor-preview-wrapper {
-    img { 
+    img {
       --at-apply: "card-default border-default";
     }
   }

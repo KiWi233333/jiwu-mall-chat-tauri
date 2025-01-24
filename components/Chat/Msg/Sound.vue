@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { dayjs } from "element-plus";
-
 /**
  * 文本消息
  */
@@ -96,43 +94,28 @@ function resetPlaySounder() {
 </script>
 
 <template>
-  <div
+  <ChatMsgTemplate
+    :prev-msg="prevMsg"
+    :index="index"
+    :data="data"
     v-bind="$attrs"
-    :label="data.roomId"
-    class="msg"
-    :class="{
-      self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
-    }"
   >
-    <!-- 头像 -->
-    <CardElImage :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 object-cover border-default" />
-    <!-- 消息体 -->
-    <div class="body">
-      <p class="flex-res truncate">
-        <!-- 昵称 -->
-        <small class="nickname">
-          {{ data.fromUser.nickName }}
+    <template #body>
+      <div
+        ctx-name="sound"
+        class="msg-popper min-w-6em cursor-pointer hover:op-80"
+        :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
+      >
+        <p ctx-name="sound" @click="playSound(body?.url)">
+          <i ctx-name="sound" :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
+          {{ chat.playSounder?.url === body.url ? getSoundText : getSoundTextRaw }}
+        </p>
+        <small v-if="body?.translation && showTranslation" ctx-name="sound-translation" class="mt-2 block border-t-(1px #8585828e solid) pt-1.5">
+          {{ body?.translation }}
         </small>
-        <small class="sendTime text-0.7em op-0">
-          {{ dayjs(data.message.sendTime).format("YYYY-MM-DD HH:mm:ss") }}
-        </small>
-      </p>
-      <!-- 内容 -->
-      <slot name="body">
-        <div
-          class="msg-popper min-w-6em cursor-pointer hover:op-80" :class="{ 'animate-pulse': chat.playSounder?.url === body?.url && chat.playSounder?.state === 'play' }"
-        >
-          <p @click="playSound(body?.url)">
-            <i :class="chat.playSounder?.url === body.url && chat.playSounder?.state === 'loading' ? 'i-solar:menu-dots-bold-duotone animate-spin ' : 'i-solar:volume-loud-outline'" p-2 />
-            {{ chat.playSounder?.url === body.url ? getSoundText : getSoundTextRaw }}
-          </p>
-          <small v-if="body?.translation && showTranslation" class="mt-2 block border-t-(1px #8585828e solid) pt-1.5">
-            {{ body?.translation }}
-          </small>
-        </div>
-      </slot>
-    </div>
-  </div>
+      </div>
+    </template>
+  </ChatMsgTemplate>
 </template>
 
 <style lang="scss" scoped>

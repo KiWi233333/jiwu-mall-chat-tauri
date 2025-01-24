@@ -8,9 +8,9 @@
     height: 100dvh;
     width: 100vw;
   }
+
   /* loading */
   .first-app-loading {
-    /* border: 1px solid #e5e7eb; */
     transition: all 0.3;
     position: fixed;
     top: 0;
@@ -28,6 +28,7 @@
     letter-spacing: 0.3em;
     font-family: Alimama;
   }
+
   .first-app-loading .flex-row-c-c {
     display: flex;
     justify-content: center;
@@ -37,7 +38,6 @@
   .first-app-loading h2 {
     padding: 0;
     margin: 0;
-    /* animation: loading-fade-in-out 1.4s ease-in-out infinite; */
   }
 
   .dark .first-app-loading {
@@ -51,20 +51,6 @@
     display: none !important;
   }
 
-  /*
-  @keyframes loading-fade-in-out {
-    0% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.2;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  } */
   #app-loading-spinner {
     margin-top: 1rem;
     display: block;
@@ -77,7 +63,7 @@
 <body data-tauri-drag-region>
   <!-- 获取模式 -->
   <script>
-    const mode = localStorage.getItem("vueuse-color-scheme");
+      const mode = localStorage.getItem("vueuse-color-scheme");
       const osType = window.localStorage.getItem("osType");
       if (["windows", "macos", "linux"].includes(osType)) {
         document.documentElement.classList.add("desktop");

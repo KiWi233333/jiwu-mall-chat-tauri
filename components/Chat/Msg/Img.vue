@@ -23,6 +23,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
       <!-- 内容 -->
       <CardElImage
         v-if="body?.url"
+        ctx-name="img"
         error-root-class="h-9rem w-9rem"
         :src="BaseUrlImg + body?.url"
         load-class="sky-loading block !h-9rem !w-9rem absolute top-0"
@@ -32,7 +33,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
         :preview-src-list="[BaseUrlImg + body?.url]"
       />
       <!-- 内容 -->
-      <p v-if="data.message?.content?.trim()" class="msg-popper">
+      <p v-if="data.message?.content?.trim()" ctx-name="content" class="msg-popper">
         {{ data.message.content }}
       </p>
     </template>

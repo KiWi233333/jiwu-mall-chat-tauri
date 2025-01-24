@@ -323,3 +323,49 @@ export function formatContactDate(date: Date | number | string): string {
     return `${year}-${month}-${day}`;
   }
 }
+
+const supportFetch = typeof window !== "undefined" && "fetch" in window;
+
+export async function getImgBlob(imgUrl: string): Promise<Blob | null> {
+  try {
+    if (supportFetch) {
+      // 使用 fetch 请求图片资源
+      const response = await fetch(imgUrl);
+      // 检查响应是否成功
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      // 将响应转换为 Blob 对象
+      const blob = await response.blob();
+      // 返回 Blob 对象
+      return blob;
+    }
+    else {
+      // 不支持 fetch 时，使用 XMLHttpRequest 作为回退方案
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", imgUrl, true);
+        xhr.responseType = "blob";
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(xhr.response);
+          }
+          else {
+            reject(new Error(`Failed to fetch image: ${xhr.statusText}`));
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(new Error("Network error while fetching image"));
+        };
+
+        xhr.send();
+      }); ;
+    }
+  }
+  catch (error) {
+    console.error("Error converting image to Blob:", error);
+    return null;
+  }
+}

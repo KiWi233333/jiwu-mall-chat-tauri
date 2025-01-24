@@ -2,7 +2,8 @@
 import { dayjs } from "element-plus";
 
 /**
- * 文本消息
+ * 消息模板（默认文本）
+ * ctx-name 用于右键菜单
  */
 const { data } = defineProps<{
   data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO>
@@ -42,27 +43,30 @@ function onCopyMsg(msg?: string | null) {
   >
     <!-- 头像 -->
     <CardElImage
+      ctx-name="avatar"
       error-class="i-solar:user-broken"
-      :src="BaseUrlImg + data.fromUser.avatar" fit="cover" class="avatar h-2.4rem w-2.4rem flex-shrink-0 cursor-pointer rounded-1/2 object-cover border-default"
+      :src="BaseUrlImg + data.fromUser.avatar"
+      fit="cover"
+      class="avatar h-2.4rem w-2.4rem flex-shrink-0 cursor-pointer rounded-1/2 object-cover border-default"
       @click="$emit('clickAvatar', data.fromUser.userId)"
     />
     <!-- 消息体 -->
     <div class="body">
-      <p class="flex-res truncate">
+      <div class="flex-res truncate">
         <!-- 昵称 -->
-        <small class="nickname">
+        <small class="nickname" ctx-name="nickname">
           {{ data.fromUser.nickName }}
         </small>
-        <small class="sendTime text-0.7em op-0">
+        <small class="sendTime text-0.7em op-0" ctx-name="sendTime">
           {{ dayjs(data.message.sendTime).format("YYYY-MM-DD HH:mm:ss") }}
         </small>
         <small class="sendTime text-0.7em op-0 btn-info" @click="onCopyMsg(data.message.content)">
           复制
         </small>
-      </p>
+      </div>
       <!-- 内容 -->
       <slot name="body">
-        <p class="msg-popper">
+        <p class="msg-popper" ctx-name="content">
           {{ data.message.content }}
         </p>
       </slot>
@@ -70,6 +74,7 @@ function onCopyMsg(msg?: string | null) {
       <small
         v-if="body?.reply"
         title="点击跳转"
+        ctx-name="reply"
         class="max-w-20em w-fit flex-1 cursor-pointer truncate px-2 text-0.75em sm:max-w-30em card-default dark:text-light-900 border-default-hover"
         @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
       >
@@ -79,6 +84,7 @@ function onCopyMsg(msg?: string | null) {
       <!-- AT @ -->
       <small
         v-if="body?.atUidList?.length && body?.atUidList.includes(user?.userInfo?.id)"
+        ctx-name="atUidList"
         class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default"
       >
         有人@我
