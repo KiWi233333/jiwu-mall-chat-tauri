@@ -4,13 +4,6 @@ import type { ChatMessageList } from "#components";
 defineProps<{
   roomId?: string
 }>();
-const chat = useChatStore();
-// 发送信息后触发
-async function onSendMsg(msg: ChatMessageVO) {
-  chat?.appendMsg(msg);
-  await nextTick();
-  chat.scrollBottom?.(false);
-};
 </script>
 
 <template>
@@ -20,7 +13,7 @@ async function onSendMsg(msg: ChatMessageVO) {
     <!-- 消息列表 -->
     <ChatMessageList />
     <!-- 发送 -->
-    <ChatMsgForm class="flex-shrink-0" @submit="onSendMsg" />
+    <ChatMsgForm class="flex-shrink-0" />
   </div>
 </template>
 

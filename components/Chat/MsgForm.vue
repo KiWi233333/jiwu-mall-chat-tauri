@@ -268,7 +268,12 @@ async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: 
   }, user.getToken);
   isSending.value = false;
   if (res.code === StatusCode.SUCCESS) {
+    // 发送信息后触发
     emit("submit", res.data);
+    // 追加消息
+    chat?.appendMsg(res.data);
+    await nextTick();
+    chat.scrollBottom?.(false);
     // 消息阅读上报
     res.data.message.roomId && chat.setReadList(res.data.message.roomId);
     typeof callback === "function" && callback(res.data); // 执行回调
@@ -556,7 +561,11 @@ watch(() => chat.theContact.roomId, () => {
           <el-tag effect="dark" size="small" class="mr-2 shrink-0">
             回复
           </el-tag>
-          <ChatMsgContentCard class="max-w-4/5 truncate" :data="chat.replyMsg" />
+
+          <div class="max-w-4/5 truncate">
+            {{ `${chat.replyMsg?.fromUser?.nickName}: ${resolveMsgReplyText(chat.replyMsg as ChatMessageVO)}` }}
+          </div>
+          <!-- <ChatMsgContentCard  :data="chat.replyMsg" /> -->
           <div class="i-solar:close-circle-bold ml-a h-5 w-5 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
         </div>
       </div>

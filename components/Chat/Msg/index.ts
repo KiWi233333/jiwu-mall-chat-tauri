@@ -183,6 +183,11 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         customClass: "group",
         onClick: () => chat.rollbackCall(data.message.roomId, data.message.body?.type, data),
       },
+      {
+        label: "回复",
+        icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
+        onClick: () => chat.setReplyMsg(data),
+      },
     ],
   };
   const getContextMenuItems = (ctxName: string, isSelf: boolean) => {
