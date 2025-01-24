@@ -3,13 +3,6 @@ import type { ChatMemberVO } from "../api/chat/room";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-enum FriendOptType {
-  Empty = -1,
-  User = 0,
-  NewFriend = 1,
-  GroupFriend = 2,
-}
-
 export interface PlaySounder {
   state?: "play" | "pause" | "stop" | "loading" | "error"
   url?: string
@@ -136,6 +129,9 @@ export const useChatStore = defineStore(
       if (vo?.roomId)
         vo.unreadCount = 0;
 
+      if (!contactMap.value[vo.roomId]) { // 追加
+        contactMap.value[vo.roomId] = vo;
+      }
       theContact.value = {
         ...(vo || {}),
         // 消息列表

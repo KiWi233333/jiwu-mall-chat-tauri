@@ -4,7 +4,7 @@ interface Props {
   immediate?: boolean
   autoStop?: boolean
 }
-type DataVO = { type: "friend"; data: ChatUserFriendVO } | { type: "group"; data: ChatContactVO };
+type DataVO = { type: "friend"; data: ChatUserFriendVO } | { type: "group"; data: ChatRoomGroupVO };
 
 const props = withDefaults(defineProps<Props>(), {
   immediate: true,
@@ -13,7 +13,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isLoading = ref<boolean>(false);
 const chat = useChatStore();
-const setting = useSettingStore();
 const user = useUserStore();
 
 const pageInfo = ref({
@@ -21,7 +20,7 @@ const pageInfo = ref({
   isLast: false,
   size: 10,
 });
-const list = ref<ChatUserFriendVO[] | ChatContactVO[]>([]);
+const list = ref<ChatUserFriendVO[] | ChatRoomGroupVO[]>([]);
 const isReload = ref(true);
 
 // 加载数据
@@ -32,11 +31,7 @@ async function loadData() {
   try {
     const { data } = props.type === "friend"
       ? await getChatFriendPage(pageInfo.value.size, pageInfo.value.cursor, user.getToken)
-      : await getChatContactPage({
-        pageSize: pageInfo.value.size,
-        cursor: pageInfo.value.cursor,
-        type: RoomType.GROUP,
-      }, user.getToken);
+      : await getChatGroupRoomPage(pageInfo.value.size, pageInfo.value.cursor, user.getToken);
 
     if (data?.list)
       list.value.push(...data.list as any[]);
@@ -75,7 +70,7 @@ if (props.type === "friend") {
 if (props.type === "group") {
   watchDebounced(() => chat.delGroupId, (val) => {
     if (val) {
-      list.value = list.value.filter(p => (p as ChatContactVO).data.roomId !== val) as ChatContactVO[];
+      list.value = list.value.filter(p => (p as ChatRoomGroupVO).roomId !== val) as ChatRoomGroupVO[];
       chat.setDelGroupId(undefined);
     }
   });
@@ -126,9 +121,9 @@ onDeactivated(() => {
         v-for="p in list"
         :key="p.id"
         class="item"
-        :class="{ focus: (isFriendPanel ? chat.theFriendOpt?.data?.id === p.userId : chat.theFriendOpt?.data?.roomId === p.roomId) }"
+        :class="{ focus: (isFriendPanel ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId) }"
         @click="chat.setTheFriendOpt(
-          isFriendPanel ? FriendOptType.User : FriendOptType.GroupFriend,
+          isFriendPanel ? FriendOptType.User : FriendOptType.Group,
           isFriendPanel ? { id: (p as ChatUserFriendVO).userId } : p,
         )"
       >
@@ -137,7 +132,7 @@ onDeactivated(() => {
           :src="BaseUrlImg + p.avatar"
           fit="cover"
         />
-        <span>{{ isFriendPanel ? (p as ChatUserFriendVO).nickName : (p as ChatContactVO).name || '未填写' }}</span>
+        <span>{{ isFriendPanel ? (p as ChatUserFriendVO).nickName : (p as ChatRoomGroupVO).name || '未填写' }}</span>
       </div>
     </ListAutoIncre>
   </div>

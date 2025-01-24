@@ -74,8 +74,8 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
             copiedDuring: 1200,
           });
           if (isSupported)
-            copy();
-          else ElMessage.error("当前浏览器不支持复制图片链接");
+            copy().catch(() => ElMessage.error("复制失败！"));
+          else ElMessage.error("当前设备不支持复制图片！");
         },
       },
       {
@@ -101,25 +101,6 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
     ],
     file: [// 文件内容
-      {
-        label: "复制",
-        hidden: !data.message.body.url,
-        customClass: "group",
-        icon: "i-solar:copy-line-duotone group-btn-info",
-        onClick: async () => {
-          const img = await getImgBlob(BaseUrlFile + data.message.body.url);
-          if (!img)
-            return ElMessage.error("文件加载失败！");
-          const { copy, isSupported } = useClipboardItems({
-            read: false,
-            source: [new ClipboardItem({ [img.type]: img })],
-            copiedDuring: 1200,
-          });
-          if (isSupported)
-            copy();
-          else ElMessage.error("当前浏览器不支持复制文件");
-        },
-      },
       {
         label: setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url] ? "打开文件" : "下载文件",
         hidden: setting.isWeb || data.message.type !== MessageType.FILE,

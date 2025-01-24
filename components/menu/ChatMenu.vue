@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { NuxtLink } from "#components";
+
 defineEmits<{
   (e: "close"): void
 }>();
@@ -80,12 +82,13 @@ const menuList: MenuItem[] = [
 
 export interface MenuItem {
   title: string
-  path: string
+  path?: string
   icon: string
   activeIcon: string
   tipValue?: any
   isDot?: boolean
   class?: string
+  onClick?: (e: MouseEvent) => void
 }
 </script>
 
@@ -110,9 +113,10 @@ export interface MenuItem {
       </span>
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
-    <!-- 个人信息 -->
+    <!-- 菜单 -->
     <div h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto>
-      <NuxtLink
+      <component
+        :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"
         :key="p.path" :to="p.path" :index="p.path"
         :class="{
@@ -120,12 +124,18 @@ export interface MenuItem {
           [`${p.class}`]: p.class,
         }"
         :title="p.title"
-        class="h-10 w-10 flex-row-c-c transition-all"
+        class="item h-10 w-10 flex-row-c-c cursor-pointer transition-all"
+        @click="(e: MouseEvent) => {
+          if (p.onClick) {
+            e.stopPropagation();
+            p.onClick(e);
+          }
+        }"
       >
         <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
-      </NuxtLink>
+      </component>
     </div>
     <div
       v-if="setting.isChatFold"
@@ -142,10 +152,16 @@ export interface MenuItem {
   right: 0;
   top:0;
 }
-.action {
-  --at-apply: "card-default !bg-[var(--el-color-primary)] shadow";
+.item {
+  --at-apply: "card-rounded-df hover:(bg-color)";
   .icon {
     --at-apply: "bg-light dark:bg-none";
+  }
+  &.action {
+    --at-apply: "!bg-[var(--el-color-primary)] shadow";
+    .icon {
+      --at-apply: "bg-light dark:bg-none";
+    }
   }
 }
 </style>

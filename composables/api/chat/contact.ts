@@ -84,6 +84,34 @@ export function getSelfContactInfoByFriendUid(friendId: string, token: string) {
 }
 
 /**
+ * 恢复会话（群聊）
+ * @param roomId 房间号
+ * @param token 身份
+ * @returns 影响
+ */
+export function restoreGroupContact(roomId: number, token: string) {
+  return useHttp.put<Result<ChatContactDetailVO>>(
+    `/chat/contact/group/restore/${roomId}`,
+    { },
+    { headers: { Authorization: token } },
+  );
+}
+
+/**
+ * 恢复会话（单聊）
+ * @param friendId 好友id
+ * @param token 身份
+ * @returns Result<ChatContactDetailVO>
+ */
+export function restoreSelfContact(friendId: string, token: string) {
+  return useHttp.put<Result<ChatContactDetailVO>>(
+    `/chat/contact//friend/restore/${friendId}`,
+    { },
+    { headers: { Authorization: token } },
+  );
+}
+
+/**
  * 删除会话
  * @param roomId 房间号
  * @param token 身份

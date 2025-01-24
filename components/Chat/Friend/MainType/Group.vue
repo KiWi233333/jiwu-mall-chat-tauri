@@ -5,7 +5,7 @@
 const {
   data,
 } = defineProps<{
-  data: TheFriendOpt<ChatContactVO>
+  data: TheFriendOpt<ChatRoomGroupVO>
 }>();
 const isLoading = ref(false);
 const isOnGroup = ref<boolean | undefined>(false);
@@ -41,9 +41,17 @@ async function toSend(roomId: number) {
   const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
   if (!res)
     return;
-  if (res && res.code !== StatusCode.SUCCESS)
-    return ElMessage.error(res ? res.message : "没有找到对应群聊！");
-  chat.setContact(res.data);
+  let contact: ChatContactDetailVO | undefined = res.data;
+  if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
+    ElMessage.closeAll("error");
+    // 记录已删除，重新拉取会话
+    const newRes = await restoreGroupContact(roomId, user.getToken);
+    if (newRes.code !== StatusCode.SUCCESS) {
+      return;
+    }
+    contact = newRes.data;
+  }
+  chat.setContact(contact);
   nextTick(() => {
     navigateTo({
       path: "/",

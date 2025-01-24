@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChatFriendMainTypeGroupFriend, ChatFriendMainTypeNewFriend, ChatFriendMainTypeUser } from "#components";
+import { ChatFriendMainTypeGroup, ChatFriendMainTypeNewFriend, ChatFriendMainTypeUser } from "#components";
 
 
 /**
@@ -11,7 +11,7 @@ defineProps<{
 const maps: FriendOptTypeMap = ({
   [FriendOptType.User]: ChatFriendMainTypeUser,
   [FriendOptType.NewFriend]: ChatFriendMainTypeNewFriend,
-  [FriendOptType.GroupFriend]: ChatFriendMainTypeGroupFriend,
+  [FriendOptType.Group]: ChatFriendMainTypeGroup,
 });
 interface FriendOptTypeMap {
   [property: number]: any

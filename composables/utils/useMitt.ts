@@ -65,3 +65,18 @@ export function resolteChatPath(type: WsMsgBodyType): MittEventType {
 
 /** mitt instance */
 export const mitter = mitt<MittEvents>();
+
+
+export function removeWsEventListener() {
+  mitter.off(MittEventType.MESSAGE);
+  mitter.off(MittEventType.ONLINE_OFFLINE_NOTIFY);
+  mitter.off(MittEventType.RECALL);
+  mitter.off(MittEventType.APPLY);
+  mitter.off(MittEventType.MEMBER_CHANGE);
+  mitter.off(MittEventType.TOKEN_EXPIRED_ERR);
+  mitter.off(MittEventType.DELETE);
+  mitter.off(MittEventType.RTC_CALL);
+  mitter.off(MittEventType.PIN_CONTACT);
+  mitter.off(MittEventType.OTHER);
+  mitter.off(MittEventType.MSG_LIST_SCROLL);
+}

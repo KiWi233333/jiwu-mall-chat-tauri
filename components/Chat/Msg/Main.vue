@@ -28,13 +28,6 @@ interface MsgComType {
 const msgRef = ref<any>();
 const chat = useChatStore();
 
-// // 权限
-// // 是否有权限（踢出群聊、）
-// const isTheGroupPermission = computed(() => {
-//   return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN;
-// });
-
-
 // 右键菜单
 const showTranslation = ref(false);
 const route = useRoute();

@@ -2,7 +2,7 @@
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum } from "~/composables/api/chat/room";
 
-const props = defineProps<{ data: ChatContactVO }>();
+const props = defineProps<{ data: ChatRoomGroupVO }>();
 const ws = useWs();
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
@@ -14,7 +14,7 @@ chat.onOfflineList.splice(0);
  * 加载数据
  */
 async function loadData() {
-  if (isLoading.value || chat.roomGroupPageInfo.isLast || props.data.type !== RoomType.GROUP)
+  if (isLoading.value || chat.roomGroupPageInfo.isLast)
     return;
   isLoading.value = true;
   const { data } = await getRoomGroupUserPage(props.data.roomId, chat.roomGroupPageInfo.size, chat.roomGroupPageInfo.cursor, user.getToken);
@@ -48,14 +48,14 @@ onUnmounted(() => {
 
 // 权限
 const getTheRoleType = computed(() => {
-  return props.data?.member?.role;
+  return props.data?.role;
 });
 const isTheGroupOwner = computed(() => {
-  return props.data?.member?.role === ChatRoomRoleEnum.OWNER;
+  return props.data?.role === ChatRoomRoleEnum.OWNER;
 });
 // 是否有权限（踢出群聊）
 const isTheGroupPermission = computed(() => {
-  return props.data?.member?.role === ChatRoomRoleEnum.OWNER || props.data?.member?.role === ChatRoomRoleEnum.ADMIN;
+  return props.data?.role === ChatRoomRoleEnum.OWNER || props.data?.role === ChatRoomRoleEnum.ADMIN;
 });
 
 const colorMode = useColorMode();
@@ -213,7 +213,7 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
 }
 
 watchDebounced(() => props.data.roomId, (val) => {
-  if (val && props.data.type === RoomType.GROUP)
+  if (val)
     reload();
 }, {
   immediate: true,

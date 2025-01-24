@@ -8,7 +8,7 @@ export interface Result<T> {
 export enum StatusCode {
   SUCCESS = 20000,
   INSERT_ERR = 20001,
-  DELETE_ERR = 20002,
+  DELETE_NOEXIST_ERR = 20002,
   SELECT_ERR = 20003,
   UPDATE_ERR = 20004,
   LINK_NULL_ERR = 20005,
@@ -28,7 +28,7 @@ export const StatusCodeText: {
 } = {
   [StatusCode.SUCCESS]: "操作成功",
   [StatusCode.INSERT_ERR]: "添加或已经存在",
-  [StatusCode.DELETE_ERR]: "被删或不存在",
+  [StatusCode.DELETE_NOEXIST_ERR]: "被删或不存在",
   [StatusCode.SELECT_ERR]: "查询不到",
   [StatusCode.UPDATE_ERR]: "修改失败",
   [StatusCode.LINK_NULL_ERR]: "链接元素不存在",

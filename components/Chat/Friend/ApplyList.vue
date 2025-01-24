@@ -90,7 +90,7 @@ function onArgeeFriend(applyId: number) {
             <p cursor-pointer>
               {{ p.user?.nickName || "未填写" }}
             </p>
-            <small cursor-pointer>{{ p.msg || "" }}</small>
+            <small mt-1 cursor-pointer text-mini>{{ p.msg || "" }}</small>
           </div>
           <div class="ml-a flex-row-c-c flex-shrink-0">
             <el-button v-if="p.status === ChatApplyStatusType.Load" @click="onArgeeFriend(p.applyId)">

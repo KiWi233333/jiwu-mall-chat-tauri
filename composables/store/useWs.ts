@@ -96,6 +96,7 @@ export const useWs = defineStore(
         status.value = WsStatusEnum.SAFE_CLOSE;
         return false;
       }
+      // 1、websocket连接
       if (setting.isUseWebsocket) {
         // 1、连接
         if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
@@ -146,13 +147,13 @@ export const useWs = defineStore(
           try {
             const data = JSON.parse(event.data) as Result<WsMsgBodyVO>;
             if (data) {
-              const cts = data.data;
-              const body = cts.data;
-              if (wsMsgMap[cts.type] !== undefined) { // 处理消息
-                wsMsgList.value[wsMsgMap[cts.type]].push(body as any);
-                mitter.emit(resolteChatPath(cts.type), body);
+              const wsMsg = data.data;
+              const body = wsMsg.data;
+              if (wsMsgMap[wsMsg.type] !== undefined) { // 处理消息
+                wsMsgList.value[wsMsgMap[wsMsg.type]].push(body as any);
+                mitter.emit(resolteChatPath(wsMsg.type), body);
               }
-              call(cts);
+              call(wsMsg);
             }
           }
           catch (err) {
