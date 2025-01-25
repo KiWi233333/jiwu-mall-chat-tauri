@@ -24,7 +24,7 @@ export const defaultLoadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  view
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useChatStore = defineStore(
-  "chat",
+  CHAT_STORE_KEY,
   () => {
     /** ***************************** 发送消息 */
     const msgForm = ref<ChatMessageDTO>({
@@ -91,7 +91,7 @@ export const useChatStore = defineStore(
     });
 
     // store
-    const ws = useWs();
+    const ws = useWsStore();
     const user = useUserStore();
     const updateContactList = ref< { [key: number]: boolean }>({});
     // 消息列表滚动
@@ -469,7 +469,7 @@ export const useChatStore = defineStore(
           }
         }
         // 消费消息
-        const ws = useWs();
+        const ws = useWsStore();
         ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== roomId);
       }).catch(() => {
       });

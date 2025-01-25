@@ -1,12 +1,13 @@
+import type { UserInfoVO, UserWallet } from "../api/user/info";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { toLogout } from "../api/user";
-import { getUserInfo, type UserInfoVO, type UserWallet } from "../api/user/info";
+import { getUserInfo } from "../api/user/info";
 import { getUserWallet } from "../api/user/wallet";
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useUserStore = defineStore(
-  "user",
+  USER_STORE_KEY,
   () => {
     // token
     const token = ref<string>("");
@@ -160,7 +161,7 @@ export const useUserStore = defineStore(
         // 退出登录
         clearUserStore();
         useChatStore().resetStore();
-        useWs().resetStore();
+        useWsStore().resetStore();
         await nextTick();
         await navigateTo("/login");
       }

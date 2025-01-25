@@ -26,7 +26,7 @@ export function useWebRTC(
   const user = useUserStore();
   const chat = useChatStore();
   const setting = useSettingStore();
-  const ws = useWs();
+  const ws = useWsStore();
   const rtcMsg = ref<Partial<RtcMsgVO>>({
     roomId: undefined,
     callType: undefined,

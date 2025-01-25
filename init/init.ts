@@ -127,7 +127,7 @@ export async function useMsgBoxWebViewInit() {
   const chat = useChatStore();
   const setting = useSettingStore();
   const user = useUserStore();
-  const ws = useWs();
+  const ws = useWsStore();
   const isNewAllMsg = computed(() => chat.isNewMsg || ws.isNewMsg);
 
   // 监听消息通知事件
@@ -249,7 +249,7 @@ export async function useMsgBoxWebViewInit() {
  */
 async function handleChannelMsg(event: MessageEvent) {
   const payload = event.data;
-  const ws = useWs();
+  const ws = useWsStore();
   const user = useUserStore();
   const chat = useChatStore();
   if (!payload)

@@ -51,7 +51,7 @@ export function useSettingInit() {
     keyToggleTheme(e);
   };
   window.addEventListener("keydown", onThemeKeyDown);
-
+  const unlistenStore = useSyncSettingStore();
   // 2、获取版本更新
   const route = useRoute();
   if (route.path !== "/msg") {
@@ -104,6 +104,10 @@ export function useSettingInit() {
     if (app)
       app.classList.add("stop-transition");
 
+    const osType = localStorage.getItem("osType");
+    if (osType && ["windows", "macos", "linux"].includes(osType) && IGNORE_SAVE_WINDOW_STATE_LABELS.includes(getCurrentWebviewWindow().label)) {
+      return;
+    }
     timer = setTimeout(async () => {
       if (app)
         app.classList.remove("stop-transition");
@@ -151,6 +155,7 @@ export function useSettingInit() {
   return () => {
     window.removeEventListener("resize", onResize);
     window.removeEventListener("keydown", onThemeKeyDown);
+    unlistenStore();
     const setting = useSettingStore();
     setting.appUploader.isCheckUpdatateLoad = false;
     setting.appUploader.isUpdating = false;

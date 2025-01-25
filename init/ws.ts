@@ -5,7 +5,7 @@ import { WsMsgBodyType, WsStatusEnum } from "~/types/chat/WsType";
 
 export async function useWsInit() {
   // 聊天模块
-  const ws = useWs();
+  const ws = useWsStore();
   const user = useUserStore();
   const setting = useSettingStore();
 
@@ -133,6 +133,6 @@ export function notification(msg: ChatMessageVO) {
 
 
 export function useWSUnmounted() {
-  const ws = useWs();
+  const ws = useWsStore();
   ws?.close(false);
 }

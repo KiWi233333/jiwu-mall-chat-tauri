@@ -72,15 +72,15 @@ const loadingIcon = `
 
 <template>
   <div class="group flex flex-col">
-    <small my-4 block opacity-70>
+    <div my-4 text-sm>
+      <i class="i-solar:devices-outline mr-2 p-2.5" />
       登录设备
-      <i class="i-solar:devices-outline ml-2 p-2.5" />
       <i
         opacity-100
         transition-300 group-hover:opacity-100 md:opacity-0 class="i-solar:refresh-outline float-right cursor-pointer bg-[var(--el-color-info)] px-3 transition-300 hover:rotate-180"
         @click="reload"
       />
-    </small>
+    </div>
     <div
       v-loading="isLoading"
       rounde-4 h-62vh overflow-y-auto

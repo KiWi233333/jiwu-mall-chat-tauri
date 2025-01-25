@@ -3,7 +3,7 @@
 import { WsStatusEnum } from "~/types/chat/WsType";
 
 const user = useUserStore();
-const ws = useWs();
+const ws = useWsStore();
 const setting = useSettingStore();
 const chat = useChatStore();
 const online = useOnline();

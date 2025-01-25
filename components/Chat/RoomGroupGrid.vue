@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import type { ChatRoomAdminAddDTO } from "~/composables/api/chat/room";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { type ChatRoomAdminAddDTO, ChatRoomRoleEnum } from "~/composables/api/chat/room";
+import { ChatRoomRoleEnum } from "~/composables/api/chat/room";
 
 const props = defineProps<{ data: ChatRoomGroupVO }>();
-const ws = useWs();
+const ws = useWsStore();
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();

@@ -272,7 +272,7 @@ export function useLoadAtUserList() {
   }
 
   // 加载用户
-  const ws = useWs();
+  const ws = useWsStore();
   watchDebounced(() => ws.wsMsgList.memberMsg.length, (len) => {
     if (!len)
       return;

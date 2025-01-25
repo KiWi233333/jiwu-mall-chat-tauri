@@ -6,8 +6,6 @@ onMounted(async () => {
   window.addEventListener("storage", (e) => {
     if (e.key === "unReadContactList")
       unReadContactList.value = JSON.parse(e.newValue || "[]");
-    if (e.key === "nuxt-color-mode")
-      useColorMode().value = e.newValue || "system" as any;
   });
   // 主动获取
   try {

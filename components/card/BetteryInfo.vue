@@ -39,6 +39,6 @@ const betteryInfo = useBattery(window);
 
 <style scoped lang="scss">
 .device-card {
-  --at-apply: "v-card border-default  p-2 px-4";
+  --at-apply: "card-default border-default  p-2 px-4";
 }
 </style>

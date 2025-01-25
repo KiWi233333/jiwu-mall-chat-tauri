@@ -376,7 +376,7 @@ onMounted(() => {
           <!-- 编辑 -->
           <div
             v-else-if="showEdit"
-            class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 v-card"
+            class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 card-default"
           >
             <slot name="pre-btns">
               <div
@@ -431,7 +431,7 @@ onMounted(() => {
           <!-- 编辑 -->
           <div
             v-else-if="showEdit"
-            class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 v-card"
+            class="pre-group-hover absolute left-0 top-0 h-full w-full flex-row-c-c gap-1 opacity-0 backdrop-blur-20px transition-300 card-default"
           >
             <slot name="pre-btns">
               <div

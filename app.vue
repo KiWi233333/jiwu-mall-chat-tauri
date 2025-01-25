@@ -28,7 +28,7 @@ const isIframe = ref(false);
 onMounted(() => {
   if (window) // 判断是否在iframe中
     isIframe.value = window?.self !== undefined && window?.self !== window?.top;
-  if (route.path === "/msg" || (setting.isDesktop && route.path === "/login")) // 进入消息页面
+  if (route.path === "/msg" || route.path.startsWith("/extend") || (setting.isDesktop && route.path === "/login")) // 进入消息页面
     useDefaultInit();
   else
     useInit();

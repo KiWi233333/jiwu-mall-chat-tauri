@@ -25,14 +25,14 @@ const form = ref({
 
 <template>
   <div class="card flex flex-col">
-    <small
-      my-4 block opacity-70
+    <div
+      my-4 block text-sm
     >
       <i
         i-solar:shield-check-broken mr-2 p-2.5
       />
       修改信息
-    </small>
+    </div>
     <!-- 用户信息 -->
     <div
       v-loading="isLoading"

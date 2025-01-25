@@ -12,11 +12,8 @@ import {
 // @unocss-include
 export default defineConfig({
   shortcuts: [
-    ["v-card", "bg-[#ffffff93] dark:bg-dark-5 rounded-1.5"],
     ["card-default", "bg-[#ffffff93] dark:(bg-dark-5) rounded-1.5"],
-    ["v-card-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
     ["card-default-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
-    ["v-btn", "border-0 rounded-4px"],
     ["blur-card", "backdrop-blur-4 bg-[#75757528] rounded-4px"],
     ["card-rounded-df", "rounded-4px"],
     ["btn-default", "border-0 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)] transition-200 text-white"],
@@ -24,6 +21,7 @@ export default defineConfig({
     // 颜色
     ["bg-color", "bg-white dark:bg-dark"],
     ["bg-color-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) backdrop-blur-12px"],
+    ["bg-color-2", "bg-[#f2f2f2]  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-menu-color", "bg-white  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     ["text-color", "text-dark dark:text-white"],

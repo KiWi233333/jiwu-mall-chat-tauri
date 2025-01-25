@@ -1,4 +1,5 @@
 
+export const DEFAULT_THEME_TOGGLE_ID = "toggle-theme-btn";
 /**
  * 切换主题
  */
@@ -13,12 +14,6 @@ export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | strin
   // @ts-expect-error
   const isAppearanceTransition = document?.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (mode === "auto") {
-    const hours = new Date().getHours();
-    colorMode.preference = hours < 18 && hours > 6 ? "light" : "dark";
-    return;
-  }
-
   // 不支持动画
   if (!isAppearanceTransition || !isAnimated) {
     colorMode.preference = mode || "system";
@@ -27,12 +22,22 @@ export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | strin
   }
   if (!event && window) {
     // 计算屏幕中心坐标
-    const centerX = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 2;
-    const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) / 2;
-    event = {
-      clientX: +centerX,
-      clientY: +centerY,
-    } as MouseEvent;
+    const modeBtn = document.getElementById(DEFAULT_THEME_TOGGLE_ID);
+    if (!modeBtn) {
+      const centerX = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 2;
+      const centerY = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) / 2;
+      event = {
+        clientX: +centerX,
+        clientY: +centerY,
+      } as MouseEvent;
+    }
+    else {
+      const rect = modeBtn.getBoundingClientRect();
+      event = {
+        clientX: +rect.left + rect.width / 2,
+        clientY: +rect.top + rect.height / 2,
+      } as MouseEvent;
+    }
   }
   if (!event)
     return;
@@ -72,4 +77,3 @@ export function useModeToggle(mode: "system" | "dark" | "light" | "auto" | strin
   });
 }
 
-export const DEFAULT_THEME_TOGGLE_ID = "toggle-theme-btn";

@@ -5,7 +5,8 @@
   "windows": [
     "main",
     "msgbox",
-    "login"
+    "login",
+    "extend"
   ],
   "permissions": [
     "updater:default",
@@ -23,6 +24,7 @@
     "window-state:allow-filename",
     "core:default",
     "core:window:allow-close",
+    "core:window:allow-center",
     "core:window:allow-toggle-maximize",
     "core:window:allow-minimize",
     "core:window:allow-maximize",

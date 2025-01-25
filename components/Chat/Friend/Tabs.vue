@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const chat = useChatStore();
-const ws = useWs();
+const ws = useWsStore();
 function onNewView() {
   chat.setTheFriendOpt(FriendOptType.NewFriend, {});
   // 消费消息

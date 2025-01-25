@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
+import { CLOSE_DESTORY_WINDOW_LABELS } from "~/composables/tauri/window";
 import { appName } from "~/constants";
 
 const {
@@ -8,11 +10,14 @@ const {
   showMin = true,
   showMax = true,
   showClose = true,
+  destroyOnClose = false,
 } = defineProps<{
   showMin?: boolean
   showMax?: boolean
   showClose?: boolean
   size?: "small" | "default" | "" | undefined
+  // 关闭是否销毁
+  destroyOnClose?: boolean
 }>();
 const defaultSize = size === "default" || size === "" || size === undefined;
 const btnStyle = computed(() => ({
@@ -24,10 +29,13 @@ const btnStyle = computed(() => ({
   margin: 0,
 }));
 const appWindow = getCurrentWindow();
-
 const isMaximized = ref(false);
 const isAlwaysOnTopVal = ref(false);
-async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
+/**
+ * 处理窗口事件
+ * @param type 事件类型
+ */
+async function handleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
   if (type === "min") {
     await appWindow.minimize();
   }
@@ -37,14 +45,33 @@ async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
     isMaximized.value = isMax;
   };
   if (type === "close") {
-    if (appWindow.label === LOGIN_WINDOW_LABEL) {
-      ElMessageBox.confirm(`确定要退出${appName}程序吗？`, "提示", {
+    if (destroyOnClose || EXIT_APP_WINDOW_LABELS.includes(appWindow.label)) {
+      ElMessageBox.confirm(`确定要关闭${appName}程序吗？`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         center: true,
-        callback: (action: string) => {
+        callback: async (action: string) => {
           if (action === "confirm") {
-            exitApp();
+            await exitApp();
+          }
+        },
+      });
+      return;
+    }
+    else if (CLOSE_DESTORY_WINDOW_LABELS.includes(appWindow.label)) {
+      ElMessageBox.confirm(`是否关闭当前扩展程序？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+        callback: async (action: string) => {
+          if (action === "confirm") {
+            // 聚焦到主窗口
+            const mainWindow = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
+            if (mainWindow) {
+              mainWindow.setFocus();
+            }
+            // 销毁当前窗口
+            await appWindow.destroy();
           }
         },
       });
@@ -62,7 +89,7 @@ async function onToggleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
   };
 }
 const data = {
-  onToggleWindow,
+  handleWindow,
 };
 const setting = useSettingStore();
 onMounted(async () => {
@@ -86,14 +113,14 @@ onMounted(async () => {
   <slot name="start" :data="data" />
   <ElButton
     v-if="showMin"
-    text size="small" :style="btnStyle" @click="onToggleWindow('min')"
+    text size="small" :style="btnStyle" @click="handleWindow('min')"
   >
     <i class="i-carbon:subtract btn-primary" title="最小化" />
   </ElButton>
   <ElButton
     v-if="showMax"
     text
-    size="small" :style="btnStyle" @click="onToggleWindow('max')"
+    size="small" :style="btnStyle" @click="handleWindow('max')"
   >
     <i
       class="text-0.8em"
@@ -102,7 +129,7 @@ onMounted(async () => {
       btn-primary
     />
   </ElButton>
-  <ElButton v-if="showClose" text size="small" class="text-amber-1" :style="btnStyle" @click="onToggleWindow('close')">
+  <ElButton v-if="showClose" text size="small" class="text-amber-1" :style="btnStyle" @click="handleWindow('close')">
     <i i-carbon:close btn-danger title="关闭" />
   </ElButton>
   <slot name="end" />

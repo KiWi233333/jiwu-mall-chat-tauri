@@ -179,7 +179,7 @@ const loadingIcon = `
         :preview-src-list="[BaseUrlImg + targetUserInfo.avatar]"
         preview-teleported
         loading="lazy"
-        class="h-4.6rem w-4.6rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-5rem w-5rem) border-default v-card"
+        class="h-4.6rem w-4.6rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-5rem w-5rem) border-default card-default"
       />
       <div flex flex-col py-1>
         <strong truncate text-1.4rem>{{ targetUserInfo.nickname }}</strong>

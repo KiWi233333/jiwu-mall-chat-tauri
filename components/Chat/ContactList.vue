@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { type ChatContactVO, RoomType } from "@/composables/api/chat/contact";
+import type { ChatContactVO } from "@/composables/api/chat/contact";
+import { RoomType } from "@/composables/api/chat/contact";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { WSMemberStatusEnum } from "~/types/chat/WsType";
 
@@ -9,6 +10,7 @@ const props = defineProps<{
 const isLoading = ref<boolean>(false);
 const setting = useSettingStore();
 const user = useUserStore();
+const ws = useWsStore();
 const chat = useChatStore();
 const isReload = ref(false);
 const pageInfo = ref({
@@ -172,7 +174,6 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 
   ContextMenu.showContextMenu(opt);
 }
-const ws = useWs();
 // 成员变动消息
 const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
   immediate: false,
@@ -255,7 +256,7 @@ onBeforeUnmount(() => {
   >
     <!-- 搜索群聊 -->
     <div
-      class="h-18 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height"
+      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput

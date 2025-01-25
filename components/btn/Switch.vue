@@ -11,7 +11,7 @@ function toggleFn(e: MouseEvent) {
 
 <template>
   <ElButton
-    class="btn v-card"
+    class="btn card-default"
     round
     @click="toggleFn"
   >

@@ -7,7 +7,7 @@ defineEmits<{
 // 路由
 const route = useRoute();
 const user = useUserStore();
-const ws = useWs();
+const ws = useWsStore();
 const setting = useSettingStore();
 const chat = useChatStore();
 
@@ -40,6 +40,9 @@ onActivated(() => {
 onDeactivated(() => {
   getApplyCount();
 });
+
+
+const showExtension = ref(false);
 // @unocss-include
 const menuList: MenuItem[] = [
   {
@@ -60,7 +63,13 @@ const menuList: MenuItem[] = [
     title: "AI客服",
     path: "/ai",
     icon: "i-solar:ghost-outline",
-    activeIcon: "i-solar:ghost-bold",
+    activeIcon: "i-solar:ghost-bold-duotone",
+  },
+  {
+    title: "扩展",
+    icon: " i-solar:widget-line-duotone hover:(i-solar:widget-bold-duotone ) ",
+    activeIcon: "i-solar:widget-bold-duotone",
+    onClick: () => showExtension.value = true,
   },
   {
     title: "账号",
@@ -143,6 +152,8 @@ export interface MenuItem {
       style="background-color: #2222223a;"
       @click="setting.isChatFold = false"
     />
+    <!-- 扩展菜单 -->
+    <LazyMenuExtensionMenu v-model:show="showExtension" />
   </div>
 </template>
 
@@ -157,7 +168,7 @@ export interface MenuItem {
   &.action {
     --at-apply: "!bg-[var(--el-color-primary)] shadow";
     .icon {
-      --at-apply: "bg-light dark:bg-none";
+      --at-apply: "bg-light dark:bg-light";
     }
   }
 }

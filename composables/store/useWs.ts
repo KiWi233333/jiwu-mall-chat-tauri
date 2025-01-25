@@ -1,6 +1,7 @@
+import type { Message as BackMessage } from "@tauri-apps/plugin-websocket";
 import type { WSFriendApply, WSMemberChange, WsMsgBodyVO, WSMsgDelete, WSMsgRecall, WSOnlineOfflineNotify, WSPinContactMsg, WsSendMsgDTO } from "../../types/chat/WsType";
 import type { ChatMessageVO } from "../api/chat/message";
-import BackWebSocket, { type Message as BackMessage } from "@tauri-apps/plugin-websocket";
+import BackWebSocket from "@tauri-apps/plugin-websocket";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../../types/chat/WsType";
 
@@ -36,8 +37,8 @@ const wsMsgMap: Record<WsMsgBodyType, keyof WsMsgItemMap> = {
 
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
-export const useWs = defineStore(
-  "chat_websocket",
+export const useWsStore = defineStore(
+  WS_STORE_KEY,
   () => {
     const webSocketHandler = ref<any>(null);
     const fullWsUrl = ref("");
@@ -317,5 +318,5 @@ export const useWs = defineStore(
   },
 );
 if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useWs, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useWsStore, import.meta.hot));
 

@@ -29,9 +29,7 @@ pub fn setup_desktop() {
             crate::desktops::commands::remove_file,
             crate::desktops::commands::mkdir_file,
             crate::desktops::commands::exit_app,
-            crate::desktops::commands::create_main_window,
-            crate::desktops::commands::create_msgbox_window,
-            crate::desktops::commands::create_login_window
+            crate::desktops::commands::create_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

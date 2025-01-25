@@ -5,7 +5,7 @@ defineEmits<{
 // 路由
 const route = useRoute();
 const user = useUserStore();
-const ws = useWs();
+const ws = useWsStore();
 const setting = useSettingStore();
 const chat = useChatStore();
 const applyUnRead = ref(0);

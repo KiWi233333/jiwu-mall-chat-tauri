@@ -21,10 +21,11 @@ export enum NotificationEnums {
   TRAY = "tray",
   CLOSE = "close",
 }
+
 // @unocss-include
 // https://pinia.web3doc.top/ssr/nuxt.html#%E5%AE%89%E8%A3%85
 export const useSettingStore = defineStore(
-  "setting",
+  SETTING_STORE_KEY,
   () => {
     const sysPermission = ref({
       isNotification: false,
@@ -367,6 +368,9 @@ export const useSettingStore = defineStore(
       }
     }
 
+    /**
+     * 重置设置
+     */
     async function reset() {
       settingPage.value.fontFamily.value = "Alimama";
       settingPage.value.modeToggle.value = "system";
