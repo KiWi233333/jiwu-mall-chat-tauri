@@ -99,6 +99,11 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
           });
         },
       },
+      {
+        label: "回复",
+        icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
+        onClick: () => chat.setReplyMsg(data),
+      },
     ],
     file: [// 文件内容
       {

@@ -25,7 +25,8 @@ const map: MsgComType = {
 interface MsgComType {
   [property: number]: any
 }
-const msgRef = ref<any>();
+const msgTypeCom = map[data.message?.type || MessageType.TEXT] || ChatMsgOther;
+const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgOther | null>>();
 const chat = useChatStore();
 
 // 右键菜单
@@ -69,7 +70,7 @@ function onClickAvatar() {
     {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component
-    :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
+    :is="msgTypeCom"
     ref="msgRef"
     :show-translation="showTranslation"
     :prev-msg="prevMsg"
@@ -77,7 +78,7 @@ function onClickAvatar() {
     :data="data"
     v-bind="$attrs"
     @click-avatar="onClickAvatar"
-    @contextmenu="onMsgContextMenu($event, data)"
+    @contextmenu="onMsgContextMenu($event, data, msgRef.onDownloadFileAndOpen)"
   />
 </template>
 
