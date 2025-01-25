@@ -347,7 +347,7 @@ defineExpose({
   <div
     v-if="show"
     ref="dragRef"
-    style="--el-dialog-padding-info: 0;"
+    style="touch-action: none;--el-dialog-padding-info: 0;"
     class="group rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,

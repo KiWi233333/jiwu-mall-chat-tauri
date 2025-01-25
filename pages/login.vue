@@ -51,7 +51,7 @@ onMounted(() => {
     <!-- 表单 -->
     <div
       class="flex flex-row-c-c flex-col select-none rounded-t-8 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 shadow-none) bg-color"
-      :class="setting.isDesktop ? 'w-full h-full !rounded-0 animate-none pt-4' : 'h-fit py-10 min-h-6/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
+      :class="setting.isDesktop ? 'w-full h-full !rounded-0 animate-none pt-4' : 'h-fit pt-16 pb-10 min-h-7/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
       data-fade
     >
       <div class="mx-a w-85/100 text-center sm:(w-3/5 text-left)">
