@@ -77,8 +77,7 @@
     "pinia": "^2.3.1",
     "pinia-plugin-persistedstate": "^4.2.0",
     "sass": "^1.83.4",
-    "typescript": "^5.7.3",
-    "vue-tsc": "^2.1.6"
+    "typescript": "^5.7.3"
   },
   "husky": {
     "hooks": {
