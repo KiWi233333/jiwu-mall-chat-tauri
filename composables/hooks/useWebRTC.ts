@@ -901,7 +901,7 @@ export function useWebRTC(
         ws.wsMsgList.rtcMsg.forEach((msg) => {
           msg = msg ? JSON.parse(JSON.stringify(msg)) : null;
           if (msg) {
-            if (msg.status === CallStatusEnum.ACCEPT) {
+            if ((!rtcStatus.value || connectionStatus.value !== CallStatusEnum.ACCEPT) && msg.status === CallStatusEnum.ACCEPT) {
               ElMessage.warning("已在其他设备接听！");
               clear();
               return;
