@@ -55,6 +55,9 @@ useSeoMeta({
       <el-tab-pane name="account" label="安全管理" lazy>
         <UserSafeDeviceList />
       </el-tab-pane>
+      <el-tab-pane name="system" label="系统信息" lazy>
+        <UserSafeSystemInfo />
+      </el-tab-pane>
     </el-tabs>
   </main>
 </template>

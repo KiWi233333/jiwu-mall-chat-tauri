@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
 
 const {
   modelValue,
@@ -27,6 +29,8 @@ const {
   selectedAudioDevice,
   selectedVideoDevice,
   videoDevices,
+  isSupportScreenSharing,
+  isSupportFullscreen,
 
   // 状态相关
   connectionStatus,
@@ -43,8 +47,12 @@ const {
   toggleVideo,
   switchAudioDevice,
   switchVideoDevice,
+  mounted,
   unMounted,
 } = chat.useChatWebRTC();
+onMounted(() => {
+  mounted();
+});
 
 // 清理资源
 onUnmounted(() => {
@@ -266,6 +274,9 @@ const colorMode = useColorMode();
 function onMaxWindContextmenu(e: MouseEvent) {
   e.stopPropagation();
   e.preventDefault();
+  if (!setting.isMobileSize) {
+    return;
+  }
   if (callType !== CallTypeEnum.VIDEO) {
     return;
   }
@@ -297,8 +308,31 @@ async function openMaxVideo() {
     });
     return;
   }
+  // 桌面端
+  if (setting.isDesktop) {
+    const appWindow = getCurrentWindow();
+    const isMax = await appWindow.isMaximized();
+    if (isMax) {
+      await appWindow.unmaximize();
+    }
+    else {
+      await appWindow.maximize();
+    }
+  }
   mainVideoRef.value?.requestFullscreen();
 }
+
+// 最大化是否结合窗口
+// watch(() => isMaxWind.value && !isMinWind.value && setting.isDesktop, async (val) => {
+//   const appWindow = getCurrentWindow();
+//   const isMax = await appWindow.isMaximized();
+//   if (isMax) {
+//     await appWindow.unmaximize();
+//   }
+//   else {
+//     await appWindow.maximize();
+//   }
+// });
 
 
 defineExpose({
@@ -311,7 +345,9 @@ defineExpose({
 
 <template>
   <div
-    v-if="show" ref="dragRef" style="overflow: hidden; --el-dialog-padding-info: 0;"
+    v-if="show"
+    ref="dragRef"
+    style="--el-dialog-padding-info: 0;"
     class="group rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
@@ -324,7 +360,6 @@ defineExpose({
       class="rounded-dialog relative z-2 h-full flex flex-col items-center gap-4 text-light shadow-lg"
       :class="{ 'bg-dark-6 bg-op-60 backdrop-blur': callType === CallTypeEnum.AUDIO || !isConnected }"
       @contextmenu="onMaxWindContextmenu"
-      @dblclick.self="onMaxWindContextmenu"
       @dblclick.stop="onDblClickWindow"
     >
       <!-- 头部 -->
@@ -357,7 +392,7 @@ defineExpose({
           </el-dropdown>
           <!-- 共享屏幕切换按钮 -->
           <el-tooltip
-            v-if="callType === CallTypeEnum.VIDEO && isConnected"
+            v-if="callType === CallTypeEnum.VIDEO && isConnected && isSupportScreenSharing"
             :content="isScreenSharing ? '停止共享屏幕' : '共享屏幕'"
             placement="bottom"
           >
@@ -367,6 +402,7 @@ defineExpose({
               @click="isScreenSharing ? stopScreenShare() : startScreenShare()"
             />
           </el-tooltip>
+          <div v-if="isMaxWind" class="h-12 w-3/4 flex-1 absolute-center-x" data-tauri-drag-region />
           <span max-w-full truncate absolute-center-x>
             {{ rtcDescText }}
           </span>
@@ -547,7 +583,7 @@ defineExpose({
     </div>
     <!-- 视频最大化 -->
     <div
-      v-if="callType === CallTypeEnum.VIDEO && maxWindStream?.getVideoTracks()[0]?.enabled "
+      v-if="callType === CallTypeEnum.VIDEO && isSupportFullscreen && maxWindStream?.getVideoTracks()[0]?.enabled "
       class="video-max absolute bottom-0 right-0 z-100 h-10 w-10 flex-row-c-c rounded-[1rem_0_0_0] bg-dark-1 bg-op-50 pl-1 pt-1 op-100 backdrop-blur-12px backdrop-saturate-180 transition-opacity btn-info sm:(op-0 group-hover:op-100)"
       @click="openMaxVideo"
     >

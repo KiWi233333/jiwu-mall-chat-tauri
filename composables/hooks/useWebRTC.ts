@@ -15,6 +15,9 @@ const configuration: RTCConfiguration = { // 默认配置
     { urls: "stun:stun2.l.google.com:19302" },
   ],
 };
+const isSupportScreenSharing = !!navigator?.mediaDevices?.getDisplayMedia;
+const isSupportFullscreen = !!document?.documentElement?.requestFullscreen;
+
 /**
  * 使用webRtc通话
  *
@@ -204,43 +207,6 @@ export function useWebRTC(
     }
   };
 
-
-  /**
-   * 通话消息 事件
-   */
-  mitter.on(MittEventType.RTC_CALL, (val) => {
-    // 通话消息 type=1
-    if (val) {
-      // 遍历所有消息
-      ws.wsMsgList.rtcMsg.forEach((msg) => {
-        msg = msg ? JSON.parse(JSON.stringify(msg)) : null;
-        if (msg) {
-          connectionStatus.value = msg.status;
-          switch (msg.signalType) {
-            case SignalTypeEnum.OFFER:
-              // 收到offer信令
-              if (msg.senderId !== user.userId) {
-                handleOffer(msg);
-              }
-              break;
-            case SignalTypeEnum.ANSWER:
-              handleAnswer(msg);
-              break;
-            case SignalTypeEnum.CANDIDATE:
-              // 收到candidate信令
-              handleCandidate(msg);
-              break;
-            case SignalTypeEnum.LEAVE:
-              clear();
-              break;
-            default:
-              break;
-          }
-        }
-      });
-      ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
-    }
-  });
 
   // 获取设备列表
   const getDevices = async () => {
@@ -618,16 +584,19 @@ export function useWebRTC(
         openDialog(type, { confirmCall, rejectCall });
 
         // 30秒超时自动拒绝
-        setTimeout(() => resolve(false), MAX_TIME_OUT_SECONDS * 1000);
+        setTimeout(() => resolve(null), MAX_TIME_OUT_SECONDS * 1000);
       });
-      // 用户接受通话，继续原有流程
-      await nextTick();
-      if (!userConfirmed) {
-        // 用户拒绝或超时
+      if (userConfirmed === null) { // 超时自动拒绝
+        connectionStatus.value = CallStatusEnum.BUSY;
+        clear();
+        return false;
+      }
+      else if (userConfirmed === false) { // 用户拒绝
         connectionStatus.value = CallStatusEnum.REJECT;
         await endCall(CallStatusEnum.REJECT);
         return false;
       }
+      // 用户接受通话，继续原有流程
       if (!isLocalStreamOk) { // 重新获取
         // getDevices().then(() => getLocalStream(type));
         await getDevices();
@@ -921,6 +890,50 @@ export function useWebRTC(
     endCall();
   }
 
+  function mounted() {
+  /**
+   * 通话消息 事件
+   */
+    mitter.on(MittEventType.RTC_CALL, (val) => {
+    // 通话消息 type=1
+      if (val) {
+      // 遍历所有消息
+        ws.wsMsgList.rtcMsg.forEach((msg) => {
+          msg = msg ? JSON.parse(JSON.stringify(msg)) : null;
+          if (msg) {
+            if (msg.status === CallStatusEnum.ACCEPT) {
+              ElMessage.warning("已在其他设备接听！");
+              clear();
+              return;
+            }
+            connectionStatus.value = msg.status;
+            switch (msg.signalType) {
+              case SignalTypeEnum.OFFER:
+              // 收到offer信令
+                if (msg.senderId !== user.userId) {
+                  handleOffer(msg);
+                }
+                break;
+              case SignalTypeEnum.ANSWER:
+                handleAnswer(msg);
+                break;
+              case SignalTypeEnum.CANDIDATE:
+              // 收到candidate信令
+                handleCandidate(msg);
+                break;
+              case SignalTypeEnum.LEAVE:
+                clear();
+                break;
+              default:
+                break;
+            }
+          }
+        });
+        ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
+      }
+    });
+  }
+
 
   return {
     theContact,
@@ -931,6 +944,10 @@ export function useWebRTC(
     callDuration, // 添加通话时长
     peerConnection,
     channel,
+
+    // 兼容性
+    isSupportFullscreen,
+    isSupportScreenSharing,
 
     // 设备相关
     audioDevices,
@@ -954,6 +971,7 @@ export function useWebRTC(
     switchVideoDevice,
     startScreenShare, // 添加桌面共享方法
     stopScreenShare, // 添加停止桌面共享方法
+    mounted,
     unMounted,
   };
 }
