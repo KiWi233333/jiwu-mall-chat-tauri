@@ -319,7 +319,7 @@ onBeforeUnmount(() => {
               </el-badge>
               <div class="flex flex-1 flex-col justify-between truncate">
                 <div flex truncate>
-                  <p truncate font-400>
+                  <p truncate text-black dark:text-white>
                     {{ room.name }}
                   </p>
                   <span ml-a w-fit flex-shrink-0 text-right text-10px text-mini>

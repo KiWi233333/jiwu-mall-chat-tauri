@@ -2,11 +2,13 @@
 // import { prismjsPlugin } from "vite-plugin-prismjs";
 // import { pwa } from "./config/pwa";
 import { appDescription, appName } from "./constants/index";
+import * as packageJson from "./package.json";
 import "dayjs/locale/zh-cn";
 
 const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
 const isSSR = process.env.NUXT_PUBLIC_SPA;
 const mode = process.env.NUXT_PUBLIC_NODE_ENV as "development" | "production" | "test";
+const version = packageJson?.version;
 // 打印
 console.log(`mode:${mode} api_url:${BASE_URL} SSR:${isSSR}`);
 export default defineNuxtConfig({
@@ -18,6 +20,7 @@ export default defineNuxtConfig({
     public: {
       baseUrl: BASE_URL,
       mode,
+      version,
     },
   },
   build: {

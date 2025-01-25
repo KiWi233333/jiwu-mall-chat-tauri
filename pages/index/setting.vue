@@ -26,6 +26,7 @@ const {
 const {
   showNotice,
   notice,
+  currentVersion,
   showUpateNoticeLine,
   showVersionNotice,
   handleCheckUpadate,
@@ -154,7 +155,7 @@ const {
       <div class="group h-8 flex-row-bt-c">
         关于更新
         <div class="ml-a flex items-center gap-2 sm:gap-4">
-          <span class="text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">{{ setting.appUploader.version ? `v${setting.appUploader.version}` : "" }} 更新日志</span>
+          <span class="text-0.8rem tracking-0.1em !btn-info" @click="showUpateNoticeLine = true">{{ currentVersion ? `v${currentVersion}` : "" }} 更新日志</span>
           <template v-if="setting.isDesktop">
             <el-badge
               v-if="!setting.appUploader.isUpdating"
@@ -308,7 +309,7 @@ const {
             >
               <div class="flex items-center text-xl font-bold">
                 v{{ item.version }}
-                <el-tag v-if="item.version === setting.appUploader.version" type="primary" effect="dark" size="small" class="ml-2 text-xs text-dark">
+                <el-tag v-if="item.version === currentVersion" type="primary" effect="dark" size="small" class="ml-2 text-xs text-dark">
                   当前
                 </el-tag>
                 <el-tag v-else-if="item.isLatest" type="danger" effect="dark" size="small" class="ml-2 text-xs text-dark">

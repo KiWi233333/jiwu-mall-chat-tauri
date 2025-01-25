@@ -19,7 +19,7 @@ const chat = useChatStore();
     v-bind="$attrs"
   >
     <template #body>
-      <div ctx-name="rtc" class="msg-popper min-w-6em cursor-pointer hover:op-80" @click="data.message.body?.type && chat.rollbackCall(data.message.roomId, data.message.body?.type, data)">
+      <div ctx-name="rtc" class="msg-popper min-w-6em flex cursor-pointer items-center hover:op-80" @click="data.message.body?.type && chat.rollbackCall(data.message.roomId, data.message.body?.type, data)">
         <i ctx-name="rtc" class="icon p-2.6" :class="data.message.body?.type === CallTypeEnum.AUDIO ? 'i-solar:end-call-outline' : 'i-solar:videocamera-record-outline'" />
         {{ data.message.content }}
       </div>
@@ -31,8 +31,9 @@ const chat = useChatStore();
 @use './msg.scss';
 .self {
   .msg-popper {
+
     .icon {
-      float: right;
+      order: 1;
       margin-left: 0.5rem;
     }
   }

@@ -15,6 +15,9 @@ export function useSettingNotice({
   const setting = useSettingStore();
   const showNotice = ref(false);
   const notice = ref<string>("# 暂无内容"); // 公告内容
+  const runtime = useRuntimeConfig();
+
+  const currentVersion = computed(() => setting.isDesktop ? setting.appUploader.version : runtime.public.version);
 
   // 显示新版本 + 当前版本 更新时间线
   const showUpateNoticeLine = ref(false);
@@ -172,6 +175,7 @@ export function useSettingNotice({
   return {
     showNotice,
     notice,
+    currentVersion,
     showUpateNoticeLine,
     showVersionNotice,
     handleCheckUpadate,

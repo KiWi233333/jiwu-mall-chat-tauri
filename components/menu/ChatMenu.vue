@@ -154,9 +154,6 @@ export interface MenuItem {
 }
 .item {
   --at-apply: "card-rounded-df hover:(bg-color)";
-  .icon {
-    --at-apply: "bg-light dark:bg-none";
-  }
   &.action {
     --at-apply: "!bg-[var(--el-color-primary)] shadow";
     .icon {
