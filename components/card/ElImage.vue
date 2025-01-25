@@ -16,6 +16,7 @@ const setting = useSettingStore();
     fit="cover"
     hide-on-click-modal
     :close-on-press-escape="!setting.settingPage.isEscMin"
+    :draggable="false"
     v-bind="$attrs"
   >
     <!-- 占位 -->
