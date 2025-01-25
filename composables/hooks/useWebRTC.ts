@@ -59,6 +59,7 @@ export function useWebRTC(
   const connectionStatus = ref<CallStatusEnum | undefined>(undefined);
   const isSender = computed(() => rtcMsg.value.senderId === user.userId);
   const isDeviceLoad = ref(false);
+  const linker = ref(false); // 链接人
 
   // rtc状态
   const rtcStatus = ref<RTCPeerConnectionState | undefined>(undefined);
@@ -393,7 +394,7 @@ export function useWebRTC(
         senderId: user.userId,
         uidList: uidList || [],
       };
-
+      linker.value = true; // 标记是会话人
       // 填充房间信息 @unocss-include
       handleContactInfo(roomId);
       // 设置30秒超时定时器
@@ -491,6 +492,7 @@ export function useWebRTC(
       connectionStatus.value = undefined;
       rtcStatus.value = undefined;
       isScreenSharing.value = false;
+      linker.value = false;
       // 关闭连接
       peerConnection.value = null;
       channel.value = null;
@@ -500,7 +502,7 @@ export function useWebRTC(
 
   // 监听 ICE 连接
   async function lisenIceCandidate(roomId: number) {
-    if (!peerConnection.value) {
+    if (!peerConnection.value || !linker.value) {
       return;
     }
     // 交换信令后，发送 ICE candidate 信令
@@ -621,6 +623,8 @@ export function useWebRTC(
         ElMessage.error("房间号不存在，请重新连接！");
         return false;
       }
+
+      linker.value = true; // 标记是会话人
       // 6. 发送 answer 信令到远端
       const res = await updateChatRTCMessage(roomId, {
         signalType: SignalTypeEnum.ANSWER,
@@ -894,41 +898,42 @@ export function useWebRTC(
   /**
    * 通话消息 事件
    */
-    mitter.on(MittEventType.RTC_CALL, (val) => {
+    mitter.on(MittEventType.RTC_CALL, (msg) => {
     // 通话消息 type=1
-      if (val) {
+      if (msg) {
       // 遍历所有消息
-        ws.wsMsgList.rtcMsg.forEach((msg) => {
-          msg = msg ? JSON.parse(JSON.stringify(msg)) : null;
-          if (msg) {
-            if ((!rtcStatus.value || connectionStatus.value !== CallStatusEnum.ACCEPT) && msg.status === CallStatusEnum.ACCEPT) {
-              ElMessage.warning("已在其他设备接听！");
-              clear();
-              return;
-            }
-            connectionStatus.value = msg.status;
-            switch (msg.signalType) {
-              case SignalTypeEnum.OFFER:
-              // 收到offer信令
-                if (msg.senderId !== user.userId) {
-                  handleOffer(msg);
-                }
-                break;
-              case SignalTypeEnum.ANSWER:
-                handleAnswer(msg);
-                break;
-              case SignalTypeEnum.CANDIDATE:
-              // 收到candidate信令
-                handleCandidate(msg);
-                break;
-              case SignalTypeEnum.LEAVE:
-                clear();
-                break;
-              default:
-                break;
-            }
+        msg = msg ? JSON.parse(JSON.stringify(msg)) : null;
+        if (msg) {
+          if (!linker.value && msg.status === CallStatusEnum.ACCEPT) {
+            !isSender && ElMessage.warning("已在其他设备接听！");
+            ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
+            clear();
+            return;
           }
-        });
+          connectionStatus.value = msg.status;
+          switch (msg.signalType) {
+            case SignalTypeEnum.OFFER:
+              // 收到offer信令
+              if (msg.senderId !== user.userId)
+                handleOffer(msg);
+              break;
+            case SignalTypeEnum.ANSWER:
+              if (!peerConnection.value)
+                break;
+              handleAnswer(msg);
+              break;
+            case SignalTypeEnum.CANDIDATE:
+              if (!peerConnection.value)
+                break;
+              handleCandidate(msg);
+              break;
+            case SignalTypeEnum.LEAVE:
+              clear();
+              break;
+            default:
+              break;
+          }
+        }
         ws.wsMsgList.rtcMsg.splice(0); // 清空消息列表
       }
     });
