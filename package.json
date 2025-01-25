@@ -45,7 +45,7 @@
     "streamsaver": "^2.0.6"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
+    "@antfu/eslint-config": "^4.1.0",
     "@element-plus/icons-vue": "^2.3.1",
     "@element-plus/nuxt": "^1.1.1",
     "@formkit/auto-animate": "^0.8.2",
@@ -58,7 +58,7 @@
     "@nuxt/eslint": "^0.7.5",
     "@pinia/nuxt": "^0.9.0",
     "@tauri-apps/api": "^2.2.0",
-    "@tauri-apps/cli": "^2.2.5",
+    "@tauri-apps/cli": "^2.2.6",
     "@tauri-apps/plugin-notification": "^2.2.1",
     "@tauri-apps/plugin-os": "^2.2.0",
     "@tauri-apps/plugin-process": "^2.2.0",
@@ -69,7 +69,7 @@
     "@vueuse/nuxt": "^12.5.0",
     "crypto-js": "^4.2.0",
     "element-plus": "^2.9.3",
-    "eslint": "^9.18.0",
+    "eslint": "^9.19.0",
     "eslint-plugin-format": "^1.0.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.2",
