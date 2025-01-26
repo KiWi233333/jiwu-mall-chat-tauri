@@ -1,6 +1,7 @@
 import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import type { Update } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
+import type { ExtendItem } from "~/components/menu/extension";
 import { appDataDir } from "@tauri-apps/api/path";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
@@ -56,6 +57,8 @@ export const useSettingStore = defineStore(
     const isUseWebsocket = ref(true); // 是否使用 websocket
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     const isMobile = computed(() => ["android", "ios"].includes(osType.value));
+    // ---------------------菜单-----------------
+    const selectExtendMenuList = ref<ExtendItem[]>([]);
     // ---------------------设置-----------------
     const settingPage = ref({
       // 字体
@@ -488,6 +491,7 @@ export const useSettingStore = defineStore(
       isUseWebsocket,
       isWeb,
       isDefaultRtcCallBell,
+      selectExtendMenuList,
       // actions
       checkUpdates,
       checkMainWinVisible,

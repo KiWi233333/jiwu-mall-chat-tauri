@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { NuxtLink } from "#components";
+import { useOpenExtendWind } from "./extension";
 
 defineEmits<{
   (e: "close"): void
@@ -41,10 +42,10 @@ onDeactivated(() => {
   getApplyCount();
 });
 
-
+const { open: openExtendMenu } = useOpenExtendWind();
 const showExtension = ref(false);
 // @unocss-include
-const menuList: MenuItem[] = [
+const menuList = computed<MenuItem[]>(() => ([
   {
     title: "聊天",
     path: "/",
@@ -65,6 +66,12 @@ const menuList: MenuItem[] = [
     icon: "i-solar:ghost-outline",
     activeIcon: "i-solar:ghost-bold-duotone",
   },
+  ...(setting.selectExtendMenuList || []).map(p => ({
+    title: p.title,
+    icon: p.icon,
+    activeIcon: p.activeIcon,
+    onClick: () => openExtendMenu(p),
+  }) as MenuItem),
   {
     title: "扩展",
     icon: " i-solar:widget-line-duotone hover:(i-solar:widget-bold-duotone ) ",
@@ -87,7 +94,7 @@ const menuList: MenuItem[] = [
     tipValue: computed(() => +setting.appUploader.isUpload),
     isDot: true,
   },
-];
+]));
 
 export interface MenuItem {
   title: string
@@ -123,7 +130,7 @@ export interface MenuItem {
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
     <!-- 菜单 -->
-    <div h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto>
+    <ListTransitionGroup tag="div" class="h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto">
       <component
         :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"
@@ -145,7 +152,7 @@ export interface MenuItem {
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>
-    </div>
+    </ListTransitionGroup>
     <div
       v-if="setting.isChatFold"
       class="absolute left-0 top-0 block h-100dvh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden"

@@ -4,6 +4,8 @@
 const user = useUserStore();
 onMounted(() => {
   getwindowSharedData();
+  // 移除stop-transition-all类
+  document?.body?.classList?.remove("stop-transition-all");
 });
 const { message } = useRouteAnnouncer({
   politeness: "assertive",

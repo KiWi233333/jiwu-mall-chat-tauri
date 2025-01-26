@@ -295,18 +295,39 @@ html.stop-transition-all {
 .blur-list-leave-active {
   transition-duration: $transition-delay;
   transition-timing-function: $animate-cubic;
-  transition-property: opacity, transform, filter;
+  transition-property: all;
 }
 
 .blur-list-enter-from,
 .blur-list-leave-to {
   opacity: 0;
   filter: blur(6px);
-  // transform: scale(0.98) translateY(-2%);
+  transform: scale(0.9) translateY(-2%);
   // transform-origin: center top;
 }
 
 .blur-list-leave-active {
+  position: absolute !important;
+}
+
+
+// blur 列表动画
+.pop-list-move,
+.pop-list-enter-active,
+.pop-list-leave-active {
+  transition-duration: $transition-delay;
+  transition-timing-function: $animate-cubic;
+  transition-property: all;
+}
+
+.pop-list-enter-from,
+.pop-list-leave-to {
+  opacity: 0;
+  filter: blur(6px);
+  transform: scale(0.9);
+}
+
+.pop-list-leave-active {
   position: absolute !important;
 }
 

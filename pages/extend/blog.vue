@@ -26,13 +26,14 @@ onMounted(async () => {
 
 <template>
   <div
-    v-loading="isLoading" w-full flex
-    flex-col
+    v-loading="isLoading"
     :element-loading-spinner="loadingIcon"
     element-loading-background="transparent"
+    class="w-full flex flex-col select-none"
   >
     <iframe
       v-if="shopUrl"
+      class="select-none"
       :src="shopUrl"
       frameborder="0"
       width="100%"
