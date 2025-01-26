@@ -58,7 +58,7 @@
     "@nuxt/eslint": "^0.7.5",
     "@pinia/nuxt": "^0.9.0",
     "@tauri-apps/api": "^2.2.0",
-    "@tauri-apps/cli": "^2.2.6",
+    "@tauri-apps/cli": "^2.2.7",
     "@tauri-apps/plugin-notification": "^2.2.1",
     "@tauri-apps/plugin-os": "^2.2.0",
     "@tauri-apps/plugin-process": "^2.2.0",
