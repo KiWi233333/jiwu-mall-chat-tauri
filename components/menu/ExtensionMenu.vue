@@ -102,6 +102,40 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
 
 // 菜单列表动画
 // const el = useTemplateRef("listRef");
+function createItem() {
+  ElMessage.warning("功能暂未开放");
+  // ElMessageBox.prompt("",{
+  //   title: "添加私人扩展",
+  //   inputType: "text",
+  //   inputPlaceholder: "请输入扩展名称",
+  //   inputValue: "",
+  //   confirmButtonText: "确定",
+  //   cancelButtonText: "取消",
+  //   inputValidator: (value: string) => {
+  //     if (value.trim() === "") {
+  //       return "请输入扩展名称";
+  //     }
+  //     if (extendMenuSaveList.value.findIndex(menu => menu.title === value.trim()) !== -1) {
+  //       return "扩展名称已存在";
+  //     }
+  //     return true;
+  //   },
+  //   callback: (value: string) => {
+  //     if (value) {
+  //       const item: ExtendItem = {
+  //         url: "",
+  //         title: value.trim(),
+  //         icon: "",
+  //         activeIcon: "",
+  //         loading: false,
+  //         saveTime: undefined,
+  //         disabled: false,
+  //       };
+  //       onAdd(item);
+  //     }
+  //   },
+  // });
+}
 </script>
 
 <template>
@@ -140,7 +174,7 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
           <i
             class="mx-a block h-1.6em w-1.6em"
             :class="item.icon"
-            @click.stop="open(item)"
+            @click.stop="!item.disabled && open(item)"
           />
           <div
             class="absolute right-1 top-1 op-0 btn-danger-bg bg-color group-hover:(op-100)"
@@ -150,7 +184,7 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
           </div>
           <div
             class="mx-a mt-2 text-center text-xs"
-            @click.stop="open(item)"
+            @click.stop="!item.disabled && open(item)"
           >
             {{ item.title }}
           </div>
@@ -175,7 +209,7 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
         >
           <i
             class="mx-a block h-1.6em w-1.6em" :class="item.icon"
-            @click.stop="open(item)"
+            @click.stop="!item.disabled && open(item)"
           />
           <div
             v-if="!item.disabled"
@@ -186,12 +220,27 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
           </div>
           <div
             class="mx-a mt-2 text-center text-xs"
-            @click.stop="open(item)"
+            @click.stop="!item.disabled && open(item)"
           >
             {{ item.title }}
           </div>
         </div>
       </template>
+      <div
+        key="add-item"
+        class="group relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer rounded text-center bg-color hover:shadow border-default-hover"
+        title="添加私人扩展"
+        @click.stop="createItem()"
+      >
+        <i
+          class="i-carbon:add mx-a block h-1.6em w-1.6em"
+        />
+        <div
+          class="mx-a mt-2 text-center text-xs"
+        >
+          添加
+        </div>
+      </div>
     </ListTransitionGroup>
     <template #footer>
       <div class="px-3 pb-2 text-right">
@@ -201,6 +250,9 @@ const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24
         <el-button type="primary" size="small" @click="saveMenu(extendMenuSaveList)">
           确定
         </el-button>
+      </div>
+      <div class="mt-2 text-center text-mini" data-fade>
+        此功能为预览版本，正式上线前可能会有变动。
       </div>
     </template>
   </el-dialog>
