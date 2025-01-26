@@ -16,20 +16,6 @@ const chat = useChatStore();
 const user = useUserStore();
 // 具体
 const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undefined);
-
-function onCopyMsg(msg?: string | null) {
-  if (!msg)
-    return;
-  const res = useCopyText(msg);
-  if (res) {
-    ElMessage.success({
-      message: "复制成功",
-      type: "success",
-      grouping: true,
-      duration: 500,
-    });
-  }
-}
 </script>
 
 <template>
@@ -59,9 +45,6 @@ function onCopyMsg(msg?: string | null) {
         </small>
         <small class="sendTime text-0.7em op-0" ctx-name="sendTime">
           {{ dayjs(data.message.sendTime).format("YYYY-MM-DD HH:mm:ss") }}
-        </small>
-        <small class="sendTime text-0.7em op-0 btn-info" @click="onCopyMsg(data.message.content)">
-          复制
         </small>
       </div>
       <!-- 内容 -->

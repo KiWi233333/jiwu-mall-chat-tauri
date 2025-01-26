@@ -25,30 +25,11 @@ const map: MsgComType = {
 interface MsgComType {
   [property: number]: any
 }
-const msgTypeCom = map[data.message?.type || MessageType.TEXT] || ChatMsgOther;
 const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgOther | null>>();
 const chat = useChatStore();
 
 // 右键菜单
 const showTranslation = ref(false);
-const route = useRoute();
-const disabledRightClickList = [
-  MessageType.AI_CHAT,
-  MessageType.SYSTEM,
-  MessageType.RECALL,
-  MessageType.RECALL,
-  MessageType.DELETE,
-];
-const disabledRightClick = computed(() => {
-  const isAiChat = route.path.includes("ai");
-  if (isAiChat)
-    return true;
-
-  if (data.message.type !== undefined && disabledRightClickList.includes(data.message.type))
-    return true;
-
-  return false;
-});
 // 是否显示时间
 const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
 
@@ -70,7 +51,7 @@ function onClickAvatar() {
     {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component
-    :is="msgTypeCom"
+    :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
     ref="msgRef"
     :show-translation="showTranslation"
     :prev-msg="prevMsg"

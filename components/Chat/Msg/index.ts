@@ -100,6 +100,13 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         },
       },
       {
+        label: "撤回",
+        hidden: !isSelf,
+        customClass: "group",
+        icon: "i-solar:backspace-broken group-btn-danger",
+        onClick: () => refundMsg(data, data.message.id),
+      },
+      {
         label: "回复",
         icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
         onClick: () => chat.setReplyMsg(data),
@@ -141,8 +148,8 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         onClick: () => useCopyText(data.fromUser.nickName as string),
       },
       {
-        label: "联系TA",
-        icon: "i-solar:user-broken group-btn-primary",
+        label: "个人资料",
+        icon: "i-solar:user-broken group-btn-info",
         customClass: "group",
         hidden: isSelf,
         onClick: () => {
@@ -152,16 +159,16 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
       {
         label: "TA",
-        icon: "i-solar:mention-circle-broken group-btn-primary",
+        icon: "i-solar:mention-circle-broken group-btn-info",
         customClass: "group",
-        hidden: isSelf,
+        hidden: isSelf || chat.theContact.type === RoomType.SELFT,
         onClick: () => chat.setAtUid(data.fromUser.userId),
       },
     ],
     avatar: [// 头像内容
       {
-        label: isSelf ? "查看自己" : "联系TA",
-        icon: "i-solar:user-broken group-btn-primary",
+        label: isSelf ? "查看自己" : "个人资料",
+        icon: "i-solar:user-broken group-btn-info",
         customClass: "group",
         onClick: () => {
           if (isSelf) {
@@ -175,9 +182,9 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
       {
         label: "TA",
-        icon: "i-solar:mention-circle-broken group-btn-primary",
+        icon: "i-solar:mention-circle-broken group-btn-info",
         customClass: "group",
-        hidden: isSelf,
+        hidden: isSelf || chat.theContact.type === RoomType.SELFT,
         onClick: () => chat.setAtUid(data.fromUser.userId),
       },
     ],
@@ -225,6 +232,7 @@ async function refundMsg(data: ChatMessageVO, msgId: number) {
         // 记录撤回的消息（提供后续撤回功能）
         chat.setRecallMsg(oldData);
       }
+      data.message.type = MessageType.RECALL;
       data.message.type = MessageType.RECALL;
       data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我" : `"${data.fromUser.nickName}"`}撤回了一条消息`;
       data.message.body = undefined;

@@ -232,7 +232,7 @@ defineExpose({
 <template>
   <el-scrollbar
     ref="scrollbarRef"
-    class="stop-transition h-full flex-1"
+    class="h-full flex-1"
     wrap-class="px-0 shadow-(sm inset) sm:px-2"
     view-class="msg-list pb-2rem" @scroll="onScroll"
   >
