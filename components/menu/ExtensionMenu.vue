@@ -98,8 +98,6 @@ function saveMenu(list: ExtendItem[]) {
   isShow.value = false;
 }
 // @unocss-include
-const loadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 4.5a7.5 7.5 0 1 0 0 15a7.5 7.5 0 0 0 0-15M1.5 12C1.5 6.201 6.201 1.5 12 1.5S22.5 6.201 22.5 12S17.799 22.5 12 22.5S1.5 17.799 1.5 12" opacity=".1"/><path fill="currentColor" d="M12 4.5a7.46 7.46 0 0 0-5.187 2.083a1.5 1.5 0 0 1-2.075-2.166A10.46 10.46 0 0 1 12 1.5a1.5 1.5 0 0 1 0 3"/></g></svg>`;
-
 // 菜单列表动画
 // const el = useTemplateRef("listRef");
 function createItem() {
@@ -162,7 +160,7 @@ function createItem() {
       <template v-for="item in extendMenuSaveList" :key="item.title">
         <div
           v-loading="item.loading"
-          :element-loading-spinner="loadingIcon"
+          :element-loading-spinner="defaultLoadingIcon"
           element-loading-custom-class="text-.5em"
           class="group relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer rounded text-center bg-color hover:shadow border-default-hover"
           :title="item.title"
@@ -198,7 +196,7 @@ function createItem() {
       <template v-for="item in extendMenuAllList.filter(item => !extendMenuSaveList.includes(item))" :key="item.title">
         <div
           v-loading="item.loading"
-          :element-loading-spinner="loadingIcon"
+          :element-loading-spinner="defaultLoadingIcon"
           element-loading-custom-class="text-.5em"
           class="group relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer rounded text-center bg-color hover:shadow border-default-hover"
           :title="item.title"
@@ -238,7 +236,7 @@ function createItem() {
         <div
           class="mx-a mt-2 text-center text-xs"
         >
-          添加
+          自定义
         </div>
       </div>
     </ListTransitionGroup>
@@ -251,8 +249,8 @@ function createItem() {
           确定
         </el-button>
       </div>
-      <div class="mt-2 text-center text-mini" data-fade>
-        此功能为预览版本，正式上线前可能会有变动。
+      <div class="mt-2 text-center text-mini" data-fade style="--start: 0.3s;">
+        此为预览功能，正式上线前将调整。
       </div>
     </template>
   </el-dialog>

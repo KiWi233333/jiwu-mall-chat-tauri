@@ -7,12 +7,16 @@ export function useOpenExtendWind() {
   const openItem = ref<ExtendItem>();
   const setting = useSettingStore();
   // 打开扩展窗口
-  const open = async (item: ExtendItem) => {
+  const open = async (item: ExtendItem, log: boolean = true) => {
     if (!item.url || item.loading) {
       return;
     }
     if (item.disabled) {
       ElMessage.warning("暂未开放！");
+      return;
+    }
+    if (item.loading) {
+      ElMessage.warning("扩展窗口正在加载中！");
       return;
     }
     // 判断是否已经打开

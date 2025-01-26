@@ -42,7 +42,7 @@ onDeactivated(() => {
   getApplyCount();
 });
 
-const { open: openExtendMenu } = useOpenExtendWind();
+const { open: openExtendMenu, openItem } = useOpenExtendWind();
 const showExtension = ref(false);
 // @unocss-include
 const menuList = computed<MenuItem[]>(() => ([
@@ -70,6 +70,7 @@ const menuList = computed<MenuItem[]>(() => ([
     title: p.title,
     icon: p.icon,
     activeIcon: p.activeIcon,
+    loading: p.loading,
     onClick: () => openExtendMenu(p),
   }) as MenuItem),
   {
@@ -134,7 +135,10 @@ export interface MenuItem {
       <component
         :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"
-        :key="p.path" :to="p.path" :index="p.path"
+        :key="p.path" v-loading="(p as any).loading" :to="p.path"
+        :index="p.path"
+        :element-loading-spinner="defaultLoadingIcon"
+        element-loading-custom-class="text-.5em"
         :class="{
           action: route.path === p.path,
           [`${p.class}`]: p.class,
