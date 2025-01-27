@@ -184,22 +184,29 @@ async function watchMemberChange(len: number) {
   // 成员变动消息
   if (ws.wsMsgList.memberMsg.length) {
     for (const p of ws.wsMsgList.memberMsg) {
-      // 新加入
+      // 自己新加入
       if (p.changeType === WSMemberStatusEnum.JOIN) {
-        getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
-          if (res) {
-            const item = chat.contactMap[p.roomId];
-            if (item) { // 更新
-              chat.contactMap[p.roomId] = res.data;
-            }
-            else { // 添加
-              res.data.unreadCount = 1;
-              chat.contactMap[res.data.roomId] = res.data;
+        if (chat.contactMap[p.roomId])
+          return;
+        setTimeout(() => { // 创建会话有一定延迟
+          // 如果会话已经存在就不请求
+          if (chat.contactMap[p.roomId])
+            return;
+          getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
+            if (res) {
+              const item = chat.contactMap[p.roomId];
+              if (item) { // 更新
+                chat.contactMap[p.roomId] = res.data;
+              }
+              else { // 添加
+                res.data.unreadCount = 1;
+                chat.contactMap[res.data.roomId] = res.data;
               // unshift();
+              }
             }
-          }
-        }).finally(() => {
-        });
+          }).finally(() => {
+          });
+        }, 300);
         // 更新用户列表
         if (!p.uid)
           return;
