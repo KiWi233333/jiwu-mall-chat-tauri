@@ -1,6 +1,5 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
-import { saveWindowState, StateFlags } from "@tauri-apps/plugin-window-state";
 
 const dev = import.meta.env.MODE === "development";
 async function onKeyDown(e: KeyboardEvent) {
@@ -113,15 +112,15 @@ export function useSettingInit() {
         app.classList.remove("stop-transition");
       setting.isMobileSize = window?.innerWidth <= 768; // 判断是否为移动端
       timer = null;
-      if (setting.isDesktop) { // 迁移rust保存
-        console.log("save window state");
-        if (saving.value) {
-          return;
-        }
-        saving.value = true;
-        await saveWindowState(StateFlags.ALL); // 保存窗口状态
-        saving.value = false;
-      }
+      // if (setting.isDesktop) { // 迁移rust保存
+      //   // console.log("save window state");
+      //   if (saving.value) {
+      //     return;
+      //   }
+      //   saving.value = true;
+      //   // await saveWindowState(StateFlags.ALL); // TODO: 保存窗口状态
+      //   saving.value = false;
+      // }
     }, 200);
   }
   window.addEventListener("resize", onResize);

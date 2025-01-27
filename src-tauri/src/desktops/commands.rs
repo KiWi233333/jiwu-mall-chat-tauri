@@ -1,6 +1,7 @@
 // commands.rs
 use std::path::PathBuf;
-use tauri::{command, AppHandle, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{command, AppHandle, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 #[tauri::command]
 pub async fn exist_file(path: PathBuf) -> bool {
@@ -70,6 +71,8 @@ pub async fn create_main_window(app_handle: AppHandle) -> tauri::Result<()> {
 
     let main_window = main_builder.build()?;
 
+    let _app = app_handle.app_handle().clone();
+
     // 监听窗口事件
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     main_window
@@ -83,6 +86,10 @@ pub async fn create_main_window(app_handle: AppHandle) -> tauri::Result<()> {
                     .clone()
                     .hide()
                     .unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
+            },
+            WindowEvent::Focused(..) => {
+                _app.save_window_state(StateFlags::all())
+                    .expect("保存窗口状态失败"); // 将所有打开窗口的状态保存到磁盘
             }
             _ => {}
         });
