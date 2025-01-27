@@ -21,9 +21,9 @@
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/issues" target="_blank">
         <img class="disabled-img-view" alt="Issues" src="https://img.shields.io/github/issues/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
-      <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/master/LICENSE" target="_blank">
-        <img class="disabled-img-view" alt="License: Apache-2.0"
-          src="https://img.shields.io/badge/License-Apache--2.0-blue.svg">
+      <a href="`https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/main/LICENSE`" target="_blank">
+         <img class="disabled-img-view" alt="License"
+          src="https://img.shields.io/github/license/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
     </div>
 
