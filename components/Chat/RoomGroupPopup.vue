@@ -86,6 +86,12 @@ watch(() => chat.theContact.avatar, (val) => {
 async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string | undefined | null = "") {
   if (field === "name" && val && val.trim().length <= 0)
     return ElMessage.warning("请输入内容！");
+  // 没有变化则不触发修改
+
+  if ((field === "name" && chat.theContact?.[field] === val) || (field === "notice" && chat?.theContact?.roomGroup?.detail?.notice === val)) {
+    editFormField.value = "";
+    return;
+  }
   const data = field === "notice"
     ? {
         detail: {
@@ -318,6 +324,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
 function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
   const isAdmin = type === ChatRoomRoleEnum.ADMIN;
   ElMessageBox.confirm(`是否将该用户${isAdmin ? "设为" : "取消"}管理员？`, {
+    title: "提示",
     center: true,
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -485,6 +492,7 @@ function onAdd() {
             style="width: fit-content;"
             placeholder="未填写"
             @focus="editFormField = 'name'"
+            @keydown.enter="submitUpdateRoom('name', theContactClone.name)"
             @blur.stop="submitUpdateRoom('name', theContactClone.name)"
           />
         </div>
@@ -507,6 +515,7 @@ function onAdd() {
           style="resize:none;width: 100%;"
           placeholder="未填写"
           @focus="editFormField = 'notice'"
+          @keydown.enter.stop="submitUpdateRoom('notice', theContactClone?.roomGroup?.detail?.notice)"
           @blur="submitUpdateRoom('notice', theContactClone?.roomGroup?.detail?.notice)"
         />
       </div>
@@ -518,7 +527,7 @@ function onAdd() {
       })"
     >
       <span>
-        {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
+        {{ isTheGroupOwner ? '解散群聊' : '退出群聊' }}
       </span>
     </btn-el-button>
     <!-- 邀请进群 -->
@@ -565,7 +574,7 @@ function onAdd() {
 
 }
 :deep(.el-scrollbar__thumb) {
-  display: none;
+  opacity: 0.5;
 }
 .label-item {
   :deep(.el-input) {

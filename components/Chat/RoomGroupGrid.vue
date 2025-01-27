@@ -193,6 +193,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
 function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
   const isAdmin = type === ChatRoomRoleEnum.ADMIN;
   ElMessageBox.confirm(`是否将该用户${isAdmin ? "设为" : "取消"}管理员？`, {
+    title: "提示",
     center: true,
     confirmButtonText: "确定",
     cancelButtonText: "取消",

@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TransitionGroup :name="!disableTransition && !setting.settingPage.isCloseAllTransition ? 'group-list' : 'xxx'" v-bind="$attrs">
+  <TransitionGroup :name="!disableTransition && !setting.settingPage.isCloseAllTransition ? 'group-list' : '_'" v-bind="$attrs">
     <slot />
   </TransitionGroup>
 </template>

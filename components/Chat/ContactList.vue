@@ -243,9 +243,14 @@ async function watchMemberChange(len: number) {
 }
 
 // 跳转好友页面
-function toFriendPage() {
-  setTimeout(() => {
-    navigateTo("/friend");
+async function toFriendPage() {
+  await navigateTo("/friend");
+  setTimeout(async () => {
+    chat.setTheFriendOpt(FriendOptType.Empty);
+    const com = document?.getElementById?.("user-search-apply-input");
+    if (com) {
+      com?.focus();
+    }
   }, 200);
 }
 
@@ -263,7 +268,7 @@ onBeforeUnmount(() => {
   >
     <!-- 搜索群聊 -->
     <div
-      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height bg-color"
+      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height border-default-b bg-color"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
@@ -291,7 +296,7 @@ onBeforeUnmount(() => {
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list" wrapper-class="relative">
       <!-- 添加骨架屏 -->
-      <div v-if="isReload" class="animate-(fade-in duration-200) overflow-y-auto">
+      <div v-if="isReload" class="animate-(fade-in duration-120) overflow-y-auto">
         <ChatContactSkeleton v-for="i in 10" :key="i" />
       </div>
       <ListAutoIncre
@@ -350,9 +355,9 @@ onBeforeUnmount(() => {
           </div>
         </ListTransitionGroup>
         <template #done>
-          <div class="my-4 w-full text-center text-mini">
-            {{ pageInfo.isLast ? '没有更多了' : '' }}
-          </div>
+          <!-- <div class="my-4 w-full text-center text-mini">
+             {{ pageInfo.isLast ? '没有更多了' : '' }}
+          </div> -->
         </template>
       </ListAutoIncre>
     </el-scrollbar>

@@ -125,6 +125,7 @@ const timer = ref<any>();
       flex-row-c-c
     >
       <ElInput
+        id="user-search-apply-input"
         v-model.trim="searchKeyWords"
         class="mr-2"
         type="text"
@@ -240,7 +241,7 @@ const timer = ref<any>();
   }
   :deep(.el-input__wrapper) {
     transition: $transition-delay;
-    letter-spacing: 0.2em;
+    --at-apply: "tracking-0.2em";
     &.is-focus {
       backdrop-filter: blur(20px);
     }

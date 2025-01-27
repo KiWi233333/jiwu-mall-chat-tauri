@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import type { UpdateInfo } from "@/composables/api/user/info";
 import type { UploadFile, UploadFiles, UploadProps } from "element-plus/es/components/upload";
-import { type UpdateInfo, updateInfoByDTO } from "@/composables/api/user/info";
+import { updateInfoByDTO } from "@/composables/api/user/info";
 import { compareObjects } from "@/composables/utils";
 
 const { data } = defineProps<{
@@ -267,7 +268,7 @@ onMounted(() => {
           <el-button
             v-show="isEditSlogan"
             key="isEditSlogan-btn"
-            icon="Select"
+            :icon="ElIconSelect"
             size="small"
             type="primary"
             @click="submitUpdateUser('slogan')"

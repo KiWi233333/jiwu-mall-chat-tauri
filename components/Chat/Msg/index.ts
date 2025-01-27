@@ -112,7 +112,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       {
         label: "复制",
         customClass: "group",
-        hidden: !data.message.body.url,
+        hidden: !data.message.body.url || setting.isMobile,
         icon: "i-solar:copy-line-duotone group-hover:(scale-110 i-solar-copy-bold-duotone) group-btn-info",
         onClick: async () => {
           let img = await getImgBlob(BaseUrlImg + data.message.body.url);

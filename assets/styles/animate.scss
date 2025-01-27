@@ -286,7 +286,7 @@ html.stop-transition-all {
 }
 
 .group-list-leave-active {
-  position: absolute;
+  position: absolute !important;
 }
 
 // blur 列表动画

@@ -200,3 +200,4 @@ pnpm config set registry https://registry.npmjs.org
 
 - 邮箱：[kiwi2333@qq.com](mailto:kiwi2333@qq.com)
 - QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qqq&menu=yes)
+- QQ群: [939204073](https://qm.qq.com/q/iSaETNVdKw)

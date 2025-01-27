@@ -511,7 +511,7 @@ watch(() => chat.theContact.roomId, () => {
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;"
       >
         <div
-          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default bg-color hover:shadow-lg"
+          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default bg-color hover:shadow"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
         >
           <CardElImage
@@ -539,7 +539,7 @@ watch(() => chat.theContact.roomId, () => {
       >
         <div
           v-for="(file, i) in fileList"
-          :key="i" class="flex-row-c-c p-3 shadow-sm transition-all border-default card-default bg-color hover:shadow-lg"
+          :key="i" class="flex-row-c-c p-3 shadow-sm transition-all border-default card-default bg-color hover:shadow"
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
           <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
@@ -594,7 +594,7 @@ watch(() => chat.theContact.roomId, () => {
         <div v-show="chat.msgForm.msgType === MessageType.SOUND && !theAudioFile?.id" class="absolute-center-x">
           <BtnElButton
             ref="pressHandleRef"
-            type="primary" class="group tracking-0.1em hover:shadow-lg"
+            type="primary" class="group tracking-0.1em hover:shadow"
             :class="{ 'is-chating': isChating }" style="padding: 0.8rem 3rem;" round
             size="small"
           >
@@ -842,7 +842,7 @@ watch(() => chat.theContact.roomId, () => {
 
 // 语音
 .is-chating {
-  --at-apply: "shadow-lg ";
+  --at-apply: "shadow ";
   --shadow-color: var(--el-color-primary);
   --shadow-color2: var(--el-color-primary-light-3);
   outline: none !important;

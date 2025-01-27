@@ -184,8 +184,8 @@ async function toSend(uid: string) {
         <p mt-a truncate text-mini :title="userId">
           ID：{{ userId }}
         </p>
-        <p v-if="isFrend || isSelf" mt-1 truncate text-mini :title="targetUserInfo.email">
-          邮箱：{{ targetUserInfo.email || ' - ' }}
+        <p mt-1 truncate text-mini :title="targetUserInfo.email">
+          邮箱：{{ (isFrend || isSelf) ? targetUserInfo.email : ' - ' }}
         </p>
       </div>
     </div>
