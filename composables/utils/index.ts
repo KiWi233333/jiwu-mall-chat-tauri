@@ -379,33 +379,48 @@ export async function getImgBlob(imgUrl: string): Promise<Blob | null> {
 /**
  * 将图片转换为 PNG 格式
  * @param imgBlob 图片的 Blob 对象
+ * @param quality 图片质量（0-1，1 为最高质量）
  * @returns 转换后的 PNG 格式的 Blob 对象，如果失败则返回 null
  */
-export async function convertImgToPng(imgBlob: Blob): Promise<Blob | null> {
+export async function convertImgToPng(
+  imgBlob: Blob,
+  quality: number = 0.8, // 默认质量（0.8 足够满足大多数需求）
+  maxWidthOrHeight: number = 2048, // 最大宽度或高度（防止生成过大的图片）
+): Promise<Blob | null> {
   try {
     // 检查输入是否为有效的 Blob 对象
     if (!(imgBlob instanceof Blob)) {
       console.error("Invalid input: Expected a Blob object");
       return null;
     }
-
-    // 创建 ImageBitmap
     const img = await createImageBitmap(imgBlob);
-
+    const max = maxWidthOrHeight;
+    let newWidth = img.width;
+    let newHeight = img.height;
+    // 如果原始图片的宽或高超过 max，按比例缩小
+    if (img.width > img.height && img.width > max) {
+      newWidth = max;
+      newHeight = (img.height / img.width) * max;
+    }
+    else if (img.height > img.width && img.height > max) {
+      newHeight = max;
+      newWidth = (img.width / img.height) * max;
+    }
     // 创建 Canvas 并绘制图片
     const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-
+    canvas.width = newWidth;
+    canvas.height = newHeight;
     const ctx = canvas.getContext("2d");
     if (!ctx) {
       console.error("Failed to get canvas context");
       return null;
     }
 
-    ctx.drawImage(img, 0, 0);
+    // 绘制时设置图像质量和抗锯齿（如果需要更高质量可以保留）
+    ctx.imageSmoothingEnabled = true; // 保持高质量抗锯齿
+    ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-    // 将 Canvas 内容转换为 PNG 格式的 Blob
+    // 调用 toBlob，并指定 quality 参数以进一步压缩文件大小
     return new Promise<Blob | null>((resolve) => {
       canvas.toBlob(
         (blob) => {
@@ -416,9 +431,10 @@ export async function convertImgToPng(imgBlob: Blob): Promise<Blob | null> {
             console.error("Failed to convert canvas to Blob");
             resolve(null);
           }
+          canvas.remove(); // 释放 canvas 节点
         },
         "image/png", // 指定输出格式为 PNG
-        1, // 图片质量（0-1，1 为最高质量）
+        Math.min(1, Math.max(0, quality)), // 确保 quality 在 0-1 范围内
       );
     });
   }

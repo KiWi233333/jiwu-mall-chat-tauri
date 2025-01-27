@@ -118,7 +118,6 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
           let img = await getImgBlob(BaseUrlImg + data.message.body.url);
           if (!img)
             return ElMessage.error("图片加载失败！");
-          // 处理剪切板部分不支持的图片格式
           if (!CopyImgType.includes(img.type)) {
             img = await convertImgToPng(img);
           }
@@ -128,16 +127,22 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
           const { copy, isSupported } = useClipboardItems({
             read: false,
             source: [new ClipboardItem({ [img.type]: img })],
-            copiedDuring: 1200,
+            // copiedDuring: 1500,
           });
           if (isSupported.value) {
-            copy().catch((e) => {
-              console.warn(e);
-              ElMessage.error("复制失败，请手动保存！");
-            });
+            copy()
+              .then(() => {
+                ElMessage.success("图片已复制到剪切板！");
+              })
+              .catch((e) => {
+                console.warn(e);
+                ElMessage.error("复制失败，请手动保存！");
+              });
+            img = null;
           }
           else {
             ElMessage.error("当前设备不支持复制图片！");
+            img = null;
           };
         },
       },

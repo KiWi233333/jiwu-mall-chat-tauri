@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { UploadProps, UploadRawFile } from "element-plus";
 import { deleteOssFile, getOssErrorCode, getResToken, OssFileType, uploadOssFileSe } from "@/composables/api/res";
 import { StatusCode } from "@/types/result";
 import * as qiniu from "qiniu-js";
@@ -148,11 +149,13 @@ async function onUpload(file: OssFile) {
   if (size !== undefined && file?.file?.size && file?.file?.size > size) {
     error.value = `文件大小不能超过${formatFileSize(size)}`;
     emit("errorMsg", error.value);
+    resetInput();
     return;
   }
   if (minSize !== undefined && file?.file?.size && file?.file?.size < minSize) {
     error.value = `文件大小不能小于${formatFileSize(minSize)}`;
     emit("errorMsg", error.value);
+    resetInput();
     return;
   }
   else {
@@ -315,6 +318,15 @@ const getPreImage = computed(() => {
 
 const [autoAnimateRef, enable] = useAutoAnimate({
 });
+
+// 单文件时
+const handleExceed: UploadProps["onExceed"] = (files) => {
+  if (!multiple || limit === 1) {
+    inputRef.value!.clearFiles();
+    const file = files[0] as UploadRawFile;
+    inputRef.value!.handleStart(file);
+  }
+};
 onMounted(() => {
   const setting = useSettingStore();
   enable(isAnimate && !setting.settingPage.isCloseAllTransition);
@@ -335,6 +347,8 @@ onMounted(() => {
         class="z-10 block h-full w-full cursor-pointer opacity-0 absolute-center"
         type="file"
         :multiple="multiple"
+
+        :on-exceed="handleExceed"
         :accept="accept"
         :required="required"
         :disabled="disable"

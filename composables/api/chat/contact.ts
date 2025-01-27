@@ -105,7 +105,7 @@ export function restoreGroupContact(roomId: number, token: string) {
  */
 export function restoreSelfContact(friendId: string, token: string) {
   return useHttp.put<Result<ChatContactDetailVO>>(
-    `/chat/contact//friend/restore/${friendId}`,
+    `/chat/contact/friend/restore/${friendId}`,
     { },
     { headers: { Authorization: token } },
   );
