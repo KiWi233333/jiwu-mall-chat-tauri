@@ -1,3 +1,4 @@
+/* eslint-disable regexp/negation */
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { save } from "@tauri-apps/plugin-dialog";
 import { appName } from "~/constants";
@@ -34,32 +35,75 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       label: "撤回",
       hidden: !isSelf,
       customClass: "group",
-      icon: "i-solar:backspace-broken group-btn-danger",
+      icon: "i-solar:backspace-broken group-hover:(scale-110 i-solar:backspace-bold) group-btn-danger",
       onClick: () => refundMsg(data, data.message.id),
     },
     {
       label: "删除",
       customClass: "group",
-      icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger",
+      icon: "i-solar:trash-bin-minimalistic-outline group-hover:(shake i-solar:trash-bin-minimalistic-bold) group-btn-danger",
       hidden: !isTheGroupPermission.value,
       onClick: () => deleteMsg(data, data.message.id),
     },
     {
       label: "回复",
-      icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
+      icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-hover:(translate-x-1 translate-y-2px) group-btn-info",
       onClick: () => chat.setReplyMsg(data),
     },
   ];
+  const txt = window.getSelection()?.toString() || data.message.content;
   const contextMenuType: Record<string, any> = {
     content: [// 文本内容
       {
         label: "复制",
-        hidden: !data.message.content,
+        hidden: !txt, // 只支持文本消息
         customClass: "group",
-        icon: "i-solar-copy-line-duotone group-btn-info",
+        icon: "i-solar-copy-line-duotone group-hover:(scale-110 i-solar-copy-bold-duotone) group-btn-info",
         onClick: () => {
-          const txt = window.getSelection()?.toString() || data.message.content;
+          // 待定是否匹配content内容
+          if (!txt) {
+            return ElMessage.error("复制失败，请选择文本！");
+          }
           useCopyText(txt as string);
+        },
+      },
+      {
+        label: "打开链接",
+        hidden: !txt || !txt?.match(/https?:\/\/[^\s]+/g)?.length,
+        customClass: "group",
+        icon: "i-solar:link-line-duotone group-hover:(scale-110 i-solar:link-bold-duotone) group-btn-info",
+        onClick: () => {
+          if (!txt) {
+            return;
+          }
+          const utls = txt?.match(/https?:\/\/[^\s]+/g);
+          if (utls?.length) {
+            ElMessageBox.confirm("是否打开链接？", "打开链接", {
+              confirmButtonText: "打开",
+              cancelButtonText: "取消",
+              center: true,
+              lockScroll: false,
+              callback: (action: string) => {
+                if (action === "confirm" && utls?.length) {
+                  window.open(utls[0], "_blank");
+                }
+              },
+            });
+          }
+        },
+      },
+      {
+        label: "搜一搜",
+        hidden: !data.message.content, // 暂时只支持文本消息
+        customClass: "group",
+        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold-duotone) group-btn-success",
+        onClick: () => {
+          if (!txt) {
+            return ElMessage.error("选择内容为空，无法搜索！");
+          }
+          // bing
+          const bingUrl = `https://bing.com/search?q=${encodeURIComponent(txt)}`;
+          window.open(bingUrl, "_blank");
         },
       },
       ...defaultContextMenu,
@@ -69,7 +113,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: "复制",
         customClass: "group",
         hidden: !data.message.body.url,
-        icon: "i-solar:copy-line-duotone group-btn-info",
+        icon: "i-solar:copy-line-duotone group-hover:(scale-110 i-solar-copy-bold-duotone) group-btn-info",
         onClick: async () => {
           let img = await getImgBlob(BaseUrlImg + data.message.body.url);
           if (!img)
@@ -101,7 +145,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: "保存图片",
         customClass: "group",
         hidden: !data.message.body.url,
-        icon: "i-solar-download-minimalistic-broken group-btn-info",
+        icon: "i-solar-download-minimalistic-broken group-hover:(translate-y-2px i-solar-download-minimalistic-bold) group-btn-success",
         onClick: async () => {
           let path: string | undefined | null = "";
           const fileName = path.split("\\").pop() || `${Date.now()}.png`;
@@ -122,7 +166,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: "撤回",
         hidden: !isSelf,
         customClass: "group",
-        icon: "i-solar:backspace-broken group-btn-danger",
+        icon: "i-solar:backspace-broken group-hover:(scale-110 i-solar:backspace-bold) group-btn-danger",
         onClick: () => refundMsg(data, data.message.id),
       },
       {
@@ -136,14 +180,16 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url] ? "打开文件" : "下载文件",
         hidden: setting.isWeb || data.message.type !== MessageType.FILE,
         customClass: "group",
-        icon: setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url] ? "i-solar-file-line-duotone group-btn-info" : "i-solar-download-minimalistic-broken group-btn-info",
+        icon: setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url]
+          ? "i-solar-file-line-duotone group-hover:(scale-110 i-solar-file-bold-duotone) group-btn-info"
+          : "i-solar-download-minimalistic-broken group-hover:(translate-y-2px i-solar-download-minimalistic-bold) group-btn-success",
         onClick: () => onDownLoadFile && onDownLoadFile(),
       },
       {
         label: "文件夹打开",
         hidden: setting.isWeb || data.message.type !== MessageType.FILE || !setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url],
         customClass: "group",
-        icon: "i-solar:folder-with-files-line-duotone group-btn-info",
+        icon: "i-solar:folder-with-files-line-duotone group-hover:(scale-110 i-solar:folder-with-files-bold-duotone) group-btn-info",
         onClick: () => setting.openFileFolder(setting.fileDownloadMap?.[BaseUrlFile + data.message.body.url] as FileItem),
       },
       ...defaultContextMenu,
@@ -153,7 +199,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: showTranslation.value ? "折叠转文字" : "转文字",
         hidden: data.message.type !== MessageType.SOUND || !data.message.body?.translation,
         customClass: "group",
-        icon: "i-solar-text-broken group-btn-info",
+        icon: "i-solar:text-broken group-hover:(scale-110 i-solar:text-bold) group-btn-info",
         onClick: () => (showTranslation.value = !showTranslation.value),
       },
       ...defaultContextMenu,
@@ -163,7 +209,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         label: "复制",
         hidden: !data.fromUser.nickName,
         customClass: "group",
-        icon: "i-solar-copy-line-duotone group-btn-info",
+        icon: "i-solar-copy-line-duotone group-hover:(scale-110 i-solar-copy-bold-duotone) group-btn-info",
         onClick: () => {
           const txt = window.getSelection()?.toString() || data.fromUser.nickName;
           useCopyText(txt as string);
@@ -171,7 +217,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
       {
         label: "个人资料",
-        icon: "i-solar:user-broken group-btn-info",
+        icon: "i-solar:user-broken group-hover:(scale-110 i-solar:user-bold) group-btn-info",
         customClass: "group",
         hidden: isSelf,
         onClick: () => {
@@ -181,7 +227,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
       {
         label: "TA",
-        icon: "i-solar:mention-circle-broken group-btn-info",
+        icon: "i-solar:mention-circle-broken group-hover:(rotate-15 i-solar:mention-circle-bold) group-btn-info",
         customClass: "group",
         hidden: isSelf || chat.theContact.type === RoomType.SELFT,
         onClick: () => chat.setAtUid(data.fromUser.userId),
