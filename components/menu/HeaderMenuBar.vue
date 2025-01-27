@@ -85,7 +85,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
             @click="reloadPage"
           />
           <!-- 下载（部分端） -->
-          <BtnDownload v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 border-0 border-l-1px pl-3 border-default" />
+          <BtnDownload v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 pl-3 border-default-l" />
           <!-- 主题 -->
           <BtnTheme
             id="toggle-theme-btn"
@@ -101,7 +101,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
           />
         </div>
         <!-- 关闭按钮 -->
-        <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="ml-2 max-w-9em flex items-center gap-0 border-0 border-l-1px pl-3 sm:(max-w-fit gap-2) border-default">
+        <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="ml-2 max-w-9em flex items-center gap-0 pl-3 sm:(max-w-fit gap-2) border-default-l">
           <MenuController>
             <template #start="{ data }">
               <ElButton

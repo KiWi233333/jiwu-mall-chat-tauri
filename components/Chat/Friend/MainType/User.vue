@@ -16,6 +16,7 @@ const store = useUserStore();
 const isLoading = ref(true);
 const isFrend = ref<boolean | undefined>(false);
 const userId = computed(() => panelData.data.id);
+const isSelf = computed(() => userId.value === store.userId);
 const targetUserInfo = ref<Partial<CommUserVO>>({});
 const getAgeText = computed(() => {
   if (!targetUserInfo.value?.birthday) {
@@ -167,10 +168,10 @@ async function toSend(uid: string) {
     element-loading-background="transparent"
     :class="{ 'op-100': !isLoading }"
     v-bind="$attrs"
-    class="md:1/6 mt-24 h-full w-full flex flex-1 flex-col gap-6 px-10 op-0 transition-120 bg-color sm:px-1/4"
+    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-24 op-0 transition-120 bg-color sm:px-1/4"
   >
     <!-- 信息 -->
-    <div flex gap-4 pb-6 border-default-b>
+    <div flex gap-4 pb-6 sm:gap-6 border-default-b>
       <CardElImage
         :src="BaseUrlImg + targetUserInfo.avatar" fit="cover"
         :preview-src-list="[BaseUrlImg + targetUserInfo.avatar]"
@@ -183,7 +184,7 @@ async function toSend(uid: string) {
         <p mt-a truncate text-mini :title="userId">
           ID：{{ userId }}
         </p>
-        <p v-if="isFrend" mt-2 truncate text-mini :title="targetUserInfo.email">
+        <p v-if="isFrend || isSelf" mt-1 truncate text-mini :title="targetUserInfo.email">
           邮箱：{{ targetUserInfo.email || ' - ' }}
         </p>
       </div>

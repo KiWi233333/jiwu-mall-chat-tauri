@@ -69,16 +69,16 @@ async function toSend(roomId: number) {
   >
     <div
       v-show="!isLoading"
-      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1 bg-color"
+      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1 bg-color-2"
       v-bind="$attrs"
     >
       <!-- 顶部 -->
       <div
-        absolute left-0 top-0 w-full flex items-center gap-4 p-3 px-5 shadow bg-color
+        absolute left-0 top-0 h-14 w-full flex items-center gap-4 px-5 border-default-b bg-color
       >
         <CardElImage
           :src="BaseUrlImg + data.data.avatar" fit="cover"
-          class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto object-cover shadow-sm border-default card-default"
+          class="h-2.2em w-2.2em flex-shrink-0 overflow-auto object-cover shadow-sm border-default card-default"
         />
         <strong text-1rem>{{ room.groupName }}</strong>
         <small op-60 el-color-info>在线：{{ room.onlineNum || "0" }}</small>

@@ -25,13 +25,13 @@
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     border-radius: 4px 1rem 1rem 1rem;
   }
-} 
+}
 .at-list {
   --at-apply: "max-w-20em md:max-w-30em";
 }
 
 .reply-shaing {
-  --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-7)] op-100 transition-120";
+  --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-7)] op-100 transition-120 ";
 }
 
 .body {
@@ -42,8 +42,7 @@
   gap: 0.5rem;
 }
 .self {
-  
-  ::selection  {
+  ::selection {
     background-color: #f0f0f0 !important;
     color: #010101 !important;
   }

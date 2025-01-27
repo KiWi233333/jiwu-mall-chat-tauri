@@ -197,7 +197,7 @@ const timer = ref<any>();
               v-for="p in searchPageList"
               :key="p.id"
               data-fade
-              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 card-default hover:(bg-white op-100 shadow shadow-inset dark:bg-dark-9) border-default-hover"
+              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 card-default bg-menu-color hover:(bg-gray-100 shadow-sm dark:bg-dark-9)"
               @click="emit('submit', p)"
             >
               <CardElImage

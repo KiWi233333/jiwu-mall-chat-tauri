@@ -24,7 +24,7 @@ const form = ref({
 </script>
 
 <template>
-  <div class="card flex flex-col">
+  <div class="flex flex-col">
     <div
       my-4 block text-sm
     >
@@ -36,7 +36,7 @@ const form = ref({
     <!-- 用户信息 -->
     <div
       v-loading="isLoading"
-      class="group flex flex-col p-4"
+      class="group flex flex-col p-4 shadow card-default border-default-hover"
       flex flex-1 flex-col
     >
       <div class="flex items-center">

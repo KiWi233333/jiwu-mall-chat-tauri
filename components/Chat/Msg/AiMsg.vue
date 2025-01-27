@@ -39,8 +39,8 @@ const colorMode = useColorMode();
         preview-theme="smart-blue"
         code-theme="a11y"
         :code-foldable="false"
-        style="font-size: 1em;padding: 0.4em 0.8em;"
-        class="msg-popper markdown mt-2 sm:max-w-40rem"
+        style="font-size: 1em;color: inherit;padding: 0.3em 0.8em;"
+        class="msg-popper markdown mt-2 sm:max-w-40rem text-color"
         :model-value="data.message?.content || ''"
       />
     </template>

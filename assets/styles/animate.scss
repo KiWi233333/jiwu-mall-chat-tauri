@@ -316,7 +316,7 @@ html.stop-transition-all {
 .pop-list-enter-active,
 .pop-list-leave-active {
   transition-duration: $transition-delay;
-  transition-timing-function: $animate-cubic;
+  // transition-timing-function: $animate-cubic;
   transition-property: all;
 }
 

@@ -277,7 +277,7 @@ defineExpose({
   p {
     word-break: break-all;
     white-space: pre-wrap;
-    line-height: 1.4em;
+    line-height: 1.5;
   }
 }
 .isReload {

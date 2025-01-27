@@ -189,6 +189,13 @@ async function onPaste(e: ClipboardEvent) {
   }
 }
 
+
+// 阅读本房间（防抖）
+const setReadListDebounce = useDebounceFn(() => {
+  // console.log("read room");
+  chat.theContact.roomId && chat.setReadList(chat.theContact.roomId);
+}, 400);
+
 /**
  * 发送消息
  */
@@ -274,8 +281,8 @@ async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: 
     chat?.appendMsg(res.data);
     await nextTick();
     chat.scrollBottom?.(false);
-    // 消息阅读上报
-    res.data.message.roomId && chat.setReadList(res.data.message.roomId);
+    // 消息阅读上报（延迟）
+    setReadListDebounce();
     typeof callback === "function" && callback(res.data); // 执行回调
   }
   else if (res.message === "您和对方已不是好友！") {
@@ -371,6 +378,7 @@ watch(() => chat.replyMsg?.message?.id, (val) => {
       inputAllRef.value?.input?.focus(); // 聚焦
   });
 });
+
 
 // 到底部并消费消息
 function setReadAndScrollBottom() {
@@ -570,7 +578,7 @@ watch(() => chat.theContact.roomId, () => {
         </div>
       </div>
     </div>
-    <div class="flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
+    <div class="form-tools flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
       <div
         class="relative flex items-center gap-2 px-2 sm:(gap-4)"
@@ -741,16 +749,20 @@ watch(() => chat.theContact.roomId, () => {
       <!-- 录音 -->
       <p
         v-if="chat.msgForm.msgType === MessageType.SOUND"
-        class="relative h-40 w-full flex-row-c-c overflow-y-auto p-8 text-wrap op-90"
+        class="relative h-27 w-full flex-row-c-c overflow-y-auto p-6 text-wrap op-90 sm:h-39 sm:p-8"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
-      <div class="flex p-1 pt-0">
+      <div class="flex items-end p-1 pt-0">
+        <div class="tip ml-a hidden sm:block text-mini">
+          Enter发送，Ctrl+Enter换行
+        </div>
         <BtnElButton
           :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
-          class="group ml-a overflow-hidden shadow"
+          class="group ml-a overflow-hidden tracking-0.2em shadow sm:ml-2"
           type="primary"
           round
+          icon-class="i-solar:chat-line-bold mr-1.5"
           size="small"
           :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
           style="padding: 0.8rem;width: 6rem;"
@@ -774,6 +786,16 @@ watch(() => chat.theContact.roomId, () => {
 </template>
 
 <style lang="scss" scoped>
+.form-tools {
+  .tip {
+    --at-apply: "op-0";
+  }
+  &:hover {
+    .tip {
+      --at-apply: "op-100";
+    }
+  }
+}
 .at-select {
   :deep(.el-select__wrapper),
   :deep(.el-select-v2__input-wrapper),

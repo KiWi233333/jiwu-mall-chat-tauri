@@ -10,7 +10,7 @@ const betteryInfo = useBattery(window);
     <div
       v-if="betteryInfo.isSupported.value"
       key="bettery"
-      class="device-card flex items-center"
+      class="device-card"
     >
       <i
         :class="
@@ -39,6 +39,6 @@ const betteryInfo = useBattery(window);
 
 <style scoped lang="scss">
 .device-card {
-  --at-apply: "card-default border-default  p-2 px-4";
+  --at-apply: " flex items-center card-default border-default-hover p-2 px-4";
 }
 </style>

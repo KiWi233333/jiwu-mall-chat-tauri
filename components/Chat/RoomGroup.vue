@@ -384,7 +384,7 @@ function onAdd() {
 <template>
   <div
     v-bind="$attrs"
-    class="group w-16vw flex flex-col gap-2 border-(0 l-1px default) p-0 px-0 sm:(relative max-w-320px w-20vw flex-col p-4)"
+    class="group w-22vw flex flex-col gap-2 p-0 px-0 sm:(relative max-w-320px flex-col p-4) border-default-l"
   >
     <div flex-row-bt-c flex-shrink-0 flex-col gap-4 truncate sm:flex-row sm:pb-4>
       <div hidden sm:flex class="p-1.5 border-default sm:border-0 group-hover:op-100 sm:op-0" @click="isGrid = !isGrid">
@@ -539,13 +539,13 @@ function onAdd() {
   z-index: 1;
 }
 .user-card {
-  --at-apply:'h-fit flex-row-c-c p-1.6 relative gap-1 sm:gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)';
+  --at-apply:'h-fit flex-row-c-c p-1.6 relative gap-1 sm:gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all sm:w-full hover:(border-[var(--el-color-primary)] bg-color op-100 shadow shadow-inset) cursor-pointer ';
 }
 
 .is-grid {
     // grid-template-columns: repeat(auto-fit, minmax(3em, 1fr)); // 设置网格布局，并设置列数为自动适应，每个列的宽度为1fr（占据可用空间）
   .user-card {
-    --at-apply:'sm:mx-0 mx-a';
+    --at-apply:'mx-a';
     width: fit-content;
   }
 }

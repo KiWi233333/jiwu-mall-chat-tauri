@@ -281,7 +281,7 @@ function onAdd() {
         :immediate="true"
         :auto-stop="true"
         :no-more="!isLoading && chat.roomGroupPageInfo.isLast"
-        loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px bg-[var(--el-color-primary)] py-2"
+        loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px py-2"
         @load="loadData"
       >
         <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 gap-4)">

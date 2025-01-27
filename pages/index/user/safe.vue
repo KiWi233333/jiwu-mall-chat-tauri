@@ -39,10 +39,10 @@ useSeoMeta({
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isLoading" class="my-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
+  <main v-loading.fullscreen.lock="isLoading" class="mt-8 flex flex-1 flex-col p-4 layout-default-se md:p-6">
     <h3 flex items-center>
       账户与安全
-      <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
+      <i i-solar:devices-bold-duotone ml-2 inline-block p0.6em opacity-60 />
     </h3>
     <el-tabs
       model-value="security"

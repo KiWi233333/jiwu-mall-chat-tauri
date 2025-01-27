@@ -94,7 +94,7 @@ onMounted(() => {
 });
 // 保存菜单设置
 function saveMenu(list: ExtendItem[]) {
-  setting.selectExtendMenuList = JSON.parse(JSON.stringify(list.sort((a, b) => (b.saveTime || 0) - (a.saveTime || 0))));
+  setting.selectExtendMenuList = JSON.parse(JSON.stringify(list.sort((a, b) => (a.saveTime || 0) - (b.saveTime || 0))));
   isShow.value = false;
 }
 // @unocss-include
@@ -178,7 +178,7 @@ function createItem() {
             class="absolute right-1 top-1 op-0 btn-danger-bg bg-color group-hover:(op-100)"
             @click.stop="onRemove(item)"
           >
-            <i class="i-carbon:subtract p-2 p-2.2 text-color" />
+            <i class="i-carbon:subtract p-2 p-2.2" />
           </div>
           <div
             class="mx-a mt-2 text-center text-xs"
@@ -214,7 +214,7 @@ function createItem() {
             class="absolute right-1 top-1 op-0 btn-primary-bg bg-color group-hover:(op-100)"
             @click.stop="onAdd(item)"
           >
-            <i class="i-carbon:add p-2 p-2.2 text-color" />
+            <i class="i-carbon:add p-2 p-2.2" />
           </div>
           <div
             class="mx-a mt-2 text-center text-xs"

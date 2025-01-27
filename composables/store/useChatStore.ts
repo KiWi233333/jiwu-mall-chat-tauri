@@ -158,11 +158,15 @@ export const useChatStore = defineStore(
     function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => void) {
       // 重新拉取会话
       getChatContactInfo(roomId, user.getToken)?.then((res) => {
-        if (res.code === StatusCode.SUCCESS) {
-          contactMap.value[roomId] = res.data as ChatContactVO; // 追加前置
-          callBack && callBack(res.data as ChatContactVO);
+        if (res.code !== StatusCode.SUCCESS) {
+          ElMessage.closeAll("error");
+          console.error(res.message);
+          return;
         }
-      }).catch(() => {
+        contactMap.value[roomId] = res.data as ChatContactVO; // 追加前置
+        callBack && callBack(res.data as ChatContactVO);
+      }).catch((res) => {
+        ElMessage.closeAll("error");
       }).finally(() => {
         delete updateContactList.value[roomId];
       });

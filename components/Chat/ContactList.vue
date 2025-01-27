@@ -251,12 +251,12 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 bg-white sm:(relative left-0 top-0 w-1/4 pl-0) dark:bg-dark-7"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
     :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4' : 'hidden') : ''"
   >
     <!-- 搜索群聊 -->
     <div
-      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height"
+      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height bg-color"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
@@ -298,7 +298,7 @@ onBeforeUnmount(() => {
           <div
             v-for="room in chat.getContactList"
             :key="room.roomId"
-            class="contact w-full text-sm"
+            class="contact"
             :class="{
               'is-pin': room.pinTime,
               'is-checked': room.roomId === theContactId,
@@ -307,7 +307,7 @@ onBeforeUnmount(() => {
             @click="onChangeRoom(room.roomId)"
           >
             <div
-              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) hover:bg-[#7c7c7c1a] text-color"
+              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) text-color"
             >
               <el-badge
                 :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
@@ -334,7 +334,7 @@ onBeforeUnmount(() => {
                   >
                     {{ room.text }}
                   </small>
-                  <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-[var(--el-color-primary-light-3)] dark:text-light-500">
+                  <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-dark dark:text-light-500">
                     置顶
                   </small>
                 </p>
@@ -357,12 +357,12 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .contact-list {
   .contact {
+    --at-apply: "w-full text-sm  cursor-pointer !hover:(bg-[#ececec]]) !hover:dark:bg-[#7c7c7c1a] ";
     &.is-pin {
-      --at-apply: "bg-light-500 dark:bg-dark";
+      --at-apply: "bg-color";
     }
-
     &.is-checked {
-      background-color: #7c7c7c1a;
+      --at-apply: "bg-[#ececec] !dark:bg-[#7c7c7c1a]";
     }
   }
 }

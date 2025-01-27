@@ -111,7 +111,7 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full px-2 border-default-r bg-menu-color"
+    class="relative z-998 h-full px-2 shadow-sm shadow-inset border-default-r bg-color-2"
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 hover:bg-transparent">
@@ -131,7 +131,7 @@ export interface MenuItem {
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
     <!-- 菜单 -->
-    <ListTransitionGroup tag="div" class="h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto">
+    <ListTransitionGroup name="pop-list" tag="div" class="h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto">
       <component
         :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"

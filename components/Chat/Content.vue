@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import type { ChatMessageList } from "#components";
-
 defineProps<{
   roomId?: string
 }>();
 </script>
 
 <template>
-  <div class="content relative flex flex-col bg-light-6 dark:bg-dark-9">
+  <div class="content relative flex flex-col bg-color-df">
     <!-- 房间信息 -->
     <ChatRoomInfo />
     <!-- 消息列表 -->

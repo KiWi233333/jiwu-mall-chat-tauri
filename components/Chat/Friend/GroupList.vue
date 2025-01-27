@@ -143,9 +143,9 @@ onDeactivated(() => {
   --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "border-(1px solid transparent) flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(border-default bg-menu-color) ";
+  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-menu-color) ";
   &.focus {
-    --at-apply: "border-default bg-menu-color ";
+    --at-apply: "bg-menu-color";
   }
 }
 </style>

@@ -72,7 +72,7 @@
     "eslint": "^9.19.0",
     "eslint-plugin-format": "^1.0.1",
     "husky": "^9.1.7",
-    "lint-staged": "^15.4.2",
+    "lint-staged": "^15.4.3",
     "nuxt": "^3.14.1592",
     "pinia": "^2.3.1",
     "pinia-plugin-persistedstate": "^4.2.0",

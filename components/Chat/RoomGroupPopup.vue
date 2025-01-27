@@ -390,7 +390,7 @@ function onAdd() {
         <i class="block h-5 w-5 op-80 btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-4 h-4' : 'i-solar:widget-bold-duotone w-2 h-2'" />
       </div>
       <small>群成员</small>
-      <div class="rounded-2rem p-1.5 border-default" @click="onAdd">
+      <div class="rounded-2rem p-1.5" @click="onAdd">
         <i class="block h-1.8em h-5 w-1.8em w-5 rounded-2rem btn-info border-default" i-carbon:add-large />
       </div>
     </div>
@@ -606,6 +606,6 @@ function onAdd() {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 }
 .dark .shadow-bt {
-  background: linear-gradient(to bottom, rgba(34, 34, 34, 0) 0%, rgba(34, 34, 34, 1) 100%);
+  background: linear-gradient(to bottom, rgba(31, 31, 31, 0) 0%, rgba(31, 31, 31, 1) 100%);
 }
 </style>
