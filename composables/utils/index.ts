@@ -326,6 +326,11 @@ export function formatContactDate(date: Date | number | string): string {
 
 const supportFetch = typeof window !== "undefined" && "fetch" in window;
 
+/**
+ * 获取图片的 Blob 对象
+ * @param imgUrl 图片 URL
+ * @returns Blob 对象
+ */
 export async function getImgBlob(imgUrl: string): Promise<Blob | null> {
   try {
     if (supportFetch) {
@@ -366,6 +371,59 @@ export async function getImgBlob(imgUrl: string): Promise<Blob | null> {
   }
   catch (error) {
     console.error("Error converting image to Blob:", error);
+    return null;
+  }
+}
+
+
+/**
+ * 将图片转换为 PNG 格式
+ * @param imgBlob 图片的 Blob 对象
+ * @returns 转换后的 PNG 格式的 Blob 对象，如果失败则返回 null
+ */
+export async function convertImgToPng(imgBlob: Blob): Promise<Blob | null> {
+  try {
+    // 检查输入是否为有效的 Blob 对象
+    if (!(imgBlob instanceof Blob)) {
+      console.error("Invalid input: Expected a Blob object");
+      return null;
+    }
+
+    // 创建 ImageBitmap
+    const img = await createImageBitmap(imgBlob);
+
+    // 创建 Canvas 并绘制图片
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      console.error("Failed to get canvas context");
+      return null;
+    }
+
+    ctx.drawImage(img, 0, 0);
+
+    // 将 Canvas 内容转换为 PNG 格式的 Blob
+    return new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          }
+          else {
+            console.error("Failed to convert canvas to Blob");
+            resolve(null);
+          }
+        },
+        "image/png", // 指定输出格式为 PNG
+        1, // 图片质量（0-1，1 为最高质量）
+      );
+    });
+  }
+  catch (error) {
+    console.error("Error converting image to PNG:", error);
     return null;
   }
 }

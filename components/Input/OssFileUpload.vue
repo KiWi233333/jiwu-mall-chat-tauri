@@ -178,8 +178,10 @@ async function onUpload(file: OssFile) {
   // ------------添加到队列-----------
   // 上传中 只能压缩图片
   if (uploadType === OssFileType.IMAGE && acceptDesc.includes(file.file.type)) {
+    // console.log("文件大小 before:", file?.file?.size);
     qiniu.compressImage(file?.file, options).then((res) => {
       // 2）上传 监视器
+      // console.log("after:", res.dist.size);
       qiniuUpload(res.dist as File, file?.key || "", data.data.uploadToken, file);
     }).catch((e) => {
       console.warn(e);

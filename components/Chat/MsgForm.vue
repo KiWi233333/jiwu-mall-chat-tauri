@@ -525,7 +525,7 @@ watch(() => chat.theContact.roomId, () => {
           />
           <small
             v-if="img.status !== 'success'"
-            class="absolute right-0 top-0 h-full w-full flex-row-c-c p-4 backdrop-blur-4px"
+            class="absolute right-0 top-0 h-full w-full flex-row-c-c truncate p-4 backdrop-blur-4px"
           >
             {{ img.status === '' ? '上传中...' : '上传失败' }}
           </small>

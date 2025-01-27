@@ -2,6 +2,9 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { save } from "@tauri-apps/plugin-dialog";
 import { appName } from "~/constants";
 
+// 剪切板支持的图片格式
+const CopyImgType = ["image/png", "image/jpg", "image/svg+xml"];
+
 // @unocss-include
 export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadFile?: () => any) {
   const chat = useChatStore();
@@ -54,7 +57,10 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         hidden: !data.message.content,
         customClass: "group",
         icon: "i-solar-copy-line-duotone group-btn-info",
-        onClick: () => useCopyText(data.message.content as string),
+        onClick: () => {
+          const txt = window.getSelection()?.toString() || data.message.content;
+          useCopyText(txt as string);
+        },
       },
       ...defaultContextMenu,
     ],
@@ -65,17 +71,30 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         hidden: !data.message.body.url,
         icon: "i-solar:copy-line-duotone group-btn-info",
         onClick: async () => {
-          const img = await getImgBlob(BaseUrlImg + data.message.body.url);
+          let img = await getImgBlob(BaseUrlImg + data.message.body.url);
           if (!img)
             return ElMessage.error("图片加载失败！");
+          // 处理剪切板部分不支持的图片格式
+          if (!CopyImgType.includes(img.type)) {
+            img = await convertImgToPng(img);
+          }
+          if (!img) {
+            return ElMessage.error("图片处理失败！");
+          }
           const { copy, isSupported } = useClipboardItems({
             read: false,
             source: [new ClipboardItem({ [img.type]: img })],
             copiedDuring: 1200,
           });
-          if (isSupported)
-            copy().catch(() => ElMessage.error("复制失败！"));
-          else ElMessage.error("当前设备不支持复制图片！");
+          if (isSupported.value) {
+            copy().catch((e) => {
+              console.warn(e);
+              ElMessage.error("复制失败，请手动保存！");
+            });
+          }
+          else {
+            ElMessage.error("当前设备不支持复制图片！");
+          };
         },
       },
       {
@@ -145,7 +164,10 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         hidden: !data.fromUser.nickName,
         customClass: "group",
         icon: "i-solar-copy-line-duotone group-btn-info",
-        onClick: () => useCopyText(data.fromUser.nickName as string),
+        onClick: () => {
+          const txt = window.getSelection()?.toString() || data.fromUser.nickName;
+          useCopyText(txt as string);
+        },
       },
       {
         label: "个人资料",

@@ -24,6 +24,8 @@ const getType = computed(() => {
     <div w-full flex items-center gap-3>
       <CardElImage
         loading="lazy"
+        :preview-src-list="[BaseUrlImg + chat.theContact.avatar]"
+        :alt="chat.theContact.name"
         :src="BaseUrlImg + chat.theContact.avatar"
         class="h-2.2rem w-2.2rem flex-shrink-0 object-cover border-default card-default"
       />
