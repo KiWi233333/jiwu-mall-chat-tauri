@@ -8,7 +8,10 @@ const setting = useSettingStore();
 const chat = useChatStore();
 const online = useOnline();
 
-const chatRtcCallDialogRef = ref<any>();
+onMounted(() => {
+  setting.isOpenContact = true;
+  console.log(setting.isOpenContact);
+});
 </script>
 
 <template>
@@ -61,32 +64,48 @@ const chatRtcCallDialogRef = ref<any>();
           </div>
         </template>
       </MenuHeaderMenuBar>
-      <!-- 通话dialog -->
-      <ChatRtcCallDialog
-        ref="chatRtcCallDialogRef"
-        v-model="chat.showRtcCall"
-        v-model:call-type="chat.rtcCallType"
-      />
       <div
-        class="main-box relative"
+        class="main-box"
         v-bind="$attrs"
       >
         <MenuChatMenu class="hidden sm:block" />
-        <!-- 会话列表 -->
-        <ChatContactList v-show="$route.path === '/'" />
-        <!-- 聊天框 -->
-        <ChatContent v-show="$route.path === '/'" v-if=" chat.theContact.roomId" class="flex-1 border-default-l" />
-        <!-- 缓存内容 -->
+        <ChatContactList
+          class="transition-anima absolute left-0 top-0 h-full w-full flex-1 scale-100 sm:(relative left-0 top-0 w-1/4 flex-none transform-none)"
+          :class="{
+            '-left-100vw css-will-change': !setting.isOpenContact,
+            '!hidden': $route.path !== '/',
+          }"
+        />
+        <!-- 聊天框 移动端动画 -->
+        <ChatContent
+          v-if="chat.theContact.roomId"
+          class="transition-anima absolute left-0 top-0 z-99 h-full flex-1 sm:(relative left-0 top-0 w-1/4 transform-none) border-default-l"
+          :class="{
+            'left-100vw css-will-change': setting.isOpenContact,
+            '!hidden': $route.path !== '/',
+          }"
+        />
+        <!-- 空白 -->
+        <div v-else data-fades class="h-full w-full flex flex-col items-center justify-center rounded-0 text-gray-600 border-default-l card-default dark:(text-gray-500)">
+          <i i-solar:chat-line-bold-duotone class="mb-2 h-12 w-12" />
+          <small>快开始聊天吧 ✨</small>
+        </div>
+        <!-- 缓存 页面内容 -->
         <NuxtPage keepalive />
       </div>
     </div>
-    <LazyMenuBottomMenu v-if="user.isLogin && setting.isOpenContact" class="grid sm:hidden" />
+    <LazyMenuBottomMenu v-if="setting.isMobileSize && setting.isOpenContact" class="grid sm:hidden" />
   </main>
 </template>
 
 <style lang="scss" scoped>
 .main-box {
-  --at-apply: "mx-a py-4 flex-1 w-full flex overflow-hidden p-0 bg-color";
-  padding: 0 !important;
+  --at-apply: "relative py-4 flex-1  w-full  flex overflow-hidden !p-0 bg-color";
 }
+.transition-anima {
+  transition: left 10s ease-in-out;
+}
+// .css-will-change {
+  // will-change: left;
+// }
 </style>

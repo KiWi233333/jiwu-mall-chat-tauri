@@ -17,7 +17,6 @@ defineProps<{
 
 <style lang="scss" scoped>
 .content {
-
   :deep(.el-scrollbar) {
     .el-scrollbar__bar {
       opacity: 0.6;
