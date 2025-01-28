@@ -24,12 +24,7 @@ export default defineNuxtConfig({
     },
   },
   build: {
-    transpile: ["@popperjs/core", "resize-detector"],
-  },
-  // @ts-expect-error
-  nuxtLink: {
-    prefetch: true,
-    prefetchOn: { visibility: true },
+    transpile: ["popperjs/core", "resize-detector"],
   },
   // spa情况下loading状态 web端使用 "./app/spa-loading-template.html"，桌面端使用 "./app/desktop-loading-template.html"
   spaLoadingTemplate: "./app/spa-loading-template.html",
@@ -145,8 +140,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    plugins: [
-    ],
     build: {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {

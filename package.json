@@ -2,6 +2,7 @@
   "name": "jiwu-mall-chat",
   "version": "1.5.6",
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "description": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "scripts": {
@@ -37,7 +38,7 @@
     "@tauri-apps/plugin-dialog": "^2.2.0",
     "@tauri-apps/plugin-fs": "^2.2.0",
     "@tauri-apps/plugin-upload": "^2.2.1",
-    "@tauri-apps/plugin-websocket": "^2.2.1",
+    "@tauri-apps/plugin-websocket": "^2.3.0",
     "@tauri-apps/plugin-window-state": "^2.2.1",
     "element-china-area-data": "^6.1.0",
     "md-editor-v3": "^5.2.1",
@@ -63,11 +64,10 @@
     "@tauri-apps/plugin-os": "^2.2.0",
     "@tauri-apps/plugin-process": "^2.2.0",
     "@tauri-apps/plugin-shell": "^2.2.0",
-    "@tauri-apps/plugin-updater": "^2.3.1",
+    "@tauri-apps/plugin-updater": "^2.4.0",
     "@unocss/eslint-plugin": "^65.4.3",
     "@unocss/nuxt": "^65.4.3",
     "@vueuse/nuxt": "^12.5.0",
-    "crypto-js": "^4.2.0",
     "element-plus": "^2.9.3",
     "eslint": "^9.19.0",
     "eslint-plugin-format": "^1.0.1",
@@ -78,7 +78,7 @@
     "pinia-plugin-persistedstate": "^4.2.0",
     "sass": "^1.83.4",
     "typescript": "^5.7.3",
-    "vue-tsc": "2.1.6"
+    "vue-tsc": "^2.1.6"
   },
   "husky": {
     "hooks": {
