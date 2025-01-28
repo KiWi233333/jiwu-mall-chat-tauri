@@ -10,7 +10,6 @@ const online = useOnline();
 
 onMounted(() => {
   setting.isOpenContact = true;
-  console.log(setting.isOpenContact);
 });
 </script>
 
@@ -103,7 +102,7 @@ onMounted(() => {
   --at-apply: "relative py-4 flex-1  w-full  flex overflow-hidden !p-0 bg-color";
 }
 .transition-anima {
-  transition: left 10s ease-in-out;
+  transition: left 0.25s ease-in-out;
 }
 // .css-will-change {
   // will-change: left;
