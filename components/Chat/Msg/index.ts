@@ -52,6 +52,11 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
     },
   ];
   const txt = window.getSelection()?.toString() || data.message.content;
+  // 移动端长按
+  if (setting.isMobileSize && ctxName === "avatar" && chat.theContact?.type === RoomType.GROUP) { // 右键直接AT他
+    chat.setAtUid(data.fromUser.userId);
+    return;
+  }
   const contextMenuType: Record<string, any> = {
     content: [// 文本内容
       {

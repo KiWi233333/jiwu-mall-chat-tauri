@@ -111,7 +111,7 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full px-2 border-default-2-r bg-color-2"
+    class="relative z-998 h-full px-2 border-default-r bg-color-2"
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 hover:bg-transparent">
@@ -177,7 +177,7 @@ export interface MenuItem {
 .item {
   --at-apply: "card-rounded-df hover:(bg-color)";
   &.action {
-    --at-apply: "!bg-[var(--el-color-primary)] shadow";
+    --at-apply: "bg-[var(--el-color-primary)] shadow";
     .icon {
       --at-apply: "bg-light dark:bg-light";
     }

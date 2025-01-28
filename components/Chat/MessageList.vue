@@ -12,7 +12,7 @@ const isReload = ref(false);
 /**
  * 加载数据
  */
-async function loadData(call?: (data?: Message[]) => void) {
+async function loadData(call?: (data?: ChatMessageVO[]) => void) {
   const roomId = chat.theContact.roomId;
   if (isLoading.value || isReload.value || pageInfo.value.isLast || !roomId)
     return;
@@ -33,7 +33,7 @@ async function loadData(call?: (data?: Message[]) => void) {
       chat.saveScrollTop && chat.saveScrollTop();
       if (pageInfo.value.cursor === null && !chat.theContact.msgList.length) { // 第一次加载默认没有动画
         chat.scrollBottom(false);
-        call && call(chat.theContact.msgList);
+        call && call(chat.theContact.msgList || []);
       }
       else {
         // 更新滚动位置
@@ -216,12 +216,6 @@ onBeforeUnmount(() => {
   // 解绑事件
   mitter.off(MittEventType.MSG_LIST_SCROLL);
 });
-onDeactivated(() => {
-  timer.value && clearTimeout(timer.value);
-  timer.value = null;
-  // 解绑事件
-  mitter.off(MittEventType.MSG_LIST_SCROLL);
-});
 
 // 暴露
 defineExpose({
@@ -233,7 +227,7 @@ defineExpose({
   <el-scrollbar
     ref="scrollbarRef"
     class="h-full flex-1"
-    wrap-class="px-0 shadow-(sm inset) sm:px-2"
+    wrap-class="px-0 shadow-inner-bg sm:px-2"
     view-class="msg-list pb-2rem" @scroll="onScroll"
   >
     <div
@@ -270,6 +264,9 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+.shadow-inner-bg {
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset, rgba(0, 0, 0, 0.06) 0px -2px 4px 0px inset;
+}
 .msg-list {
   div,
   small,

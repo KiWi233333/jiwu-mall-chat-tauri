@@ -8,7 +8,7 @@ import { onMsgContextMenu } from ".";
  */
 const { data, prevMsg, index } = defineProps<{
   data: ChatMessageVO
-  prevMsg?: ChatMessageVO
+  prevMsg?: Partial<ChatMessageVO>
   index: number
 }>();
 const map: MsgComType = {

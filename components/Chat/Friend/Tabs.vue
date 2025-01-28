@@ -62,7 +62,10 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
   --at-apply:"mb-5 flex flex-col"
 }
 .item {
-  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 transition-300";
+  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-menu-color) ";
+  &.focus {
+    --at-apply: "bg-menu-color";
+  }
 }
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {

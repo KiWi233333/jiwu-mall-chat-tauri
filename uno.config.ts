@@ -21,9 +21,10 @@ export default defineConfig({
     ["btn-primary-bg", " cursor-pointer rounded-4px hover:bg-[var(--el-color-primary)]  hover:text-white"],
     // 颜色
     ["bg-color", "bg-white dark:bg-dark-5"],
-    ["bg-color-2", "bg-[#f6f6f6]  dark:bg-dark-8"], // 控件菜单背景色
+    ["bg-color-2", "bg-[#f2f2f2]  dark:bg-dark-8"], // 控件菜单背景色
+    ["bg-color-3", "bg-[#f2f2f2]  dark:bg-[#111111]"], // 控件菜单背景色
     ["bg-color-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) backdrop-blur-12px"],
-    ["bg-color-df", "bg-[#f5f5f5]  dark:bg-dark-9"], // 控件菜单背景色
+    ["bg-color-df", "bg-[#f2f2f2]  dark:bg-dark-9"], // 控件菜单背景色
     ["bg-menu-color", "bg-[#f6f6f6]  dark:bg-dark-8"], // 控件菜单背景色
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     ["text-color", "text-dark dark:text-white"],

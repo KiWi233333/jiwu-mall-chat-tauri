@@ -5,7 +5,6 @@ import { WsStatusEnum } from "~/types/chat/WsType";
 const user = useUserStore();
 const ws = useWsStore();
 const setting = useSettingStore();
-const chat = useChatStore();
 const online = useOnline();
 
 onMounted(() => {
@@ -68,27 +67,6 @@ onMounted(() => {
         v-bind="$attrs"
       >
         <MenuChatMenu class="hidden sm:block" />
-        <ChatContactList
-          class="transition-anima absolute left-0 top-0 h-full w-full flex-1 scale-100 sm:(relative w-1/4 flex-none transform-none)"
-          :class="{
-            '-translate-x-full css-will-change': !setting.isOpenContact,
-            '!hidden': $route.path !== '/',
-          }"
-        />
-        <!-- 聊天框 移动端动画 -->
-        <ChatContent
-          v-if="chat.theContact.roomId"
-          class="transition-anima absolute left-0 top-0 z-99 h-full flex-1 sm:(relative w-1/4 transform-none) border-default-l"
-          :class="{
-            'translate-x-full css-will-change': setting.isOpenContact,
-            '!hidden': $route.path !== '/',
-          }"
-        />
-        <!-- 空白 -->
-        <div v-else-if="$route.path === '/'" data-fades class="h-full w-full flex flex-col items-center justify-center rounded-0 text-gray-600 border-default-l card-default dark:(text-gray-500)">
-          <i i-solar:chat-line-bold-duotone class="mb-2 h-12 w-12" />
-          <small>快开始聊天吧 ✨</small>
-        </div>
         <!-- 缓存 页面内容 -->
         <NuxtPage keepalive />
       </div>
@@ -98,13 +76,4 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.main-box {
-  --at-apply: "relative py-4 flex-1  w-full  flex overflow-hidden !p-0 bg-color";
-}
-.transition-anima {
-  transition: transform 0.25s ease-in-out;
-}
-.css-will-change {
-  will-change: transform;
-}
 </style>

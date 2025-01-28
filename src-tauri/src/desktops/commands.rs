@@ -87,8 +87,7 @@ pub async fn create_main_window(app_handle: AppHandle) -> tauri::Result<()> {
                     .hide()
                     .unwrap_or_else(|e| eprintln!("隐藏窗口时出错: {:?}", e));
             },
-            WindowEvent::Focused(..) => {
-                // 打印结果和异常处理
+            WindowEvent::Destroyed => {
                 _app.save_window_state(StateFlags::all())
                 .unwrap_or_else(|e| eprintln!("保存窗口状态时出错: {:?}", e));
             }

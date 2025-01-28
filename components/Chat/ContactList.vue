@@ -48,20 +48,10 @@ const theContactId = computed({
     return chat.theContact.roomId;
   },
   set(contactId: number) {
-    onChangeRoom(contactId);
+    chat.onChangeRoom(contactId);
   },
 });
 // 切换房间
-async function onChangeRoom(newRoomId?: number) {
-  setting.isOpenContact = false;
-  if (!newRoomId || chat.theContact.roomId === newRoomId)
-    return;
-  const item = chat.contactMap[newRoomId];
-  if (!item)
-    return;
-  await chat.setContact(item); // 提前设置当前会话
-}
-chat.onChangeRoom = onChangeRoom;
 // 刷新
 async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
@@ -77,7 +67,11 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
       setting.isOpenGroupMember = false;// 关闭群成员列表
       setting.isOpenContactSearch = true;// 打开搜索框
     }
-    await loadData(dto || props.dto);
+    const list = await loadData(dto || props.dto);
+    // 默认加载首个会话
+    if (list && list.length && !chat.theContact.roomId) {
+      chat.setContact(list[0]);
+    }
   }
   else if (roomId) { // 刷新某一房间
     refreshItem(roomId);
@@ -108,7 +102,6 @@ async function refreshItem(roomId: number) {
     delete isLoadRoomMap[roomId];
   }
 }
-chat.onReloadContact = reload;
 
 // 添加群聊
 const showDialog = ref(false);
@@ -254,7 +247,6 @@ async function toFriendPage() {
   }, 200);
 }
 
-
 reload();
 onBeforeUnmount(() => {
   stopWatch?.();
@@ -263,7 +255,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
+    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
   >
     <!-- 搜索群聊 -->
     <div
@@ -315,10 +307,10 @@ onBeforeUnmount(() => {
               'is-checked': room.roomId === theContactId,
             }"
             @contextmenu.stop="onContextMenu($event, room)"
-            @click="onChangeRoom(room.roomId)"
+            @click="chat.onChangeRoom(room.roomId)"
           >
             <div
-              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5) text-color"
+              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5 text-color)"
             >
               <el-badge
                 :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
@@ -326,26 +318,26 @@ onBeforeUnmount(() => {
               >
                 <CardElImage
                   :src="BaseUrlImg + room.avatar" fit="cover"
-                  class="h-2.4rem w-2.4rem object-cover card-default"
+                  class="h-2.5rem w-2.5rem object-cover shadow-sm card-default"
                 />
               </el-badge>
               <div class="flex flex-1 flex-col justify-between truncate">
                 <div flex truncate>
-                  <p truncate text-black dark:text-white>
+                  <p class="text truncate text-black dark:text-white">
                     {{ room.name }}
                   </p>
-                  <span ml-a w-fit flex-shrink-0 text-right text-10px text-mini>
+                  <span class="text ml-a w-fit flex-shrink-0 text-right text-10px text-mini">
                     {{ formatContactDate(room.activeTime) }}
                   </span>
                 </div>
-                <p mt-1 flex text-small>
+                <p class="text mt-1 flex text-small">
                   <small
                     class="flex-1 truncate"
                     :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
                   >
                     {{ room.text }}
                   </small>
-                  <small v-if="room.pinTime" class="ml-a flex-shrink-0 text-dark dark:text-light-500">
+                  <small v-if="room.pinTime" class="text ml-a flex-shrink-0 text-dark dark:text-light-500">
                     置顶
                   </small>
                 </p>
@@ -368,12 +360,15 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .contact-list {
   .contact {
-    --at-apply: "w-full text-sm  cursor-pointer !hover:(bg-[#ececec]]) !hover:dark:bg-[#7c7c7c1a] ";
+    --at-apply: "shadow-sm w-full text-sm  cursor-pointer  card-bg-color !hover:(bg-[var(--el-color-primary-dark)] dark:bg-[var(--el-color-primary-dark)]) ";
     &.is-pin {
-      --at-apply: "card-bg-color";
+      --at-apply: "bg-color-2";
     }
     &.is-checked {
-      --at-apply: "bg-[#ececec] !dark:bg-[#7c7c7c1a]";
+      --at-apply: " !sm:(bg-[var(--el-color-primary)] dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  color-white dark:text-light ";
+      .text {
+        --at-apply: "color-white dark:text-light";
+      }
     }
   }
 }

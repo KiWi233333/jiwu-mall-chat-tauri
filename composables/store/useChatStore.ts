@@ -65,7 +65,7 @@ export const useChatStore = defineStore(
     const isNewMsg = computed(() => contactList.value.filter(p => p.unreadCount).length > 0);
     const isVisible = ref(false); // 是否可见
     const isMsgListScroll = ref(false); // 消息列表是否滚动
-    const theContact = ref<ChatContactDetailVO>({
+    const theContact = ref<ChatContactDetailVO & { msgList: ChatMessageVO[], unreadMsgList: ChatMessageVO[], }>({
       activeTime: 0,
       avatar: "",
       roomId: 0,
@@ -75,11 +75,11 @@ export const useChatStore = defineStore(
       type: 1,
       selfExit: 1,
       unreadCount: 0,
+      roomGroup: undefined,
+      member: undefined,
       // 消息列表
       msgList: [],
       unreadMsgList: [],
-      roomGroup: undefined,
-      member: undefined,
     });
     const playSounder = ref<PlaySounder>({
       state: "stop",
@@ -267,12 +267,12 @@ export const useChatStore = defineStore(
       }
       // 本房间修改状态
       const oldMsg = findMsg(msg.msgId);
-      const msgContent = `${oldMsg.fromUser.userId === user.userInfo.id ? "我" : `"${oldMsg.fromUser.nickName}"`}撤回了一条消息`;
-      // 更新会话列表
-      const targetContact = contactMap.value[msg.roomId];
-      if (targetContact)
-        targetContact.text = msgContent;
       if (oldMsg) {
+        const msgContent = `${oldMsg.fromUser.userId === user.userInfo.id ? "我" : `"${oldMsg.fromUser.nickName}"`}撤回了一条消息`;
+        // 更新会话列表
+        const targetContact = contactMap.value[msg.roomId];
+        if (targetContact)
+          targetContact.text = msgContent;
         oldMsg.message.type = MessageType.RECALL;
         oldMsg.message.content = msgContent;
         oldMsg.message.body = undefined;
@@ -295,12 +295,12 @@ export const useChatStore = defineStore(
       }
       // 本房间修改状态
       const oldMsg = findMsg(msg.msgId);
-      const msgContent = `${msg.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${oldMsg.fromUser.nickName}"删除了一条成员消息`}`;
-      // 更新会话列表
-      const targetContact = contactMap.value[msg.roomId];
-      if (targetContact)
-        targetContact.text = msgContent;
       if (oldMsg) {
+        const msgContent = `${msg.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${oldMsg.fromUser.nickName}"删除了一条成员消息`}`;
+        // 更新会话列表
+        const targetContact = contactMap.value[msg.roomId];
+        if (targetContact)
+          targetContact.text = msgContent;
         oldMsg.message.type = MessageType.DELETE;
         oldMsg.message.content = msgContent;
         oldMsg.message.body = undefined;
@@ -486,9 +486,6 @@ export const useChatStore = defineStore(
     };
 
     // 页面绑定
-    // 重新获取会话列表
-    const onReloadContact = (size: number = 10, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) => {
-    };
     const scrollTopSize = ref(0);
     const scrollReplyMsg = (msgId: number, gapCount: number = 0, isAnimated: boolean = true) => {
       mitter.emit(MittEventType.MSG_LIST_SCROLL, {
@@ -508,9 +505,20 @@ export const useChatStore = defineStore(
         payload: { size },
       });
     };
-      // 房间
+
+    // 房间
     const onChangeRoom = async (newRoomId: number) => {
+      const setting = useSettingStore();
+      setting.isOpenContact = false;
+      if (!newRoomId || theContact.value.roomId === newRoomId)
+        return;
+      const item = contactMap.value[newRoomId];
+      if (!item)
+        return;
+      await setContact(item); // 提前设置当前会话
     };
+
+
     const onDownUpChangeRoomLoading = ref(false);
     // 向下/向上切换房间
     const onDownUpChangeRoom = async (type: "down" | "up") => {
@@ -754,7 +762,6 @@ export const useChatStore = defineStore(
       setDelUserId,
       setDelGroupId,
       setTheFriendOpt,
-      onReloadContact,
       resetStore,
       openRtcCall,
       rollbackCall,

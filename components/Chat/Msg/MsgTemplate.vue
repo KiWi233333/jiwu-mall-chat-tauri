@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dayjs } from "element-plus";
+// import { dayjs } from "element-plus";
 
 /**
  * 消息模板（默认文本）
@@ -43,9 +43,9 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
         <small class="nickname" ctx-name="nickname">
           {{ data.fromUser.nickName }}
         </small>
-        <small class="sendTime text-0.7em op-0" ctx-name="sendTime">
+        <!-- <small class="sendTime text-0.7em op-0" ctx-name="sendTime">
           {{ dayjs(data.message.sendTime).format("YYYY-MM-DD HH:mm:ss") }}
-        </small>
+        </small> -->
       </div>
       <!-- 内容 -->
       <slot name="body">

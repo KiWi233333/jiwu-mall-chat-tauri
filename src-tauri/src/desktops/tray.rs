@@ -4,12 +4,14 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager,
 };
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
 }
 
+const HOST_URL: &str = "https://kiwi233.top";
 // msgbox宽高
 // const MSGBOX_WIDTH: f64 = 240.0;
 // const MSGBOX_HEIGHT: f64 = 300.0;
@@ -32,31 +34,38 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
         .show_menu_on_left_click(false)
         .on_menu_event(move |app, event| match event.id().as_ref() {
             "setting" => {
-                let window = app.get_webview_window("main").unwrap();
-                window.unminimize().unwrap();
-                window.show().unwrap();
-                window.set_focus().unwrap();
-                window
-                    .emit(
-                        "router",
-                        Payload {
-                            message: "/setting".into(),
-                        },
-                    )
-                    .unwrap();
+                if let Some(window) = app.get_webview_window("main") {
+                    window.unminimize().unwrap();
+                    window.show().unwrap();
+                    window.set_focus().unwrap();
+                    window
+                        .emit(
+                            "router",
+                            Payload {
+                                message: "/setting".into(),
+                            },
+                        )
+                        .unwrap();
+                }
             }
             "to_host" => {
-                let window = app.get_webview_window("main").unwrap();
-                window
-                    .emit(
-                        "open_url",
-                        Payload {
-                            message: "https://kiwi233.top".into(),
-                        },
-                    )
-                    .unwrap();
+                if let Some(window) = app.get_webview_window("main") {
+                    window
+                        .emit(
+                            "open_url",
+                            Payload {
+                                message: HOST_URL.into(),
+                            },
+                        )
+                        .unwrap();
+                } else {
+                    println!("Window 'main' does not exist!");
+                }
             }
             "quit" => {
+                app.clone()
+                    .save_window_state(StateFlags::all())
+                    .unwrap_or_else(|e| eprintln!("保存窗口状态时出错: {:?}", e));
                 std::process::exit(0);
             }
             "restart" => {
@@ -91,11 +100,11 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
                 position,
                 rect: _,
             } => {
-    let app = tray.app_handle();
-    app.emit("tray_mouseenter", position).unwrap();
-    if let Some(msgbox) = app.get_webview_window("msgbox") {
-        msgbox.set_focus().unwrap();
-    }
+                let app = tray.app_handle();
+                app.emit("tray_mouseenter", position).unwrap();
+                if let Some(msgbox) = app.get_webview_window("msgbox") {
+                    msgbox.set_focus().unwrap();
+                }
             }
             TrayIconEvent::Leave {
                 id: _,
@@ -117,22 +126,31 @@ pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     Ok(())
 }
 
-
-
 #[cfg(desktop)]
 pub fn show_window(app: &AppHandle) {
     use crate::desktops::window::setup_desktop_window;
 
     if let Some(window) = app.webview_windows().get("main") {
-            window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
-            window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
-            window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
+        window
+            .unminimize()
+            .unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
+        window
+            .show()
+            .unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+        window
+            .set_focus()
+            .unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
     } else if let Some(window) = app.webview_windows().get("login") {
-        window.unminimize().unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
-        window.show().unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
-        window.set_focus().unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
-    }else {
+        window
+            .unminimize()
+            .unwrap_or_else(|e| eprintln!("取消最小化窗口时出错: {:?}", e));
+        window
+            .show()
+            .unwrap_or_else(|e| eprintln!("显示窗口时出错: {:?}", e));
+        window
+            .set_focus()
+            .unwrap_or_else(|e| eprintln!("聚焦窗口时出错: {:?}", e));
+    } else {
         setup_desktop_window(app).unwrap_or_else(|e| eprintln!("创建窗口时出错: {:?}", e));
-
     }
 }

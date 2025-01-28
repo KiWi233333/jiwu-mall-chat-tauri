@@ -22,7 +22,7 @@ const {
   reset: resetAudio,
   handlePlayAudio, // 播放录音
 } = useRecording();
-const pressHandleRef = ref<HTMLElement>();
+const pressHandleRef = useTemplateRef<HTMLElement>("pressHandleRef");
 // 长按
 onLongPress(
   pressHandleRef,
@@ -30,7 +30,7 @@ onLongPress(
   {
     delay: 300,
     onMouseUp: toggleChating,
-    distanceThreshold: 12,
+    distanceThreshold: 20,
     modifiers: {
       stop: true,
     },
@@ -425,14 +425,19 @@ function resetForm() {
  * @param callback 上传成功回调
  */
 async function onSubmitSound(callback: (key: string) => void) {
-  if (!theAudioFile.value || !theAudioFile.value.id)
-    return ElMessage.error("请先录制语音");
-  await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
+  if (!theAudioFile.value || !theAudioFile.value.id) {
+    isSending.value = false;
+    return false;
+  }
+  return await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
     callback(event, data, file) {
-      if (event === "error")
+      if (event === "error") {
+        isSending.value = false;
         ElMessage.error("发送语音失败，请稍后再试！");
-      else if (event === "success")
+      }
+      else if (event === "success") {
         callback(data);
+      }
     },
   });
 }
@@ -465,9 +470,9 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
   else { // TODO: 处理小尺寸设备动画input飘逸 (疑似popper组件的定位问题) 目前先懒加载输入框
     loadInputTimer.value = setTimeout(() => {
       loadInputDone.value = true;
-      nextTick(() => {
-        inputAllRef.value?.input?.focus(); // 聚焦
-      });
+      // nextTick(() => {
+      //   inputAllRef.value?.input?.focus(); // 聚焦
+      // });
     }, 400);
     return;
   }
@@ -491,7 +496,7 @@ watch(() => chat.replyMsg?.message?.id, (val) => {
 onMounted(() => {
   // 监听快捷键
   window.addEventListener("keydown", startChating);
-  inputAllRef.value?.input?.focus(); // 聚焦
+  !setting.isMobileSize && inputAllRef.value?.input?.focus(); // 聚焦
   // 处理聚焦
   mitter.on(MittEventType.MSG_FORM, ({
     type,
@@ -523,6 +528,14 @@ onUnmounted(() => {
     :disabled="isDisabledFile"
   >
     <div class="absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
+      <!-- 滚动底部 -->
+      <div
+        v-if="chat.theContact?.msgList?.length > 20"
+        data-fade
+        float-right mb-2 mr-2 rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover @click="setReadAndScrollBottom"
+      >
+        <i class="i-solar:double-alt-arrow-down-line-duotone block h-5 w-5 transition-200" />
+      </div>
       <!-- 新消息 -->
       <div
         v-show="chat.theContact.unreadCount"
@@ -541,7 +554,7 @@ onUnmounted(() => {
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;"
       >
         <div
-          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default bg-color hover:shadow"
+          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default hover:shadow"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
         >
           <CardElImage
@@ -569,7 +582,7 @@ onUnmounted(() => {
       >
         <div
           v-for="(file, i) in fileList"
-          :key="i" class="flex-row-c-c p-3 shadow-sm transition-all border-default card-default bg-color hover:shadow"
+          :key="i" class="flex-row-c-c p-3.2 shadow-sm transition-all border-default card-default bg-color sm:p-2.8 hover:shadow"
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
           <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
@@ -604,14 +617,14 @@ onUnmounted(() => {
             {{ `${chat.replyMsg?.fromUser?.nickName}: ${resolveMsgReplyText(chat.replyMsg as ChatMessageVO)}` }}
           </div>
           <!-- <ChatMsgContentCard  :data="chat.replyMsg" /> -->
-          <div class="i-solar:close-circle-bold ml-a h-5 w-5 text-dark op-80 transition-200 transition-color btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
+          <div class="i-solar:close-circle-bold ml-a h-6 w-6 text-dark op-80 transition-200 transition-color sm:(h-5 w-5) btn-default dark:text-light hover:text-[var(--el-color-danger)]" @click="chat.setReplyMsg({})" />
         </div>
       </div>
     </div>
     <div class="form-tools flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
       <!-- 工具栏 -->
       <div
-        class="relative flex items-center gap-2 px-2 sm:(gap-4)"
+        class="relative flex items-center gap-4 px-2"
       >
         <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="chat.msgForm.msgType !== MessageType.SOUND ? (setting.isMobileSize ? '语音' : '语音 Ctrl+T') : '键盘'" placement="top">
           <i
@@ -652,7 +665,7 @@ onUnmounted(() => {
           />
         </div>
         <!-- 图片 -->
-        <div v-show="chat.msgForm.msgType !== MessageType.SOUND" class="flex items-center gap-2 sm:gap-4">
+        <div v-show="chat.msgForm.msgType !== MessageType.SOUND" class="grid cols-4 items-center gap-4 sm:flex">
           <InputOssFileUpload
             ref="inputOssImgUploadRef"
             v-model="imgList"
@@ -662,10 +675,10 @@ onUnmounted(() => {
             :min-size="1024"
             :limit="9"
             :disable="isDisabledFile"
-            class="i-solar:album-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            class="i-solar:album-line-duotone h-6 w-6 cursor-pointer sm:(h-5 w-5) btn-primary"
             pre-class="hidden"
             :upload-type="OssFileType.IMAGE"
-            input-class="op-0 h-5 w-5 cursor-pointer "
+            input-class="op-0 h-6 w-6 sm:(w-5 h-5) cursor-pointer "
             :upload-quality="0.5"
             @error-msg="(msg:string) => {
               ElMessage.error(msg)
@@ -682,10 +695,10 @@ onUnmounted(() => {
             :preview="false"
             :limit="1"
             :disable="isDisabledFile"
-            class="i-solar-folder-with-files-line-duotone h-5 w-5 cursor-pointer btn-primary"
+            class="i-solar-folder-with-files-line-duotone h-6 w-6 cursor-pointer sm:(h-5 w-5) btn-primary"
             pre-class="hidden"
             :upload-type="OssFileType.FILE"
-            input-class="op-0 h-5 w-5 cursor-pointer "
+            input-class="op-0 h-6 w-6 sm:(w-5 h-5) cursor-pointer "
             :accept="FILE_UPLOAD_ACCEPT"
             @error-msg="(msg:string) => {
               ElMessage.error(msg)
@@ -694,41 +707,37 @@ onUnmounted(() => {
           />
         </div>
         <i ml-a block w-0 />
-        <template v-if="chat.msgForm.msgType !== MessageType.SOUND">
-          <!-- 群广播消息 -->
-          <div
-            v-if="isLord"
-            title="群广播消息"
-            class="i-solar-confetti-minimalistic-line-duotone inline-block p-2.8 transition-200 btn-primary"
-            @click="showLordMsg = true"
-          />
-          <!-- 语音通话 -->
-          <div
-            v-if="isSelfRoom"
-            title="语音通话"
-            class="i-solar:phone-calling-outline p-2.8 transition-200 btn-primary"
-            @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.AUDIO)"
-          />
-          <!-- 视频通话 -->
-          <div
-            v-if="isSelfRoom"
-            title="视频通话"
-            class="i-solar:videocamera-record-line-duotone p-2.8 transition-200 btn-primary"
-            @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.VIDEO)"
-          />
-        </template>
-        <!-- 滚动底部 -->
+        <!-- 群广播消息 -->
         <div
-          class="i-solar:double-alt-arrow-down-line-duotone inline-block p-2.8 transition-200 btn-primary"
-          @click="setReadAndScrollBottom"
+          v-if="isLord"
+          title="群广播消息"
+          class="i-solar-confetti-minimalistic-line-duotone inline-block p-3.2 transition-200 btn-primary sm:p-2.8"
+          @click="showLordMsg = true"
+        />
+        <!-- 语音通话 -->
+        <div
+          v-if="isSelfRoom"
+          title="语音通话"
+          class="i-solar:phone-calling-outline p-3.2 transition-200 btn-primary sm:p-2.8"
+          @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.AUDIO)"
+        />
+        <!-- 视频通话 -->
+        <div
+          v-if="isSelfRoom"
+          title="视频通话"
+          class="i-solar:videocamera-record-line-duotone p-3.2 transition-200 btn-primary sm:p-2.8"
+          @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.VIDEO)"
         />
       </div>
       <!-- 内容 -->
       <el-form-item
         v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
-        style="padding: 0;margin: 0;"
-        class="input relative h-fit min-h-5em w-full"
+        class="input relative h-fit w-full"
+        :class="{
+          'is-mobile': setting.isMobileSize,
+        }"
+        style="padding: 0;margin: 1em 0;"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
@@ -742,9 +751,10 @@ onUnmounted(() => {
           :prefix="['@']"
           popper-class="at-select"
           :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"
-          :rows="setting.isMobileSize ? 4 : 6"
+          :rows="setting.isMobileSize ? 1 : 6"
           :maxlength="500"
-          :autosize="false"
+          :autosize="setting.isMobileSize"
+          :placeholder="setting.isMobileSize ? '请输入内容' : ''"
           type="textarea"
           resize="none"
           :class="{
@@ -757,7 +767,6 @@ onUnmounted(() => {
           :offset="10"
           :popper-options="{
             placement: 'top-start',
-            appendToBody: false,
           }"
           @paste.stop="onPaste"
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
@@ -773,19 +782,40 @@ onUnmounted(() => {
               群成员
             </span>
           </template>
-          <!-- <template #footer>
-            <span my-2 op-70 />
+          <!-- <template #append>
+            <BtnElButton
+              v-if="setting.isMobileSize"
+              :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
+              size="small"
+              :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
+              @click="onSubmit()"
+            >
+              发送
+            </BtnElButton>
           </template> -->
         </el-mention>
+        <BtnElButton
+          v-if="setting.isMobileSize"
+          :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
+          type="primary"
+          class="mb-1px ml-2 mr-2"
+          :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
+          @click="onSubmit()"
+        >
+          发送
+        </BtnElButton>
       </el-form-item>
       <!-- 录音 -->
       <p
         v-if="chat.msgForm.msgType === MessageType.SOUND"
-        class="relative h-27 w-full flex-row-c-c overflow-y-auto p-6 text-wrap op-90 sm:h-39 sm:p-8"
+        class="relative mt-2 h-fit max-h-40 w-full flex-row-c-c overflow-y-auto p-4 text-wrap sm:(h-36.5 p-8) text-small"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
-      <div class="flex items-end p-1 pt-0">
+      <div
+        v-if="!setting.isMobileSize"
+        class="hidden items-end p-1 pt-0 sm:flex"
+      >
         <div class="tip ml-a hidden sm:block text-mini">
           Enter发送, Shift+Enter换行
         </div>
@@ -849,17 +879,27 @@ onUnmounted(() => {
   }
 }
 :deep(.el-form-item__content) {
-    padding: 0;
-  }
+  padding: 0;
+}
+
 .input {
+  :deep(.el-form-item__content) {
+    display: flex;
+    align-items: end;
+    .el-mention {
+      width: auto;
+      flex: 1;
+    }
+  }
   :deep(.el-input__count) {
     left: 0.8em;
-    bottom: -2.5em;
+    bottom: -3.5em;
     width: fit-content;
     background-color: transparent;
     transition: opacity 0.2s;
     opacity: 0;
   }
+  :deep(.el-text__inner),
   :deep(.el-textarea__inner) {
     resize:none;
     box-shadow: none !important;
@@ -868,6 +908,39 @@ onUnmounted(() => {
     font-size: 1rem;
     &:hover + .el-input__count  {
       opacity: 1;
+    }
+  }
+  :deep(.el-input) {
+
+      --at-apply: "p-2";
+    .el-input__wrapper {
+      box-shadow: none !important;
+      outline: none !important;
+      --at-apply: "bg-color-2";
+    }
+    .el-input__suffix {
+      display: none !important;
+    }
+    .el-input-group__append {
+      border: none;
+      outline: none;
+      box-shadow: none;
+      --at-apply: "w-5em card-rounded-df px-4 ml-2 text-center bg-[var(--el-color-primary)] text-white text-center ";
+    }
+  }
+
+  &.is-mobile {
+    :deep(.el-form-item__content) {
+      .el-input__count {
+        left: auto;
+        right: 1.2em;
+        bottom: 0.8em;
+      }
+      .el-textarea {
+        .el-textarea__inner {
+          --at-apply: "bg-color-2 shadow-lg shadow-inset";
+        }
+      }
     }
   }
 }

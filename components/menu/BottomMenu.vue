@@ -50,7 +50,7 @@ const menuList = [
     title: "聊天",
     path: "/",
     icon: "i-solar:chat-line-broken",
-    activeIcon: "i-solar:chat-line-bold-duotone",
+    activeIcon: "i-solar:chat-line-bold",
     tipValue: computed(() => chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0)),
     isDot: false,
   },
@@ -58,7 +58,7 @@ const menuList = [
     title: "好友",
     path: "/friend",
     icon: "i-solar:users-group-rounded-line-duotone",
-    activeIcon: "i-solar:users-group-rounded-bold-duotone",
+    activeIcon: "i-solar:users-group-rounded-bold",
     tipValue: computed(() => applyUnRead.value),
     isDot: false,
   },
@@ -72,27 +72,27 @@ const menuList = [
     title: "个人",
     path: "/user",
     icon: "i-solar:user-outline",
-    activeIcon: "i-solar:user-bold-duotone",
+    activeIcon: "i-solar:user-bold",
   },
   {
     title: "更多",
     path: "/more",
     icon: "i-solar-layers-broken ",
-    activeIcon: "i-solar-layers-bold-duotone ",
+    activeIcon: "i-solar-layers-bold ",
     tipValue: computed(() => +setting.appUploader.isUpload),
     children: [
       {
         title: "账号",
         path: "/user/safe",
         icon: "i-solar:devices-outline",
-        activeIcon: "i-solar:devices-bold-duotone",
+        activeIcon: "i-solar:devices-bold",
         isDot: true,
       },
       {
         title: "设置",
         path: "/setting",
         icon: "i-solar:settings-linear hover:animate-spin",
-        activeIcon: "i-solar:settings-bold-duotone hover:animate-spin",
+        activeIcon: "i-solar:settings-bold hover:animate-spin",
         tipValue: computed(() => +setting.appUploader.isUpload),
         isDot: true,
       },
@@ -167,8 +167,8 @@ const activeMenu = computed({
   --at-apply: "flex-row-c-c flex-col cursor-pointer gap-2 rounded-2 py-4 transition-200";
 }
 .active {
-  color: var(--el-color-info);
-  filter: drop-shadow(0 0 8px var(--el-color-info));
+  color: var(--el-color-primary);
+  filter: drop-shadow(0 0 8px var(--el-color-primary));
   transition-property: filter, color;
 }
 </style>

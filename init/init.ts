@@ -176,6 +176,9 @@ export async function useMsgBoxWebViewInit() {
 
     if (isNewAllMsg.value) {
       // 消费第一个未读消息
+      await navigateTo("/");
+      await win.show();
+      await win.isMinimized() && await win.unminimize();
       const contact = chat.unReadContactList[0];
       chat.setContact(contact);
       if (contact && chat.theContact.roomId === contact?.roomId)
