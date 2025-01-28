@@ -445,6 +445,10 @@ function setReadAndScrollBottom() {
   }
 }
 
+
+const loadInputDone = ref(false);
+const loadInputTimer = shallowRef<NodeJS.Timeout>();
+
 // watch
 // 房间号变化
 let timer: any = 0;
@@ -454,8 +458,23 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
   }
   resetForm();
   loadUser();
+  loadInputTimer.value && clearTimeout(loadInputTimer.value);
+  if (!setting.isMobileSize) {
+    loadInputDone.value = true;
+  }
+  else { // TODO: 处理小尺寸设备动画input飘逸 (疑似popper组件的定位问题) 目前先懒加载输入框
+    loadInputTimer.value = setTimeout(() => {
+      loadInputDone.value = true;
+      nextTick(() => {
+        inputAllRef.value?.input?.focus(); // 聚焦
+      });
+    }, 400);
+    return;
+  }
   if (inputAllRef.value?.input)
     inputAllRef.value?.input?.focus(); // 聚焦
+}, {
+  immediate: true,
 });
 
 
@@ -491,6 +510,7 @@ onUnmounted(() => {
   window.removeEventListener("keydown", startChating);
   clearTimeout(timer);
   clearInterval(timer);
+  loadInputTimer.value && clearTimeout(loadInputTimer.value);
   timer = null;
 });
 </script>
@@ -501,10 +521,8 @@ onUnmounted(() => {
     :model="chat.msgForm"
     v-bind="$attrs"
     :disabled="isDisabledFile"
-    class="w-full"
-    style="position: relative;"
   >
-    <div class="top absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
+    <div class="absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
       <!-- 新消息 -->
       <div
         v-show="chat.theContact.unreadCount"
@@ -710,12 +728,14 @@ onUnmounted(() => {
         v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
         style="padding: 0;margin: 0;"
-        class="input relative h-fit w-full"
+        class="input relative h-fit min-h-5em w-full"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
       >
+        <!-- TODO: 移动端需要延迟加载 -->
         <el-mention
+          v-if="loadInputDone"
           ref="inputAllRef"
           v-model.lazy="chat.msgForm.content"
           :options="userOpenOptions"
@@ -730,7 +750,6 @@ onUnmounted(() => {
           :class="{
             focused: chat.msgForm.content,
           }"
-          style="height: 100%;"
           placement="top"
           autofocus
           show-word-limit
@@ -738,6 +757,7 @@ onUnmounted(() => {
           :offset="10"
           :popper-options="{
             placement: 'top-start',
+            appendToBody: false,
           }"
           @paste.stop="onPaste"
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
