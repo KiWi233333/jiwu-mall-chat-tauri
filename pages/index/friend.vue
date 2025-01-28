@@ -31,7 +31,7 @@ async function clearHistory() {
     <ChatFriendTabs class="relative mx-a h-full flex-shrink-0 p-4" />
   </div>
   <div
-    class="z-1 h-full flex-1 flex-shrink-0 flex-col card-default"
+    class="z-1 h-full flex-1 flex-shrink-0 flex-col bg-color"
     :class="chat.showTheFriendPanel ? 'flex absolute sm:(p-0 relative) left-0 w-full' : 'hidden sm:flex'"
   >
     <div
@@ -50,11 +50,11 @@ async function clearHistory() {
     <ChatFriendMainType
       v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
       :data="chat.theFriendOpt"
-      class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 card-default"
+      class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 bg-color"
     />
     <div
       v-else
-      class="flex-row-c-c flex-1 flex-shrink-0 card-default"
+      class="flex-row-c-c flex-1 flex-shrink-0 bg-color"
     >
       <div data-fades class="h-full w-full flex flex-col items-center justify-center text-gray-600 op-80 dark:(text-gray-300 op-50)">
         <i i-solar:users-group-two-rounded-bold-duotone class="mb-2 h-12 w-12" />

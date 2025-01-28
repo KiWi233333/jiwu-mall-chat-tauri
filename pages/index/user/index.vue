@@ -60,10 +60,10 @@ useHead({
           :user="user"
           grid-class="grid grid-cols-4 gap-4"
           card-class="truncate word-nowrap text-0.85rem"
-          class="p-4 border-default card-default-br"
+          class="p-4 shadow-sm card-default-br border-default-hover"
         />
         <!-- 签到 -->
-        <UserInfoSigninCard class="border-default card-default-br" />
+        <UserInfoSigninCard class="shadow-sm card-default-br border-default-hover" />
       </div>
     </div>
   </div>
@@ -71,6 +71,6 @@ useHead({
 
 <style scoped lang="scss">
 .mains {
-  --at-apply: 'grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
+  --at-apply: 'shadow-lg bg-color flex-1 grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
 }
 </style>

@@ -233,7 +233,7 @@ export function useAtUsers(text: string, userOptions: AtChatMemberOption[], conf
   };
 }
 
-interface AtConfigs {
+export interface AtConfigs {
   regExp?: RegExp
 }
 

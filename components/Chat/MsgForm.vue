@@ -3,7 +3,6 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { FILE_MAX_SIZE, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
 import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
 
-
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
 }>();
@@ -24,6 +23,7 @@ const {
   handlePlayAudio, // 播放录音
 } = useRecording();
 const pressHandleRef = ref<HTMLElement>();
+// 长按
 onLongPress(
   pressHandleRef,
   toggleChating,
@@ -36,15 +36,35 @@ onLongPress(
     },
   },
 );
-
+const colorMode = useColorMode();
 // 表单
-const inputAllRef = ref(); // 输入框
-const formRef = ref();
 const isSending = ref(false);
 const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
 const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); // 自己不存在 或 不是好友
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
+
+// 状态
+const showLordMsg = ref(false);
+
+// ref
+const inputOssImgUploadRef = useTemplateRef("inputOssImgUploadRef");
+const inputAllRef = useTemplateRef("inputAllRef"); // 输入框
+const formRef = useTemplateRef("formRef"); // 表单
+const inputOssFileUploadRef = useTemplateRef("inputOssFileUploadRef"); // 文件上传
+const imgList = ref<OssFile[]>([]);
+const fileList = ref<OssFile[]>([]);
+
+// 计算 computed
+const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
+const isUploadFile = computed(() => chat.msgForm.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
+const SelfExistTextMap = { // 好友状态
+  [RoomType.SELFT]: "已经不是好友",
+  [RoomType.GROUP]: "已经不是群成员",
+  [RoomType.AICHAT]: "已经被AI拉黑",
+};
+
+
 // 读取@用户列表 hook
 const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
 watch(() => chat.atUidListTemp, (val) => {
@@ -58,17 +78,7 @@ watch(() => chat.atUidListTemp, (val) => {
   }
 }, { deep: true });
 
-const SelfExistTextMap = {
-  [RoomType.SELFT]: "已经不是好友",
-  [RoomType.GROUP]: "已经不是群成员",
-  [RoomType.AICHAT]: "已经被AI拉黑",
-};
-// 右键菜单
-const colorMode = useColorMode();
-
 // 文件上传（图片）回调
-const inputOssImgUploadRef = ref();
-const imgList = ref<OssFile[]>([]);
 function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
   const file = imgList.value.find(f => f.key === key);
   if (key && file?.file) {
@@ -94,9 +104,8 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
     };
   }
 }
+
 // 文件上传（文件）回调
-const inputOssFileUploadRef = ref();
-const fileList = ref<OssFile[]>([]);
 function onSubmitFile(key: string, pathList: string[]) {
   const file = fileList.value.find(f => f.key === key);
   if (key && file?.file) {
@@ -114,15 +123,7 @@ function onSubmitFile(key: string, pathList: string[]) {
     };
   }
 }
-// 语音
-onMounted(() => {
-  // 监听快捷键
-  window.addEventListener("keydown", startChating);
-  inputAllRef.value?.input?.focus(); // 聚焦
-});
-onUnmounted(() => {
-  window.removeEventListener("keydown", startChating);
-});
+
 // 开始录音
 async function startChating(e: KeyboardEvent) {
   if (e.key === "t" && e.ctrlKey && !isChating.value) {
@@ -137,8 +138,6 @@ async function startChating(e: KeyboardEvent) {
   }
 }
 
-const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
-const isUploadFile = computed(() => chat.msgForm.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
 /**
  * 粘贴上传
  * @param e 事件对象
@@ -171,11 +170,6 @@ async function onPaste(e: ClipboardEvent) {
     chat.msgForm.msgType = MessageType.FILE; // 文件
   }
   if (img) {
-    // if (isUploadImg.value) { // 单图片上传
-    //   ElMessage.warning("图片正在上传中，请稍后再试！");
-    //   return;
-    // }
-    // imgList.value = [];
     inputOssImgUploadRef.value?.resetInput?.();
     inputOssFileUploadRef.value?.resetInput?.();
     await inputOssImgUploadRef.value?.onUpload({
@@ -188,7 +182,6 @@ async function onPaste(e: ClipboardEvent) {
     chat.msgForm.msgType = MessageType.IMG; // 图片
   }
 }
-
 
 // 阅读本房间（防抖）
 const setReadListDebounce = useDebounceFn(() => {
@@ -330,11 +323,9 @@ async function multiSubmitImg() {
   isSending.value = false;
 }
 
-
 /**
  * 发送群广播消息
  */
-const showLordMsg = ref(false);
 function onSubmitLordMsg(formData: ChatMessageDTO) {
   if (!isLord.value) {
     ElMessage.error("仅群主可发送广播消息！");
@@ -354,38 +345,6 @@ function onSubmitLordMsg(formData: ChatMessageDTO) {
     body: {
     },
   });
-}
-
-
-// 房间号变化
-let timer: any = 0;
-watch(() => chat.theContact.roomId, () => {
-  resetForm();
-  if (inputAllRef.value?.input)
-    inputAllRef.value?.input?.focus(); // 聚焦
-});
-onUnmounted(() => {
-  clearTimeout(timer);
-  clearInterval(timer);
-  timer = null;
-});
-
-// 回复消息
-watch(() => chat.replyMsg?.message?.id, (val) => {
-  chat.msgForm.body.replyMsgId = val;
-  nextTick(() => {
-    if (inputAllRef.value?.input)
-      inputAllRef.value?.input?.focus(); // 聚焦
-  });
-});
-
-
-// 到底部并消费消息
-function setReadAndScrollBottom() {
-  if (chat.theContact.roomId) {
-    chat.setReadList(chat.theContact.roomId);
-    chat.scrollBottom();
-  }
 }
 
 /**
@@ -477,9 +436,62 @@ async function onSubmitSound(callback: (key: string) => void) {
     },
   });
 }
-watch(() => chat.theContact.roomId, () => {
+
+// 到底部并消费消息
+function setReadAndScrollBottom() {
+  if (chat.theContact.roomId) {
+    chat.setReadList(chat.theContact.roomId);
+    chat.scrollBottom();
+  }
+}
+
+// watch
+// 房间号变化
+let timer: any = 0;
+watch(() => chat.theContact.roomId, (newVal, oldVal) => {
+  if (newVal === oldVal) {
+    return;
+  }
   resetForm();
   loadUser();
+  if (inputAllRef.value?.input)
+    inputAllRef.value?.input?.focus(); // 聚焦
+});
+
+
+// 回复消息
+watch(() => chat.replyMsg?.message?.id, (val) => {
+  chat.msgForm.body.replyMsgId = val;
+  nextTick(() => {
+    if (inputAllRef.value?.input)
+      inputAllRef.value?.input?.focus(); // 聚焦
+  });
+});
+
+// 生命周期
+onMounted(() => {
+  // 监听快捷键
+  window.addEventListener("keydown", startChating);
+  inputAllRef.value?.input?.focus(); // 聚焦
+  // 处理聚焦
+  mitter.on(MittEventType.MSG_FORM, ({
+    type,
+    // payload ={}
+  }: MSG_FORM_EVENT_PLAOYLOAD) => {
+    if (type === "focus") {
+      inputAllRef.value?.input?.focus(); // 聚焦
+    }
+    else if (type === "blur") {
+      inputAllRef.value?.input?.blur(); // 聚焦
+    }
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", startChating);
+  clearTimeout(timer);
+  clearInterval(timer);
+  timer = null;
 });
 </script>
 
@@ -755,7 +767,7 @@ watch(() => chat.theContact.roomId, () => {
       </p>
       <div class="flex items-end p-1 pt-0">
         <div class="tip ml-a hidden sm:block text-mini">
-          Enter发送，Ctrl+Enter换行
+          Enter发送, Shift+Enter换行
         </div>
         <BtnElButton
           :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"

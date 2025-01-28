@@ -249,7 +249,7 @@ onMounted(() => {
           />
         </el-tooltip>
       </small>
-      <div mt-4 flex flex-row flex-col flex-wrap gap-2 op-80 transition-200 hover:op-100>
+      <div mt-4 flex flex-row flex-col flex-wrap gap-2>
         <!-- 个性签名 -->
         <div class="small-input mt-3 flex items-center justify-start">
           <small>签名：</small>
@@ -335,6 +335,11 @@ onMounted(() => {
       height: 6em;
       border-width: 2px;
       border-radius: 50%;
+      border-style: solid;
+      border-color: var(--el-border-color);
+      &:hover {
+        border-style: dashed;
+      }
       transition: $transition-delay;
     }
   }

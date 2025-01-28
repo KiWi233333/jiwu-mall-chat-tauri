@@ -14,13 +14,20 @@ export enum MittEventType {
   OTHER = "chat-other",
   // 组件滚动事件
   MSG_LIST_SCROLL = "msg-list-scroll",
-
+  // 表单操作事件
+  MSG_FORM = "msg-form-focus",
 }
 
 // 组件滚动事件载荷
 export interface MSG_LIST_SCROLL_EVENT_PLAOYLOAD {
   type: "scrollBottom" | "scrollTop" | "scrollReplyMsg" | "saveScrollTop",
   payload: any
+}
+
+// 表单操作事件载荷
+export interface MSG_FORM_EVENT_PLAOYLOAD {
+  type: "focus" | "blur",
+  payload?: any
 }
 
 // eslint-disable-next-line ts/consistent-type-definitions
@@ -38,6 +45,8 @@ type EventPayloadMap = {
   [MittEventType.OTHER]: object;
   // 消息列表组件事件
   [MittEventType.MSG_LIST_SCROLL]: MSG_LIST_SCROLL_EVENT_PLAOYLOAD;
+  // 表单操作事件
+  [MittEventType.MSG_FORM]: MSG_FORM_EVENT_PLAOYLOAD;
 };
 
 export type MittEvents = {
@@ -79,4 +88,5 @@ export function removeWsEventListener() {
   mitter.off(MittEventType.PIN_CONTACT);
   mitter.off(MittEventType.OTHER);
   mitter.off(MittEventType.MSG_LIST_SCROLL);
+  mitter.off(MittEventType.MSG_FORM);
 }

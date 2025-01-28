@@ -91,7 +91,7 @@ function exitLogin(ua?: string) {
         <UserSafeDeviceCard
           v-for="p in deviceList"
           :key="p.id"
-          class="relative h-fit cursor-pointer active:scale-97 hover:(border-[var(--el-color-info)] border-solid shadow)"
+          class="relative h-fit cursor-pointer hover:(border-[var(--el-color-info)] border-solid shadow) card-default"
           :data="p"
         >
           <div />

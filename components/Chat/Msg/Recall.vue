@@ -21,12 +21,15 @@ function editRecallMsg() {
   // 重新编辑消息
   chat.msgForm = {
     roomId: enoughEditMsgInfo.value.message.roomId,
-    msgType: MessageType.TEXT, // 暂时只支持文字消息
+    msgType: MessageType.TEXT, // TODO: 暂时只支持文字消息
     content: enoughEditMsgInfo.value.message.content || "",
     body: {
       // ...enoughEditMsgInfo.message.body,
     },
   };
+  nextTick(() => {
+    mitter.emit(MittEventType.MSG_FORM, { type: "focus" });
+  });
 }
 </script>
 

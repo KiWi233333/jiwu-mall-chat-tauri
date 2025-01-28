@@ -12,7 +12,8 @@ import {
 // @unocss-include
 export default defineConfig({
   shortcuts: [
-    ["card-default", "bg-white dark:bg-dark-5 rounded-1.5"],
+    ["card-default", "bg-white dark:bg-dark-4 rounded-1.5"],
+    ["card-bg-color", "bg-white dark:bg-dark-4"],
     ["card-default-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
     ["blur-card", "backdrop-blur-4 bg-[#75757528] rounded-4px"],
     ["card-rounded-df", "rounded-4px"],
@@ -43,9 +44,14 @@ export default defineConfig({
     ["border-default-l", "border-solid border-gray-200 border-0 border-l-1px  dark:border-dark-300"],
     ["border-default-t", "border-solid border-gray-200 border-0 border-t-1px  dark:border-dark-300"],
     ["border-default-b", "border-solid border-gray-200 border-0 border-b-1px  dark:border-dark-300"],
+    ["border-default-2", "border-1px border-solid border-(gray-100 op-40) dark:border-dark-300"],
+    ["border-default-2-r", "border-r-(1px gray-200 solid) dark:border-dark-300 border-opacity-30"],
+    ["border-default-2-l", "border-l-(1px gray-200 solid) dark:border-dark-300 border-opacity-30"],
+    ["border-default-2-t", "border-b-(1px gray-200 solid) dark:border-dark-300 border-opacity-30"],
+    ["border-default-2-b", "border-t-(1px gray-200 solid) dark:border-dark-300 border-opacity-30"],
     ["border-default-dashed", "hover:shadow-sm border-2px  border-default border-dashed"],
     ["border-default-sm", "border-1px border-solid border-gray-200 dark:border-dark-500"],
-    ["border-default-hover", "transition-200 border-1px border-solid border-gray-200 dark:border-dark-300 hover:(border-gray-300 dark:border-dark-100)"],
+    ["border-default-hover", "transition-200 border-1px border-solid border-gray-100 dark:border-dark-300 hover:(border-gray-200 dark:border-dark-100)"],
     ["border-default-dashed", "border-2px  border-default border-dashed"],
     ["border-default-dashed-hover", "transition-200 hover:border-solid hover:border-[var(--el-color-primary)]  border-default-dashed"],
     // 布局

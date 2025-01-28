@@ -75,13 +75,14 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div class="relative z-1000 flex flex-shrink-0 items-center gap-2">
+      <div class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
         <BtnAppDownload />
         <div class="flex items-center gap-3 rounded-2rem px-2 py-1 border-default card-default">
           <!-- 刷新页面 -->
           <div
             v-show="!isPageReload"
-            class="i-solar:refresh-outline h-4.5 w-4.5 cursor-pointer bg-[var(--el-color-info)] transition-300 hover:rotate-180"
+            title="刷新页面"
+            class="i-solar:refresh-outline h-4.5 w-4.5 cursor-pointer transition-300 hover:rotate-180 btn-info"
             @click="reloadPage"
           />
           <!-- 下载（部分端） -->
@@ -97,7 +98,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
             class="cursor-pointer btn-danger"
             title="退出登录"
             transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-            plain circle i-solar:logout-3-broken p-2 @click="user.exitLogin()"
+            plain circle i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
           />
         </div>
         <!-- 关闭按钮 -->
@@ -126,7 +127,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
 
 <style lang="scss" scoped>
 .nav {
-  --at-apply: "h-56px sm:h-50px relative left-0 top-0 flex-row-bt-c select-none gap-4 border-0 border-b-0 border-b-1px rounded-b-0 px-3  border-default-b  bg-color";
+  --at-apply: "h-56px sm:h-50px relative left-0 top-0 flex-row-bt-c select-none gap-4 rounded-b-0 px-3  border-default-b  bg-color";
   z-index: 999;
   background-size: 3px 3px;
   backdrop-filter: blur(1rem);

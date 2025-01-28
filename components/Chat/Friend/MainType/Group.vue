@@ -69,12 +69,12 @@ async function toSend(roomId: number) {
   >
     <div
       v-show="!isLoading"
-      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1 bg-color-2"
+      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1"
       v-bind="$attrs"
     >
       <!-- 顶部 -->
       <div
-        absolute left-0 top-0 h-14 w-full flex items-center gap-4 px-5 border-default-b bg-color
+        absolute left-0 top-0 h-14 w-full flex items-center gap-4 px-5 border-default-b card-bg-color
       >
         <CardElImage
           :src="BaseUrlImg + data.data.avatar" fit="cover"
@@ -85,7 +85,7 @@ async function toSend(roomId: number) {
       </div>
       <!-- 群成员 -->
       <ChatRoomGroupGrid class="mx-a mt-24 max-h-50vh sm:w-2/3" :data="data.data" />
-      <div class="mx-a my-6 w-4/5 border-0 border-b-1px sm:(my-10 w-3/5) border-default" />
+      <div class="mx-a my-6 w-4/5 sm:(my-10 w-3/5) border-default-b" />
       <!-- 按钮 -->
       <div flex-row-c-c gap-4>
         <BtnElButton

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { ListTransitionGroup } from "#components";
+
 const emit = defineEmits<{
   (e: "submit", data: ChatUserSeInfoVO): void
 }>();
@@ -25,11 +27,10 @@ const searchHistoryList = useStorageAsync<string[]>("jiwu_chat_friend_user", [])
  */
 async function onSearch() {
   if (!searchKeyWords.value) {
-    return ElMessage.error({
-      message: "搜索内容不能为空！",
-    });
+    // 清空
+    clearSearch();
+    return;
   }
-
   reSearch();
   // 1、请求
   // 添加记录
@@ -192,23 +193,22 @@ const timer = ref<any>();
           :no-more="noMore"
           @load="onLoadMore"
         >
-          <div pt-4>
+          <ListTransitionGroup tag="div" class="py-2">
             <!-- 用户卡片 -->
             <div
               v-for="p in searchPageList"
               :key="p.id"
-              data-fade
-              class="relative mb-2 flex cursor-pointer items-center gap-4 truncate p-2 transition-300 transition-all active:scale-96 card-default bg-menu-color hover:(bg-gray-100 shadow-sm dark:bg-dark-9)"
+              class="relative mb-2 flex cursor-pointer items-center truncate p-2 transition-300 transition-all card-default bg-color-2 hover:(bg-gray-200 shadow-sm dark:bg-dark-9)"
               @click="emit('submit', p)"
             >
               <CardElImage
                 :src="BaseUrlImg + p.avatar"
                 fit="cover"
-                class="h-2.5rem w-2.5rem object-cover border-default card-default"
+                class="mr-2 h-2.2rem w-2.2rem object-cover border-default card-default"
               />
               <small>{{ p.nickname || p.username }}</small>
             </div>
-          </div>
+          </ListTransitionGroup>
           <template #done>
             <p text-center text-mini>
               暂无更多

@@ -263,7 +263,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
+    class="group absolute z-4 h-full w-0 flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
     :class="setting.isOpenContact ? (setting.showChatMenu ? 'w-full sm:w-1/4' : 'hidden') : ''"
   >
     <!-- 搜索群聊 -->
@@ -371,7 +371,7 @@ onBeforeUnmount(() => {
   .contact {
     --at-apply: "w-full text-sm  cursor-pointer !hover:(bg-[#ececec]]) !hover:dark:bg-[#7c7c7c1a] ";
     &.is-pin {
-      --at-apply: "bg-color";
+      --at-apply: "card-bg-color";
     }
     &.is-checked {
       --at-apply: "bg-[#ececec] !dark:bg-[#7c7c7c1a]";

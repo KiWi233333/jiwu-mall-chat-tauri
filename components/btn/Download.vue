@@ -56,7 +56,7 @@ onMounted(() => {
     :hide-after="0"
   >
     <template #reference>
-      <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" />
+      <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" title="下载管理" />
     </template>
     <template #default>
       <div class="w-90vw sm:w-350px">

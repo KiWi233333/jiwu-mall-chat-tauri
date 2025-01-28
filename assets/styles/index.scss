@@ -103,6 +103,13 @@
   }
 }
 
+.el-overlay.is-message-box {
+  .el-message-box {
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 7px 29px 0px, rgba(0, 0, 0, 0.05) 0px 3px 18px 0px;
+    // --at-apply: "";
+  }
+}
+
 // 消息框
 body .el-message {
   width: max-content;

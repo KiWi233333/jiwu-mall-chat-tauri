@@ -1,10 +1,7 @@
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   //  node_modules/element-plus/theme-chalk/src/common/var.scss"
   $border-radius: ("base": 6px, "small": 12px, "round": 20px, "circle": 100%),
-  $loading: (
-    'spinner-size': 1.8rem,
-    'fullscreen-spinner-size': 2rem,
-  ),
+  $loading: ("spinner-size": 1.8rem, "fullscreen-spinner-size": 2rem),
   $colors: (
     "white": #f9fafb,
     "black": #1d1d1d,
@@ -12,7 +9,6 @@
     "primary": (
       "base": #5d33f6
     ),
-
     "success": (
       "base": #67c23a
     ),
@@ -37,7 +33,6 @@
     "placeholder": #a8abb2,
     "disabled": #c0c4cc
   ),
-
   // $drawer
   $drawer: ("padding-primary": 0px),
   //
@@ -84,21 +79,21 @@
   $checkbox: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "border-radius": 4px),
   $radio: ("font-size": 1em, "input-height": 1em, "input-width": 1em, "input-border-radius": 4px),
   $menu: (
-      // 'active-color': getCssVar('color-primary'),
-      // 'text-color': getCssVar('text-color-primary'),
-      // 'hover-text-color': getCssVar('color-primary'),
-      // 'bg-color': getCssVar('fill-color', 'blank'),
-      // 'hover-bg-color': getCssVar('color-primary-light-9'),
-      // 'item-height': 56px,
-      // 'sub-item-height': calc(#{getCssVar('menu-item-height')} - 6px),
-      // 'horizontal-sub-item-height': 36px,
-      // 'item-font-size': getCssVar('font-size-base'),
-      // 'item-hover-fill': getCssVar('color-primary-light-9'),
-      // 'border-color': getCssVar('border-color'),
-      // 'base-level-padding': 20px,
-      // 'level-padding': 20px,
-      // 'icon-width': 24px,
-    ),
+    // 'active-color': getCssVar('color-primary'),
+    // 'text-color': getCssVar('text-color-primary'),
+    // 'hover-text-color': getCssVar('color-primary'),
+    // 'bg-color': getCssVar('fill-color', 'blank'),
+    // 'hover-bg-color': getCssVar('color-primary-light-9'),
+    // 'item-height': 56px,
+    // 'sub-item-height': calc(#{getCssVar('menu-item-height')} - 6px),
+    // 'horizontal-sub-item-height': 36px,
+    // 'item-font-size': getCssVar('font-size-base'),
+    // 'item-hover-fill': getCssVar('color-primary-light-9'),
+    // 'border-color': getCssVar('border-color'),
+    // 'base-level-padding': 20px,
+    // 'level-padding': 20px,
+    // 'icon-width': 24px,
+  ),
   $dropdown: (
     // 'menu-box-shadow': getCssVar('box-shadow-light'),
     // 'menuItem-hover-fill': getCssVar('color-text-primary'),
