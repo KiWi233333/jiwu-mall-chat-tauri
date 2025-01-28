@@ -37,7 +37,7 @@ export const useChatStore = defineStore(
     /** ***************************** 撤回的消息map */
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
     /** ***************************** 会话 */
-    const isOpenContact = ref(true);
+    const isOpenContact = ref(true); // 用于移动尺寸
     const contactMap = ref<Record<number, ChatContactVO>>({});
     const contactList = computed(() => Object.values(contactMap.value));
     const searchKeyWords = ref("");
@@ -136,7 +136,6 @@ export const useChatStore = defineStore(
         msgList: theContact.value.msgList || [],
         unreadMsgList: theContact.value.unreadMsgList || [],
       };
-      useSettingStore().isOpenContact = false; // 关闭会话面板
       try {
         const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type);
         if (res && res.code === StatusCode.SUCCESS) {
@@ -508,8 +507,6 @@ export const useChatStore = defineStore(
 
     // 房间
     const onChangeRoom = async (newRoomId: number) => {
-      const setting = useSettingStore();
-      setting.isOpenContact = false;
       if (!newRoomId || theContact.value.roomId === newRoomId)
         return;
       const item = contactMap.value[newRoomId];

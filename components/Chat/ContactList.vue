@@ -63,13 +63,12 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
     if (setting.isMobileSize) { // 移动端
-      setting.isOpenContact = true;// 打开会话列表
       setting.isOpenGroupMember = false;// 关闭群成员列表
       setting.isOpenContactSearch = true;// 打开搜索框
     }
     const list = await loadData(dto || props.dto);
     // 默认加载首个会话
-    if (list && list.length && !chat.theContact.roomId) {
+    if (!setting.isMobileSize && list && list.length && !chat.theContact.roomId) {
       chat.setContact(list[0]);
     }
   }
@@ -247,6 +246,11 @@ async function toFriendPage() {
   }, 200);
 }
 
+function onClickContact(room: ChatContactVO) {
+  chat.isOpenContact = false;
+  chat.onChangeRoom(room.roomId);
+}
+
 reload();
 onBeforeUnmount(() => {
   stopWatch?.();
@@ -307,7 +311,7 @@ onBeforeUnmount(() => {
               'is-checked': room.roomId === theContactId,
             }"
             @contextmenu.stop="onContextMenu($event, room)"
-            @click="chat.onChangeRoom(room.roomId)"
+            @click="onClickContact(room)"
           >
             <div
               class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5 text-color)"

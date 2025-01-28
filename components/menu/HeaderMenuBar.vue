@@ -2,6 +2,7 @@
 const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
+const chat = useChatStore();
 // @unocss-include
 async function toggleContactSearch() {
   setting.isOpenContactSearch = !setting.isOpenContactSearch;
@@ -19,7 +20,7 @@ async function toggleContactOpen() {
     await navigateTo("/");
     return;
   }
-  setting.isOpenContact = !setting.isOpenContact;
+  chat.isOpenContact = !chat.isOpenContact;
 }
 
 const isPageReload = ref(false);
@@ -53,7 +54,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
         </NuxtLink>
         <div
           class="btn-primary"
-          :class="!setting.isOpenContact ? 'flex-row-c-c animate-zoom-in animate-duration-200 sm:hidden' : 'hidden '" @click="toggleContactOpen"
+          :class="!chat.isOpenContact ? 'flex-row-c-c animate-zoom-in animate-duration-200 sm:hidden' : 'hidden '" @click="toggleContactOpen"
         >
           <i i-solar-alt-arrow-left-line-duotone p-3 />
         </div>
@@ -67,7 +68,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     <!-- 会话搜索框 -->
     <slot name="search-contact">
       <i
-        v-if=" $route.path === '/' && setting.isMobileSize && setting.isOpenContact"
+        v-if=" $route.path === '/' && setting.isMobileSize && chat.isOpenContact"
         class="i-solar:magnifer-outline ml-a animate-zoom-in animate-duration-200 btn-primary"
         title="搜索会话"
         @click="toggleContactSearch"

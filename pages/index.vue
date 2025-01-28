@@ -6,10 +6,7 @@ const user = useUserStore();
 const ws = useWsStore();
 const setting = useSettingStore();
 const online = useOnline();
-
-onMounted(() => {
-  setting.isOpenContact = true;
-});
+const chat = useChatStore();
 </script>
 
 <template>
@@ -71,7 +68,7 @@ onMounted(() => {
         <NuxtPage keepalive />
       </div>
     </div>
-    <LazyMenuBottomMenu v-if="setting.isMobileSize && setting.isOpenContact" class="grid sm:hidden" />
+    <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
   </main>
 </template>
 

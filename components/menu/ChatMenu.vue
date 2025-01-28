@@ -121,13 +121,6 @@ export interface MenuItem {
           class="relative z-100 mx-a h-8 w-8 sm:mr-a border-default card-default" alt="头像"
         />
       </NuxtLink>
-      <!-- 会话 -->
-      <span
-        block sm:hidden class="mx-a my-2 transition-200 sm:(ml-a mr-0) hover:scale-120 btn-primary"
-        @click="setting.isOpenContact = !setting.isOpenContact"
-      >
-        <i class="i-solar:chat-square-bold-duotone" cursor-pointer p-3 />
-      </span>
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
     <!-- 菜单 -->

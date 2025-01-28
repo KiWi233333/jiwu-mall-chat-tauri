@@ -86,7 +86,6 @@ export const useSettingStore = defineStore(
 
     // --------------------- 聊天设置 -----------------
     const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
-    const isOpenContact = ref(true); // 是否打开会话列表
     const showChatMenu = ref(true);
     const downUpChangeContact = ref(true); // 向上向下切换联系人列表
     async function checkMainWinVisible() {
@@ -380,7 +379,6 @@ export const useSettingStore = defineStore(
       settingPage.value.isCloseAllTransition = false;
       settingPage.value.isEscMin = true;
       isChatFold.value = false;
-      isOpenContact.value = true;
       isOpenGroupMember.value = true;
       showChatMenu.value = true;
       isThemeChangeLoad.value = false;
@@ -471,7 +469,6 @@ export const useSettingStore = defineStore(
       isChatFold,
       // state
       isCollapse,
-      isOpenContact,
       isOpenGroupMember,
       isUserCollapse,
       isUserFold,

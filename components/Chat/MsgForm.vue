@@ -718,7 +718,7 @@ onUnmounted(() => {
         <div
           v-if="isSelfRoom"
           title="语音通话"
-          class="i-solar:phone-calling-outline p-3.2 transition-200 btn-primary sm:p-2.8"
+          class="i-solar:phone-calling-outline p-3 transition-200 btn-primary sm:p-2.8"
           @click="chat.openRtcCall(chat.theContact.roomId, CallTypeEnum.AUDIO)"
         />
         <!-- 视频通话 -->
@@ -754,7 +754,6 @@ onUnmounted(() => {
           :rows="setting.isMobileSize ? 1 : 6"
           :maxlength="500"
           :autosize="setting.isMobileSize"
-          :placeholder="setting.isMobileSize ? '请输入内容' : ''"
           type="textarea"
           resize="none"
           :class="{
@@ -937,6 +936,7 @@ onUnmounted(() => {
         bottom: 0.8em;
       }
       .el-textarea {
+        padding-left: 0.6em;
         .el-textarea__inner {
           --at-apply: "bg-color-2 shadow-lg shadow-inset";
         }
