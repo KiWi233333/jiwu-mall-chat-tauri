@@ -7,6 +7,9 @@ useSeoMeta({
   description: `${appName} - 极物聊天 开启你的极物之旅！`,
   keywords: appKeywords,
 });
+const setting = useSettingStore();
+const user = useUserStore();
+
 const INIT_MSG = {
   fromUser: {
     userId: "1739333818150862850",
@@ -17,21 +20,25 @@ const INIT_MSG = {
   message: {
     id: 1,
     roomId: 0,
-    sendTime: new Date().getTime(),
+    sendTime: Date.now(),
     content: "你好！欢迎光临极物聊天，有什么可以帮您的吗？",
     type: MessageType.AI_CHAT,
     body: {
     },
   },
 };
-const setting = useSettingStore();
-const user = useUserStore();
+
+
+const scollRef = useTemplateRef("scollRef");
+const formRef = useTemplateRef("formRef");
+const inputRef = useTemplateRef("inputRef");
+const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
+const status = ref<WsStatusEnum>(WsStatusEnum.CLOSE);
+const isChat = computed(() => status.value === WsStatusEnum.OPEN);// 是否在返回数据
 const form = ref({
   role: "user",
   content: "",
 });
-const inputRef = ref();
-const status = ref<WsStatusEnum>(WsStatusEnum.CLOSE);
 
 const body = ref({
   ws: null as WebSocket | null,
@@ -60,10 +67,6 @@ const dto = ref({
   },
 });
 
-const msgList = useLocalStorage<ChatMessageVO[]>(`ai_chat_history_${user.userInfo.id}`, []);
-// 是否在返回数据
-const isChat = computed(() => status.value === WsStatusEnum.OPEN);
-const formRef = ref();
 function onSubmit() {
   if (status.value === WsStatusEnum.OPEN || !form.value.content || form.value.content.length < 1 || isChat.value)
     return;
@@ -73,9 +76,6 @@ function onSubmit() {
       return;
     sendMsg(form.value.content, user.userInfo.id);
     form.value.content = "";
-    nextTick(() => {
-      scrollBottom();
-    });
   });
 }
 
@@ -83,7 +83,6 @@ function onStop() {
   if (status.value === WsStatusEnum.OPEN)
     return;
   body.value.ws?.close();
-  scrollBottom();
   scrollBottom();
   status.value = WsStatusEnum.SAFE_CLOSE;
 }
@@ -145,7 +144,7 @@ function sendMsg(msg: string, id: string) {
         message: {
           id: data.header.sid,
           roomId: 0,
-          sendTime: new Date().getTime(),
+          sendTime: Date.now(),
           content: text.value,
           type: MessageType.AI_CHAT,
           body: {
@@ -163,9 +162,9 @@ function sendMsg(msg: string, id: string) {
       nickName: user.userInfo.nickname,
     },
     message: {
-      id: Math.random() * 1000,
+      id: Date.now(),
       roomId: 0,
-      sendTime: new Date().getTime(),
+      sendTime: Date.now(),
       content: msg,
       type: MessageType.TEXT,
       body: {
@@ -174,10 +173,12 @@ function sendMsg(msg: string, id: string) {
   });
 }
 
-const scollRef = ref();
 // 滚动到底部
 function scrollBottom(animate = true) {
-  if (scollRef.value?.wrapRef?.scrollTo && animate) {
+  if (!scollRef.value?.wrapRef?.scrollTo) {
+    return;
+  }
+  if (animate) {
     scollRef.value?.wrapRef?.scrollTo({
       top: scollRef?.value?.wrapRef?.scrollHeight + 20 || 0,
       behavior: "smooth",
@@ -202,8 +203,6 @@ function handleNewChat() {
   });
 }
 
-onMounted(() => active());
-onActivated(() => active());
 function active() {
   if (!setting.isMobileSize)
     inputRef.value?.focus();
@@ -215,81 +214,119 @@ function active() {
     scrollBottom(false);
   });
 }
+
+onMounted(() => active());
+onActivated(() => active());
 </script>
 
 <template>
-  <div class="w-full flex flex-col p-4">
+  <div class="flex flex-1 flex-col sm:(px-4 pb-4)">
     <!-- header -->
-    <p class="mb-4 text-[var(--el-color-primary)] font-600 tracking-0.2em">
+    <p class="my-4 pl-4 text-[var(--el-color-primary)] font-600 tracking-0.2em sm:pl-0">
       <i class="i-solar:ghost-bold mr-2 p-0.8em" />
       极物AI
     </p>
     <!-- 内容 -->
-    <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="bg-light card-default dark:bg-dark-9">
-      <div relative flex flex-col>
-        <!-- 消息适配器 -->
+    <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="relative sm:card-rounded-df shadow shadow-inset bg-color-2">
+      <!-- 消息适配器 -->
+      <div class="pb-24">
         <ChatMsgMain
-          v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`" :key="msg.message.id" :index="i"
+          v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`"
+          :key="msg.message.id"
+          :index="i"
           :data="msg"
+          data-fade
           :prev-msg="i > 0 ? msgList[i - 1] : undefined"
         />
       </div>
-    </el-scrollbar>
-    <el-form
-      ref="formRef" v-auth :model="form"
-      class="mt-4 flex items-center gap-2 sm:gap-4 bg-color"
-      @submit.prevent="onSubmit"
-    >
-      <div>
-        <el-tooltip content="新对话" placement="top">
-          <CardElImage
-            :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
-            class="h-2.2rem w-2.2rem cursor-pointer rounded-1/2 shadow"
-            @click="handleNewChat"
-          />
-        </el-tooltip>
+      <div class="form">
+        <el-form
+          ref="formRef"
+          data-fade
+          class="form-wrapper"
+          :model="form"
+          @submit.prevent="onSubmit"
+        >
+          <div class="group relative h-2rem w-2rem shrink-0">
+            <CardElImage
+              :src="user.userInfo.avatar ? BaseUrlImg + user.userInfo.avatar : ''"
+              class="h-full w-full cursor-pointer rounded-1/2 shadow"
+            />
+            <div
+              class="h-full w-full flex-row-c-c rounded-full op-0 transition-opacity absolute-center-center btn-primary-text bg-color-br group-hover:op-100 border-default-hover"
+              @click="handleNewChat"
+            >
+              <el-tooltip content="新对话" placement="top">
+                <i i-carbon:add p-3 />
+              </el-tooltip>
+            </div>
+          </div>
+          <el-form-item
+            prop="content" class="w-full" :rules="[{
+              required: true,
+              message: '',
+              trigger: 'change',
+            }]"
+            style="margin: 0;padding: 0;"
+          >
+            <el-input
+              ref="inputRef"
+              v-model.lazy="form.content"
+              type="textarea"
+              :row="1"
+              :maxlength="2048"
+              :minlength="1"
+              resize="none"
+              :autosize="true"
+              style="max-height: 16em;overflow-y: auto;"
+              :disabled="isChat" placeholder="快开始对话吧 ✨"
+              class="content card-rounded-df"
+              @keydown.enter.prevent="onSubmit"
+            />
+          </el-form-item>
+          <BtnElButton
+            class="group ml-a"
+            :class="isChat ? 'animate-pulse' : ''"
+            :icon-class="`hidden sm:block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`"
+            :type="isChat ? 'danger' : 'info'"
+            @click="isChat ? onStop() : onSubmit()"
+          >
+            {{ isChat ? "结束" : "发送" }}&nbsp;
+          </BtnElButton>
+        </el-form>
       </div>
-      <el-form-item
-        prop="content" class="w-full" :rules="[{
-          required: true,
-          message: '',
-          trigger: 'change',
-        }]"
-      >
-        <el-input
-          ref="inputRef"
-          v-model.lazy="form.content"
-          :disabled="isChat" placeholder="快开始对话吧 ✨"
-          class="content mt-4 border-0 border-b-1px border-default"
-        />
-      </el-form-item>
-      <BtnElButton
-        class="group ml-a"
-        :class="isChat ? 'animate-pulse' : ''"
-        :icon-class="` block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`" round
-        :type="isChat ? 'danger' : 'info'"
-        @click="isChat ? onStop() : onSubmit()"
-      >
-        {{ isChat ? "结束" : "发送" }}&nbsp;
-      </BtnElButton>
-    </el-form>
+    </el-scrollbar>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.content {
-  :deep(.el-input__wrapper) {
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 2rem;
-    padding: 0 1em;
-    box-shadow: none !important;
+// .content {
+//   // :deep(.el-input__wrapper) {
+//   //   background-color: transparent;
+//   //   border: 1px solid transparent;
+//   //   border-radius: 2rem;
+//   //   padding: 0 1em;
+//   //   box-shadow: none !important;
 
-    &.is-focus,
-    &:hover,
-    &.is-error {
-      box-shadow: transparent !important;
-      border-bottom: 1px solid #88888811;
+//   //   &.is-focus,
+//   //   &:hover,
+//   //   &.is-error {
+//   //     box-shadow: transparent !important;
+//   //     border-bottom: 1px solid #88888811;
+//   //   }
+//   // }
+// }
+.form {
+  --at-apply: "absolute bottom-0 w-full left-0 sm:p-4 p-2";
+  .form-wrapper {
+    --at-apply: "flex border-default-2 items-end gap-2 p-4  sm:gap-4 bg-color-br card-rounded-df";
+  }
+  :deep(.content.el-textarea) {
+    .el-textarea__inner {
+      box-shadow: none !important;
+      outline: none !important;
+      border-radius: inherit;
+      --at-apply: "bg-color-2";
     }
   }
 }
