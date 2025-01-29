@@ -615,7 +615,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div class="form-tools flex flex-col justify-center p-2 shadow border-default-t card-bg-color sm:bg-color-2">
+    <div class="form-tools flex flex-col justify-center p-2 border-default-t">
       <!-- 工具栏 -->
       <div
         class="relative flex items-center gap-4 px-2"

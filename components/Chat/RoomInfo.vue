@@ -20,16 +20,16 @@ const getType = computed(() => {
 </script>
 
 <template>
-  <h4 class="flex-row-bt-c rounded-0 px-4 py-3.6 bg-color">
+  <div class="h-14 flex-row-bt-c rounded-0 pl-2 pr-4 sm:(h-16 pl-4)">
     <div w-full flex items-center gap-3>
       <CardElImage
         loading="lazy"
         :preview-src-list="[BaseUrlImg + chat.theContact.avatar]"
         :alt="chat.theContact.name"
         :src="BaseUrlImg + chat.theContact.avatar"
-        class="h-2.2rem w-2.2rem flex-shrink-0 object-cover border-default card-default"
+        class="h-1.8em w-1.8em flex-shrink-0 object-cover sm:(h-2.4em w-2.4em) border-default card-default"
       />
-      <span truncate>
+      <span truncate text-sm font-500>
         {{ chat.theContact.name }}
       </span>
       <el-tag effect="dark" size="small">
@@ -43,7 +43,7 @@ const getType = computed(() => {
         p-2.2 @click="setting.isOpenGroupMember = !setting.isOpenGroupMember"
       />
     </div>
-  </h4>
+  </div>
 </template>
 
 <style lang="scss" scoped>

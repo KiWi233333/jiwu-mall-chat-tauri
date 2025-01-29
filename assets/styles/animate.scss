@@ -15,7 +15,9 @@
 .fade-up-move,
 .fade-up-enter-active,
 .fade-up-leave-active {
-  transition: opacity $transition-delay ease-in-out, transform $transition-delay ease-in-out;
+  transition:
+    opacity $transition-delay ease-in-out,
+    transform $transition-delay ease-in-out;
 }
 
 .fade-up-enter-from,
@@ -324,7 +326,6 @@ html.stop-transition-all {
 .blur-list-leave-active {
   position: absolute !important;
 }
-
 
 // blur 列表动画
 .pop-list-move,
@@ -832,13 +833,21 @@ html.stop-transition-all {
   --start: 0ms;
   --anima: latter-slice-top;
 }
+[data-fade-blur] {
+  --lv: 0;
+  --delay: 0.1s;
+  --start: 0ms;
+  --anima: latter-slice-blur-top;
+}
 @for $i from 1 through 20 {
+  [data-fades-blur] > *:nth-child(#{$i}),
   [data-fades] > *:nth-child(#{$i}) {
     --lv: #{$i};
   }
 }
 
 /* 段落 */
+[data-fades-blur] > *,
 [data-fades] > * {
   --lv: 0;
   --delay: 0.1s;
@@ -850,15 +859,19 @@ html.stop-transition-all {
 
 @media (prefers-reduced-motion: no-preference) {
   [data-fades] > *,
+  [data-fades-blur] > *,
+  [data-fade-blur],
   [data-fade] {
     animation: var(--anima) 0.5s both;
     animation-delay: calc(var(--lv) * var(--delay) + var(--start));
   }
 }
 
+[data-fade-blur-controller="false"][data-fade-blur],
 [data-fade-controller="false"][data-fade] {
   animation: none;
 }
+[data-fades-blur-controller="false"][data-fades-blur] > *,
 [data-fades-controller="false"][data-fades] > * {
   animation: none;
 }
@@ -1083,7 +1096,6 @@ html.stop-transition-all {
   animation-delay: var(--anima-delay, 0s);
   stroke: var(--anima-color, currentColor);
 }
-
 
 // 移动端视窗的推入推出动画
 .mobile-slice-enter-active,

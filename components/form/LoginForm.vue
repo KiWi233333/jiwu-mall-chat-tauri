@@ -265,7 +265,7 @@ const options = [
       <el-segmented
         v-show="loginType !== LoginType.ADMIN"
         v-model="loginType"
-        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-default bg-color" :options="options"
+        class="toggle-login grid grid-cols-3 mb-4 w-full gap-2 card-bg-color-2" :options="options"
       />
       <!-- 验证码登录(客户端 ) -->
       <!-- 邮箱登录 -->

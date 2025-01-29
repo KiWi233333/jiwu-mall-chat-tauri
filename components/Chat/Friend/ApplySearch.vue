@@ -4,6 +4,7 @@ import { ListTransitionGroup } from "#components";
 const emit = defineEmits<{
   (e: "submit", data: ChatUserSeInfoVO): void
 }>();
+const chat = useChatStore();
 // 搜索相关
 const searchKeyWords = ref<string>("");
 const isShowResult = ref<boolean>(false);
@@ -22,6 +23,9 @@ const size = ref<number>(10);
 const noMore = computed(() => searchPage.value.total > 0 && searchPageList.length >= searchPage.value.total);
 // 搜索历史 本地存储
 const searchHistoryList = useStorageAsync<string[]>("jiwu_chat_friend_user", []);
+const currentFocus = ref(-1); // 当前聚焦的索引
+const isShowModel = ref(false);
+
 /**
  * 搜索好友
  */
@@ -29,6 +33,13 @@ async function onSearch() {
   if (!searchKeyWords.value) {
     // 清空
     clearSearch();
+    return;
+  }
+  if (currentFocus.value > -1) { // 打开
+    if (!searchPageList?.[currentFocus.value]) {
+      return;
+    }
+    emit("submit", searchPageList[currentFocus.value] as ChatUserSeInfoVO);
     return;
   }
   reSearch();
@@ -45,6 +56,20 @@ async function onSearch() {
   }
 
   await onLoadMore();
+}
+
+// 监听键盘事件
+function handleKeydown(type: string) {
+  switch (type) {
+    case "arrow-down":
+      currentFocus.value = Math.min(currentFocus.value + 1, searchPageList.length - 1);
+      break;
+    case "arrow-up":
+      currentFocus.value = Math.max(currentFocus.value - 1, 0);
+      break;
+    default:
+      break;
+  }
 }
 
 async function onLoadMore() {
@@ -96,6 +121,7 @@ function reSearch() {
     size: 0,
     current: 0,
   };
+  currentFocus.value = -1;
   page.value = 0;
 }
 /**
@@ -114,9 +140,6 @@ function clickTag(val: string, i: number) {
   searchKeyWords.value = val;
   onSearch();
 }
-const isShowModel = ref(false);
-
-const timer = ref<any>();
 </script>
 
 <template>
@@ -124,10 +147,10 @@ const timer = ref<any>();
     <div
       class="search-input flex-row-c-c"
     >
-      <ElInput
+      <el-input
         id="user-search-apply-input"
         v-model.trim="searchKeyWords"
-        class="mr-2"
+        class="mr-2 text-0.8rem"
         style="height: 2rem;"
         type="text"
         clearable
@@ -138,13 +161,15 @@ const timer = ref<any>();
         :on-search="onSearch"
         placeholder="搜索好友 🔮"
         @focus="isShowModel = true"
-        @keyup.esc="clearSearch"
-        @keyup.enter="onSearch"
+        @keyup.esc.stop="clearSearch"
+        @keyup.enter.stop="onSearch"
+        @keydown.arrow-down.stop="handleKeydown('arrow-down')"
+        @keydown.arrow-up.stop="handleKeydown('arrow-up')"
       />
       <BtnElButton
         type="primary"
         class="w-5rem text-sm shadow"
-        style=" position: relative;transition: 0.2s;height: 2rem;"
+        style="position: relative; transition: 0.2s; height: 2rem;"
         :disabled="isLoading"
         icon-class="i-solar:magnifer-outline mr-1"
         @focus="isShowModel = true"
@@ -196,9 +221,14 @@ const timer = ref<any>();
           <ListTransitionGroup tag="div" class="py-2">
             <!-- 用户卡片 -->
             <div
-              v-for="p in searchPageList"
+              v-for="(p, index) in searchPageList"
               :key="p.id"
-              class="relative mb-2 flex cursor-pointer items-center truncate p-2 transition-300 transition-all card-default bg-color-2 hover:(bg-gray-200 shadow-sm dark:bg-dark-9)"
+              class="relative mb-2 flex cursor-pointer items-center truncate p-2 transition-300 transition-all card-default card-bg-color hover:(bg-color-2 shadow-sm)"
+              :class="{
+                selected: chat.theFriendOpt.type === FriendOptType.User && chat.theFriendOpt.data?.id === p?.id,
+                focused: currentFocus === index,
+              }"
+              tabindex="0"
               @click="emit('submit', p)"
             >
               <CardElImage
@@ -274,14 +304,21 @@ const timer = ref<any>();
   }
 }
 
+.focused {
+  --at-apply: "card-bg-color-2";
+}
+.selected {
+  --at-apply: "!bg-color-3";
+}
 
 .search-input {
   :deep(.el-input) {
     .el-input__wrapper {
       box-shadow: none !important;
       outline: none !important;
-      --at-apply: "bg-color-2";
+      --at-apply: "card-bg-color-2";
     }
   }
+
 }
 </style>

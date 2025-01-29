@@ -111,7 +111,7 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full px-2 border-default-r bg-color"
+    class="relative z-998 h-full px-2 border-default-r card-bg-color"
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full w-full grid-gap-6 pt-4 hover:bg-transparent">
@@ -146,7 +146,7 @@ export interface MenuItem {
           }
         }"
       >
-        <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :max="99">
+        <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :offset="[-5, 0]" :max="99">
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>

@@ -235,7 +235,6 @@ onActivated(() => active());
           :key="msg.message.id"
           :index="i"
           :data="msg"
-          data-fade
           :prev-msg="i > 0 ? msgList[i - 1] : undefined"
         />
       </div>

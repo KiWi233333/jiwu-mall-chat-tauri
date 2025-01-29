@@ -263,11 +263,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
+    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) card-bg-color-2"
   >
     <!-- 搜索群聊 -->
     <div
-      class="header h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height border-default-b bg-color"
+      class="header"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
       />
       <!-- 添加 -->
       <el-dropdown placement="bottom-end" popper-class="dropdown-btns" trigger="click">
-        <div class="h-2rem w-2rem flex-row-c-c btn-primary-bg bg-color-2">
+        <div class="icon">
           <i i-carbon:add-large p-2 />
         </div>
         <template #dropdown>
@@ -327,39 +327,35 @@ onBeforeUnmount(() => {
             @contextmenu.stop="onContextMenu($event, room)"
             @click="onClickContact(room)"
           >
-            <div
-              class="flex items-center gap-3 truncate px-4 py-3 transition-200 transition-shadow sm:(w-full p-4 px-5 text-color)"
+            <el-badge
+              :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
+              class="h-3em w-3em flex-shrink-0"
             >
-              <el-badge
-                :hidden="!room.unreadCount" :max="99" :value="room.unreadCount"
-                class="h-2.4rem w-2.4rem flex-shrink-0"
-              >
-                <CardElImage
-                  :src="BaseUrlImg + room.avatar" fit="cover"
-                  class="h-2.5rem w-2.5rem object-cover shadow-sm card-default"
-                />
-              </el-badge>
-              <div class="flex flex-1 flex-col justify-between truncate">
-                <div flex truncate>
-                  <p class="text truncate text-black dark:text-white">
-                    {{ room.name }}
-                  </p>
-                  <span class="text ml-a w-fit flex-shrink-0 text-right text-10px text-mini">
-                    {{ formatContactDate(room.activeTime) }}
-                  </span>
-                </div>
-                <p class="text mt-1 flex text-small">
-                  <small
-                    class="flex-1 truncate"
-                    :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
-                  >
-                    {{ room.text }}
-                  </small>
-                  <small v-if="room.pinTime" class="text ml-a flex-shrink-0 text-dark dark:text-light-500">
-                    置顶
-                  </small>
+              <CardElImage
+                :src="BaseUrlImg + room.avatar" fit="cover"
+                class="h-full w-full object-cover shadow-sm card-default"
+              />
+            </el-badge>
+            <div class="flex flex-1 flex-col justify-between truncate">
+              <div flex truncate>
+                <p class="text truncate text-black dark:text-white">
+                  {{ room.name }}
                 </p>
+                <span class="text ml-a w-fit flex-shrink-0 text-right text-10px text-mini">
+                  {{ formatContactDate(room.activeTime) }}
+                </span>
               </div>
+              <p class="text mt-1 flex text-small">
+                <small
+                  class="flex-1 truncate"
+                  :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
+                >
+                  {{ room.text }}
+                </small>
+                <small v-if="room.pinTime" class="text ml-a flex-shrink-0 text-dark dark:text-light-500">
+                  &nbsp;置顶
+                </small>
+              </p>
             </div>
           </div>
         </ListTransitionGroup>
@@ -377,10 +373,15 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .contact-list {
+  --at-apply: "sm:p-2 p-0";
+
   .contact {
-    --at-apply: "w-full text-sm  cursor-pointer  !hover:bg-[#f4f4f4] !dark:hover:bg-[#151515]";
+    --at-apply: "flex items-center transition-150 gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
+    .text {
+      --at-apply: "transition-none";
+    }
     &.is-pin {
-      --at-apply: "bg-color";
+      --at-apply: "shadow bg-white dark:bg-dark-9";
     }
     &.is-checked {
       --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";
@@ -392,12 +393,17 @@ onBeforeUnmount(() => {
 }
 
 .header {
+  --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height border-default-b  card-bg-color";
+
   :deep(.el-input) {
     .el-input__wrapper {
       box-shadow: none !important;
       outline: none !important;
-      --at-apply: "bg-color-2";
+      --at-apply: "bg-color-2 dark:bg-dark-7";
     }
+  }
+  .icon {
+    --at-apply: "h-2rem w-2rem flex-row-c-c btn-primary-bg  bg-color-2 dark:bg-dark-7";
   }
 }
 

@@ -368,7 +368,7 @@ function toLoginForm() {
       v-model="registerType"
       :size="size"
       style=""
-      class="toggle-btns grid grid-cols-3 mb-4 w-full gap-2 card-default dark:bg-dark-300"
+      class="toggle-btns grid grid-cols-3 mb-4 w-full gap-2 card-bg-color-2"
       :options="options"
     />
     <!-- 验证码注册(客户端 ) -->

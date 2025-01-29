@@ -169,7 +169,7 @@ body .el-message {
     &:not(.is-disabled) {
       &:hover,
       &:focus {
-        --at-apply: "bg-[var(--el-color-primary)] text-color shadow";
+        --at-apply: "bg-[var(--el-color-primary)] text-white shadow";
       }
     }
   }
