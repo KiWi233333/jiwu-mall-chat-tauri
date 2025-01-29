@@ -376,12 +376,12 @@ onBeforeUnmount(() => {
   --at-apply: "sm:p-2 p-0";
 
   .contact {
-    --at-apply: "flex items-center transition-150 gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
+    --at-apply: "border-(1px solid transparent) flex items-center transition-150 gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
     .text {
       --at-apply: "transition-none";
     }
     &.is-pin {
-      --at-apply: "shadow bg-white dark:bg-dark-9";
+      --at-apply: "border-default";
     }
     &.is-checked {
       --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";
@@ -394,12 +394,9 @@ onBeforeUnmount(() => {
 
 .header {
   --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height border-default-b  card-bg-color";
-
   :deep(.el-input) {
     .el-input__wrapper {
-      box-shadow: none !important;
-      outline: none !important;
-      --at-apply: "bg-color-2 dark:bg-dark-7";
+      --at-apply: "!shadow-none !outline-none bg-color-2 dark:bg-dark-7";
     }
   }
   .icon {

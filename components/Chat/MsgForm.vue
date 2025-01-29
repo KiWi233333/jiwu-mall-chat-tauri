@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { FILE_MAX_SIZE, FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
+import { FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
 import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
 
 const emit = defineEmits<{
@@ -579,7 +579,7 @@ onUnmounted(() => {
           :key="i" class="flex-row-c-c p-3.2 shadow-sm transition-all border-default card-default bg-color sm:p-2.8 hover:shadow"
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
-          <img :src="file?.file?.type ? FILE_TYPE_ICON_MAP[file?.file?.type] : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
+          <img :src="file?.file?.type ? (FILE_TYPE_ICON_MAP[file?.file?.type] || FILE_TYPE_ICON_DEFAULT) : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
           <div class="mx-2 max-w-16vw min-w-8rem">
             <p class="truncate text-sm">
               {{ file?.file?.name || file.key }}
@@ -665,7 +665,7 @@ onUnmounted(() => {
             v-model="imgList"
             :multiple="true"
             :preview="false"
-            :size="IMG_MAX_SIZE"
+            :size="setting.systemConstant.ossInfo?.image?.fileSize"
             :min-size="1024"
             :limit="9"
             :disable="isDisabledFile"
@@ -684,7 +684,7 @@ onUnmounted(() => {
             ref="inputOssFileUploadRef"
             v-model="fileList"
             :multiple="false"
-            :size="FILE_MAX_SIZE"
+            :size="setting.systemConstant.ossInfo?.file?.fileSize"
             :min-size="1024"
             :preview="false"
             :limit="1"

@@ -128,22 +128,20 @@ export async function useMsgBoxWebViewInit() {
   const setting = useSettingStore();
   const user = useUserStore();
   const ws = useWsStore();
-  const isNewAllMsg = computed(() => chat.isNewMsg || ws.isNewMsg);
 
   // 监听消息通知事件
   const channel = new BroadcastChannel("main_channel");
   channel.addEventListener("message", handleChannelMsg);
   // 是否有新消息，控制图标闪烁
   const { start, stop, activeIcon, onlineUrl, offlineUrl } = await useFlashTray();
-  watchDebounced([isNewAllMsg, () => setting.settingPage.notificationType], async ([newAllMsg, notificationType], oldVal) => {
-    if (notificationType !== NotificationEnums.TRAY) {
+  watchDebounced([() => chat.isNewMsg, () => setting.settingPage.notificationType], async ([newAllMsg, notificationType], oldVal) => {
+    if (notificationType !== NotificationEnums.TRAY || !newAllMsg) {
       stop();
       return;
     }
+    console.log(newAllMsg);
     if (newAllMsg)
       start(true);
-    else
-      stop();
   }, {
     immediate: true,
     debounce: 300,
@@ -174,7 +172,7 @@ export async function useMsgBoxWebViewInit() {
     if (!win)
       return;
 
-    if (isNewAllMsg.value) {
+    if (chat.isNewMsg) {
       // 消费第一个未读消息
       await navigateTo("/");
       await win.show();
@@ -193,7 +191,7 @@ export async function useMsgBoxWebViewInit() {
 
   // 鼠标移入托盘
   const trayMouseoverUnlisten = await listen("tray_mouseenter", async (event) => {
-    if (!isNewAllMsg.value)
+    if (!chat.isNewMsg)
       return;
     if (useSettingStore().settingPage.notificationType !== NotificationEnums.TRAY) { // 未开启托盘通知
       return;

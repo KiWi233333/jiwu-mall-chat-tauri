@@ -4,6 +4,7 @@ const MimeType = "audio/mp3";
  * mp3音频录制Hook
  */
 export function useRecording(options: { timeslice?: number } = { timeslice: 1000 }) {
+  const setting = useSettingStore();
   // opt
   const { timeslice } = options;
   // 变量
@@ -18,6 +19,10 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
     startTime: 0,
     endTime: 0,
   });
+
+  // 获取文件大小限制
+  const fileSizeLimit = computed(() => setting.systemConstant.ossInfo?.audio?.fileSize || 20 * 1024 * 1024); // 默认限制为20MB
+  // 录音秒数
   const second = computed(() => {
     const diff = (startEndTime.endTime - startEndTime.startTime) / 1000 || 0;
     if (diff > 0 && startEndTime.endTime > 0)
@@ -131,8 +136,6 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
 
   // 解析音频输入
   function resolveAudioInput(stream: MediaStream) {
-    console.log(stream);
-
     if (mediaRecorderContext.value) { // 防止重复创建
       mediaRecorderContext.value?.stop?.();
       mediaRecorderContext.value = undefined;
@@ -160,8 +163,14 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
         speechRecognition.stop();
         return;
       }
-      if (speechRecognition)
-        speechRecognition.start(); // 开始语音转文字
+      if (speechRecognition) {
+        try {
+          speechRecognition?.start(); // 开始语音转文字
+        }
+        catch (error) {
+          console.warn(error);
+        }
+      }
     });
 
     mediaRecorderContext.value.addEventListener("stop", (e) => {
@@ -172,6 +181,13 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
       }
       // 转化为文件上传
       const file = new File(audioChunks, `${Date.now()}.mp3`, { type: MimeType });
+      console.log(`结束录音,时长：${second.value}s 文件大小：${formatFileSize(file.size)}`);
+
+      if (file.size > fileSizeLimit.value) {
+        ElMessage.error(`文件大小超过限制，最大支持 ${formatFileSize(fileSizeLimit.value)}`);
+        reset();
+        return;
+      }
       theAudioFile.value = {
         id: URL.createObjectURL(file),
         key: undefined,
@@ -188,6 +204,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
   }
 
   return {
+    fileSizeLimit, // 文件大小限制
     // 录音相关
     isChating,
     second,

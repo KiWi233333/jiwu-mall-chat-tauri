@@ -2,6 +2,7 @@ import type { OsType, Platform } from "@tauri-apps/plugin-os";
 import type { Update } from "@tauri-apps/plugin-updater";
 import type { Action } from "element-plus";
 import type { ExtendItem } from "~/components/menu/extension";
+import type { SystemConstantVO } from "~/init/system";
 import { appDataDir } from "@tauri-apps/api/path";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutostart, isEnabled as isAutostartEnabled } from "@tauri-apps/plugin-autostart";
@@ -57,6 +58,51 @@ export const useSettingStore = defineStore(
     const isUseWebsocket = ref(true); // 是否使用 websocket
     const isDesktop = computed(() => ["windows", "linux", "macos"].includes(osType.value));
     const isMobile = computed(() => ["android", "ios"].includes(osType.value));
+    // --------------------- 系统环境常量 -----------------
+    const systemConstant = ref<SystemConstantVO>({
+      ossInfo: {
+        image: {
+          type: "image",
+          path: "image/",
+          code: 0,
+          timeOut: 2400,
+          fileSize: 3145728, // 3M
+          fileType: "image/*",
+        },
+        file: {
+          type: "file",
+          path: "file/",
+          code: 2,
+          timeOut: 12000,
+          fileSize: 52428800, // 50M
+          fileType: "text/plain;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/octet-stream;application/vnd.ms-powerpoint;application/pdf;application/x-pdf;application/x-bzpdf;application/x-gzpdf;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/msword;application/vnd.openxmlformats-officedocument.wordprocessingml.document;",
+        },
+        video: {
+          type: "video",
+          path: "video/",
+          code: 1,
+          timeOut: 2400,
+          fileSize: 20971520, // 20M
+          fileType: "mp4/*",
+        },
+        audio: {
+          type: "audio",
+          path: "audio/",
+          code: 4,
+          timeOut: 2400,
+          fileSize: 10485760, // 10M
+          fileType: "audio/mp3;audio/x-mpeg;audio/mpeg;audio/webm;audio/wav;video/webm;",
+        },
+        font: {
+          type: "font",
+          path: "font/",
+          code: 3,
+          timeOut: 2400,
+          fileSize: 12582912,
+          fileType: "font/*",
+        },
+      },
+    });
     // ---------------------菜单-----------------
     const selectExtendMenuList = ref<ExtendItem[]>([]);
     // ---------------------设置-----------------
@@ -482,6 +528,7 @@ export const useSettingStore = defineStore(
       fileDownloadMap,
       fileDownloadList,
       appPlatform,
+      systemConstant,
       appDataDownloadDirUrl,
       BaseDirCode,
       osType,

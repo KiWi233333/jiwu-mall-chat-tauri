@@ -2,8 +2,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
 
-export const IMG_MAX_SIZE = 5 * 1024 * 1024;// 5MB
-export const FILE_MAX_SIZE = 50 * 1024 * 1024;// 50MB
+// export const IMG_MAX_SIZE = 3 * 1024 * 1024;// 3MB 图片大小
+// export const VIDEO_MAX_SIZE = 20 * 1024 * 1024;// 20MB 视频文件大小
+// export const FILE_MAX_SIZE = 50 * 1024 * 1024;// 50MB 文件大小
+
 export const FILE_TYPE_ICON_MAP = {
   "text/plain": "/images/icon/TXT.png",
 
@@ -21,6 +23,7 @@ export const FILE_TYPE_ICON_MAP = {
   "application/x-bzpdf": "/images/icon/PDF.png",
   "application/x-gzpdf": "/images/icon/PDF.png",
 } as Record<string, string>;
+
 export const FILE_UPLOAD_ACCEPT = Object.keys(FILE_TYPE_ICON_MAP).join(",");
 /**
  * 默认文件图标

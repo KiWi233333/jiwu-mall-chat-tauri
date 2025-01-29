@@ -2,6 +2,7 @@
 import { useIframeInit } from "./iframe";
 import { useAuthInit, useMsgBoxWebViewInit, userTauriInit } from "./init";
 import { useHotkeyInit, useSettingInit, useWindowVisibilityInit } from "./setting";
+import { initSystemConstant } from "./system";
 import { useWsInit, useWSUnmounted } from "./ws";
 
 let unMountedMsgBoxWebView: (() => void) | undefined;
@@ -18,6 +19,8 @@ let unMountedWindowVisibilityInit: (() => void) | undefined;
 export async function useDefaultInit() {
   // 鉴权
   useAuthInit();
+  // 系统常量
+  initSystemConstant();
   // 初始化窗口可见性
   unMountedWindowVisibilityInit = useWindowVisibilityInit();
   // 设置配置
