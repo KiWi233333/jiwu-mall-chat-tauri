@@ -49,7 +49,7 @@ async function onSearch() {
 
 async function onLoadMore() {
   try {
-    if (noMore.value || isLoading.value)
+    if (noMore.value || isLoading.value || !searchKeyWords.value?.trim())
       return;
     isLoading.value = true;
     page.value++;
@@ -122,13 +122,13 @@ const timer = ref<any>();
 <template>
   <div class="h-full w-full flex flex-col" relative>
     <div
-      class="v-input"
-      flex-row-c-c
+      class="search-input flex-row-c-c"
     >
       <ElInput
         id="user-search-apply-input"
         v-model.trim="searchKeyWords"
         class="mr-2"
+        style="height: 2rem;"
         type="text"
         clearable
         autocomplete="off"
@@ -143,14 +143,14 @@ const timer = ref<any>();
       />
       <BtnElButton
         type="primary"
-        class="w-5rem shadow"
-        style=" position: relative;transition: 0.2s"
+        class="w-5rem text-sm shadow"
+        style=" position: relative;transition: 0.2s;height: 2rem;"
         :disabled="isLoading"
-        icon-class="i-solar:magnifer-outline mr-2"
+        icon-class="i-solar:magnifer-outline mr-1"
         @focus="isShowModel = true"
         @click.self="onSearch"
       >
-        搜索
+        搜&nbsp;索
       </BtnElButton>
     </div>
     <div v-if="isShowModel" class="absolute left-0 top-2.5rem z-1 h89vh w-full flex-1 bg-color">
@@ -218,7 +218,7 @@ const timer = ref<any>();
       </el-scrollbar>
       <ElEmpty
         v-show="!searchPage.total"
-        mt-10
+        min-h-50vh
         :image-size="80"
         :description="searchPageList.length <= 0 && searchPage.current > 0 ? '没有找到好友' : '好友查找'"
       >
@@ -271,6 +271,17 @@ const timer = ref<any>();
 
   :deep(.el-close):hover {
     opacity: 1;
+  }
+}
+
+
+.search-input {
+  :deep(.el-input) {
+    .el-input__wrapper {
+      box-shadow: none !important;
+      outline: none !important;
+      --at-apply: "bg-color-2";
+    }
   }
 }
 </style>

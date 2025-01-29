@@ -46,6 +46,8 @@ const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // �
 
 // 状态
 const showLordMsg = ref(false);
+const loadInputDone = ref(false); // 用于移动尺寸动画
+const loadInputTimer = shallowRef<NodeJS.Timeout>();
 
 // ref
 const inputOssImgUploadRef = useTemplateRef("inputOssImgUploadRef");
@@ -63,7 +65,6 @@ const SelfExistTextMap = { // 好友状态
   [RoomType.GROUP]: "已经不是群成员",
   [RoomType.AICHAT]: "已经被AI拉黑",
 };
-
 
 // 读取@用户列表 hook
 const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
@@ -87,7 +88,7 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
     let height = 0;
     const img = new Image(); // 手动创建一个Image对象
     img.src = url.createObjectURL(file?.file);// 创建Image的对象的url
-    img.onload = function () {
+    img.onload = () => {
       width = img.width || 0;
       height = img.height || 0;
     };
@@ -450,10 +451,6 @@ function setReadAndScrollBottom() {
   }
 }
 
-
-const loadInputDone = ref(false);
-const loadInputTimer = shallowRef<NodeJS.Timeout>();
-
 // watch
 // 房间号变化
 let timer: any = 0;
@@ -470,9 +467,6 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
   else { // TODO: 处理小尺寸设备动画input飘逸 (疑似popper组件的定位问题) 目前先懒加载输入框
     loadInputTimer.value = setTimeout(() => {
       loadInputDone.value = true;
-      // nextTick(() => {
-      //   inputAllRef.value?.input?.focus(); // 聚焦
-      // });
     }, 400);
     return;
   }
@@ -621,7 +615,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div class="form-tools flex flex-col justify-center border-0 border-t-1px p-2 shadow border-default bg-color">
+    <div class="form-tools flex flex-col justify-center p-2 shadow border-default-t card-bg-color sm:bg-color-2">
       <!-- 工具栏 -->
       <div
         class="relative flex items-center gap-4 px-2"
@@ -911,7 +905,7 @@ onUnmounted(() => {
   }
   :deep(.el-input) {
 
-      --at-apply: "p-2";
+    --at-apply: "p-2";
     .el-input__wrapper {
       box-shadow: none !important;
       outline: none !important;

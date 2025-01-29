@@ -5,13 +5,13 @@ defineProps<{
 </script>
 
 <template>
-  <div class="content relative flex flex-col bg-color-3">
+  <div class="content relative flex flex-col bg-color-2">
     <!-- 房间信息 -->
     <ChatRoomInfo />
     <!-- 消息列表 -->
     <ChatMessageList />
     <!-- 发送 -->
-    <ChatMsgForm class="flex-shrink-0" />
+    <ChatMsgForm />
   </div>
 </template>
 

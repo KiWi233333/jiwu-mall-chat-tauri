@@ -25,7 +25,7 @@ async function clearHistory() {
 
 <template>
   <div
-    class="w-full transition-all sm:(relative mx-auto w-1/4 border-default-r p-0) bg-color"
+    class="w-full transition-all sm:(relative mx-auto w-1/4 border-default-r p-0)"
   >
     <!-- 好友列表 -->
     <ChatFriendTabs class="relative mx-a h-full flex-shrink-0 p-4" />
@@ -63,7 +63,6 @@ async function clearHistory() {
     </div>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .main {

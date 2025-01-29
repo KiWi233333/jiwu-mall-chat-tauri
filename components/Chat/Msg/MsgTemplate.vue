@@ -30,7 +30,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
     <!-- 头像 -->
     <CardElImage
       ctx-name="avatar"
-      error-class="i-solar:user-broken"
+      error-class="i-solar:user-bold-duotone"
       :src="BaseUrlImg + data.fromUser.avatar"
       fit="cover"
       class="avatar h-2.4rem w-2.4rem flex-shrink-0 cursor-pointer rounded-1/2 object-cover border-default"

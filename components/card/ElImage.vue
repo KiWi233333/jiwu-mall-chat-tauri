@@ -5,6 +5,7 @@ defineProps<{
   loadRootClass?: string
   errorRootClass?: string
   errorClass?: string
+  ctxName?: string
 }>();
 const setting = useSettingStore();
 </script>
@@ -18,6 +19,7 @@ const setting = useSettingStore();
     :close-on-press-escape="!setting.settingPage.isEscMin"
     :draggable="false"
     v-bind="$attrs"
+    :ctx-name="ctxName"
   >
     <!-- 占位 -->
     <template #placeholder>
@@ -25,14 +27,14 @@ const setting = useSettingStore();
     </template>
     <!-- 错误 -->
     <template #error>
-      <div class="h-full w-full flex-row-c-c" :class="errorRootClass">
-        <i class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
+      <div :ctx-name="ctxName" class="h-full w-full flex-row-c-c" :class="errorRootClass">
+        <i :ctx-name="ctxName" class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
       </div>
     </template>
   </el-image>
   <template v-else>
-    <div class="flex-row-c-c text-mini" :class="$attrs.class">
-      <i class="icon i-solar-gallery-add-bold-duotone op-60" :class="errorClass" />
+    <div :ctx-name="ctxName" class="flex-row-c-c text-mini" :class="$attrs.class">
+      <i :ctx-name="ctxName" class="icon i-solar-gallery-add-bold-duotone op-60" :class="errorClass" />
     </div>
   </template>
 </template>

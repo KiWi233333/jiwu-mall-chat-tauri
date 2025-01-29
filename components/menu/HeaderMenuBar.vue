@@ -43,10 +43,10 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
 </script>
 
 <template>
-  <!-- 菜单栏 -->
   <menu
     class="group nav"
   >
+    <!-- 菜单栏 -->
     <slot name="left">
       <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
         <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
@@ -76,7 +76,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
+      <div id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
         <BtnAppDownload />
         <div class="flex items-center gap-3 rounded-2rem px-2 py-1 border-default card-default">
           <!-- 刷新页面 -->
@@ -87,7 +87,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
             @click="reloadPage"
           />
           <!-- 下载（部分端） -->
-          <BtnDownload v-if="setting.appPlatform !== 'web'" class="flex items-center gap-2 pl-3 border-default-l" />
+          <BtnDownload v-if="!setting.isWeb" class="flex items-center gap-2 pl-3 border-default-l" />
           <!-- 主题 -->
           <BtnTheme
             id="toggle-theme-btn"
@@ -99,7 +99,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
             class="cursor-pointer btn-danger"
             title="退出登录"
             transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-            plain circle i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
+            circle plain i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
           />
         </div>
         <!-- 关闭按钮 -->

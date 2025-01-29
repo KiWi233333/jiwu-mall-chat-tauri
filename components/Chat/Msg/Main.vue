@@ -47,7 +47,7 @@ function onClickAvatar() {
 </script>
 
 <template>
-  <p v-if="showTime" w-full py-2 text-center text-0.8em op-60>
+  <p v-if="showTime" :key="`${index}_time`" w-full py-2 text-center text-0.8em op-60>
     {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component

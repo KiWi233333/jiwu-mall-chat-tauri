@@ -111,10 +111,10 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full px-2 border-default-r bg-color-2"
+    class="relative z-998 h-full px-2 border-default-r bg-color"
   >
     <!-- 顶部 -->
-    <div class="grid grid-cols-1 w-full grid-gap-6 pt-4 hover:bg-transparent">
+    <div class="grid grid-cols-1 w-full w-full grid-gap-6 pt-4 hover:bg-transparent">
       <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a card-default">
         <CardElImage
           :src="BaseUrlImg + user?.userInfo?.avatar"
@@ -124,11 +124,12 @@ export interface MenuItem {
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
     <!-- 菜单 -->
-    <ListTransitionGroup name="pop-list" tag="div" class="h-full flex flex-1 flex-shrink-0 flex-col gap-3 overflow-y-auto">
+    <div name="pop-list" tag="div" class="flex flex-col gap-3 overflow-y-auto">
       <component
         :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"
-        :key="p.path" v-loading="(p as any).loading" :to="p.path"
+        :key="p.path"
+        v-loading="(p as any).loading" :to="p.path"
         :index="p.path"
         :element-loading-spinner="defaultLoadingIcon"
         element-loading-custom-class="text-.5em"
@@ -149,7 +150,7 @@ export interface MenuItem {
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>
-    </ListTransitionGroup>
+    </div>
     <div
       v-if="setting.isChatFold"
       class="absolute left-0 top-0 block h-100dvh w-100vw overflow-hidden bg-[#8181811a] -z-1 md:hidden"
@@ -170,7 +171,7 @@ export interface MenuItem {
 .item {
   --at-apply: "card-rounded-df hover:(bg-color)";
   &.action {
-    --at-apply: "bg-[var(--el-color-primary)] shadow";
+    --at-apply: "!bg-[var(--el-color-primary)] shadow";
     .icon {
       --at-apply: "bg-light dark:bg-light";
     }

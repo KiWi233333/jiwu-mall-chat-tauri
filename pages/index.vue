@@ -12,16 +12,16 @@ const chat = useChatStore();
 <template>
   <main
     v-loading.fullscreen.lock="!user.isLogin"
-    class="h-full flex flex-col !overflow-hidden"
+    class="relative flex flex-col !overflow-hidden"
     element-loading-text="退出登录中..."
     element-loading-background="transparent"
     :element-loading-spinner="defaultLoadingIcon"
   >
     <div
       v-if="user.isLogin"
-      class="relative h-full flex flex-col overflow-hidden"
+      class="h-full flex flex-1 flex-col overflow-hidden"
     >
-      <MenuHeaderMenuBar>
+      <MenuHeaderMenuBar class="flex-shrink-0">
         <template #drag-content>
           <div
             v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin"
@@ -60,15 +60,16 @@ const chat = useChatStore();
         </template>
       </MenuHeaderMenuBar>
       <div
-        class="main-box"
-        v-bind="$attrs"
+        class="relative h-1 max-h-full flex flex-1"
       >
-        <MenuChatMenu class="hidden sm:block" />
+        <MenuChatMenu class="hidden w-fit shrink-0 sm:block" />
         <!-- 缓存 页面内容 -->
         <NuxtPage keepalive />
       </div>
+      <!-- RTC通话弹窗 -->
+      <ChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
+      <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
     </div>
-    <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
   </main>
 </template>
 

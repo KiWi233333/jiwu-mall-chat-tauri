@@ -15,17 +15,17 @@ export default defineConfig({
     ["card-default", "bg-white dark:bg-dark-4 rounded-1.5"],
     ["card-bg-color", "bg-white dark:bg-dark-4"],
     ["card-default-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
-    ["blur-card", "backdrop-blur-4 bg-[#75757528] rounded-4px"],
-    ["card-rounded-df", "rounded-4px"],
+    ["blur-card", "backdrop-blur-4 bg-[#75757528] rounded-1.5"],
+    ["card-rounded-df", " rounded-1.5"],
     ["btn-default", "border-0 cursor-pointer rounded-4px hover:text-[var(--el-color-primary)] transition-200 text-white"],
     ["btn-primary-bg", " cursor-pointer rounded-4px hover:bg-[var(--el-color-primary)]  hover:text-white"],
     // 颜色
     ["bg-color", "bg-white dark:bg-dark-5"],
-    ["bg-color-2", "bg-[#f2f2f2]  dark:bg-dark-8"], // 控件菜单背景色
-    ["bg-color-3", "bg-[#f2f2f2]  dark:bg-[#111111]"], // 控件菜单背景色
+    ["bg-color-2", "bg-[#f2f2f2]  dark:bg-[#111111]"], // 次要背景色
+    ["bg-color-3", "bg-[#f2f2f2]  dark:bg-dark-9"],
     ["bg-color-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) backdrop-blur-12px"],
-    ["bg-color-df", "bg-[#f2f2f2]  dark:bg-dark-9"], // 控件菜单背景色
-    ["bg-menu-color", "bg-[#f6f6f6]  dark:bg-dark-8"], // 控件菜单背景色
+    ["bg-color-df", "bg-[#f2f2f2]  dark:bg-dark-9"],
+    ["bg-menu-color", "bg-[#f6f6f6]  dark:bg-dark-8"],
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     ["text-color", "text-dark dark:text-white"],
     ["bg-skeleton", "bg-gray-1 dark:bg-[#1f1f1f]"],

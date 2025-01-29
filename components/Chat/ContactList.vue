@@ -18,6 +18,25 @@ const pageInfo = ref({
   isLast: false,
   size: 20,
 });
+const isLoadRoomMap: Record<number, boolean> = {};
+
+// 状态
+const colorMode = useColorMode();
+
+// 添加群聊
+const showDialog = ref(false);
+const ChatNewGroupDialogRef = ref();
+
+// 计算
+const theContactId = computed({
+  get() {
+    return chat.theContact.roomId;
+  },
+  set(contactId: number) {
+    chat.onChangeRoom(contactId);
+  },
+});
+
 /**
  * 加载会话列表
  */
@@ -42,16 +61,7 @@ async function loadData(dto?: ContactPageDTO) {
   isLoading.value = false;
   return data.list;
 }
-// 改变当前会话
-const theContactId = computed({
-  get() {
-    return chat.theContact.roomId;
-  },
-  set(contactId: number) {
-    chat.onChangeRoom(contactId);
-  },
-});
-// 切换房间
+
 // 刷新
 async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = true, roomId?: number) {
   if (isReload.value)
@@ -78,7 +88,6 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
   isReload.value = false;
 }
 
-const isLoadRoomMap: Record<number, boolean> = {};
 // 刷新某一房间
 async function refreshItem(roomId: number) {
   if (!roomId || isLoadRoomMap[roomId])
@@ -102,12 +111,7 @@ async function refreshItem(roomId: number) {
   }
 }
 
-// 添加群聊
-const showDialog = ref(false);
-const ChatNewGroupDialogRef = ref();
-
 // 右键菜单
-const colorMode = useColorMode();
 function onContextMenu(e: MouseEvent, item: ChatContactVO) {
   e.preventDefault();
   const isPin = !!chat.contactMap?.[item.roomId]?.pinTime;
@@ -259,22 +263,32 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color"
+    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) bg-color-2"
   >
     <!-- 搜索群聊 -->
     <div
-      class="h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height border-default-b bg-color"
+      class="header h-16 flex-row-c-c flex-shrink-0 px-4 transition-200 transition-height border-default-b bg-color"
       :class="setting.isMobileSize && !setting.isOpenContactSearch ? '!h-0 overflow-y-hidden' : ''"
     >
       <ElInput
-        id="search-contact" v-model.lazy="chat.searchKeyWords" name="search-content" class="mr-2" type="text" clearable
-        autocomplete="off" :prefix-icon="ElIconSearch" minlength="2" maxlength="30" placeholder="搜索"
+        id="search-contact"
+        v-model.lazy="chat.searchKeyWords"
+        style="height: 2rem;"
+        name="search-content"
+        class="mr-2"
+        type="text"
+        clearable
+        autocomplete="off"
+        :prefix-icon="ElIconSearch"
+        minlength="2"
+        maxlength="30"
+        placeholder="搜索"
       />
       <!-- 添加 -->
       <el-dropdown placement="bottom-end" popper-class="dropdown-btns" trigger="click">
-        <BtnElButton plain style="width: 2rem;transition: 200ms;">
+        <div class="h-2rem w-2rem flex-row-c-c btn-primary-bg bg-color-2">
           <i i-carbon:add-large p-2 />
-        </BtnElButton>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item :icon="ElIconUser" @click="toFriendPage">
@@ -364,15 +378,25 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .contact-list {
   .contact {
-    --at-apply: "shadow-sm w-full text-sm  cursor-pointer  card-bg-color !hover:(bg-[var(--el-color-primary-dark)] dark:bg-[var(--el-color-primary-dark)]) ";
+    --at-apply: "w-full text-sm  cursor-pointer  !hover:bg-[#f4f4f4] !dark:hover:bg-[#151515]";
     &.is-pin {
-      --at-apply: "bg-color-2";
+      --at-apply: "bg-color";
     }
     &.is-checked {
-      --at-apply: " !sm:(bg-[var(--el-color-primary)] dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  color-white dark:text-light ";
+      --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";
       .text {
-        --at-apply: "color-white dark:text-light";
+        --at-apply: "sm:(color-white dark:text-light)";
       }
+    }
+  }
+}
+
+.header {
+  :deep(.el-input) {
+    .el-input__wrapper {
+      box-shadow: none !important;
+      outline: none !important;
+      --at-apply: "bg-color-2";
     }
   }
 }
