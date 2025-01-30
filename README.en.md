@@ -67,42 +67,45 @@ Note: This account does not have permissions for uploading images, changing pass
 | Voice and Video Module | Based on WebRTC for Screen Share, voice and video chat functionality | ✔ |
 | Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
 
-## Project Screenshots
+## Project Screenshots 📸
 
-- Chat Desktop App - Login
+- Chat Desktop Application Login
 
 ![Login](./.doc/login.png)
 
-- Chat Desktop App Chat
+<!-- ![Register](./.doc/register.png) -->
 
-![Home](./.doc/chat.png)
+- Chat Desktop Application Chat
 
-- Voice and Video Chat - WebRTC
+![Light Mode](./.doc/chat1.png)
 
-![RTC Call](./.doc/rtc1.png)
+- Global Light / Dark Mode
 
-- Voice and Video Chat - Desktop Share
+![Home Page](./.doc/chat.png)
 
-![Desktop Share](./.doc/rtc3.png)
+- Voice and Video Chat via WebRTC
 
-- Global Dark Mode Light / Dark
+![Voice and Video Chat](./.doc/rtc1.png)
 
-![Dark](./.doc/chat1.png)
+- Screen Sharing
 
-- Chat Social
+![Screen Content Sharing](./.doc/rtc3.png)
 
-![Dark](./.doc/chat2.png)
+- Chat and Social Interaction
 
-- AI Shopping - Chat
+![Dark Mode](./.doc/chat2.png)
 
-![Dark](./.doc/chat3.png)
+- AI Shopping Chat
 
-- Account & Security
+![Dark Mode](./.doc/chat3.png)
 
-![Account & Security](./.doc/chat4.png)
+![Dark Mode](./.doc/chat3.2.png)
 
-![Account & Security](./.doc/chat5.png)
+- Account and Security
 
+![Account and Security](./.doc/chat4.png)
+
+![Account and Security](./.doc/chat5.png)
 - Mobile Adaptation
 
 <div>
@@ -144,7 +147,7 @@ pnpm run dev:tauri
 
 ```sh
 # Terminal 1: Start prod nuxt (recommended ✔)
-pnpm run nuxt:prod
+pnpm run prod:nuxt
 # Terminal 2: Start tauri
 pnpm run dev:tauri
 ```

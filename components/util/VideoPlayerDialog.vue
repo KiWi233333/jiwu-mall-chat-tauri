@@ -300,7 +300,7 @@ const videoSize = computed(() => {
 }
 .animate-zoom-out-dailog {
   --at-apply: "animate-zoom-out";
-  animation-timing-function: var(--animate-cubic) !important;
+  animation-timing-function: ease-in-out !important;
   animation-duration: 0.4s !important;
 }
 </style>

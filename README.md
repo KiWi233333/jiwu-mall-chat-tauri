@@ -41,7 +41,7 @@
 
 ## 介绍
 
-JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊天应用，具备实时消息、WebRTC 音视频通话、屏幕共享以及 AI 购物功能。它支持无缝跨设备通信，涵盖文本、图片、文件和语音消息，还支持群聊和可定制化设置。提供浅色/深色模式，助力高效社交网络。✨
+JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊天应用，具备多种实时消息、WebRTC 音视频通话、屏幕共享以及 AI 购物功能。它支持无缝跨设备通信，涵盖文本、图片、文件和语音消息，还支持群聊和可定制化设置。提供浅色/深色模式，助力高效社交网络。✨
 
 ## 一套代码，多端适配
 
@@ -75,13 +75,15 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 ![登录](./.doc/login.png)
 
+<!-- ![注册](./.doc/register.png) -->
+
 - 聊天桌面应用 Chat
 
-![主页](./.doc/chat.png)
+![浅色](./.doc/chat1.png)
 
 - 全局夜间模式 Light / Dark
 
-![暗黑](./.doc/chat1.png)
+![主页](./.doc/chat.png)
 
 - 语音视频聊天 WebRTC
 
@@ -98,6 +100,8 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 - AI购物聊天
 
 ![暗黑](./.doc/chat3.png)
+
+![暗黑](./.doc/chat3.2.png)
 
 - 账号与安全
 
@@ -132,20 +136,21 @@ pnpm install
 
 ### ✨ 开发
 
-- 若有后端服务，可采用自定义修改开发`.env.development`环境变量文件进行开发
+- 若`没有`后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。🎈
+
+```sh
+# 终端1：启动nuxt (发布环境)
+pnpm run prod:nuxt
+# 终端2：启动tauri
+pnpm run dev:tauri
+```
+
+- 若`有`后端服务，可采用自定义修改开发`.env.development`环境变量文件进行开发
 
 ```sh
 # 建议分开运行
 # 终端1：启动nuxt
 pnpm run dev:nuxt
-# 终端2：启动tauri
-pnpm run dev:tauri
-```
-- 若没有后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。
-
-```sh
-# 终端1：启动nuxt (发布环境)
-pnpm run prod:nuxt
 # 终端2：启动tauri
 pnpm run dev:tauri
 ```
@@ -202,7 +207,7 @@ pnpm config set registry https://registry.npmjs.org
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
-## 💬 联系方式 | Contact
+## 💬 联系方式
 
 - 邮箱：[kiwi2333@qq.com](mailto:kiwi2333@qq.com)
 - QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qqq&menu=yes)
