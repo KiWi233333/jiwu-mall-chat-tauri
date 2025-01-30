@@ -274,6 +274,11 @@ async function onRegisterHandle() {
         message: "恭喜，注册成功 🎉",
         duration: 2000,
       });
+      // 先预取一下热点会话
+      setMsgReadByRoomId(1, token).catch((e) => {
+        console.warn("预取热点会话失败", e);
+        ElMessage.closeAll("error");
+      });
       // 登录
       let count = 2;
       const timers = setInterval(() => {
@@ -543,22 +548,8 @@ function toLoginForm() {
   font-weight: 600;
   transition: 0.3s;
   cursor: pointer;
-
-  :deep(.el-input__wrapper) {
-    background-color: var(--el-color-primary);
-    cursor: pointer;
-
-    * {
-      color: #fff;
-      font-weight: 600;
-      letter-spacing: 0.4em;
-    }
-  }
-
-  .dark:deep(.el-input__wrapper) {
-    background-color: var(--el-color-primary);
-    cursor: pointer;
-    color: #fff;
-  }
+}
+:deep(.el-input__wrapper.is-focus) {
+  --el-input-focus-border-color: var(--el-color-info);
 }
 </style>

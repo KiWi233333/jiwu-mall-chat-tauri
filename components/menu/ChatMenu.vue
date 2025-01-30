@@ -51,14 +51,14 @@ const menuList = computed<MenuItem[]>(() => ([
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold-duotone",
-    tipValue: computed(() => chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0)),
+    tipValue: chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
   },
   {
     title: "好友",
     path: "/friend",
     icon: "i-solar:users-group-rounded-line-duotone",
     activeIcon: "i-solar:users-group-rounded-bold-duotone",
-    tipValue: computed(() => applyUnRead.value),
+    tipValue: applyUnRead.value,
   },
   {
     title: "AI客服",
@@ -92,7 +92,7 @@ const menuList = computed<MenuItem[]>(() => ([
     icon: "i-solar:settings-linear hover:animate-spin block",
     activeIcon: "i-solar:settings-bold-duotone hover:animate-spin block",
     class: "absolute bottom-3 diabled-bg",
-    tipValue: computed(() => +setting.appUploader.isUpload),
+    tipValue: +setting.appUploader.isUpload,
     isDot: true,
   },
 ]));
@@ -146,7 +146,7 @@ export interface MenuItem {
           }
         }"
       >
-        <el-badge :value="100" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :offset="[-6, -1]" :max="99">
+        <el-badge :value="p.tipValue || 0" :hidden="!p?.tipValue" :is-dot="!!p?.isDot" :offset="[-6, -1]" :max="99">
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>

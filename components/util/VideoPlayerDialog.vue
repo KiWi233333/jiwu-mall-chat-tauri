@@ -27,10 +27,63 @@ const videoInfo = ref<{
   thumbWidth: undefined,
   thumbHeight: undefined,
 });
+
+// 拖拽
+const dragHandler = useTemplateRef<HTMLDivElement>("dragHandler");
+const dragRef = useTemplateRef<HTMLDivElement>("dragRef");
+const dragRefStyle = ref({
+  maxWidth: 0,
+  maxHeight: 0,
+});
+const { x, y } = useDraggable(dragRef, {
+  stopPropagation: true,
+  handle: dragHandler,
+  initialValue: { x: 0, y: 0 },
+  disabled: setting.isMobileSize,
+  onMove: (position) => {
+    const { innerWidth, innerHeight } = window;
+    // 限制不移出屏幕边缘
+    const newX = Math.min(Math.max(position.x, 0), innerWidth - (dragRef?.value?.offsetWidth || 0));
+    const newY = Math.min(Math.max(position.y, 0), innerHeight - (dragRef?.value?.offsetHeight || 0));
+    if (dragRef.value) {
+      if (newX <= 50 || newY <= 50) {
+        //
+      }
+      else if (newX >= innerWidth - (dragRefStyle.value.maxWidth || dragRef.value.offsetWidth) || newY >= innerHeight - (dragRefStyle.value.maxHeight || dragRef.value.offsetHeight)) {
+        dragRefStyle.value.maxWidth = Math.max(dragRef.value.offsetWidth, dragRefStyle.value.maxWidth);
+        dragRefStyle.value.maxHeight = Math.max(dragRef.value.offsetHeight, dragRefStyle.value.maxHeight);
+      }
+      position.x = newX;
+      position.y = newY;
+    }
+  },
+  onEnd: (position) => {
+    const { innerWidth, innerHeight } = window;
+    const dragRefElement = dragRef.value;
+    const dragRefWidth = dragRefElement?.offsetWidth || 0;
+    const dragRefHeight = dragRefElement?.offsetHeight || 0;
+    const maxWidth = dragRefStyle.value.maxWidth || dragRefWidth;
+    const maxHeight = dragRefStyle.value.maxHeight || dragRefHeight;
+    // 限制不移出屏幕边缘
+    const newX = Math.min(Math.max(position.x, 0), innerWidth - dragRefWidth);
+    const newY = Math.min(Math.max(position.y, 0), innerHeight - dragRefHeight);
+
+    if (dragRefElement) {
+      const isCloseToMaxEdge = newX >= innerWidth - maxWidth || newY >= innerHeight - maxHeight;
+      if (isCloseToMaxEdge) {
+        position.x = newX + dragRefWidth + 60 >= innerWidth ? (innerWidth - dragRefWidth) : newX;
+        position.y = newY + dragRefHeight + 60 >= innerHeight ? (innerHeight - dragRefHeight) : newY;
+      }
+    }
+  },
+});
+
+// 打开视频
 const show = computed({
   get: () => props.modelValue,
   set: (val: boolean) => {
     if (val && videoInfo.value.url !== "") {
+      // 添加监听
       document.addEventListener("fullscreenchange", onFullscreenChange);
     }
     emit("update:modelValue", val);
@@ -75,14 +128,6 @@ function onEnded() {
   status.value = "ended";
 }
 
-// 全屏关闭时处理
-// function onClosed() {
-//   if (isFullscreen.value) {
-//     document.exitFullscreen().catch(() => {}); // 捕获可能的错误
-//   }
-//   isFullscreen.value = false;
-// }
-
 // 全屏事件监听
 function onFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement;
@@ -94,25 +139,11 @@ onMounted(() => {
     // console.log(payload);
     switch (type) {
       case "play":
-        status.value = "playing";
-        show.value = true;
-        videoInfo.value = {
-          url: payload.url.startsWith("http") ? payload.url : "",
-          muted: false,
-          mouseX: payload.mouseX || undefined,
-          mouseY: payload.mouseY || undefined,
-          thumbUrl: payload.thumbUrl,
-          thumbSize: payload.thumbSize,
-          thumbWidth: payload.thumbWidth,
-          thumbHeight: payload.thumbHeight,
-        };
-        break;
       case "play-dbsound":
-        status.value = "play-dbsound";
-        show.value = true;
+        status.value = type === "play" ? "playing" : "play-dbsound";
         videoInfo.value = {
           url: payload.url.startsWith("http") ? payload.url : "",
-          muted: true,
+          muted: status.value === "play-dbsound",
           mouseX: payload.mouseX || undefined,
           mouseY: payload.mouseY || undefined,
           thumbUrl: payload.thumbUrl,
@@ -120,6 +151,13 @@ onMounted(() => {
           thumbWidth: payload.thumbWidth,
           thumbHeight: payload.thumbHeight,
         };
+        // 初始化居中
+        show.value = true;
+        nextTick(() => {
+          const { innerWidth, innerHeight } = window;
+          x.value = Math.floor((innerWidth - (dragRef.value?.offsetWidth || 0)) / 2);
+          y.value = Math.floor((innerHeight - (dragRef.value?.offsetHeight || 0)) / 2);
+        });
         break;
       case "pause":
         status.value = "paused";
@@ -140,12 +178,15 @@ onMounted(() => {
 function destroy() {
   if (videoPlayerRef.value) {
     videoPlayerRef.value?.pause?.();
+  }
+  setTimeout(() => {
+    console.log("销毁");
     videoInfo.value = {
       ...videoInfo.value,
       url: "", // 清空部分
       muted: true,
     };
-  }
+  }, 350);
   document.removeEventListener("fullscreenchange", onFullscreenChange);
   show.value = false;
 }
@@ -193,29 +234,38 @@ const videoSize = computed(() => {
       @click.self="closeDialog"
     >
       <div
-        class="group video-player relative flex-row-c-c animate-[fade-in_0.4s] card-rounded-df shadow-lg transition-none bg-color-2 border-default-hover"
+        ref="dragRef"
+        class="group video-player fixed flex-row-c-c animate-[fade-in_0.4s] card-rounded-df shadow-lg transition-none bg-color-2 border-default-hover"
+        :style="{
+          touchAction: 'none',
+          left: `${x}px`,
+          top: `${y}px`,
+        }"
       >
-        <div class="menu absolute right-2 top-2 z-1 flex gap-4 px-4 py-2 transition-opacity card-default-br sm:(op-0 group-hover:op-100)">
-          <div
-            @click.stop="saveDownloadVideoByUrl(videoInfo.url)"
-          >
-            <i
-              class="i-solar:download-minimalistic-linear"
-              title="另存为"
-              p-2.5 filter-drop-shadow-lg btn-info
-            />
-          </div>
-          <div
-            @click.stop="toggleFullscreen"
-          >
-            <i
-              class="i-tabler:maximize"
-              title="全屏"
-              p-2.8 filter-drop-shadow-lg btn-info
-            />
-          </div>
-          <div @click.stop="closeDialog">
-            <i title="关闭" i-carbon:close p-3 filter-drop-shadow-lg btn-danger />
+        <div class="menu absolute left-0 top-0 z-1 w-full flex flex items-center p-2">
+          <div ref="dragHandler" class="h-10 flex flex-1 cursor-move" />
+          <div class="ml-a flex-row-c-c gap-4 px-4 py-2 transition-opacity card-default-br sm:(op-0 group-hover:op-100)">
+            <div
+              @click.stop="saveDownloadVideoByUrl(videoInfo.url)"
+            >
+              <i
+                class="i-solar:download-minimalistic-linear"
+                title="另存为"
+                p-2.4 filter-drop-shadow-lg btn-info
+              />
+            </div>
+            <div
+              @click.stop="toggleFullscreen"
+            >
+              <i
+                class="i-tabler:maximize"
+                title="全屏"
+                p-2.4 filter-drop-shadow-lg btn-info
+              />
+            </div>
+            <div @click.stop="closeDialog">
+              <i title="关闭" i-carbon:close p-2.8 filter-drop-shadow-lg btn-danger />
+            </div>
           </div>
         </div>
         <video
@@ -231,10 +281,11 @@ const videoSize = computed(() => {
           @pause="onPause"
           @ended="onEnded"
         />
-        <div
-          v-else card-rounded-df
+        <!-- 视频封面 -->
+        <!-- <div
+          v-else-if="!setting.isMobileSize" hidden card-rounded-df sm:block
           :style="{ width: videoSize.width, height: videoSize.height, background: `url(${videoInfo.thumbUrl}) no-repeat center center / cover` }"
-        />
+        /> -->
       </div>
     </div>
   </Transition>
@@ -243,11 +294,13 @@ const videoSize = computed(() => {
 <style scoped>
 /* @unocss-include */
 .animate-zoom-in-dailog {
-  --at-apply: "animate-(zoom-in duration-0.4s)";
-  animation-timing-function: var(--animate-cubic);
+  --at-apply: "animate-fade-in sm:animate-zoom-in";
+  animation-timing-function: var(--animate-cubic) !important;
+  animation-duration: 0.4s !important;
 }
 .animate-zoom-out-dailog {
-  --at-apply: "animate-(zoom-out duration-0.4s)";
-  animation-timing-function: var(--animate-cubic);
+  --at-apply: "animate-fade-out sm:animate-zoom-out";
+  animation-timing-function: var(--animate-cubic) !important;
+  animation-duration: 0.4s !important;
 }
 </style>

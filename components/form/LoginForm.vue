@@ -498,21 +498,5 @@ const options = [
   transition: 0.3s;
   cursor: pointer;
 
-  :deep(.el-input__wrapper) {
-    background-color: var(--el-color-primary);
-    cursor: pointer;
-
-    * {
-      color: #fff;
-      font-weight: 600;
-      letter-spacing: 0.4em;
-    }
-  }
-
-  .dark:deep(.el-input__wrapper) {
-    background-color: var(--el-color-primary);
-    cursor: pointer;
-    color: #fff;
-  }
 }
 </style>
