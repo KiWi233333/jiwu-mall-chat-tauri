@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { UploadProps, UploadRawFile } from "element-plus";
+import type { OssFile } from "@/composables/api/res";
 import { deleteOssFile, getOssErrorCode, getResToken, OssFileType, uploadOssFileSe } from "@/composables/api/res";
 import { StatusCode } from "@/types/result";
 import * as qiniu from "qiniu-js";
@@ -84,7 +84,7 @@ function getNewPathList(list: OssFile[]) {
 // 错误信息
 const error = ref<string>("");
 // 输入框ref
-const inputRef = ref();
+const inputRef = useTemplateRef("inputRef");
 
 // 1、文件改变
 async function hangdleChange(e: Event) {
@@ -121,7 +121,8 @@ async function hangdleChange(e: Event) {
     }
     const data = [...t.files].map((p) => {
       return {
-        id: uploadType === OssFileType.IMAGE ? URL.createObjectURL(p) : BaseUrlVideo + p,
+        id: URL.createObjectURL(p as Blob | MediaSource),
+        // id: uploadType === OssFileType.IMAGE ? URL.createObjectURL(p) : BASE_OSS_PATH + p,
         key: undefined,
         status: "",
         percent: 0,
@@ -135,9 +136,9 @@ async function hangdleChange(e: Event) {
 
 /**
  * 上传文件
- * @param file
+ * @param ossFile 文件对象
  */
-async function onUpload(file: OssFile) {
+async function onUpload(ossFile: OssFile) {
   // 文件校验
   if (fileList.value.length + 1 > limit) { // 限制上传数量
     error.value = `最多只能上传${limit}个文件`;
@@ -146,13 +147,13 @@ async function onUpload(file: OssFile) {
     resetInput();
     return;
   }
-  if (size !== undefined && file?.file?.size && file?.file?.size > size) {
+  if (size !== undefined && ossFile?.file?.size && ossFile?.file?.size > size) {
     error.value = `文件大小不能超过${formatFileSize(size)}`;
     emit("errorMsg", error.value);
     resetInput();
     return;
   }
-  if (minSize !== undefined && file?.file?.size && file?.file?.size < minSize) {
+  if (minSize !== undefined && ossFile?.file?.size && ossFile?.file?.size < minSize) {
     error.value = `文件大小不能小于${formatFileSize(minSize)}`;
     emit("errorMsg", error.value);
     resetInput();
@@ -162,47 +163,95 @@ async function onUpload(file: OssFile) {
     error.value = "";
   }
   // 1）获取凭证
-  const data = await getResToken(uploadType, user.getToken);
-  if (data.code !== StatusCode.SUCCESS) {
-    error.value = data.message;
-    file.status = "warning";
+  const upToken = await getResToken(uploadType, user.getToken);
+  if (upToken.code !== StatusCode.SUCCESS) {
+    error.value = upToken.message;
+    ossFile.status = "warning";
     return;
   }
-  else {
-    file.key = data.data.key;
-  }
+  // 保存上传凭证
+  ossFile.key = upToken.data.key;
   const options = {
     quality: uploadQuality || 0.6,
     noCompressIfLarger: true,
   };
-  if (!file?.file)
+  if (!ossFile?.file)
     return;
 
   // ------------添加到队列-----------
   // 上传中 只能压缩图片
-  if (uploadType === OssFileType.IMAGE && acceptDesc.includes(file.file.type)) {
+  if (uploadType === OssFileType.IMAGE && acceptDesc.includes(ossFile.file.type)) {
     // console.log("文件大小 before:", file?.file?.size);
-    qiniu.compressImage(file?.file, options).then((res) => {
+    qiniu.compressImage(ossFile?.file, options).then((res) => {
       // 2）上传 监视器
       // console.log("after:", res.dist.size);
-      qiniuUpload(res.dist as File, file?.key || "", data.data.uploadToken, file);
+      qiniuUpload(res.dist as File, ossFile?.key || "", upToken.data.uploadToken, ossFile);
     }).catch((e) => {
       console.warn(e);
-      file.status = "warning";
+      ossFile.status = "warning";
       error.value = "图片压缩失败，请稍后再试！";
       emit("errorMsg", error.value);
     }).finally(() => {
       if (!error.value)
-        fileList.value.push(file);
+        fileList.value.push(ossFile);
+    });
+  }
+  else if (uploadType === OssFileType.VIDEO && ossFile?.file) { // 视频先获取一帧，作为封面
+    // 2. 获取封面
+    generateVideoThumbnail(ossFile.file, { quality: 0.4, mimeType: "image/png" }).then(async ({
+      blob,
+      width,
+      height,
+      duration,
+      size,
+    }: VideoFileInfo) => {
+      const coverUrl = URL.createObjectURL(blob);
+      const coverFileRaw = new File([blob], "cover.png", { type: blob.type }) as File;
+      const coverFile = ref<OssFile>({
+        id: coverUrl,
+        key: undefined,
+        status: "",
+        percent: 0,
+        file: coverFileRaw,
+        duration,
+        thumbWidth: width,
+        thumbHeight: height,
+        thumbSize: size,
+      });
+      ossFile.children = [ // 封面复制
+        coverFile.value,
+      ];
+      // 1. 先上传封面图片
+      const coverRes = await getResToken(OssFileType.IMAGE, user.getToken);
+      fileList.value.push(ossFile);
+      if (coverRes.code !== StatusCode.SUCCESS || !ossFile.file) {
+        error.value = coverRes.message;
+        ossFile.status = "warning";
+        return;
+      }
+      coverFile.value.key = coverRes.data.key;
+      // 图片文件上传
+      qiniuUpload(coverFile?.value?.file as File, coverFile.value.key as string, coverRes.data.uploadToken, coverFile.value, false, (theCover) => {
+        if (ossFile.status === "success") {
+          ossFile.status = theCover.status;
+        }
+      });
+      // 2. 上传视频
+      qiniuUpload(ossFile.file, ossFile?.key || "", upToken.data.uploadToken, ossFile);
+    }).catch((e) => {
+      console.warn(e);
+      ossFile.status = "warning";
+      error.value = "视频封面获取失败，请稍后再试！";
+      emit("errorMsg", error.value);
     });
   }
   else {
-    qiniuUpload(file.file, file?.key || "", data.data.uploadToken, file);
-    fileList.value.push(file);
+    qiniuUpload(ossFile.file, ossFile?.key || "", upToken.data.uploadToken, ossFile);
+    fileList.value.push(ossFile);
   }
 }
 // 封装上传处理
-function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
+function qiniuUpload(dist: File, key: string, token: string, file: OssFile, isPush = true, done?: (theFile: OssFile) => void) {
   const observable = uploadOssFileSe(dist, key, token);
   const subscribe = observable.subscribe({
     next(res) {
@@ -226,13 +275,21 @@ function qiniuUpload(dist: File, key: string, token: string, file: OssFile) {
       const current = fileList.value.find(p => p.key === key) || file;
       current.status = "success";
       current.percent = 100;
-      emit("update:modelValue", fileList.value);
-      emit("submit", current.key!, pathList.value, fileList.value);
+      done && done(current);
+      resetRawInp();
+      isPush && emit("update:modelValue", fileList.value);
+      isPush && emit("submit", current.key!, pathList.value, fileList.value);
     },
   });
   file.subscribe = subscribe;
 }
 
+function resetRawInp() {
+  if (inputRef?.value?.value) {
+    inputRef.value.value = "";
+    error.value = "";
+  }
+}
 
 function resetInput() {
   if (inputRef?.value?.value) {
@@ -251,22 +308,28 @@ async function removeItem(t: OssFile) {
     const file = fileList.value.find(item => item.key === t.key);
     if (file && file.status !== "success") {
       file.status = "warning";
-      file.subscribe?.unsubscribe();
+      file.subscribe?.unsubscribe(); // 取消上传
     }
-    const res = await deleteOssFile(t.key, user.getToken);
-    if (res.code === StatusCode.SUCCESS) {
-      fileList.value.splice(
-        fileList.value.findIndex(item => item.key === t.key),
-        1,
-      );
-      flag = true;
-    }
-    else if (res.code === StatusCode.DELETE_NOEXIST_ERR) {
-      fileList.value.splice(
-        fileList.value.findIndex(item => item.key === t.key),
-        1,
-      );
-    }
+    const files = [t, ...(t.children || [])];
+    files.forEach(async (item) => {
+      if (!item.key) {
+        return;
+      }
+      const res = await deleteOssFile(item.key, user.getToken);
+      if (res.code === StatusCode.SUCCESS) {
+        fileList.value.splice(
+          fileList.value.findIndex(item => item.key === t.key),
+          1,
+        );
+        flag = true;
+      }
+      else if (res.code === StatusCode.DELETE_NOEXIST_ERR) {
+        fileList.value.splice(
+          fileList.value.findIndex(item => item.key === t.key),
+          1,
+        );
+      }
+    });
   }
   else {
     fileList.value.splice(
@@ -320,13 +383,14 @@ const [autoAnimateRef, enable] = useAutoAnimate({
 });
 
 // 单文件时
-const handleExceed: UploadProps["onExceed"] = (files) => {
-  if (!multiple || limit === 1) {
-    inputRef.value!.clearFiles();
-    const file = files[0] as UploadRawFile;
-    inputRef.value!.handleStart(file);
-  }
-};
+// :on-exceed="handleExceed"
+// const handleExceed: UploadProps["onExceed"] = (files) => {
+//   if (!multiple || limit === 1) {
+//     // inputRef.value!.clearFiles();
+//     const file = files[0] as UploadRawFile;
+//     // inputRef.value!.handleStart(file);
+//   }
+// };
 onMounted(() => {
   const setting = useSettingStore();
   enable(isAnimate && !setting.settingPage.isCloseAllTransition);
@@ -347,8 +411,6 @@ onMounted(() => {
         class="z-10 block h-full w-full cursor-pointer opacity-0 absolute-center"
         type="file"
         :multiple="multiple"
-
-        :on-exceed="handleExceed"
         :accept="accept"
         :required="required"
         :disabled="disable"

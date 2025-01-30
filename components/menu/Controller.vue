@@ -129,7 +129,7 @@ onMounted(async () => {
       btn-primary
     />
   </ElButton>
-  <ElButton v-if="showClose" text size="small" class="text-amber-1" :style="btnStyle" @click="handleWindow('close')">
+  <ElButton v-if="showClose" text size="small" :style="btnStyle" @click="handleWindow('close')">
     <i i-carbon:close btn-danger title="关闭" />
   </ElButton>
   <slot name="end" />

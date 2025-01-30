@@ -128,4 +128,10 @@ export interface OssFile {
   percent: number
   key?: string
   subscribe?: any
+  children?: OssFile[]
+  // 视频信息
+  duration?: number;
+  thumbSize?: number;
+  thumbWidth?: number;
+  thumbHeight?: number;
 }

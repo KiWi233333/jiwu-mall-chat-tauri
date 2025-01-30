@@ -42,6 +42,111 @@ export function getDBMsgPage(roomId: number, pageSize = 10, cursor: string | num
 
 
 /**
+ * 发送消息
+ * @param dto 参数
+ * @param token tokn
+ * @returns 发送的组合消息
+ */
+export function addChatMessage(dto: ChatMessageDTO, token: string) {
+  return useHttp.post<Result<ChatMessageVO>>(
+    "/chat/message",
+    { ...dto },
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+
+/**
+ * 撤回消息
+ * @param roomId 房间号
+ * @param id 消息id
+ * @param token 身份
+ * @returns 影响行
+ */
+export function refundChatMessage(roomId: number, id: number, token: string) {
+  return useHttp.put<Result<ChatMessageVO>>(
+    `/chat/message/recall/${roomId}/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+/**
+ * 删除消息
+ * @param roomId 房间号
+ * @param id 消息id
+ * @param token 身份
+ * @returns 影响行
+ */
+export function deleteChatMessage(roomId: number, id: number, token: string) {
+  return useHttp.deleted<Result<ChatMessageVO>>(
+    `/chat/message/recall/${roomId}/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+
+/**
+ * 获取消息的已读未读列表（单条消息）
+
+ * @param msgId 消息id
+ * @param searchType 类型
+ * @param pageSize 页码
+ * @param cursor 游标
+ * @param token 身份
+ * @returns 数据
+ */
+export function getChatMessageReadPage(msgId: number, searchType: number, pageSize = 10, cursor: string | number | null = null, token: string) {
+  return useHttp.get<Result<CursorPage<ChatMessageReadVO>>>(
+    "/chat/message/read/page",
+    {
+      msgId,
+      pageSize,
+      searchType,
+      cursor,
+    },
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+/**
+ * 消息阅读上报
+ * @param roomId 房间号
+ * @param token 身份
+ * @returns 影响
+ */
+export function setMsgReadByRoomId(roomId: number, token: string) {
+  return useHttp.put<Result<number>>(
+    `/chat/message/msg/read/${roomId}`,
+    {
+    },
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+}
+
+
+/**
  * 消息返回体
  * Date: 2023-03-23
  *
@@ -162,6 +267,36 @@ export interface ImgBodyMsgVO {
     body?: any;
   };
 }
+
+
+/**
+ * 视频消息
+ */
+export interface VideoBodyMsgVO {
+  url: string;
+  size?: number;
+  duration: number;
+  thumbUrl: string;
+  thumbSize?: number;
+  thumbWidth?: number;
+  thumbHeight?: number;
+  reply: {
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
+    /**
+     * 是否可消息跳转 0否 1是
+     */
+    canCallback: isTrue;
+    /**
+     * 跳转间隔的消息条数
+     */
+    gapCount: number;
+    body?: any;
+  };
+}
+
 /**
  * 文件消息
  */
@@ -253,25 +388,6 @@ export const MessageTypeText = {
 
 
 /**
- * 发送消息
- * @param dto 参数
- * @param token tokn
- * @returns 发送的组合消息
- */
-export function addChatMessage(dto: ChatMessageDTO, token: string) {
-  return useHttp.post<Result<ChatMessageVO>>(
-    "/chat/message",
-    { ...dto },
-    {
-      headers: {
-        Authorization: token,
-      },
-    },
-  );
-}
-
-
-/**
  * ChatMessageDTO
  */
 export interface ChatMessageDTO<T = MessageType> {
@@ -318,71 +434,6 @@ export interface RecallBodyDTO {
   recallUid?: string;
   recallTime?: number;
 }
-/**
- * 撤回消息
- * @param roomId 房间号
- * @param id 消息id
- * @param token 身份
- * @returns 影响行
- */
-export function refundChatMessage(roomId: number, id: number, token: string) {
-  return useHttp.put<Result<ChatMessageVO>>(
-    `/chat/message/recall/${roomId}/${id}`,
-    {},
-    {
-      headers: {
-        Authorization: token,
-      },
-    },
-  );
-}
-
-/**
- * 删除消息
- * @param roomId 房间号
- * @param id 消息id
- * @param token 身份
- * @returns 影响行
- */
-export function deleteChatMessage(roomId: number, id: number, token: string) {
-  return useHttp.deleted<Result<ChatMessageVO>>(
-    `/chat/message/recall/${roomId}/${id}`,
-    {},
-    {
-      headers: {
-        Authorization: token,
-      },
-    },
-  );
-}
-
-
-/**
- * 获取消息的已读未读列表（单条消息）
-
- * @param msgId 消息id
- * @param searchType 类型
- * @param pageSize 页码
- * @param cursor 游标
- * @param token 身份
- * @returns 数据
- */
-export function getChatMessageReadPage(msgId: number, searchType: number, pageSize = 10, cursor: string | number | null = null, token: string) {
-  return useHttp.get<Result<CursorPage<ChatMessageReadVO>>>(
-    "/chat/message/read/page",
-    {
-      msgId,
-      pageSize,
-      searchType,
-      cursor,
-    },
-    {
-      headers: {
-        Authorization: token,
-      },
-    },
-  );
-}
 
 export enum ChatReadType {
   /**
@@ -407,23 +458,4 @@ export interface ChatMessageReadVO {
    */
   uid?: null | string;
   [property: string]: any;
-}
-
-/**
- * 消息阅读上报
- * @param roomId 房间号
- * @param token 身份
- * @returns 影响
- */
-export function setMsgReadByRoomId(roomId: number, token: string) {
-  return useHttp.put<Result<number>>(
-    `/chat/message/msg/read/${roomId}`,
-    {
-    },
-    {
-      headers: {
-        Authorization: token,
-      },
-    },
-  );
 }

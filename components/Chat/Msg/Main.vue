@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText } from "#components";
+import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText, ChatMsgVideo } from "#components";
 import { MessageType } from "@/composables/api/chat/message";
 import { onMsgContextMenu } from ".";
+
 
 /**
  * 消息适配器
@@ -16,6 +17,7 @@ const map: MsgComType = {
   [MessageType.RECALL]: ChatMsgRecall,
   [MessageType.DELETE]: ChatMsgDelete,
   [MessageType.IMG]: ChatMsgImg,
+  [MessageType.VIDEO]: ChatMsgVideo,
   [MessageType.FILE]: ChatMsgFile,
   [MessageType.SYSTEM]: ChatMsgSystem,
   [MessageType.AI_CHAT]: ChatMsgAiMsg,
@@ -25,7 +27,7 @@ const map: MsgComType = {
 interface MsgComType {
   [property: number]: any
 }
-const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgOther | null>>();
+const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgVideo | typeof ChatMsgRecall | typeof ChatMsgDelete | typeof ChatMsgSystem | typeof ChatMsgSound | typeof ChatMsgRTC | typeof ChatMsgAiMsg | typeof ChatMsgOther | null>>();
 const chat = useChatStore();
 
 // 右键菜单

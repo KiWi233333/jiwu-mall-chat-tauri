@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { immediate = false, delay = 600 } = defineProps<{
+const { immediate = false, delay = 800 } = defineProps<{
   immediate?: boolean
   delay?: number
 }>();

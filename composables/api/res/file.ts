@@ -231,3 +231,197 @@ export function downloadFileByStreamSaver(url: string, fileName: string, callbac
   };
 }
 
+
+interface ThumbnailOptions {
+  width?: number;
+  height?: number;
+  mimeType?: "image/png" | "image/jpg" | "image/webp" | "image/svg+xml";
+  quality?: number;
+}
+
+/**
+ * 生成视频缩略图
+ * @param file 视频文件
+ * @param options 缩略图选项
+ * @returns 视频缩略图文件
+ */
+export function generateVideoThumbnail(file: File, options: ThumbnailOptions = {
+  mimeType: "image/png",
+  quality: 0.7,
+}): Promise<VideoFileInfo> {
+  return new Promise((resolve, reject) => {
+    // 检查浏览器是否支持 OffscreenCanvas
+    generateThumbnailWithCanvas(file, options, resolve, reject);
+    // const supportsOffscreenCanvas = "OffscreenCanvas" in window;
+    // if (supportsOffscreenCanvas) {
+    //   // 使用 OffscreenCanvas 和 MediaSource 的现代方法
+    //   generateThumbnailWithOffscreenCanvas(file, options, resolve, reject);
+    // }
+    // else {
+    //   // 使用传统的 <video> 和 <canvas> 方法
+    //   generateThumbnailWithCanvas(file, options, resolve, reject);
+    // }
+  });
+}
+
+function generateThumbnailWithOffscreenCanvas(
+  file: File,
+  options: ThumbnailOptions,
+  resolve: (value: Blob) => void,
+  reject: (reason: Error) => void,
+): void {
+  const mediaSource = new MediaSource();
+  const videoUrl = URL.createObjectURL(mediaSource);
+  const offscreenCanvas = new OffscreenCanvas(options.width || 320, options.height || 240); // 设置封面大小
+  const ctx = offscreenCanvas.getContext("2d");
+
+  mediaSource.addEventListener("sourceopen", async () => {
+    const mimeType = await detectMimeType(file);
+    if (!mimeType) {
+      reject(new Error("Unsupported video format."));
+      return;
+    }
+
+    const sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      if (e.target && e.target.result) {
+        const arrayBuffer = e.target.result as ArrayBuffer;
+        sourceBuffer.appendBuffer(arrayBuffer);
+
+        sourceBuffer.addEventListener("updateend", () => {
+          const video = document.createElement("video");
+          video.src = videoUrl;
+          video.addEventListener("loadeddata", () => {
+            video.currentTime = video.duration / 2;
+          });
+
+          video.addEventListener("seeked", () => {
+            if (ctx) {
+              ctx.drawImage(video, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+              offscreenCanvas.convertToBlob().then((blob) => {
+                resolve(blob);
+                URL.revokeObjectURL(videoUrl);
+                mediaSource.endOfStream();
+              });
+            }
+          });
+
+          video.addEventListener("error", (e) => {
+            reject(new Error("Error occurred while playing the video."));
+          });
+        });
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+
+    reader.onerror = (e) => {
+      reject(new Error("Error occurred while reading the file."));
+    };
+  });
+
+  mediaSource.addEventListener("error", (e) => {
+    reject(new Error("Error occurred while generating thumbnail using OffscreenCanvas."));
+  });
+}
+
+function detectMimeType(file: File): Promise<string | null> {
+  return new Promise<string | null>((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target && e.target.result) {
+        const arrayBuffer = e.target.result as ArrayBuffer;
+        const dataView = new DataView(arrayBuffer);
+
+        // 检测文件头
+        if (dataView.getUint32(0) === 0x66747970) { // 'ftyp'
+          // MP4 文件
+          resolve("video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"");
+        }
+        else if (dataView.getUint32(0) === 0x1A45DFA3) { // EBML header
+          // WebM 文件
+          resolve("video/webm; codecs=\"vp8, vorbis\"");
+        }
+        else if (dataView.getUint8(0) === 0x4F && dataView.getUint8(1) === 0x67) { // 'Og'
+          // OGG 文件
+          resolve("video/ogg; codecs=\"theora, vorbis\"");
+        }
+        else {
+          resolve(null); // 未知格式
+        }
+      }
+    };
+    reader.readAsArrayBuffer(file.slice(0, 10)); // 读取文件头
+  });
+}
+
+
+/**
+ * 生成视频缩略图
+ * @param file 视频文件
+ * @param options 缩略图选项
+ * @param resolve 成功回调
+ * @param reject 失败回调
+ */
+function generateThumbnailWithCanvas(
+  file: File,
+  options: ThumbnailOptions,
+  resolve: (fileInfo: VideoFileInfo) => void,
+  reject: (reason: Error) => void,
+): void {
+  const video = document.createElement("video");
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (e.target && e.target.result) {
+      video.src = e.target.result as string;
+
+      // 视频时长
+      video.addEventListener("loadeddata", () => {
+        video.currentTime = video.duration / 2;
+      });
+
+      // 视频尺寸
+      video.addEventListener("seeked", () => {
+        canvas.width = options.width || video.videoWidth;
+        canvas.height = options.height || video.videoHeight;
+        if (!ctx) {
+          reject(new Error("Error occurred while generating thumbnail using Canvas."));
+          return;
+        }
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve({
+              blob,
+              duration: video.duration,
+              width: video.videoWidth,
+              height: video.videoHeight,
+              size: file.size,
+            });
+          }
+          else {
+            reject(new Error("Error occurred while generating thumbnail using Canvas."));
+          }
+        }, options.mimeType || "image/png", options.quality || 1);
+      });
+    }
+  };
+  reader.readAsDataURL(file);
+
+  video.addEventListener("error", (e) => {
+    reject(new Error("Error occurred while generating thumbnail using Canvas."));
+  });
+}
+
+export interface VideoFileInfo {
+  blob: Blob;
+  duration: number;
+  width: number;
+  height: number;
+  size: number;
+}

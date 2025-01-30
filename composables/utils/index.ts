@@ -443,3 +443,33 @@ export async function convertImgToPng(
     return null;
   }
 }
+export function computedImgScaleSize(
+  originalWidth: number,
+  originalHeight: number,
+  options: ImageScaleOptions,
+): { width: number; height: number } {
+  const { maxWidth, maxHeight } = options;
+
+  // 如果没有指定最大宽度或最大高度，则直接返回原始尺寸
+  if (!maxWidth && !maxHeight) {
+    return { width: originalWidth, height: originalHeight };
+  }
+
+  // 计算宽度和高度的缩放比例
+  const widthScale = maxWidth ? maxWidth / originalWidth : 1;
+  const heightScale = maxHeight ? maxHeight / originalHeight : 1;
+  // 选择最小的缩放比例，以确保图像不会超出限制
+  const scale = Math.min(widthScale, heightScale);
+  // 根据缩放比例计算新的宽度和高度
+  const newWidth = originalWidth * scale;
+  const newHeight = originalHeight * scale;
+
+  return {
+    width: newWidth,
+    height: newHeight,
+  };
+}
+export interface ImageScaleOptions {
+  maxWidth?: number; // 最大宽度
+  maxHeight?: number; // 最大高度
+};

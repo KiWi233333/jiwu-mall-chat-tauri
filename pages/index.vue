@@ -7,6 +7,8 @@ const ws = useWsStore();
 const setting = useSettingStore();
 const online = useOnline();
 const chat = useChatStore();
+
+const showVideoDialog = ref(false);
 </script>
 
 <template>
@@ -66,8 +68,11 @@ const chat = useChatStore();
         <!-- 缓存 页面内容 -->
         <NuxtPage keepalive />
       </div>
+      <!-- 视频播放器 -->
+      <UtilVideoPlayerDialog v-model="showVideoDialog" />
       <!-- RTC通话弹窗 -->
       <ChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
+      <!-- 移动端菜单 -->
       <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
     </div>
   </main>

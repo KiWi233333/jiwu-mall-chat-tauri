@@ -43,7 +43,6 @@ const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExis
 const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); // 自己不存在 或 不是好友
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
-
 // 状态
 const showLordMsg = ref(false);
 const loadInputDone = ref(false); // 用于移动尺寸动画
@@ -51,15 +50,19 @@ const loadInputTimer = shallowRef<NodeJS.Timeout>();
 
 // ref
 const inputOssImgUploadRef = useTemplateRef("inputOssImgUploadRef");
+const inputOssVideoUploadRef = useTemplateRef("inputOssVideoUploadRef");
 const inputAllRef = useTemplateRef("inputAllRef"); // 输入框
 const formRef = useTemplateRef("formRef"); // 表单
 const inputOssFileUploadRef = useTemplateRef("inputOssFileUploadRef"); // 文件上传
 const imgList = ref<OssFile[]>([]);
 const fileList = ref<OssFile[]>([]);
+const videoList = ref<OssFile[]>([]);
 
 // 计算 computed
 const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
 const isUploadFile = computed(() => chat.msgForm.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
+const isUploadVideo = computed(() => chat.msgForm.msgType === MessageType.VIDEO && !!videoList?.value?.filter(f => f.status === "")?.length);
+const isBtnLoading = computed(() => isSending.value || isUploadImg.value || isUploadFile.value || isUploadVideo.value);
 const SelfExistTextMap = { // 好友状态
   [RoomType.SELFT]: "已经不是好友",
   [RoomType.GROUP]: "已经不是群成员",
@@ -79,8 +82,12 @@ watch(() => chat.atUidListTemp, (val) => {
   }
 }, { deep: true });
 
+
 // 文件上传（图片）回调
-function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
+function onSubmitImg(key: string, pathList: string[]) {
+  fileList.value = [];
+  // imgList.value = [];
+  videoList.value = [];
   const file = imgList.value.find(f => f.key === key);
   if (key && file?.file) {
     const url = window.URL || window.webkitURL;
@@ -108,6 +115,9 @@ function onSubmitImg(key: string, pathList: string[], fileList: OssFile[]) {
 
 // 文件上传（文件）回调
 function onSubmitFile(key: string, pathList: string[]) {
+  // fileList.value = [];
+  imgList.value = [];
+  videoList.value = [];
   const file = fileList.value.find(f => f.key === key);
   if (key && file?.file) {
     chat.msgForm = {
@@ -116,10 +126,34 @@ function onSubmitFile(key: string, pathList: string[]) {
       content: chat.msgForm.content,
       body: {
         atUidList: chat.msgForm.body.atUidList,
-
         url: key,
         fileName: file?.file?.name,
         size: file?.file?.size,
+      },
+    };
+  }
+}
+
+// 视频上传回调
+function onSubmitVideo(key: string, pathList: string[]) {
+  fileList.value = [];
+  imgList.value = [];
+  // videoList.value = [];
+  const file = videoList.value.find(f => f.key === key);
+  if (key && file?.file) {
+    chat.msgForm = {
+      roomId: chat.theContact.roomId,
+      msgType: MessageType.VIDEO, // 视频
+      content: chat.msgForm.content,
+      body: {
+        url: key,
+        fileName: file?.file?.name,
+        size: file?.file?.size,
+        duration: file?.children?.[0]?.duration || 0,
+        thumbUrl: file?.children?.[0]?.key || undefined,
+        thumbSize: file?.children?.[0]?.thumbSize || 0,
+        thumbWidth: file?.children?.[0]?.thumbWidth || 0,
+        thumbHeight: file?.children?.[0]?.thumbHeight || 0,
       },
     };
   }
@@ -151,37 +185,52 @@ async function onPaste(e: ClipboardEvent) {
   const fileArr = Array.from(e.clipboardData.items);
   const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
   const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
-  if ((!img && !file) || !inputOssImgUploadRef.value)
+  const video = fileArr.find(v => v.type.includes("video"))?.getAsFile();
+  if ((!img && !file && !video) || !inputOssImgUploadRef.value)
     return;
-  if (file) {
-    if (isUploadFile.value) {
-      ElMessage.warning("文件正在上传中，请稍后再试！");
-      return;
+  if (video) {
+    inputOssImgUploadRef.value?.resetInput?.();
+    inputOssFileUploadRef.value?.resetInput?.();
+    await inputOssVideoUploadRef.value?.onUpload({
+      id: URL.createObjectURL(video),
+      key: undefined,
+      status: "",
+      percent: 0,
+      file: video,
+    });
+    chat.msgForm.msgType = MessageType.VIDEO; // 视频
+  }
+  else
+    if (file) {
+      if (isUploadFile.value) {
+        ElMessage.warning("文件正在上传中，请稍后再试！");
+        return;
+      }
+      inputOssImgUploadRef.value?.resetInput?.();
+      inputOssFileUploadRef.value?.resetInput?.();
+      fileList.value = [];
+      await inputOssFileUploadRef.value?.onUpload({
+        id: URL.createObjectURL(file),
+        key: undefined,
+        status: "",
+        percent: 0,
+        file,
+      });
+      chat.msgForm.msgType = MessageType.FILE; // 文件
     }
-    inputOssImgUploadRef.value?.resetInput?.();
-    inputOssFileUploadRef.value?.resetInput?.();
-    fileList.value = [];
-    await inputOssFileUploadRef.value?.onUpload({
-      id: URL.createObjectURL(file),
-      key: undefined,
-      status: "",
-      percent: 0,
-      file,
-    });
-    chat.msgForm.msgType = MessageType.FILE; // 文件
-  }
-  if (img) {
-    inputOssImgUploadRef.value?.resetInput?.();
-    inputOssFileUploadRef.value?.resetInput?.();
-    await inputOssImgUploadRef.value?.onUpload({
-      id: URL.createObjectURL(img),
-      key: undefined,
-      status: "",
-      percent: 0,
-      file: img,
-    });
-    chat.msgForm.msgType = MessageType.IMG; // 图片
-  }
+    else
+      if (img) {
+        inputOssImgUploadRef.value?.resetInput?.();
+        inputOssFileUploadRef.value?.resetInput?.();
+        await inputOssImgUploadRef.value?.onUpload({
+          id: URL.createObjectURL(img),
+          key: undefined,
+          status: "",
+          percent: 0,
+          file: img,
+        });
+        chat.msgForm.msgType = MessageType.IMG; // 图片
+      }
 }
 
 // 阅读本房间（防抖）
@@ -229,7 +278,7 @@ async function onSubmit(e?: KeyboardEvent) {
     // 图片
     if (chat.msgForm.msgType === MessageType.IMG) {
       if (isUploadImg.value) {
-        ElMessage.warning("图片正在上传中，请稍后再试！");
+        ElMessage.warning("图片正在上传中，请稍等！");
         return;
       }
       if (imgList.value.length > 1) {
@@ -239,7 +288,12 @@ async function onSubmit(e?: KeyboardEvent) {
     }
     // 文件
     if (chat.msgForm.msgType === MessageType.FILE && isUploadFile.value) {
-      ElMessage.warning("文件正在上传中，请稍后再试！");
+      ElMessage.warning("文件正在上传中，请稍等！");
+      return;
+    }
+    // 视频
+    if (chat.msgForm.msgType === MessageType.VIDEO && isUploadVideo.value) {
+      ElMessage.warning("视频正在上传中，请稍等！");
       return;
     }
     // 开始提交
@@ -359,6 +413,7 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
   const textMap = {
     [OssFileType.IMAGE]: "图片",
     [OssFileType.FILE]: "文件",
+    [OssFileType.VIDEO]: "视频",
     [OssFileType.SOUND]: "语音",
   } as Record<OssFileType, string>;
   const opt = {
@@ -373,10 +428,18 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
         onClick: async () => {
           if (!key)
             return;
-          const item = fileList.value.find(f => f.key === key);
+          const filesMap: Record<OssFileType, (Ref<OssFile[]> | undefined)> = {
+            [OssFileType.IMAGE]: imgList,
+            [OssFileType.FILE]: fileList,
+            [OssFileType.VIDEO]: videoList,
+            [OssFileType.SOUND]: undefined,
+            [OssFileType.FONT]: undefined,
+          };
+          const item = filesMap?.[type]?.value.find(f => f.key === key);
           if (item)
             item.subscribe.unsubscribe();
-          await deleteOssFile(key, user.getToken);
+          const keys = [key, ...(item?.children || []).map(f => f.key)];
+          keys.forEach(k => k && deleteOssFile(k, user.getToken));
           ElMessage.closeAll("error");
           if (type === OssFileType.IMAGE) {
             imgList.value.splice(
@@ -385,18 +448,43 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
             );
             inputOssImgUploadRef?.value?.resetInput?.();
           }
-          if (type === OssFileType.FILE) {
-            fileList.value.splice(
-              index,
-              1,
-            );
-            inputOssFileUploadRef?.value?.resetInput?.();
-          }
+          filesMap?.[type]?.value.splice(
+            index,
+            1,
+          );
+          inputOssFileUploadRef?.value?.resetInput?.();
         },
       },
     ],
   };
   ContextMenu.showContextMenu(opt);
+}
+
+/**
+ * 显示视频详情
+ * @param e 事件对象
+ * @param video 视频对象
+ *
+ */
+function showVideoDetail(e: MouseEvent, video: OssFile) {
+  const thumb = video.children?.[0];
+  if (!video?.key) {
+    return;
+  }
+  mitter.emit(MittEventType.VIDEO_READY, {
+    type: "play",
+    payload: {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      url: BaseUrlVideo + video.key,
+      duration: video?.duration || 0,
+      thumbUrl: BaseUrlImg + thumb?.key,
+      size: video.file?.size || 0,
+      thumbSize: thumb?.thumbSize || 0,
+      thumbWidth: thumb?.thumbWidth || 0,
+      thumbHeight: thumb?.thumbHeight || 0,
+    },
+  });
 }
 
 // 重置表单
@@ -411,6 +499,7 @@ function resetForm() {
   };
   imgList.value = [];
   fileList.value = [];
+  videoList.value = []; // 清空视频
   // store
   chat.atUserList.splice(0);
 
@@ -495,7 +584,7 @@ onMounted(() => {
   mitter.on(MittEventType.MSG_FORM, ({
     type,
     // payload ={}
-  }: MSG_FORM_EVENT_PLAOYLOAD) => {
+  }: MsgFormEventPlaoyload) => {
     if (type === "focus") {
       inputAllRef.value?.input?.focus(); // 聚焦
     }
@@ -521,12 +610,12 @@ onUnmounted(() => {
     v-bind="$attrs"
     :disabled="isDisabledFile"
   >
-    <div class="absolute w-full p-2 -transform-translate-y-full" @click.prevent="() => {}">
+    <div class="absolute w-full flex flex-col p-2 -transform-translate-y-full" @click.prevent="() => {}">
       <!-- 滚动底部 -->
       <div
         v-if="chat.theContact?.msgList?.length > 20"
-        data-fade
-        float-right mb-2 mr-2 rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover @click="setReadAndScrollBottom"
+
+        data-fade mb-2 ml-a mr-2 w-fit rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover @click="setReadAndScrollBottom"
       >
         <i class="i-solar:double-alt-arrow-down-line-duotone block h-5 w-5 transition-200" />
       </div>
@@ -548,7 +637,10 @@ onUnmounted(() => {
         style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;"
       >
         <div
-          v-for="(img, i) in imgList" :key="i" class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default hover:shadow"
+          v-for="(img, i) in imgList" :key="i" v-loading="img.status !== 'success'"
+          class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default hover:shadow"
+          :element-loading-spinner="defaultLoadingIcon"
+          element-loading-background="transparent"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
         >
           <CardElImage
@@ -560,12 +652,52 @@ onUnmounted(() => {
             :class="imgList.length > 1 ? 'w-4rem h-4rem sm:(w-6rem h-6rem)' : 'h-9rem max-w-16rem'"
             title="左键放大 | 右键删除"
           />
-          <small
-            v-if="img.status !== 'success'"
-            class="absolute right-0 top-0 h-full w-full flex-row-c-c truncate p-4 backdrop-blur-4px"
+        </div>
+      </div>
+      <!-- 视频 -->
+      <div
+        v-if="videoList.length > 0"
+        class="w-full cursor-pointer"
+        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;width:fit-content;justify-content: center;gap: 0.5rem;grid-gap:4;margin-left: auto;"
+      >
+        <div
+          v-for="(video, i) in videoList"
+          :key="i"
+          title="点击播放[视频]"
+          class="relative"
+          @click="showVideoDetail($event, video)"
+          @contextmenu="onContextMenu($event, video.key, i, OssFileType.VIDEO)"
+        >
+          <div
+            v-if="video?.children?.[0]?.id"
+            v-loading="video.status !== 'success'"
+            :element-loading-spinner="defaultLoadingIcon"
+            element-loading-background="transparent"
+            class="relative flex-row-c-c cursor-pointer"
           >
-            {{ img.status === '' ? '上传中...' : '上传失败' }}
-          </small>
+            <img
+              error-class="i-solar:file-smile-line-duotone p-2.8"
+              :src="video?.children?.[0]?.id"
+              class="h-full max-h-16rem max-w-16rem min-h-8rem min-w-8rem w-full flex-row-c-c shadow card-default"
+            >
+            <div class="play-btn h-12 w-12 flex-row-c-c rounded-full absolute-center-center" style="border-width: 2px;">
+              <i i-solar:alt-arrow-right-bold ml-1 p-4 />
+            </div>
+          </div>
+          <div class="mt-1 w-full truncate card-rounded-df pb-2 pl-3 pr-2 backdrop-blur transition-all bg-color-br" :class="video.status !== 'success' ? 'h-8' : 'h-0 !p-0 '">
+            <el-progress
+              striped
+              :striped-flow="video.status !== 'success'"
+              :duration="10"
+              class="absolute mt-2 min-w-8em w-full"
+              :percentage="video.percent" :stroke-width="4" :status="video?.status as any || ''"
+            >
+              {{ formatFileSize(video?.file?.size || 0) }}
+            </el-progress>
+          </div>
+          <!-- <div v-if="formattedDuration" class="bg-blur absolute bottom-1 right-2 text-shadow">
+            {{ formattedDuration }}
+          </div> -->
         </div>
       </div>
       <!-- 文件 -->
@@ -580,7 +712,7 @@ onUnmounted(() => {
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
           <img :src="file?.file?.type ? (FILE_TYPE_ICON_MAP[file?.file?.type] || FILE_TYPE_ICON_DEFAULT) : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
-          <div class="mx-2 max-w-16vw min-w-8rem">
+          <div class="max-w-16rem min-w-8rem">
             <p class="truncate text-sm">
               {{ file?.file?.name || file.key }}
             </p>
@@ -658,8 +790,8 @@ onUnmounted(() => {
             @click="handlePlayAudio('del')"
           />
         </div>
-        <!-- 图片 -->
         <div v-show="chat.msgForm.msgType !== MessageType.SOUND" class="grid cols-4 items-center gap-4 sm:flex">
+          <!-- 图片 -->
           <InputOssFileUpload
             ref="inputOssImgUploadRef"
             v-model="imgList"
@@ -678,6 +810,26 @@ onUnmounted(() => {
               ElMessage.error(msg)
             }"
             @submit="onSubmitImg"
+          />
+          <!-- 视频 -->
+          <InputOssFileUpload
+            ref="inputOssVideoUploadRef"
+            v-model="videoList"
+            :multiple="false"
+            :size="setting.systemConstant.ossInfo?.video?.fileSize"
+            :min-size="1024"
+            :preview="false"
+            :limit="1"
+            :disable="isDisabledFile"
+            class="i-solar:video-library-line-duotone h-6 w-6 cursor-pointer sm:(h-5 w-5) btn-primary"
+            pre-class="hidden"
+            :upload-type="OssFileType.VIDEO"
+            input-class="op-0 h-6 w-6 sm:(w-5 h-5) cursor-pointer "
+            accept=".mp4,.webm,.mpeg,.flv"
+            @error-msg="(msg:string) => {
+              ElMessage.error(msg)
+            }"
+            @submit="onSubmitVideo"
           />
           <!-- 文件 -->
           <InputOssFileUpload
@@ -775,24 +927,13 @@ onUnmounted(() => {
               群成员
             </span>
           </template>
-          <!-- <template #append>
-            <BtnElButton
-              v-if="setting.isMobileSize"
-              :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
-              size="small"
-              :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
-              @click="onSubmit()"
-            >
-              发送
-            </BtnElButton>
-          </template> -->
         </el-mention>
         <BtnElButton
           v-if="setting.isMobileSize"
           :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
           type="primary"
           class="mb-1px ml-2 mr-2"
-          :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
+          :loading="isBtnLoading"
           @click="onSubmit()"
         >
           发送
@@ -819,7 +960,7 @@ onUnmounted(() => {
           round
           icon-class="i-solar:chat-line-bold mr-1.5"
           size="small"
-          :loading="isSending || isUploadImg || isUploadFile || isPalyAudio"
+          :loading="isBtnLoading"
           style="padding: 0.8rem;width: 6rem;"
           @click="onSubmit()"
         >
@@ -989,6 +1130,14 @@ onUnmounted(() => {
   100% {
     box-shadow: 0 0 0.5rem var(--shadow-color);
     background-position: 0% 50%;
+  }
+}
+
+.play-btn {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  --at-apply: "text-white  border-(2px solid #ffffff) bg-(gray-5 op-30) backdrop-blur-3px";
+  .bg-blur {
+    --at-apply: " bg-(gray-5 op-30) backdrop-blur";
   }
 }
 </style>

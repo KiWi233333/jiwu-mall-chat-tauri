@@ -263,7 +263,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="group z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0) card-bg-color-2"
+    class="group main"
   >
     <!-- 搜索群聊 -->
     <div
@@ -372,6 +372,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
+.main {
+  --at-apply: "z-4 h-full flex flex-shrink-0 flex-col select-none overflow-hidden border-0 border-0 rounded-0 sm:(relative left-0 top-0 w-1/4 pl-0 card-bg-color-2) bg-color-3";
+}
 .contact-list {
   --at-apply: "sm:p-2 p-0";
 
@@ -381,7 +384,7 @@ onBeforeUnmount(() => {
       --at-apply: "transition-none";
     }
     &.is-pin {
-      --at-apply: "border-default";
+      --at-apply: "sm:border-default";
     }
     &.is-checked {
       --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";

@@ -279,6 +279,35 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         onClick: () => chat.setReplyMsg(data),
       },
     ],
+    video: [// video视频内容
+      // 静音播放
+      {
+        label: "静音播放",
+        icon: "i-solar:volume-cross-line-duotone group-hover:(scale-110 i-solar:volume-cross-bold-duotone) group-btn-warning",
+        customClass: "group",
+        onClick: () => {
+          const body = data.message.body as VideoBodyMsgVO;
+          if (!body?.url) {
+            return;
+          }
+          mitter.emit(MittEventType.VIDEO_READY, {
+            type: "play-dbsound",
+            payload: {
+              mouseX: e.clientX,
+              mouseY: e.clientY,
+              url: BaseUrlVideo + body.url,
+              duration: body.duration,
+              size: body.size,
+              thumbUrl: BaseUrlImg + body.thumbUrl,
+              thumbSize: body.thumbSize,
+              thumbWidth: body.thumbWidth,
+              thumbHeight: body.thumbHeight,
+            },
+          });
+        },
+      },
+      ...defaultContextMenu,
+    ],
   };
   const getContextMenuItems = (ctxName: string, isSelf: boolean) => {
     return contextMenuType[ctxName] || [];

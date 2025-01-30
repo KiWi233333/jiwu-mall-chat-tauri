@@ -16,16 +16,34 @@ export enum MittEventType {
   MSG_LIST_SCROLL = "msg-list-scroll",
   // 表单操作事件
   MSG_FORM = "msg-form-focus",
+  // 视频组件事件
+  VIDEO_READY = "video-ready",
 }
 
 // 组件滚动事件载荷
-export interface MSG_LIST_SCROLL_EVENT_PLAOYLOAD {
+export interface MsgListScrollPayload {
   type: "scrollBottom" | "scrollTop" | "scrollReplyMsg" | "saveScrollTop",
   payload: any
 }
 
+// 视频组件事件载荷
+export interface VideoReadyPayload {
+  type: "play" | "play-dbsound" | "pause" | "ended",
+  payload: {
+    url: string;
+    duration: number;
+    thumbUrl?: string;
+    mouseX: number;
+    mouseY: number;
+
+    size?: number;
+    thumbSize?: number;
+    thumbWidth?: number;
+    thumbHeight?: number;
+  }
+}
 // 表单操作事件载荷
-export interface MSG_FORM_EVENT_PLAOYLOAD {
+export interface MsgFormEventPlaoyload {
   type: "focus" | "blur",
   payload?: any
 }
@@ -44,9 +62,11 @@ type EventPayloadMap = {
   [MittEventType.PIN_CONTACT]: WSPinContactMsg;
   [MittEventType.OTHER]: object;
   // 消息列表组件事件
-  [MittEventType.MSG_LIST_SCROLL]: MSG_LIST_SCROLL_EVENT_PLAOYLOAD;
+  [MittEventType.MSG_LIST_SCROLL]: MsgListScrollPayload;
   // 表单操作事件
-  [MittEventType.MSG_FORM]: MSG_FORM_EVENT_PLAOYLOAD;
+  [MittEventType.MSG_FORM]: MsgFormEventPlaoyload;
+  // 视频组件事件
+  [MittEventType.VIDEO_READY]: VideoReadyPayload;
 };
 
 export type MittEvents = {
@@ -65,8 +85,8 @@ const eventAndWsMap: Readonly<Record<WsMsgBodyType, MittEventType>> = {
   [WsMsgBodyType.DELETE]: MittEventType.DELETE,
   [WsMsgBodyType.RTC_CALL]: MittEventType.RTC_CALL,
   [WsMsgBodyType.PIN_CONTACT]: MittEventType.PIN_CONTACT,
-} as const;
 
+} as const;
 export function resolteChatPath(type: WsMsgBodyType): MittEventType {
   return eventAndWsMap[type] || MittEventType.OTHER;
 }
@@ -89,4 +109,5 @@ export function removeWsEventListener() {
   mitter.off(MittEventType.OTHER);
   mitter.off(MittEventType.MSG_LIST_SCROLL);
   mitter.off(MittEventType.MSG_FORM);
+  mitter.off(MittEventType.VIDEO_READY);
 }
