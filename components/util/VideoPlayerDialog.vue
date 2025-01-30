@@ -180,8 +180,8 @@ const videoSize = computed(() => {
 <template>
   <Transition
     mode="out-in"
-    enter-active-class="animate-[zoom-in_0.4s_var(--animate-cubic)]"
-    leave-active-class="animate-[zoom-out_0.3s_var(--animate-cubic)]"
+    enter-active-class="animate-zoom-in-dailog"
+    leave-active-class="animate-zoom-out-dailog"
   >
     <div
       v-show="show"
@@ -230,4 +230,13 @@ const videoSize = computed(() => {
 </template>
 
 <style scoped>
+/* @unocss-include */
+.animate-zoom-in-dailog {
+  --at-apply: "animate-(zoom-in duration-0.4s)";
+  animation-timing-function: var(--animate-cubic);
+}
+.animate-zoom-out-dailog {
+  --at-apply: "animate-(zoom-out duration-0.4s)";
+  animation-timing-function: var(--animate-cubic);
+}
 </style>
