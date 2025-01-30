@@ -13,7 +13,7 @@
           src="https://img.shields.io/github/stars/Kiwi233333/jiwu-mall-chat-tauri.svg?style=social">
       </a>
     </div>
-    <div >
+    <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/commits" target="_blank">
         <img class="disabled-img-view" alt="Commit"
           src="https://img.shields.io/github/commit-activity/m/Kiwi233333/jiwu-mall-chat-tauri">
@@ -21,30 +21,36 @@
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/issues" target="_blank">
         <img class="disabled-img-view" alt="Issues" src="https://img.shields.io/github/issues/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
+    </div>
+    <div>
       <a href="`https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/main/LICENSE`" target="_blank">
-         <img class="disabled-img-view" alt="License"
+          <img class="disabled-img-view" alt="License"
           src="https://img.shields.io/github/license/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
+      <a href="https://app.netlify.com/sites/jiwuchat/deploys" target="_blank">
+          <img src="https://api.netlify.com/api/v1/badges/b68ad9ac-53e5-4c5a-ac56-a8882ffe7697/deploy-status" alt="+QQ群"/>
+      </a>
       <a href="https://qm.qq.com/q/iSaETNVdKw" target="_blank">
-        <img src="https://img.shields.io/badge/+QQ群 -blue?logo=tencentqq&logoColor=white" alt="+QQ群"/>
+        <img src="https://img.shields.io/badge/QQ群:939204073 -blue?logo=tencentqq&logoColor=white" alt="QQ群"/>
       </a>
     </div>
 
 语言 : 简体中文 | [English](./README.en.md)
+
 </div>
 
 ## 介绍
 
-极物聊天 Tauri APP 是一个基于Nuxt3 + Tauri + element-plus 基本框架的聊天桌面应用。它提供了一个美观的用户界面，并集成了聊天和社交功能。同时，它还支持AI购物聊天和全局夜间模式。用户可以通过该应用进行实时聊天、分享动态和AI客服问答。
+JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊天应用，具备实时消息、WebRTC 音视频通话、屏幕共享以及 AI 购物功能。它支持无缝跨设备通信，涵盖文本、图片、文件和语音消息，还支持群聊和可定制化设置。提供浅色/深色模式，助力高效社交网络。✨
 
 ## 一套代码，多端适配
 
 ![多端适配](.doc/previews.png)
 
 ## 默认账号
-
 - 账号：ikun233
 - 密码：123456
+- 体验：[Web端地址](https://chat.jiwu.kiwi233.top/)
 
 注：该账号上传图片、修改密码等部分没有权限
 

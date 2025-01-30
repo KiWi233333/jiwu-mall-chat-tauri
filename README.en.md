@@ -4,16 +4,17 @@
  </div>
  <h2 align=center style="margin: 2em 0;">JiwuChat Tauri APP</h2>
 
+
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
-        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project Address-blueviolet.svg?style=plastic">
+        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-JiwuChat-blueviolet.svg?style=plasticr">
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
         <img class="disabled-img-view" alt="License"
           src="https://img.shields.io/github/stars/Kiwi233333/jiwu-mall-chat-tauri.svg?style=social">
       </a>
     </div>
-    <div >
+    <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/commits" target="_blank">
         <img class="disabled-img-view" alt="Commit"
           src="https://img.shields.io/github/commit-activity/m/Kiwi233333/jiwu-mall-chat-tauri">
@@ -21,8 +22,13 @@
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/issues" target="_blank">
         <img class="disabled-img-view" alt="Issues" src="https://img.shields.io/github/issues/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
+    </div>
+    <div>
+      <a href="https://app.netlify.com/sites/jiwuchat/deploys" target="_blank">
+          <img src="https://api.netlify.com/api/v1/badges/b68ad9ac-53e5-4c5a-ac56-a8882ffe7697/deploy-status" alt="+QQ群"/>
+      </a>
       <a href="`https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/main/LICENSE`" target="_blank">
-         <img class="disabled-img-view" alt="License"
+          <img class="disabled-img-view" alt="License"
           src="https://img.shields.io/github/license/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
     </div>
@@ -32,7 +38,7 @@ Language: English | [Simplified Chinese](./README.md)
 
 ## Introduction
 
-JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + element-plus framework. It provides an aesthetically pleasing user interface and integrates chat and social features. It also supports AI shopping chat and global dark mode. Users can engage in real-time chat, share updates, and AI customer service Q&A through the app.
+JiwuChat is a lightweight (~10MB) multi-platform chat app built with Tauri2 and Nuxt3, featuring real-time messaging, WebRTC audio and video calls, screen sharing, and AI shopping. It offers seamless cross-device communication with text, image, file, and voice messaging, as well as group chats and customizable settings. Available in light and dark modes for efficient social networking. ✨
 
 ## One Code, Multi-platform Support
 
@@ -42,6 +48,7 @@ JiwuChat Tauri APP is a chat desktop application based on the Nuxt3 + Tauri + el
 
 - Account: ikun233
 - Password: 123456
+- Experience: [Web Address](https://chat.jiwu.kiwi233.top/)
 
 Note: This account does not have permissions for uploading images, changing passwords, etc.
 
