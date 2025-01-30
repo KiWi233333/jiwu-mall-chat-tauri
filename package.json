@@ -2,7 +2,6 @@
   "name": "jiwu-mall-chat",
   "version": "1.5.7",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
   "description": "jiwu-mall-chat",
   "author": "Kiwi2333",
   "scripts": {

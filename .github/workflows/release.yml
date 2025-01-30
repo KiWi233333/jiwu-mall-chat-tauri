@@ -53,7 +53,7 @@ jobs:
         uses: pnpm/action-setup@v4
         id: pnpm-install
         with:
-          version: 9.15.4
+          version: 8
           run_install: false
 
       # 读取更新文档内容 (保留换行符)
