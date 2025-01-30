@@ -284,7 +284,7 @@ function onMaxWindContextmenu(e: MouseEvent) {
     x: e.x,
     zIndex: 2000,
     y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items: [
       {
         customClass: "group",

@@ -419,7 +419,7 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
   const opt = {
     x: e.x,
     y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items: [
       {
         customClass: "group",

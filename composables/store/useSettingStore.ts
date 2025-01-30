@@ -130,6 +130,10 @@ export const useSettingStore = defineStore(
     const isChatFold = ref(false);
     const isThemeChangeLoad = ref(false);
 
+    // --------------------- 右键菜单 -----------------
+    const colorMode = useColorMode();
+    const contextMenuTheme = computed(() => colorMode.value === "dark" ? "mac dark" : "mac");
+
     // --------------------- 聊天设置 -----------------
     const isOpenGroupMember = ref(true); // 是否打开 群聊成员菜单列表
     const showChatMenu = ref(true);
@@ -516,6 +520,7 @@ export const useSettingStore = defineStore(
       // state
       isCollapse,
       isOpenGroupMember,
+      contextMenuTheme,
       isUserCollapse,
       isUserFold,
       sysPermission,

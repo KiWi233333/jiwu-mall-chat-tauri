@@ -8,7 +8,7 @@ const ws = useWsStore();
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
-
+const setting = useSettingStore();
 chat.onOfflineList.splice(0);
 
 /**
@@ -59,7 +59,6 @@ const isTheGroupPermission = computed(() => {
   return props.data?.role === ChatRoomRoleEnum.OWNER || props.data?.role === ChatRoomRoleEnum.ADMIN;
 });
 
-const colorMode = useColorMode();
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   e.preventDefault();
@@ -67,7 +66,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items: [
       {
         label: "@ 他",
@@ -314,7 +313,7 @@ function onAdd() {
       </ListAutoIncre>
     </el-scrollbar>
     <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
       @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
         chat.removeContact(data.roomId);
       })"

@@ -118,11 +118,11 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
   const opt = {
     x: e.x,
     y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items: [
       { // 置顶功能
         customClass: "group",
-        icon: isPin ? "i-solar:pin-bold-duotone group-btn-info group-hover:i-solar:pin-outline" : "i-solar:pin-outline group-btn-info group-hover:i-solar:pin-bold-duotone",
+        icon: isPin ? "i-solar:pin-bold-duotone  group-hover:(i-solar:pin-outline scale-110)" : "i-solar:pin-outline group-hover:i-solar:pin-bold-duotone",
         label: isPin ? "取消置顶" : "置顶",
         onClick: () => {
           chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE, () => {

@@ -189,7 +189,7 @@ const isTheGroupPermission = computed(() => {
   return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN;
 });
 
-const colorMode = useColorMode();
+const setting = useSettingStore();
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   e.preventDefault();
@@ -198,7 +198,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
     x: e.x,
     y: e.y,
     zIndex: 3000, // 高于遮罩层
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items: [
       {
         label: "@ 他",

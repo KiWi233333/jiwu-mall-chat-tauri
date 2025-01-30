@@ -320,7 +320,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: colorMode.preference === "dark" ? "mac dark" : "wind10",
+    theme: setting.contextMenuTheme,
     items,
   });
 }
