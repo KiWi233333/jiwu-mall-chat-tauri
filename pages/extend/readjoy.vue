@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import { appName } from "@/constants";
 import { LogicalSize } from "@tauri-apps/api/dpi";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 
 useSeoMeta({
-  title: `博客`,
-  description: `分享${appName}的心得与经验`,
+  title: `悦读时光`,
+  description: `悦读时光，专注于分享生活点滴，记录美好生活！`,
 });
 
 const setting = useSettingStore();
 const isLoading = ref(true);
-const shopUrl = computed(() => "https://kiwi233.top/");
+const shopUrl = computed(() => "https://readjoy.kiwi233.top/");
 
 onMounted(async () => {
   if (setting.isDesktop) {
@@ -26,7 +25,6 @@ onMounted(async () => {
   <div
     v-loading="isLoading"
     :element-loading-spinner="defaultLoadingIcon"
-    element-loading-background="transparent"
     class="w-full flex flex-col select-none"
   >
     <iframe

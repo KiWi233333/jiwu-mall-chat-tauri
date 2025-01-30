@@ -69,9 +69,11 @@ const showVideoDialog = ref(false);
         <NuxtPage keepalive />
       </div>
       <!-- 视频播放器 -->
-      <UtilVideoPlayerDialog v-model="showVideoDialog" />
+      <LazyUtilVideoPlayerDialog v-model="showVideoDialog" />
+      <!-- 扩展菜单 -->
+      <LazyMenuExtensionMenu v-model:show="chat.showExtension" />
       <!-- RTC通话弹窗 -->
-      <ChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
+      <LazyChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
       <!-- 移动端菜单 -->
       <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
     </div>

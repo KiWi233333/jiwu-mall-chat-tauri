@@ -43,7 +43,6 @@ onDeactivated(() => {
 });
 
 const { open: openExtendMenu, openItem } = useOpenExtendWind();
-const showExtension = ref(false);
 // @unocss-include
 const menuList = computed<MenuItem[]>(() => ([
   {
@@ -77,7 +76,7 @@ const menuList = computed<MenuItem[]>(() => ([
     title: "扩展",
     icon: " i-solar:widget-line-duotone hover:(i-solar:widget-bold-duotone ) ",
     activeIcon: "i-solar:widget-bold-duotone",
-    onClick: () => showExtension.value = true,
+    onClick: () => chat.showExtension = true,
   },
   {
     title: "账号",
@@ -105,6 +104,7 @@ export interface MenuItem {
   tipValue?: any
   isDot?: boolean
   class?: string
+  children?: MenuItem[]
   onClick?: (e: MouseEvent) => void
 }
 </script>
@@ -132,13 +132,13 @@ export interface MenuItem {
         v-loading="(p as any).loading" :to="p.path"
         :index="p.path"
         :element-loading-spinner="defaultLoadingIcon"
-        element-loading-custom-class="text-.5em"
+        element-loading-custom-class="text-.4em"
         :class="{
           action: route.path === p.path,
           [`${p.class}`]: p.class,
         }"
         :title="p.title"
-        class="item h-10 w-10 flex-row-c-c cursor-pointer transition-all"
+        class="item group h-10 w-10 flex-row-c-c cursor-pointer transition-all"
         @click="(e: MouseEvent) => {
           if (p.onClick) {
             e.stopPropagation();
@@ -157,8 +157,6 @@ export interface MenuItem {
       style="background-color: #2222223a;"
       @click="setting.isChatFold = false"
     />
-    <!-- 扩展菜单 -->
-    <LazyMenuExtensionMenu v-model:show="showExtension" />
   </div>
 </template>
 
@@ -169,7 +167,7 @@ export interface MenuItem {
   top:0;
 }
 .item {
-  --at-apply: "card-rounded-df hover:(bg-color)";
+  --at-apply: "card-rounded-df hover:(bg-color-3)";
   &.action {
     --at-apply: "!bg-[var(--el-color-primary)] shadow";
     .icon {

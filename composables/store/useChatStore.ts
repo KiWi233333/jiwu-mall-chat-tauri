@@ -34,6 +34,8 @@ export const useChatStore = defineStore(
       body: {
       },
     });
+    /** ***************************** 扩展打开 */
+    const showExtension = ref(false);
     /** ***************************** 撤回的消息map */
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
     /** ***************************** 会话 */
@@ -629,6 +631,7 @@ export const useChatStore = defineStore(
       };
       delUserId.value = "";
       isAddNewFriend.value = false;
+      showExtension.value = false;
       isOpenContact.value = true;
       roomGroupPageInfo.value = {
         cursor: null,
@@ -721,6 +724,7 @@ export const useChatStore = defineStore(
       msgForm,
       rtcCallType,
       showRtcCall,
+      showExtension,
       recallMsgMap,
       contactMap,
       contactList,

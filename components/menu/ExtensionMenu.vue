@@ -26,8 +26,17 @@ const extendMenuAllList = ref<ExtendItem[]>([
   {
     url: "/extend/shop",
     title: "极物圈商城",
-    icon: "i-solar:shop-line-duotone",
+    icon: "i-solar:shop-line-duotone group-hover:(i-solar:shop-bold-duotone bg-[#5d33f6] transition-200 p-3)",
     activeIcon: "i-solar:shop-bold-duotone",
+    loading: false,
+    saveTime: undefined,
+    disabled: false,
+  },
+  {
+    url: "/extend/readjoy",
+    title: "悦读时光",
+    icon: "i-solar:notebook-square-line-duotone group-hover:(i-solar:notebook-square-bold-duotone transition-200 p-3 color-[#2f7efd])",
+    activeIcon: "i-solar:notebook-square-bold-duotone",
     loading: false,
     saveTime: undefined,
     disabled: false,
@@ -35,8 +44,8 @@ const extendMenuAllList = ref<ExtendItem[]>([
   {
     url: "/extend/blog",
     title: "博客",
-    icon: "i-solar:notebook-bookmark-broken",
-    activeIcon: "i-solar:notebook-bookmark-bold-duotone",
+    icon: "i-solar:chat-square-code-line-duotone p-2.6 group-hover:(i-solar:chat-square-code-bold-duotone transition-200 p-2.8 color-[#add7da])",
+    activeIcon: "i-solar:chat-square-code-bold-duotone",
     loading: false,
     saveTime: undefined,
     disabled: false,
@@ -139,7 +148,8 @@ function createItem() {
 <template>
   <el-dialog
     v-model="isShow"
-    center width="fit-content"
+    center
+    width="fit-content"
     append-to-body
     class="border-default !bg-color-2"
   >
@@ -210,8 +220,8 @@ function createItem() {
             @click.stop="!item.disabled && open(item)"
           />
           <div
-            v-if="!item.disabled"
-            class="absolute right-1 top-1 op-0 btn-primary-bg bg-color group-hover:(op-100)"
+            v-if="!item.disabled && !setting.isMobileSize"
+            class="absolute right-1 top-1 hidden op-0 sm:block btn-primary-bg bg-color group-hover:(op-100)"
             @click.stop="onAdd(item)"
           >
             <i class="i-carbon:add p-2 p-2.2" />

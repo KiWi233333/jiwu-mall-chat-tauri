@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import type { MenuItem } from "./ChatMenu.vue";
+import { useOpenExtendWind } from "./extension";
+
 defineEmits<{
   (e: "close"): void
 }>();
@@ -44,14 +47,15 @@ onDeactivated(() => {
 onBeforeUnmount(() => {
   unWatchDebounced();
 });
+const { open: openExtendMenu, openItem } = useOpenExtendWind();
 // @unocss-include
-const menuList = [
+const menuList = ref<MenuItem[]>([
   {
     title: "聊天",
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold",
-    tipValue: computed(() => chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0)),
+    tipValue: chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
     isDot: false,
   },
   {
@@ -59,7 +63,7 @@ const menuList = [
     path: "/friend",
     icon: "i-solar:users-group-rounded-line-duotone",
     activeIcon: "i-solar:users-group-rounded-bold",
-    tipValue: computed(() => applyUnRead.value),
+    tipValue: applyUnRead.value,
     isDot: false,
   },
   {
@@ -79,8 +83,21 @@ const menuList = [
     path: "/more",
     icon: "i-solar-layers-broken ",
     activeIcon: "i-solar-layers-bold ",
-    tipValue: computed(() => +setting.appUploader.isUpload),
+    tipValue: +setting.appUploader.isUpload,
     children: [
+      // ...(setting.selectExtendMenuList || []).map(p => ({
+      //   title: p.title,
+      //   icon: p.icon,
+      //   activeIcon: p.activeIcon,
+      //   loading: p.loading,
+      //   onClick: () => openExtendMenu(p),
+      // }) as MenuItem),
+      {
+        title: "扩展",
+        icon: " i-solar:widget-line-duotone hover:(i-solar:widget-bold-duotone ) ",
+        activeIcon: "i-solar:widget-bold-duotone",
+        onClick: () => chat.showExtension = true,
+      },
       {
         title: "账号",
         path: "/user/safe",
@@ -93,12 +110,13 @@ const menuList = [
         path: "/setting",
         icon: "i-solar:settings-linear hover:animate-spin",
         activeIcon: "i-solar:settings-bold hover:animate-spin",
-        tipValue: computed(() => +setting.appUploader.isUpload),
+        tipValue: +setting.appUploader.isUpload,
         isDot: true,
       },
+
     ],
   },
-];
+]);
 
 const activeMenu = computed({
   get: () => route.path,
@@ -117,12 +135,15 @@ const activeMenu = computed({
     <div
       v-for="p in menuList" :key="p.path" :index="p.path" class="item"
       :class="{ active: activeMenu === p.path }"
-      @click="activeMenu = p.path"
+      @click.stop="() => {
+        if (p.path)
+          activeMenu = p.path
+      }"
     >
       <el-badge
         v-if="!p?.children?.length"
-        :value="p?.tipValue?.value || 0"
-        :hidden="!p?.tipValue?.value"
+        :value="p?.tipValue || 0"
+        :hidden="!p?.tipValue"
         :max="99"
         :is-dot="p.isDot"
       >
@@ -138,12 +159,18 @@ const activeMenu = computed({
       >
         <template #reference>
           <el-badge
-            :value="p.tipValue?.value || 0"
-            :hidden="!p.tipValue.value"
+            :value="p.tipValue"
+            :hidden="!p.tipValue"
             :max="99"
             :offset="[-15, 2]"
             class="h-full w-full flex-row-c-c flex-col"
             :is-dot="p.isDot"
+            @click.stop="(e: MouseEvent) => {
+              if (p.onClick) {
+                e.stopPropagation();
+                p.onClick(e);
+              }
+            }"
           >
             <i class="p-3" :class="route.path === p.path ? p.activeIcon : p.icon" />
             <span mt-2 block select-none text-center text-3>{{ p.title }}</span>
@@ -151,7 +178,19 @@ const activeMenu = computed({
         </template>
         <template #default>
           <ul class="grid cols-1 gap-3">
-            <el-badge v-for="item in p.children" :key="item.path" :value="item.tipValue?.value || 0" :hidden="!item.tipValue?.value" :max="99" :is-dot="item.isDot" class="flex-row-c-c cursor-pointer gap-6 px-2 py-1" :index="p.path" :class="{ active: activeMenu === item.path }" @click="activeMenu = item.path">
+            <el-badge
+              v-for="item in p.children"
+              :key="item.path" :value="item.tipValue || 0" :hidden="!item.tipValue" :max="99" :is-dot="item.isDot" class="flex-row-c-c cursor-pointer gap-6 px-2 py-1" :index="p.path" :class="{ active: activeMenu === item.path }"
+              @click.stop="(e: MouseEvent) => {
+                if (item.path) {
+                  activeMenu = item.path
+                }
+                if (item.onClick) {
+                  e.stopPropagation();
+                  item.onClick(e);
+                }
+              }"
+            >
               <i class="inline-block p-3" :class="route.path === item.path ? item.activeIcon : item.icon" />
               <span>{{ item.title }}</span>
             </el-badge>

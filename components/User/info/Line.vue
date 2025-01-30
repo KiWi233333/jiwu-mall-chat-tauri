@@ -150,7 +150,7 @@ onMounted(() => {
   <div>
     <div
       v-loading="isLoading"
-      class="avatar shadow-md"
+      class="avatar shadow-md card-default-br"
     >
       <!-- 上传 -->
       <el-upload
@@ -162,6 +162,7 @@ onMounted(() => {
         :headers="{ Authorization: store.token }"
         method="PUT"
         :limit="1"
+        accept="image/*"
         :multiple="false"
         auto-upload
         :show-file-list="false"
@@ -180,9 +181,9 @@ onMounted(() => {
             v-else
             size="2em"
           />
-          <i
+          <!-- <i
             class="i-solar:camera-broken absolute p-5 opacity-0 transition-300 group-hover:opacity-60"
-          />
+          /> -->
         </div>
       </el-upload>
     </div>
