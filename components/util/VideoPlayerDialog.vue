@@ -294,12 +294,12 @@ const videoSize = computed(() => {
 <style scoped>
 /* @unocss-include */
 .animate-zoom-in-dailog {
-  --at-apply: "animate-fade-in sm:animate-zoom-in";
+  --at-apply: "animate-zoom-in";
   animation-timing-function: var(--animate-cubic) !important;
   animation-duration: 0.4s !important;
 }
 .animate-zoom-out-dailog {
-  --at-apply: "animate-fade-out sm:animate-zoom-out";
+  --at-apply: "animate-zoom-out";
   animation-timing-function: var(--animate-cubic) !important;
   animation-duration: 0.4s !important;
 }
