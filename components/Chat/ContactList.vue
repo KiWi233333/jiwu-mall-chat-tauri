@@ -379,7 +379,7 @@ onBeforeUnmount(() => {
   --at-apply: "sm:p-2 p-0";
 
   .contact {
-    --at-apply: "border-(1px solid transparent) flex items-center transition-150 gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
+    --at-apply: "border-(1px solid transparent) flex items-center gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
     .text {
       --at-apply: "transition-none";
     }

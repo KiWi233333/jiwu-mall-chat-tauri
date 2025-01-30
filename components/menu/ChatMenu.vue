@@ -111,10 +111,10 @@ export interface MenuItem {
 
 <template>
   <div
-    class="relative z-998 h-full px-2 border-default-r card-bg-color"
+    class="relative z-998 h-full border-default-r card-bg-color"
   >
     <!-- 顶部 -->
-    <div class="grid grid-cols-1 w-full w-full grid-gap-6 pt-4 hover:bg-transparent">
+    <div class="grid grid-cols-1 w-full w-full grid-gap-6 px-2 pt-4 hover:bg-transparent">
       <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a card-default">
         <CardElImage
           :src="BaseUrlImg + user?.userInfo?.avatar"
@@ -122,9 +122,9 @@ export interface MenuItem {
         />
       </NuxtLink>
     </div>
-    <div class="mx-a my-4 w-5/6 border-0 border-b-1px border-default" />
+    <div class="mx-a my-4 w-5/6 border-0 border-b-1px px-2 border-default" />
     <!-- 菜单 -->
-    <div name="pop-list" tag="div" class="flex flex-col gap-3 overflow-y-auto">
+    <div name="pop-list" tag="div" class="flex flex-col gap-3 overflow-y-auto px-2">
       <component
         :is="p.path ? NuxtLink : 'div'"
         v-for="p in menuList"
@@ -146,7 +146,7 @@ export interface MenuItem {
           }
         }"
       >
-        <el-badge :value="p?.tipValue?.value || 0" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :offset="[-5, 0]" :max="99">
+        <el-badge :value="100" :hidden="!p?.tipValue?.value" :is-dot="!!p?.isDot" :offset="[-6, -1]" :max="99">
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>
@@ -174,6 +174,11 @@ export interface MenuItem {
     --at-apply: "!bg-[var(--el-color-primary)] shadow";
     .icon {
       --at-apply: "bg-light dark:bg-light";
+    }
+  }
+  :deep(.el-badge) {
+    .el-badge__content {
+      font-size: 0.6em !important;
     }
   }
 }

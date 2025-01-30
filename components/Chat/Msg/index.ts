@@ -157,7 +157,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         hidden: !data.message.body.url,
         icon: "i-solar-download-minimalistic-broken group-hover:(translate-y-2px i-solar-download-minimalistic-bold) group-btn-success",
         onClick: async () => {
-          let path: string | undefined = "";
+          let path: string | undefined | null = "";
           const fileName = path.split("\\").pop() || `${Date.now()}.png`;
           if (!setting.isWeb) {
             path = await saveDialog({

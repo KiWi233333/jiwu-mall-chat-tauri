@@ -94,7 +94,7 @@ const isMinWind = ref(false); // 最小化
 const isMaxWind = ref(false); // 全屏|窗口通话
 
 // 拖拽
-const dragRef = ref<HTMLDivElement>();
+const dragRef = useTemplateRef<HTMLDivElement>("dragRef");
 const dragRefStyle = ref({
   maxWidth: 0,
   maxHeight: 0,
@@ -364,7 +364,7 @@ defineExpose({
     >
       <!-- 头部 -->
       <h4
-        class="menu w-full flex items-center p-4"
+        class="menu w-full flex items-center rounded-t-2 p-4"
         :class="{ 'bg-linear': callType === CallTypeEnum.VIDEO && isConnected }"
       >
         <span v-if="!isConnected" mx-a>
@@ -426,7 +426,7 @@ defineExpose({
         </template>
       </h4>
       <div
-        class="menu-mini hidden w-full p-2 text-center text-sm"
+        class="menu-mini hidden w-full rounded-t-2 p-2 text-center text-sm"
         :class="{ 'bg-linear': callType === CallTypeEnum.VIDEO && isConnected }"
       >
         {{ rtcDescText }}
