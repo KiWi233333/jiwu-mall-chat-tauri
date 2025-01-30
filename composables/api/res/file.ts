@@ -94,7 +94,7 @@ export const DownFileStatusIconMap: Record<FileStatus, string> = {
 };
 
 /**
- * 下载文件
+ * 下载文件(兼容web,pc端,移动端)
  * @param url 下载地址
  * @param fileName 下载后的文件名
  * @param options 下载选项

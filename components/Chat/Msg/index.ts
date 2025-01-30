@@ -1,6 +1,6 @@
 /* eslint-disable regexp/negation */
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { save } from "@tauri-apps/plugin-dialog";
+import { save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { appName } from "~/constants";
 
 // 剪切板支持的图片格式
@@ -157,18 +157,21 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
         hidden: !data.message.body.url,
         icon: "i-solar-download-minimalistic-broken group-hover:(translate-y-2px i-solar-download-minimalistic-bold) group-btn-success",
         onClick: async () => {
-          let path: string | undefined | null = "";
+          let path: string | undefined = "";
           const fileName = path.split("\\").pop() || `${Date.now()}.png`;
-          if (setting.isWeb) { // 非web端
-            downloadFile(BaseUrlFile + data.message.body.url, fileName, { targetPath: path }, () => {
-              ElMessage.success(setting.isWeb ? "图片已保存" : `图片已保存到 ${path}`);
+          if (!setting.isWeb) {
+            path = await saveDialog({
+              title: setting.isDesktop ? `${appName} - 保存图片` : undefined,
+              filters: [{ name: "图片文件", extensions: ["png", "jpeg", "jpg", "svg", "webp"] }],
+              defaultPath: fileName,
             });
-            return;
+            if (!path) {
+              return;
+            }
           }
-          path = await save({
-            title: setting.isDesktop ? `${appName} - 保存图片` : undefined,
-            filters: [{ name: "图片文件", extensions: ["png", "jpeg", "jpg", "svg", "webp"] }],
-            defaultPath: fileName,
+
+          downloadFile(BaseUrlImg + data.message.body.url, fileName, { targetPath: path }, () => {
+            ElMessage.success(setting.isWeb ? "图片已保存" : `图片已保存到 ${path}`);
           });
         },
       },
@@ -306,6 +309,15 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
           });
         },
       },
+      // 另存视频
+      {
+        label: "另存视频",
+        icon: "i-solar:download-line-duotone group-hover:(scale-110 i-solar:download-bold-duotone) group-btn-success",
+        customClass: "group",
+        onClick: async () => {
+          saveDownloadVideoByUrl(BaseUrlVideo + data.message.body.url);
+        },
+      },
       ...defaultContextMenu,
     ],
   };
@@ -369,5 +381,32 @@ function deleteMsg(data: ChatMessageVO, msgId: number) {
         }
       }
     },
+  });
+}
+
+
+/**
+ * 下载视频
+ * @param url 视频地址
+ */
+export async function saveDownloadVideoByUrl(url: string) {
+  if (!url) {
+    return;
+  }
+  const setting = useSettingStore();
+  let path: string | undefined | null = "";
+  const fileName = path.split("\\").pop() || `${Date.now()}.mp4`;
+  if (!setting.isWeb) {
+    path = await saveDialog({
+      title: setting.isDesktop ? `${appName} - 保存视频` : undefined,
+      filters: [{ name: "视频文件", extensions: ["mp4"] }],
+      defaultPath: fileName,
+    });
+    if (!path) {
+      return;
+    }
+  }
+  downloadFile(url, fileName, { targetPath: path }, () => {
+    ElMessage.success(setting.isWeb ? "视频已保存" : `视频已保存到 ${path}`);
   });
 }

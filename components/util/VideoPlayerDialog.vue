@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { saveDownloadVideoByUrl } from "../Chat/Msg";
+
 const props = defineProps<{
   modelValue: boolean;
 }>();
@@ -195,11 +197,20 @@ const videoSize = computed(() => {
       >
         <div class="menu absolute right-2 top-2 z-1 flex gap-4 px-4 py-2 transition-opacity card-default-br sm:(op-0 group-hover:op-100)">
           <div
+            @click.stop="saveDownloadVideoByUrl(videoInfo.url)"
+          >
+            <i
+              class="i-solar:download-minimalistic-linear"
+              title="另存为"
+              p-2.5 filter-drop-shadow-lg btn-info
+            />
+          </div>
+          <div
             @click.stop="toggleFullscreen"
           >
             <i
-              :class="isFullscreen ? 'i-tabler:minimize' : 'i-tabler:maximize'"
-              :title="isFullscreen ? '还原' : '最大化'"
+              class="i-tabler:maximize"
+              title="全屏"
               p-2.8 filter-drop-shadow-lg btn-info
             />
           </div>

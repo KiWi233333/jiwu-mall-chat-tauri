@@ -195,37 +195,54 @@ body .el-message {
 }
 
 /**  ------------------------------right-menu---------------------------------------  **/
-.mx-context-menu-items .mx-item-row {
-  margin: 4px 2px;
-}
+
 .mx-context-menu {
   --popper-fade-anima-scale: 0.9;
-  --at-apply: "!border-default animate-[popper-fade-anim_0.15s]";
+  --at-apply: "!border-default-hover bg-color-2 animate-[popper-fade-anim_0.15s]";
+  .mx-context-menu-items .mx-item-row {
+    margin: 4px 2px;
+  }
   .mx-icon-placeholder {
     i {
       font-size: 0.9em;
       transition: all 0.2s;
     }
   }
+
+  //在这里覆盖默认css变量的值
+  // --mx-menu-backgroud: var(--el-color-primary) !important;
+  --mx-menu-active-backgroud: var(--el-color-primary);
+  --mx-menu-hover-backgroud: var(--el-color-primary);
+  --mx-menu-open-hover-backgroud: var(--el-color-primary);
+  --mx-menu-open-backgroud: #71717188 !important;
+
+  //   --mx-menu-backgroud: #ececec;
+  // --mx-menu-hover-backgroud: #0165e1;
+  // --mx-menu-active-backgroud: #0165e1;
+  // --mx-menu-open-backgroud: #858585;
+  // --mx-menu-open-hover-backgroud: #0165e1;
+  // --mx-menu-divider: #d2d2d2;
+  // --mx-menu-text: #232323;
+  // --mx-menu-hover-text: #fff;
+  // --mx-menu-active-text: #fff;
+  // --mx-menu-open-text: #fff;
+  // --mx-menu-open-hover-text: #fff;
+  // --mx-menu-disabled-text: #bbbbbb;
+  // --mx-menu-shadow-color: rgba(0, 0, 0, .1);
+  // --mx-menu-backgroud-radius: 10px;
+  // --mx-menu-shortcut-backgroud: transparent;
+  // --mx-menu-shortcut-backgroud-hover: transparent;
+  // --mx-menu-shortcut-backgroud-active: transparent;
+  // --mx-menu-shortcut-backgroud-open: transparent;
+  // --mx-menu-shortcut-backgroud-disabled: transparent;
+  // --mx-menu-shortcut-text: #424242;
+  // --mx-menu-shortcut-text-hover: #fff;
+  // --mx-menu-shortcut-text-active: #fff;
+  // --mx-menu-shortcut-text-open: #fff;
+  // --mx-menu-shortcut-text-disabled: #a5a5a5;
+  // --mx-menu-focus-color: transparent;
+  // --mx-menu-border-color: #bbbbbb;
 }
-//   //在这里覆盖默认css变量的值
-//   --mx-menu-backgroud: var(--el-color-primary);
-//   --mx-menu-active-backgroud: var(--el-color-primary);
-//   --mx-menu-hover-backgroud: var(--el-color-primary);
-
-//   //自定义菜单外层样式
-//   // padding: 8px 0;
-//   // box-shadow: 0px 5px 7px 1px var(--mx-menu-shadow-color);
-//   // border: 1px solid var(--mx-menu-border-color);
-
-//   //自定义其他菜单部件的样式
-//   .mx-context-menu-item {
-//     // border-radius: 5px;
-//     // margin: 0 6px;
-//     // padding: 3px 6px;
-//   }
-//   //这里篇幅有限，完整的每个部件的样式请在 ContextMenu.scss 中查看
-// }
 .el-loading-mask {
   *.is-fullscreen {
     border-radius: 6px;
