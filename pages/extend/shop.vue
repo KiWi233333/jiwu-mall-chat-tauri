@@ -18,6 +18,7 @@ onMounted(async () => {
     const wind = WebviewWindow.getCurrent();
     await wind.setMinSize(new LogicalSize(1500, 960));
     await wind.setSize(new LogicalSize(1500, 960));
+    await wind.show();
   }
 });
 </script>

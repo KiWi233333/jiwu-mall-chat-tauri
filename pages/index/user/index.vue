@@ -38,7 +38,7 @@ useHead({
 </script>
 
 <template>
-  <div w-full flex flex-1 flex-col>
+  <div w-full flex flex-1 flex-col bg-color-3 sm:card-bg-color-2>
     <!-- 壁纸 -->
     <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
     <div class="mains">
@@ -51,7 +51,7 @@ useHead({
       </div>
       <!-- 右侧 -->
       <div class="hidden flex-col gap-6 -mt-6 sm:flex">
-        <!-- 帖子 -->
+        <!-- 统计 -->
         <CardUserPostTotal
           v-if="user?.id"
           :dto="{
@@ -71,6 +71,6 @@ useHead({
 
 <style scoped lang="scss">
 .mains {
-  --at-apply: ' bg-color flex-1 grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
+  --at-apply: 'flex-1 grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
 }
 </style>

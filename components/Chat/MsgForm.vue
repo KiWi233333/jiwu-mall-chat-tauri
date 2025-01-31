@@ -912,7 +912,7 @@ onUnmounted(() => {
           :popper-options="{
             placement: 'top-start',
           }"
-          style="min-height: fit-content;"
+          style="min-height: fit-content !important;overflow-y: hidden;"
           @paste.stop="onPaste"
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
         >

@@ -36,7 +36,7 @@ const form = ref({
     <!-- 用户信息 -->
     <div
       v-loading="isLoading"
-      class="group flex flex-col"
+      class="group flex flex-col p-4 card-default border-default-hover"
       flex flex-1 flex-col
     >
       <div class="flex items-center">

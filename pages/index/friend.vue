@@ -24,7 +24,7 @@ async function clearHistory() {
 </script>
 
 <template>
-  <div class="h-full flex flex-1">
+  <div class="h-full w-full flex flex-1">
     <div
       class="w-full transition-all sm:(relative mx-auto w-1/4 border-default-r p-0)"
     >

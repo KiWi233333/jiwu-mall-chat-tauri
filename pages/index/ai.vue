@@ -220,7 +220,7 @@ onActivated(() => active());
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col sm:(px-4 pb-4)">
+  <div class="h-full w-full flex flex-1 flex-col sm:(px-4 pb-4)">
     <!-- header -->
     <p class="my-4 pl-4 text-[var(--el-color-primary)] font-600 tracking-0.2em sm:pl-0">
       <i class="i-solar:ghost-bold mr-2 p-0.8em" />
@@ -276,7 +276,7 @@ onActivated(() => active());
               :minlength="1"
               resize="none"
               :autosize="true"
-              style="max-height: 16em;overflow-y: auto;"
+              style="max-height: 16em;min-height: 31px !important;overflow-y: auto;"
               :disabled="isChat" placeholder="快开始对话吧 ✨"
               class="content card-rounded-df"
               @keydown.enter.prevent="onSubmit"

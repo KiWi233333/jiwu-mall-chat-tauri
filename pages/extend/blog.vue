@@ -17,7 +17,8 @@ onMounted(async () => {
   if (setting.isDesktop) {
     const wind = WebviewWindow.getCurrent();
     await wind.setMinSize(new LogicalSize(375, 780));
-    await wind.setSize(new LogicalSize(1080, 780));
+    await wind.setSize(new LogicalSize(1200, 800));
+    await wind.show();
   }
 });
 </script>

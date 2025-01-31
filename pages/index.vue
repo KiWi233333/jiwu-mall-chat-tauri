@@ -7,7 +7,6 @@ const ws = useWsStore();
 const setting = useSettingStore();
 const online = useOnline();
 const chat = useChatStore();
-
 const showVideoDialog = ref(false);
 </script>
 
@@ -68,8 +67,7 @@ const showVideoDialog = ref(false);
         <!-- 缓存 页面内容 -->
         <NuxtPage
           keepalive
-          class="h-full"
-          :transition="setting.isMobileSize ? chat.pageTransition : false"
+          :transition="setting.isMobileSize && !setting.settingPage.isCloseAllTransition ? chat.pageTransition : false"
         />
       </div>
       <!-- 视频播放器 -->

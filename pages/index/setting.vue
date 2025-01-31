@@ -52,7 +52,7 @@ const {
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isFullLoading" class="h-full w-full flex flex-1 flex-col p-4 pt-12 bg-color-2 md:p-6">
+  <main v-loading.fullscreen.lock="isFullLoading" class="h-full w-full flex flex-1 flex-col p-4 p-6 pt-12 card-bg-color-2">
     <h3 flex items-center>
       系统设置
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
