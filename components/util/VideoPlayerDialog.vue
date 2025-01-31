@@ -31,6 +31,7 @@ const videoInfo = ref<{
 // 拖拽
 const dragHandler = useTemplateRef<HTMLDivElement>("dragHandler");
 const dragRef = useTemplateRef<HTMLDivElement>("dragRef");
+const disabledDrag = computed(() => setting.isMobileSize);
 const dragRefStyle = ref({
   maxWidth: 0,
   maxHeight: 0,
@@ -39,7 +40,7 @@ const { x, y } = useDraggable(dragRef, {
   stopPropagation: true,
   handle: dragHandler,
   initialValue: { x: 0, y: 0 },
-  disabled: setting.isMobileSize,
+  disabled: disabledDrag,
   onMove: (position) => {
     const { innerWidth, innerHeight } = window;
     // 限制不移出屏幕边缘
@@ -235,7 +236,7 @@ const videoSize = computed(() => {
     >
       <div
         ref="dragRef"
-        class="group video-player fixed flex-row-c-c animate-[fade-in_0.4s] card-rounded-df shadow-lg transition-none bg-color-2 border-default-hover"
+        class="group video-player fixed flex-row-c-c animate-[fade-in_0.4s] select-none card-rounded-df shadow-lg transition-none bg-color-2 border-default-hover"
         :style="{
           touchAction: 'none',
           left: `${x}px`,
@@ -243,7 +244,8 @@ const videoSize = computed(() => {
         }"
       >
         <div class="menu absolute left-0 top-0 z-1 w-full flex flex items-center p-2">
-          <div ref="dragHandler" class="h-10 flex flex-1 cursor-move" />
+          <!-- 拖拽柄 -->
+          <div ref="dragHandler" class="h-10 flex flex-1 select-none sm:cursor-move" />
           <div class="ml-a flex-row-c-c gap-4 px-4 py-2 transition-opacity card-default-br sm:(op-0 group-hover:op-100)">
             <div
               @click.stop="saveDownloadVideoByUrl(videoInfo.url)"
