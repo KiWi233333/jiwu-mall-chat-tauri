@@ -14,8 +14,12 @@ definePageMeta({
 
 const setting = useSettingStore();
 
-onMounted(() => {
+onMounted(async () => {
   user.showLoginForm = true;
+  // if (setting.isDesktop) {
+  //   const wind = getCurrentWindow();
+  //   await wind.setSize(new LogicalSize(380.0, 420.0));
+  // }
 });
 </script>
 

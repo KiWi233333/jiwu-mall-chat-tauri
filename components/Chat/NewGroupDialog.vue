@@ -143,7 +143,9 @@ defineExpose({
     :title="form.roomId ? '邀请成员' : '新建群聊'"
     width="fit-content"
     class="overflow-hidden"
-    center append-to-body destroy-on-close
+    center
+    append-to-body
+    destroy-on-close
   >
     <el-form
       ref="formRef"

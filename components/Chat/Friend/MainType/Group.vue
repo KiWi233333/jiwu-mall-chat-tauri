@@ -12,6 +12,7 @@ const isOnGroup = ref<boolean | undefined>(false);
 const room = ref<Partial<ChatRoomInfoVO>>({});
 const user = useUserStore();
 const chat = useChatStore();
+const setting = useSettingStore();
 const isGroupOwner = computed(() => room.value.role === ChatRoomRoleEnum.OWNER);
 
 // 加载房间数据
@@ -51,8 +52,11 @@ async function toSend(roomId: number) {
     }
     contact = newRes.data;
   }
-  chat.setContact(contact);
-  nextTick(() => {
+  await chat.setContact(contact);
+  if (setting.isMobileSize) {
+    chat.isOpenContact = false;
+  }
+  await nextTick(() => {
     navigateTo({
       path: "/",
     });
@@ -69,12 +73,12 @@ async function toSend(roomId: number) {
   >
     <div
       v-show="!isLoading"
-      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1"
+      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1px"
       v-bind="$attrs"
     >
       <!-- 顶部 -->
       <div
-        absolute left-0 top-0 h-14 w-full flex items-center gap-4 px-5 border-default-b card-bg-color
+        absolute left-0 top-0 h-4.2rem w-full flex items-center gap-4 px-5 border-default-b card-bg-color
       >
         <CardElImage
           :src="BaseUrlImg + data.data.avatar" fit="cover"

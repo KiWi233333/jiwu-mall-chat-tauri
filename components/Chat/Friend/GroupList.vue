@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isLoading = ref<boolean>(false);
+const lastLoadTime = ref<number>();
 const chat = useChatStore();
 const user = useUserStore();
 
@@ -51,6 +52,7 @@ async function loadData() {
 async function reloadData() {
   pageInfo.value.cursor = null;
   pageInfo.value.isLast = false;
+  lastLoadTime.value = Date.now();
   list.value = [];
   await loadData();
 }
@@ -96,6 +98,13 @@ onUnmounted(() => {
 });
 onDeactivated(() => {
   isFirstLoad.value = false;
+});
+
+// 页面激活 5分钟内不重新加载
+onActivated(() => {
+  if (lastLoadTime.value && Date.now() - lastLoadTime.value > 1000 * 60 * 5) { // 5分钟内不再加载
+    reloadData();
+  }
 });
 </script>
 

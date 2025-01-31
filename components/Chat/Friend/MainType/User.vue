@@ -13,6 +13,7 @@ interface UserType {
   id: string
 }
 const store = useUserStore();
+const setting = useSettingStore();
 const isLoading = ref(true);
 const isFrend = ref<boolean | undefined>(false);
 const userId = computed(() => panelData.data.id);
@@ -150,8 +151,11 @@ async function toSend(uid: string) {
     }
     contact = newRes.data;
   }
-  chat.setContact(contact);
-  nextTick(() => {
+  await chat.setContact(contact);
+  if (setting.isMobileSize) {
+    chat.isOpenContact = false;
+  }
+  await nextTick(() => {
     navigateTo({
       path: "/",
     });

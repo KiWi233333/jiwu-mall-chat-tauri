@@ -38,7 +38,7 @@ useHead({
 </script>
 
 <template>
-  <div w-full flex flex-1 flex-col bg-color-3 sm:card-bg-color-2>
+  <div h-full w-full flex flex-1 flex-col bg-color-2 sm:card-bg-color-2>
     <!-- 壁纸 -->
     <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
     <div class="mains">

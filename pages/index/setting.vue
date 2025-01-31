@@ -231,7 +231,7 @@ const {
       <div v-if="!setting.isWeb" id="download" class="group h-8 flex-row-bt-c">
         下载
         <div class="ml-a flex items-center gap-3" :title="setting.appDataDownloadDirUrl">
-          <small class="mr-2 max-w-50vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
+          <small class="mr-2 max-w-40vw flex-1 truncate op-60">{{ setting.appDataDownloadDirUrl }}</small>
           <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-warning" @click="setting.changeDownloadDir()">更改</span>
           <span class="cursor-pointer text-0.8rem tracking-0.1em !btn-info" @click="openFileFolder()">打开目录</span>
         </div>
@@ -239,7 +239,7 @@ const {
     </section>
     <div class="btns mt-a flex flex-col items-center gap-4 sm:flex-row">
       <BtnElButton
-        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit)" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
+        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit) card-bg-color" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
         style="--el-color-primary: var(--el-color-danger);--el-button-hover-border-color: var(--el-color-danger);background-color: transparent;"
         @click="setting.reset()"
       >

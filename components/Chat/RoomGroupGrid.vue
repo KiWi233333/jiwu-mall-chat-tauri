@@ -290,7 +290,7 @@ function onAdd() {
             :key="p.userId"
             :title="p.nickName"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-            class="flex-row-c-c flex-col p-2 btn-primary-bg"
+            class="item"
             @contextmenu="onContextMenu($event, p)"
             @click="chat.setTheFriendOpt(FriendOptType.User, {
               id: p.userId,
@@ -313,7 +313,7 @@ function onAdd() {
       </ListAutoIncre>
     </el-scrollbar>
     <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
       @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
         chat.removeContact(data.roomId);
       })"
@@ -332,31 +332,18 @@ function onAdd() {
 </template>
 
 <style lang="scss" scoped>
-.g-avatar {
-  display: block;
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  position: absolute;
-  right: 0.2em;
-  bottom: 0.2em;
-  --at-apply: "border-default";
-  z-index: 1;
-}
-.user-card {
-  --at-apply: "";
-}
-.live {
-  position: relative;
-  opacity: 60;
-  --at-apply: "animate-[fade-in_0.6s]";
-
+.item {
+  --at-apply: "flex-row-c-c flex-col shadow-sm btn-primary-bg py-4";
   .g-avatar {
-    background-color: var(--el-color-info);
+    --at-apply: "border-default z-1 block w-0.6em h-0.6em rounded-full absolute right-0.2em bottom-0.2em";
   }
+  &.live {
+    --at-apply: "relative filter-none animate-[fade-in_0.6s]";
 
-  filter: grayscale(0);
-
+    .g-avatar {
+      background-color: var(--el-color-info);
+    }
+  }
 }
 :deep(.el-scrollbar__thumb) {
   display: none;

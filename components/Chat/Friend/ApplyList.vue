@@ -66,7 +66,7 @@ function onArgeeFriend(applyId: number) {
 </script>
 
 <template>
-  <div ref="autoAnimateRef" w-full flex flex-col>
+  <div ref="autoAnimateRef" w-full flex flex-col px-2>
     <ListAutoIncre
       :immediate="true"
       :auto-stop="true"
@@ -75,7 +75,7 @@ function onArgeeFriend(applyId: number) {
     >
       <div
         v-for="p in list"
-        :key="p.applyId" class="mb-3 border-0 border-b-1px pb-3 border-default"
+        :key="p.applyId" class="mb-3 pb-3 border-default-b"
       >
         <div class="item">
           <div
@@ -114,6 +114,6 @@ function onArgeeFriend(applyId: number) {
   --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: " flex items-center gap-4 p-3 cursor-pointer rounded-6px mt-2 hover:(bg-menu-color) transition-300";
+  --at-apply: "border-(1px solid transparent)  flex items-center gap-4 p-3 cursor-pointer rounded-6px mt-2 hover:(border-default bg-menu-color shadow) transition-200";
 }
 </style>
