@@ -19,7 +19,6 @@ const isShow = computed({
 const setting = useSettingStore();
 const {
   open,
-  // openItem,
 } = useOpenExtendWind();
 // 扩展菜单列表
 const extendMenuAllList = ref<ExtendItem[]>([
@@ -50,15 +49,15 @@ const extendMenuAllList = ref<ExtendItem[]>([
     saveTime: undefined,
     disabled: false,
   },
-  {
-    url: "/extend/wallet",
-    title: "我的钱包",
-    icon: "i-solar:wallet-money-line-duotone",
-    activeIcon: "i-solar:wallet-money-bold-duotone",
-    loading: false,
-    saveTime: undefined,
-    disabled: true,
-  },
+  // {
+  //   url: "/extend/wallet",
+  //   title: "我的钱包",
+  //   icon: "i-solar:wallet-money-line-duotone",
+  //   activeIcon: "i-solar:wallet-money-bold-duotone",
+  //   loading: false,
+  //   saveTime: undefined,
+  //   disabled: true,
+  // },
   {
     url: "/extend/doc",
     title: "极物文档",

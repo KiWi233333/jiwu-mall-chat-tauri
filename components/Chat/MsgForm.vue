@@ -638,7 +638,7 @@ onUnmounted(() => {
       >
         <div
           v-for="(img, i) in imgList" :key="i" v-loading="img.status !== 'success'"
-          class="relative flex-row-c-c p-2 shadow-sm transition-shadow border-default card-default hover:shadow"
+          class="relative flex-row-c-c shadow-sm transition-shadow border-default card-default hover:shadow"
           :element-loading-spinner="defaultLoadingIcon"
           element-loading-background="transparent"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
@@ -747,7 +747,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div class="form-tools flex flex-col justify-center p-2 border-default-t">
+    <div class="form-tools relative">
       <!-- 工具栏 -->
       <div
         class="relative flex items-center gap-4 px-2"
@@ -888,7 +888,6 @@ onUnmounted(() => {
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
       >
-        <!-- TODO: 移动端需要延迟加载 -->
         <el-mention
           v-if="loadInputDone"
           ref="inputAllRef"
@@ -913,6 +912,7 @@ onUnmounted(() => {
           :popper-options="{
             placement: 'top-start',
           }"
+          style="min-height: fit-content;"
           @paste.stop="onPaste"
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
         >
@@ -967,15 +967,15 @@ onUnmounted(() => {
           发送&nbsp;
         </BtnElButton>
       </div>
-    </div>
-    <div
-      v-show="isNotExistOrNorFriend"
-      class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-2px shadow backdrop-blur-4px border-default"
-    >
-      <span op-80>
-        <i i-solar:adhesive-plaster-bold-duotone mr-3 p-2.4 />
-        {{ SelfExistTextMap[chat.theContact.type] }}
-      </span>
+      <div
+        v-show="isNotExistOrNorFriend"
+        class="absolute left-0 top-0 h-full w-full flex-row-c-c border-0 border-t-1px tracking-2px shadow backdrop-blur-4px border-default"
+      >
+        <span op-80>
+          <i i-solar:adhesive-plaster-bold-duotone mr-3 p-2.4 />
+          {{ SelfExistTextMap[chat.theContact.type] }}
+        </span>
+      </div>
     </div>
   </el-form>
   <ChatGroupNoticeMsgDialog v-model:show="showLordMsg" @submit="onSubmitLordMsg" />
@@ -983,7 +983,8 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .form-tools {
-  .tip {
+    --at-apply: "flex flex-col justify-center p-2 border-default-t";
+    .tip {
     --at-apply: "op-0";
   }
   &:hover {
@@ -1073,7 +1074,7 @@ onUnmounted(() => {
       .el-textarea {
         padding-left: 0.6em;
         .el-textarea__inner {
-          --at-apply: "bg-color-2 shadow-lg shadow-inset";
+          --at-apply: "bg-light-900 dark:bg-[#111111] shadow-lg shadow-inset";
         }
       }
     }

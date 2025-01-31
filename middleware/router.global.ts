@@ -6,6 +6,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if ((from.path !== "/msg" && to.path === "/msg")) // 页面进出禁止
     return abortNavigation();
   const user = useUserStore();
+  // 页面动画
+  resolveTransition(to.path, from.path);
   if (checkDesktop()) { // 桌面端
     if ((!from.path.startsWith("/extend") && to.path.startsWith("/extend")) || (to.path.startsWith("/extend") && !user.isLogin)) // 页面进出禁止
       return abortNavigation();
@@ -57,6 +59,29 @@ function loadLoginWindow() {
     }
   })();
 }
+
+const mainRoutes: Record<string, number> = {
+  "/": 1,
+  "/friend": 2,
+  "/ai": 3,
+  "/user": 4,
+  "/setting": 5,
+  // "/user/safe": 6,
+};
+function resolveTransition(toPath: string, fromPath: string) {
+  if (mainRoutes[toPath] && mainRoutes[fromPath]) {
+    if (mainRoutes[toPath] > mainRoutes[fromPath]) {
+      useChatStore().pageTransition.name = "page-slide-left";
+    }
+    else if (mainRoutes[toPath] < mainRoutes[fromPath]) {
+      useChatStore().pageTransition.name = "page-slide-right";
+    }
+  }
+  else {
+    useChatStore().pageTransition.name = "page-fade-in";
+  }
+}
+
 
 /**
  * 加载主页

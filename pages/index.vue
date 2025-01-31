@@ -66,7 +66,11 @@ const showVideoDialog = ref(false);
       >
         <MenuChatMenu class="hidden w-fit shrink-0 sm:block" />
         <!-- 缓存 页面内容 -->
-        <NuxtPage keepalive />
+        <NuxtPage
+          keepalive
+          class="h-full"
+          :transition="setting.isMobileSize ? chat.pageTransition : false"
+        />
       </div>
       <!-- 视频播放器 -->
       <LazyUtilVideoPlayerDialog v-model="showVideoDialog" />

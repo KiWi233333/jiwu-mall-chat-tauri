@@ -38,7 +38,7 @@ useHead({
 </script>
 
 <template>
-  <div w-full flex flex-col>
+  <div w-full flex flex-1 flex-col>
     <!-- 壁纸 -->
     <UserInfoBgToggle class="fixed left-0 top-0 z-0 w-full" />
     <div class="mains">
@@ -71,6 +71,6 @@ useHead({
 
 <style scoped lang="scss">
 .mains {
-  --at-apply: 'shadow-lg bg-color flex-1 grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
+  --at-apply: ' bg-color flex-1 grid grid-cols-1 pl-2rem pr-4rem sm:(grid-cols-[2fr_1fr] px-4rem)';
 }
 </style>

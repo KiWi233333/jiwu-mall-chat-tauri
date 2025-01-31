@@ -36,6 +36,11 @@ export const useChatStore = defineStore(
     });
     /** ***************************** 扩展打开 */
     const showExtension = ref(false);
+    const pageTransition = ref<{
+      name?: string
+    }>({
+      name: "",
+    });
     /** ***************************** 撤回的消息map */
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
     /** ***************************** 会话 */
@@ -725,6 +730,7 @@ export const useChatStore = defineStore(
       rtcCallType,
       showRtcCall,
       showExtension,
+      pageTransition,
       recallMsgMap,
       contactMap,
       contactList,

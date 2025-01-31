@@ -241,7 +241,6 @@ onActivated(() => active());
       <div class="form">
         <el-form
           ref="formRef"
-          data-fade
           class="form-wrapper"
           :model="form"
           @submit.prevent="onSubmit"

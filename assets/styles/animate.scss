@@ -1,3 +1,50 @@
+// 页面动画
+// 向左
+.page-slide-left-move,
+.page-slide-left-enter-active,
+.page-slide-left-leave-active {
+  transition: transform $transition-delay ease-in-out;
+}
+.page-slide-left-enter-from {
+  transform: translateX(100%);
+}
+.page-slide-left-leave-to {
+  transform: translateX(-100%);
+}
+.page-slide-left-leave-active {
+  position: absolute !important;
+}
+// 向左
+.page-slide-right-move,
+.page-slide-right-enter-active,
+.page-slide-right-leave-active {
+  transition: transform $transition-delay ease-in-out;
+}
+.page-slide-right-enter-from {
+  transform: translateX(-100%);
+}
+.page-slide-right-leave-to {
+  transform: translateX(100%);
+}
+.page-slide-right-leave-active {
+  position: absolute !important;
+}
+// 其他渐变
+.page-fade-in-move,
+.page-fade-in-enter-active,
+.page-fade-in-leave-active {
+  transition: opacity $transition-delay ease-in-out;
+}
+.page-fade-in-enter-from {
+  opacity: 0;
+}
+.page-fade-in-leave-to {
+  opacity: 0;
+}
+.page-fade-in-leave-active {
+  position: absolute !important;
+}
+
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
