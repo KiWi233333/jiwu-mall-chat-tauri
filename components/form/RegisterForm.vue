@@ -438,8 +438,11 @@ function toLoginForm() {
     <Teleport to="body">
       <Transition name="popper-fade-up">
         <div v-if="agreeDetail.showDetail" class="terms fixed left-0 top-0 z-1200 h-100vh w-100vw flex flex-col sm:(card-rounded-df left-50vw top-50vh h-500px w-400px border-default shadow-lg -translate-x-1/2 -translate-y-1/2) p-4 card-default bg-color">
-          <h3 class="mb-4 text-center text-1rem">
+          <h3 class="relative mb-4 text-center text-1rem">
             用户协议
+            <ElButton text size="small" class="absolute right-0 -top-1" style="width: 2rem;height: 1.4rem;" @click="agreeDetail.showDetail = false">
+              <i i-carbon:close p-3 btn-danger title="关闭" />
+            </ElButton>
           </h3>
           <div
             class="flex-1 overflow-y-auto"

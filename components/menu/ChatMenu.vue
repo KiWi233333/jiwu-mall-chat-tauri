@@ -50,7 +50,7 @@ const menuList = computed<MenuItem[]>(() => ([
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold-duotone",
-    tipValue: chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
+    tipValue: chat.getContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
   },
   {
     title: "好友",

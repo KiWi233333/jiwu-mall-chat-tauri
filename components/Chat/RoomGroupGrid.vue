@@ -163,6 +163,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         hidden: isSelf || !isTheGroupPermission.value,
         onClick: () => {
           ElMessageBox.confirm("是否将该用户踢出群聊？", {
+            title: "提示",
             center: true,
             confirmButtonText: "踢出",
             cancelButtonText: "取消",
@@ -313,7 +314,7 @@ function onAdd() {
       </ListAutoIncre>
     </el-scrollbar>
     <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
       @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
         chat.removeContact(data.roomId);
       })"

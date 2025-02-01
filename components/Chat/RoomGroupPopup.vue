@@ -301,6 +301,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         hidden: isSelf || !isTheGroupPermission.value,
         onClick: () => {
           ElMessageBox.confirm("是否将该用户踢出群聊？", {
+            title: "提示",
             center: true,
             confirmButtonText: "踢出",
             cancelButtonText: "取消",

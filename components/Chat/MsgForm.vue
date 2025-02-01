@@ -614,7 +614,6 @@ onUnmounted(() => {
       <!-- 滚动底部 -->
       <div
         v-if="chat.theContact?.msgList?.length > 20"
-
         data-fade mb-2 ml-a mr-2 w-fit rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover @click="setReadAndScrollBottom"
       >
         <i class="i-solar:double-alt-arrow-down-line-duotone block h-5 w-5 transition-200" />

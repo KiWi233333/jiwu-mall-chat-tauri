@@ -55,7 +55,7 @@ const menuList = ref<MenuItem[]>([
     path: "/",
     icon: "i-solar:chat-line-broken",
     activeIcon: "i-solar:chat-line-bold",
-    tipValue: chat.unReadContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
+    tipValue: chat.getContactList.reduce((acc, cur) => acc + cur.unreadCount, 0),
     isDot: false,
   },
   {

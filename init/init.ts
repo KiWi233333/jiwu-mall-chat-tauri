@@ -139,7 +139,6 @@ export async function useMsgBoxWebViewInit() {
       stop();
       return;
     }
-    console.log(newAllMsg);
     if (newAllMsg)
       start(true);
   }, {

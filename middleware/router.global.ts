@@ -6,6 +6,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if ((from.path !== "/msg" && to.path === "/msg")) // 页面进出禁止
     return abortNavigation();
   const user = useUserStore();
+  // 极物圈商品页
+  // if (to.path.startsWith("/goods/detail")) {
+  //   return abortNavigation();
+  // }
   // 页面动画
   resolveTransition(to.path, from.path);
   if (checkDesktop()) { // 桌面端

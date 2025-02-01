@@ -45,31 +45,35 @@ export const useChatStore = defineStore(
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
     /** ***************************** 会话 */
     const isOpenContact = ref(true); // 用于移动尺寸
-    const contactMap = ref<Record<number, ChatContactVO>>({});
-    const contactList = computed(() => Object.values(contactMap.value));
     const searchKeyWords = ref("");
-    const getContactList = computed(() => {
-      const contacts = Object.values(contactMap.value);
-      const sortedContacts = contacts.sort((a, b) => {
+    const contactMap = ref<Record<number, ChatContactVO>>({});
+    const sortedContacts = ref<ChatContactVO[]>([]);
+
+    watch(contactMap, (val) => {
+      sortedContacts.value = Object.values(val).sort((a, b) => {
         const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
         if (pinDiff !== 0)
-          return pinDiff; // 如果 pinTime 不同，直接返回结果
-        return b.activeTime - a.activeTime; // 否则按 activeTime 排序
+          return pinDiff;
+        return b.activeTime - a.activeTime;
       });
+    }, {
+      deep: true,
+    });
+    const getContactList = computed(() => {
       if (searchKeyWords.value) {
-        const lowerCaseSearchKey = searchKeyWords.value.toLowerCase(); // 避免重复调用 toLowerCase
-        return sortedContacts.filter(item =>
+        const lowerCaseSearchKey = searchKeyWords.value.toLowerCase();
+        return sortedContacts.value.filter(item =>
           item.name.toLowerCase().includes(lowerCaseSearchKey),
         );
       }
-      return sortedContacts;
+      return sortedContacts.value;
     });
     const unReadContactList = computed(() => {
-      const list = contactList.value.filter(p => p.unreadCount);
+      const list = sortedContacts.value.filter(p => p.unreadCount);
       localStorage.setItem("unReadContactList", JSON.stringify(list));
       return list;
     });
-    const isNewMsg = computed(() => contactList.value.filter(p => p.unreadCount).length > 0);
+    const isNewMsg = computed(() => unReadContactList.value.length > 0);
     const isVisible = ref(false); // 是否可见
     const isMsgListScroll = ref(false); // 消息列表是否滚动
     const theContact = ref<ChatContactDetailVO & { msgList: ChatMessageVO[], unreadMsgList: ChatMessageVO[], }>({
@@ -218,6 +222,8 @@ export const useChatStore = defineStore(
       mitter.off(MittEventType.DELETE);
     }
     onUnmounted(removeListeners);
+
+    const setting = useSettingStore();
     /**
      * 1. 新消息处理
      */
@@ -236,7 +242,7 @@ export const useChatStore = defineStore(
           theContact.value.unreadCount += 1;
       });
       // 2）更新消息列表
-      if (msg.message.roomId !== theContact.value.roomId) {
+      if (msg.message.roomId !== theContact.value.roomId || (setting.isMobileSize && !isOpenContact.value)) {
         ws.wsMsgList.newMsg.splice(0);
         return;
       }
@@ -442,7 +448,7 @@ export const useChatStore = defineStore(
           return false;
       }
       else if (setting.isDesktop) { // 桌面端
-        const win = await WebviewWindow.getByLabel(MAIN_WINDOW_LABEL);
+        const win = WebviewWindow.getCurrent();
         if (!await win?.isFocused()) // 窗口未激活
           return false;
       }
@@ -463,20 +469,21 @@ export const useChatStore = defineStore(
       if (useRoute().path !== "/") { // 不在聊天页面
         return;
       }
-      if (!user.getToken)
-        return false;
+      if (!contactMap.value[roomId]?.unreadCount && !theContact.value.unreadCount) {
+        return;
+      }
+
+      // 标记已读
+      if (roomId === theContact.value.roomId) {
+        theContact.value.unreadCount = 0;
+        theContact.value.unreadMsgList = [];
+        theContact.value.text = lastMsg;
+      }
       setMsgReadByRoomId(roomId, user.getToken).then((res) => {
         if (res.code !== StatusCode.SUCCESS)
           return false;
-
-        // 标记已读
-        if (roomId === theContact.value.roomId) {
-          theContact.value.unreadCount = 0;
-          theContact.value.unreadMsgList = [];
-          theContact.value.text = lastMsg;
-          if (contactMap.value[roomId]) {
-            contactMap.value[roomId].unreadCount = 0;
-          }
+        if (contactMap.value[roomId]) {
+          contactMap.value[roomId].unreadCount = 0;
         }
         // 消费消息
         const ws = useWsStore();
@@ -486,9 +493,11 @@ export const useChatStore = defineStore(
     }
 
     const clearAllUnread = () => {
-      contactList.value.forEach((p) => {
-        setReadList(p.roomId);
-      });
+      for (const key in contactMap.value) {
+        if (contactMap.value[key]) {
+          contactMap.value[key].unreadCount = 0;
+        }
+      }
     };
 
     // 页面绑定
@@ -733,7 +742,6 @@ export const useChatStore = defineStore(
       pageTransition,
       recallMsgMap,
       contactMap,
-      contactList,
       isNewMsg,
       unReadContactList,
       searchKeyWords,
