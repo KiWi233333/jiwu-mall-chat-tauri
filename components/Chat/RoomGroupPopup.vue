@@ -7,6 +7,7 @@ import { ChatRoomRoleEnum } from "~/composables/api/chat/room";
 const ws = useWsStore();
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
+const isReload = ref<boolean>(false);
 const memberScrollbarRef = ref();
 const user = useUserStore();
 const isGrid = useLocalStorage(`chat_room_group_member_show_type_${user.userInfo.id}`, false);
@@ -160,22 +161,27 @@ async function loadData() {
 }
 
 async function reload() {
+  if (isLoading.value || isReload.value)
+    return;
   chat.onOfflineList = [];
   pageInfo.value = {
     cursor: null,
     isLast: false,
     size: 15,
   };
-  if (isLoading.value)
-    return;
-  isLoading.value = false;
+  isReload.value = true;
   // 动画
-  await loadData();
+  try {
+    await loadData();
+  }
+  finally {
+    isLoading.value = false;
+    isReload.value = false;
+  }
 }
 // 添加好友
 const theUser = ref<ChatMemberVO>();
 const isShowApply = ref();
-
 
 // 权限
 const getTheRoleType = computed(() => {
@@ -408,7 +414,13 @@ function onAdd() {
         :no-more="pageInfo.isLast"
         @load="loadData"
       >
-        <div :class="isGrid ? 'flex-row is-grid' : 'flex-col'" relative flex flex-wrap gap-0>
+        <div
+          :class="[
+            isGrid ? 'flex-row is-grid' : 'flex-col',
+            isReload ? 'op-0' : 'op-100',
+          ]"
+          relative flex flex-wrap gap-0 op-0 transition-opacity
+        >
           <div
             v-for="p in merberList" :key="p.userId"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
@@ -521,7 +533,7 @@ function onAdd() {
       </div>
     </div>
     <btn-el-button
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
       @click="chat.exitGroupConfirm(chat.theContact.roomId, isTheGroupOwner, () => {
         chat.removeContact(chat.theContact.roomId);
       })"

@@ -31,7 +31,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   else { // 移动、web端
     if (to.path !== "/login") {
       if (!user.isLogin) {
-        user.showLoginForm = true;
+        user.showLoginAndRegister = "login";
         return "/login";
       }
     }

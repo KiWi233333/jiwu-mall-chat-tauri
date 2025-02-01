@@ -170,8 +170,7 @@ function onCloseTimer() {
 
 const store = useUserStore();
 function toRegister() {
-  store.showLoginForm = false;
-  store.showRegisterForm = true;
+  store.showLoginAndRegister = "register";
 }
 
 const formRef = ref();

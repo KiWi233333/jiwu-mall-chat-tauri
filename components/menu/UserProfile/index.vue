@@ -6,16 +6,7 @@ enum FormType {
 }
 // 表单
 function onLogin(type: FormType) {
-  if (type === FormType.LOGIN) {
-    // 登录
-    user.showLoginForm = true;
-    user.showRegisterForm = false;
-  }
-  else {
-    // 注册
-    user.showLoginForm = false;
-    user.showRegisterForm = true;
-  }
+  user.showLoginAndRegister = type === FormType.LOGIN ? "login" : "register";
 }
 </script>
 

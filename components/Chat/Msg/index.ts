@@ -376,7 +376,7 @@ function deleteMsg(data: ChatMessageVO, msgId: number) {
       if (res.code === StatusCode.SUCCESS) {
         if (data.message.id === msgId) {
           data.message.type = MessageType.RECALL;
-          data.message.content = `${data.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${data.fromUser.nickName}"删除了一条成员消息`}`;
+          data.message.content = `${data.deleteUid === user.userInfo.id ? "我删除了一条消息" : `我删除了一条"${data.fromUser.nickName}"成员消息`}`;
           data.message.body = undefined;
         }
       }

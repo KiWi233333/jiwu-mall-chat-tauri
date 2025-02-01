@@ -323,8 +323,7 @@ async function toLogin(token?: string) {
   // 自动登录成功
   store.$patch({
     token: data.data,
-    showLoginForm: false,
-    showRegisterForm: false,
+    showLoginAndRegister: "",
     isLogin: true,
   });
   ElMessage.success({
@@ -348,10 +347,7 @@ async function checkUsername() {
 }
 
 function toLoginForm() {
-  store.$patch({
-    showRegisterForm: false,
-    showLoginForm: true,
-  });
+  store.showLoginAndRegister = "login";
 }
 </script>
 
