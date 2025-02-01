@@ -70,7 +70,8 @@ const SelfExistTextMap = { // 好友状态
 };
 
 // 读取@用户列表 hook
-const { userOptions, userOpenOptions, loadUser } = useLoadAtUserList();
+const { userOptions, userAtOptions, loadUser } = useLoadAtUserList();
+// const { aiOptions, loadAi } = useLoadAiList();
 watch(() => chat.atUidListTemp, (val) => {
   if (val.length) {
     chat.msgForm.content += val.map((uid) => {
@@ -891,7 +892,7 @@ onUnmounted(() => {
           v-if="loadInputDone"
           ref="inputAllRef"
           v-model.lazy="chat.msgForm.content"
-          :options="userOpenOptions"
+          :options="userAtOptions"
           :prefix="['@']"
           popper-class="at-select"
           :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"

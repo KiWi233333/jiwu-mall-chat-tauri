@@ -259,7 +259,7 @@ export interface AtConfigs {
  * 加载@用户列表
  * @returns
  *  userOptions: 所有用户列表
- *  userOpenOptions: 未添加的用户列表
+ *  userAtOptions: 未添加的用户列表
  *  loadUser: 加载用户列表
  */
 export function useLoadAtUserList() {
@@ -267,7 +267,7 @@ export function useLoadAtUserList() {
   const chat = useChatStore();
   const user = useUserStore();
   const userOptions = ref<AtChatMemberOption[]>([]);
-  const userOpenOptions = computed(() => chat.theContact.type === RoomType.GROUP ? userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId)) : []); // 过滤已存在的用户
+  const userAtOptions = computed(() => chat.theContact.type === RoomType.GROUP ? userOptions.value.filter(u => !chat.atUserList.find(a => a.userId === u.userId)) : []); // 过滤已存在的用户
 
   /**
    * 加载@用户列表
@@ -297,12 +297,9 @@ export function useLoadAtUserList() {
   }, {
     debounce: 500,
   });
-  onMounted(() => {
-    loadUser();
-  });
   return {
     userOptions,
-    userOpenOptions,
+    userAtOptions,
     loadUser,
   };
 }
