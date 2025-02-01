@@ -84,3 +84,6 @@ export const appTerms = `
 ## 感谢您使用极物聊天！
 
 `;
+
+export const githubReportUrl = "https://github.com/KiWi233333/JiwuChat";
+export const giteeReportUrl = "https://gitee.com/KiWi233333/JiwuChat";

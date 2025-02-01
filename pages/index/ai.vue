@@ -276,7 +276,7 @@ onActivated(() => active());
               :minlength="1"
               resize="none"
               :autosize="true"
-              style="max-height: 16em;min-height: 31px !important;overflow-y: auto;"
+              style="max-height: 16em;"
               :disabled="isChat" placeholder="快开始对话吧 ✨"
               class="content card-rounded-df"
               @keydown.enter.prevent="onSubmit"

@@ -18,18 +18,12 @@ async function toggleFn(e: MouseEvent) {
     <img
       v-if="setting.settingPage.modeToggle.value === 'light'"
       class="h-1.3em w-1.3em"
-      sizes="md:20px"
-      densities="x1 x2"
       src="/images/icon/sun.svg"
-      quality="50"
       alt="sun 日间模式"
     >
     <img
       v-else
       src="/images/icon/moon.svg"
-      sizes="md:20px"
-      quality="50"
-      densities="x1 x2"
       class="h-1.3em w-1.3em fill-light-5"
       alt="moon 夜间模式"
     >
