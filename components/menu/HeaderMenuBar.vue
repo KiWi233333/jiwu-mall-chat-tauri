@@ -50,7 +50,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     <slot name="left">
       <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
         <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
-          <CardElImage src="/logo.png" class="h-2rem w-2rem" />
+          <img src="/logo.png" class="h-2rem w-2rem" alt="logo">
         </NuxtLink>
         <div
           class="btn-primary"

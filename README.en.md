@@ -1,13 +1,12 @@
 <div align=center>
  <div align=center margin="10em" style="margin:4em 0 0 0;font-size: 30px;letter-spacing:0.3em;">
-<img src="./.doc/jiwuchat-tauri.png" width="140px" height="140px" alt="Image Name" align=center />
+<img src="./.doc/jiwuchat-tauri.png" width="140px" height="140px" alt="JiwuChat Logo" align=center />
  </div>
  <h2 align=center style="margin: 2em 0;">JiwuChat Tauri APP</h2>
 
-
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
-        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-JiwuChat-blueviolet.svg?style=plasticr">
+        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project_Address-blueviolet.svg?style=plasticr">
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
         <img class="disabled-img-view" alt="License"
@@ -24,100 +23,110 @@
       </a>
     </div>
     <div>
-      <a href="https://app.netlify.com/sites/jiwuchat/deploys" target="_blank">
-          <img src="https://api.netlify.com/api/v1/badges/b68ad9ac-53e5-4c5a-ac56-a8882ffe7697/deploy-status" alt="+QQ群"/>
-      </a>
       <a href="`https://github.com/Kiwi233333/jiwu-mall-chat-tauri/blob/main/LICENSE`" target="_blank">
           <img class="disabled-img-view" alt="License"
           src="https://img.shields.io/github/license/Kiwi233333/jiwu-mall-chat-tauri">
       </a>
+      <a href="https://app.netlify.com/sites/jiwuchat/deploys" target="_blank">
+          <img src="https://api.netlify.com/api/v1/badges/b68ad9ac-53e5-4c5a-ac56-a8882ffe7697/deploy-status" alt="Deploy Status"/>
+      </a>
+      <a href="https://qm.qq.com/q/iSaETNVdKw" target="_blank">
+        <img src="https://img.shields.io/badge/QQ_Group:939204073 -blue?logo=tencentqq&logoColor=white" alt="QQ Group"/>
+      </a>
     </div>
 
-Language: English | [Simplified Chinese](./README.md)
+Language: [简体中文](./README.md) | English
+
 </div>
 
 ## Introduction
 
-JiwuChat is a lightweight (~10MB) multi-platform chat app built with Tauri2 and Nuxt3, featuring real-time messaging, WebRTC audio and video calls, screen sharing, and AI shopping. It offers seamless cross-device communication with text, image, file, and voice messaging, as well as group chats and customizable settings. Available in light and dark modes for efficient social networking. ✨
+JiwuChat is a lightweight `(~10MB)` cross-platform chat application built with Tauri2 and Nuxt3, featuring real-time messaging, AI chatbots (integrated with `iFlyTek Spark`, `KimiAI`, etc.), `WebRTC audio/video calls`, screen sharing, and AI-powered shopping capabilities. It supports seamless cross-device communication with text, images, files, voice messages, group chats, and customizable settings. Offers light/dark themes to enhance social networking efficiency.✨
 
-## One Code, Multi-platform Support
+## One Codebase, Multi-Platform Support
 
-![Multi-platform Support](.doc/previews.png)
+![Multi-Platform](.doc/previews.png)
 
 ## Default Account
-
-- Account: ikun233
+- Username: ikun233
 - Password: 123456
-- Experience: [Web Address](https://chat.jiwu.kiwi233.top/)
+- Experience: [Web Version](https://chat.jiwu.kiwi233.top/)
 
-Note: This account does not have permissions for uploading images, changing passwords, etc.
+> ⚠ Note: This account is only used as a test account because it does not have permission to upload files, modify personal information, and modify passwords
 
-## Feature List
+## Features
 
-| Feature Module | Description | Status |
-| --- | --- | --- |
-| User Module | Supports login and registration with account, phone number, and email | ✔ |
-| Message Module | Supports real-time chat with text, images, files, voice, @users, retract, delete, and other message types | ✔ |
-| Conversation Module | Supports group chat, private chat, and various roles such as group owner, administrator, and ordinary user | ✔ |
-| Contact Module | Supports viewing, adding, and deleting contacts | ✔ |
-| System Version Module | Supports automatic app updates and viewing version announcements | ✔ |
-| Account & Security Module | Provides functions for account login, password change, account management, device security, and account online/offline | ✔ |
-| AI Shopping Module | AI shopping chat feature, providing product recommendations under "Jiwu Circle" | ✔ |
-| File Download Management Module | Supports local file download, open, and delete functions | ✔ |
-| Voice and Video Module | Based on WebRTC for Screen Share, voice and video chat functionality | ✔ |
-| Other Features | Global dark mode, font, custom download path, multi-system support, customized settings, etc. | ✔ |
+| Module          | Description                                                                 | Status |
+|-----------------|-----------------------------------------------------------------------------|--------|
+| User Module     | Login/Register via username, phone, or email                               | ✔      |
+| Messaging       | Real-time text, images, files, voice, @mentions, recall, delete            | ✔      |
+| Conversations   | Group chats, private chats with roles (owner/admin/user)                   | ✔      |
+| Contacts        | View/add/remove contacts                                                   | ✔      |
+| Version Updates | Auto-updates and version release notes                                     | ✔      |
+| Account Security| Password change, device management, login history                          | ✔      |
+| AI Shopping     | AI-powered product recommendations from `Jiwu Circle`                      | ✔      |
+| File Management | Local file download/open/delete                                            | ✔      |
+| Voice/Video     | WebRTC-based screen sharing, voice/video calls                             | ✔      |
+| Others          | Dark mode, font customization, multi-OS support                            | ✔      |
 
-## Project Screenshots 📸
+## Screenshots
 
-- Chat Desktop Application Login
+- Desktop App Login / Register
 
 ![Login](./.doc/login.png)
 
-<!-- ![Register](./.doc/register.png) -->
+![Register](./.doc/register.png)
 
-- Chat Desktop Application Chat
+- Light / Dark Themes
 
-![Light Mode](./.doc/chat1.png)
+![Light Theme](./.doc/chat1.png)
 
-- Global Light / Dark Mode
+![Main Interface](./.doc/chat.png)
 
-![Home Page](./.doc/chat.png)
+- AI Chatbots
 
-- Voice and Video Chat via WebRTC
+![AI Chatbot](./.doc/group-ai-3.png)
 
-![Voice and Video Chat](./.doc/rtc1.png)
+![AI Chatbot](./.doc/group-ai-1.png)
+
+![AI Chatbot](./.doc/group-ai-2.png)
+
+- WebRTC Voice/Video Chat
+
+![Voice/Video Chat](./.doc/rtc1.png)
 
 - Screen Sharing
 
-![Screen Content Sharing](./.doc/rtc3.png)
+![Screen Sharing](./.doc/rtc3.png)
 
-- Chat and Social Interaction
+- Social Chat
 
-![Dark Mode](./.doc/chat2.png)
+![Dark Theme](./.doc/chat2.png)
 
-- AI Shopping Chat
+- AI Shopping (Powered by [Jiwu Circle](https://github.com/KiWi233333/jiwu-mall-sites))
 
-![Dark Mode](./.doc/chat3.png)
+![AI Shopping](./.doc/chat3.png)
 
-![Dark Mode](./.doc/chat3.2.png)
+![AI Shopping](./.doc/chat3.2.png)
 
-- Account and Security
+- Account & Security
 
-![Account and Security](./.doc/chat4.png)
+![Account Security](./.doc/chat4.png)
 
-![Account and Security](./.doc/chat5.png)
+![Account Security](./.doc/chat5.png)
+
 - Mobile Adaptation
 
 <div>
- <img src="./.doc/chat12.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/rtc2.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/rtc_remove_desktop.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
- <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="Mobile Adaptation" align=center />
+ <img src="./.doc/chat12.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/rtc2.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/rtc_remove_desktop.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
+ <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="Mobile" align=center />
 </div>
 
 ## ⏳ Getting Started
@@ -125,7 +134,7 @@ Note: This account does not have permissions for uploading images, changing pass
 ### 📦 Install Dependencies
 
 ```sh
-# Node version >= 18
+# Requires Node.js >= 18
 npm install -g pnpm
 
 pnpm install
@@ -133,79 +142,75 @@ pnpm install
 
 ### ✨ Development
 
-- If there is a backend service, you can modify the `.env.development` environment variable file for development
+- 📌 If you **don't have** a backend service, modify `.env.development` or use `.env.production`.
 
 ```sh
-# It is recommended to run separately
-# Terminal 1: Start nuxt
-pnpm run dev:nuxt
-# Terminal 2: Start tauri
-pnpm run dev:tauri
-```
-
-- If there is no backend service, modify the `.env.development` environment variable or use the `.env.production` configuration file.
-
-```sh
-# Terminal 1: Start prod nuxt (recommended ✔)
+# Terminal 1: Start Nuxt (Production)
 pnpm run prod:nuxt
-# Terminal 2: Start tauri
+# Terminal 2: Start Tauri
 pnpm run dev:tauri
 ```
 
-### 📦 Package
+- If you **have** a backend service, customize `.env.development` for development.
+
+```sh
+# Recommended to run separately
+# Terminal 1: Start Nuxt
+pnpm run dev:nuxt
+# Terminal 2: Start Tauri
+pnpm run dev:tauri
+```
+
+### 📦 Build
 
 ```sh
 pnpm run build:tauri
 ```
 
-### ❌ pnpm install error
+### ❌ pnpm Install Errors
 
-Check the source
-
+Check registry:
 ```sh
 pnpm get registry
 ```
 
-Temporary modification
-
+Temporary fix:
 ```sh
 pnpm --registry https://registry.npm.taobao.org install any-touch
 ```
 
-Permanent use
-
+Persistent change:
 ```sh
 pnpm config set registry https://registry.npm.taobao.org
 ```
 
-Restore
-
+Restore default:
 ```sh
 pnpm config set registry https://registry.npmjs.org
 ```
 
-## 🔧 Technology Stack | Tech Stack
+## 🔧 Tech Stack
 
-| Category        | Technology/Component | Version   |
-| --------------- | ------------------- | --------- |
-| Framework      | Nuxt3              | ^3.14.159+ |
-|                 | Tauri              | ^2.1.0    |
-| UI Component Library | Element Plus      | ^2.8.4    |
-| State Management | Pinia             | 2.1.7     |
-| Utility Library | Vueuse            | 10.11.0   |
-| Build & Development Tools | Nuxi          | lts      |
-|                 | Vite              | lts      |
-| Code Quality   | ESLint            | 8.56.0    |
-|                 | Prettier          | 3.3.2    |
-| Type Checking  | TypeScript        | 5.3.2    |
-| Style Processing | Sass             | 1.77.6   |
+| Category       | Technology           | Version       |
+|----------------|----------------------|---------------|
+| Framework      | Nuxt                | ^3.14.159+    |
+|                | Tauri               | ^2.1.0        |
+| UI Library     | Element Plus        | ^2.8.4        |
+| State Management| Pinia               | 2.1.7         |
+| Utility        | Vueuse              | 10.11.0       |
+| Build Tools    | Nuxi                | lts           |
+|                | Vite                | lts           |
+| Code Quality   | ESLint              | 8.56.0        |
+|                | Prettier            | 3.3.2         |
+| Type Checking  | TypeScript          | 5.3.2         |
+| Styling        | Sass                | 1.77.6        |
 
-
-## 🦾 Trends
+## 🦾 Star History
 
 ![JiwuChat Star History Chart](https://api.star-history.com/svg?repos=KiWi233333/jiwu-mall-chat-tauri&type=Date)
 
 ## 💬 Contact
 
 - Email: [kiwi2333@qq.com](mailto:kiwi2333@qq.com)
-- QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qq&menu=yes)
+- QQ: [1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qqq&menu=yes)
+- QQ Group: [939204073](https://qm.qq.com/q/iSaETNVdKw)

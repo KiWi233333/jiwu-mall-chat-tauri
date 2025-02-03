@@ -41,7 +41,7 @@
 
 ## 介绍
 
-JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊天应用，具备多种实时消息、WebRTC 音视频通话、屏幕共享以及 AI 购物功能。它支持无缝跨设备通信，涵盖文本、图片、文件和语音消息，还支持群聊和可定制化设置。提供浅色/深色模式，助力高效社交网络。✨
+JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊天应用，具备多种实时消息、AI群聊机器人（`讯飞星火`、`KimiAI`等已接入）、`WebRTC 音视频通话`、屏幕共享以及 AI 购物功能。它支持无缝跨设备通信，涵盖文本、图片、文件和语音等多种消息，还支持群聊和可定制化设置。提供浅色/深色模式，助力高效社交网络。✨
 
 ## 一套代码，多端适配
 
@@ -52,7 +52,7 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 - 密码：123456
 - 体验：[Web端地址](https://chat.jiwu.kiwi233.top/)
 
-注：该账号上传图片、修改密码等部分没有权限
+> ⚠ 注：该账号上传文件、修改个人信息、修改密码等部分没有权限，只作为测试账号使用。
 
 ## 功能列表
 
@@ -71,19 +71,26 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 ## 项目截图
 
-- 聊天桌面应用 Login
+- 聊天桌面应用 Login / Register
 
 ![登录](./.doc/login.png)
 
-<!-- ![注册](./.doc/register.png) -->
+![注册](./.doc/register.png)
 
-- 聊天桌面应用 Chat
+- 深浅主题 Light / Dark
 
 ![浅色](./.doc/chat1.png)
 
-- 全局夜间模式 Light / Dark
-
 ![主页](./.doc/chat.png)
+
+- AI机器人 Chatbot
+
+![AI机器人](./.doc/group-ai-3.png)
+
+![AI机器人](./.doc/group-ai-1.png)
+
+![AI机器人](./.doc/group-ai-2.png)
+
 
 - 语音视频聊天 WebRTC
 
@@ -97,7 +104,7 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 ![暗黑](./.doc/chat2.png)
 
-- AI购物聊天
+- AI购物聊天 （来源: [极物圈](https://github.com/KiWi233333/jiwu-mall-sites)）
 
 ![暗黑](./.doc/chat3.png)
 
@@ -136,7 +143,7 @@ pnpm install
 
 ### ✨ 开发
 
-- 若`没有`后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。🎈
+- 📌 若`没有`后端服务，修改`.env.development`环境变量，或使用`.env.production`配置文件。
 
 ```sh
 # 终端1：启动nuxt (发布环境)
@@ -191,7 +198,7 @@ pnpm config set registry https://registry.npmjs.org
 
 | 类别         | 技术/组件          | 版本号       |
 | ------------- | ------------------ | ------------ |
-| 框架         | Nuxt3              | ^3.14.159+       |
+| 框架         | Nuxt             | ^3.14.159+       |
 |                 | Tauri               | ^2.1.0        |
 | UI 组件库     | Element Plus       | ^2.8.4        |
 | 状态管理     | Pinia              | 2.1.7        |
