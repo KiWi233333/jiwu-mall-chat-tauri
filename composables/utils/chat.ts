@@ -5,7 +5,7 @@
  * @param msg 消息
  * @returns 消息内容
  */
-export function resolveMsgContactText(msg: ChatMessageVO): string | undefined | null {
+export function resolveMsgContactText(msg: ChatMessageVO): string {
   if (msg.message.type === MessageType.SOUND) {
     const _msg = msg as ChatMessageVO<SoundBodyMsgVO>;
     return `[语音] ${getSecondsText(_msg?.message?.body?.second || 0)}`;
@@ -27,7 +27,7 @@ export function resolveMsgContactText(msg: ChatMessageVO): string | undefined | 
     return `[${_msg.message.body?.typeText || "通讯聊天"}] ${_msg?.message.content}`;
   }
   // 其他类型消息
-  return msg.message.content;
+  return msg.message.content || "";
 }
 /**
  * 解析消息内容（回复文本）

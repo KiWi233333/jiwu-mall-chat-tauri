@@ -44,9 +44,9 @@ function handleRepo(type: "github" | "gitee", isStar: boolean = true) {
   <template v-if="setting.isWeb">
     <el-popconfirm
       title="如果你觉得这个项目不错，并且您愿意的话，欢迎给项目点个Star！"
-      confirm-button-text="好哒 ~"
+      confirm-button-text="前往"
       cancel-button-text="下次一定"
-      :width="200"
+      :width="300"
       @cancel="handleRepo('github', false)"
       @confirm="handleRepo('github')"
     >
@@ -64,9 +64,9 @@ function handleRepo(type: "github" | "gitee", isStar: boolean = true) {
     </el-popconfirm>
     <el-popconfirm
       title="如果你觉得这个项目不错，并且您愿意的话，欢迎给项目点个Star！"
-      confirm-button-text="好哒 ~"
+      confirm-button-text="前往"
       cancel-button-text="下次一定"
-      :width="200"
+      :width="300"
       @cancel="handleRepo('gitee', false)"
       @confirm="handleRepo('gitee')"
     >

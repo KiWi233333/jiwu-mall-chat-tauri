@@ -232,7 +232,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
  */
 export function useAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(#(\S+)\)\s/g }): { uidList: string[]; atUidList: AtChatMemberOption[] } {
   const { regExp } = configs;
-  if (!regExp)
+  if (!regExp || !text)
     throw new Error("regExp is required");
   const atUidList: AtChatMemberOption[] = [];
   const matches = text.matchAll(regExp);
@@ -248,6 +248,36 @@ export function useAtUsers(text: string, userOptions: AtChatMemberOption[], conf
     uidList: atUidList.map(p => p.userId) || [],
     atUidList: JSON.parse(JSON.stringify(atUidList)),
   };
+}
+/**
+ * 处理/AI回复
+ * @param text 文本内容
+ * @param aiOptions 所有AI列表
+ * @returns
+ *  aiReply: 识别到的/AI回复
+ */
+export function useAiReply(text: string, aiOptions: AskAiRobotOption[], configs: AtConfigs = { regExp: /\/\S+\(#(\S+)\)\s/g }): { aiRobitUidList: string[]; aiRobotList: AskAiRobotOption[] } {
+  const { regExp } = configs;
+  if (!regExp || !text)
+    throw new Error("regExp is required");
+  const aiRobotList: AskAiRobotOption[] = [];
+  const matches = text.matchAll(regExp);
+  for (const match of matches) {
+    // 识别/和括号直接的昵称
+    if (match[1]) {
+      const aiRobot = aiOptions.find(u => u.username === match[1]);
+      if (aiRobot)
+        aiRobotList.push(aiRobot);
+    }
+  }
+  return {
+    aiRobitUidList: aiRobotList.map(p => p.userId) || [],
+    aiRobotList: JSON.parse(JSON.stringify(aiRobotList)),
+  };
+}
+
+export function formatAiReplyTxt(item: AskAiRobotOption) {
+  return `/${item.nickName}(#${item.username}) `;
 }
 
 export interface AtConfigs {
@@ -328,3 +358,78 @@ export function checkAtUserWhole(context: string | undefined | null, pattern: st
   return true;
 }
 
+/**
+ * 加载/AI列表
+ * @returns
+ *  aiOptions: 所有AI列表
+ *  loadAi: 加载AI列表
+ */
+export function useLoadAiList() {
+  const chat = useChatStore();
+  const user = useUserStore();
+  const aiOptions = ref<AskAiRobotOption[]>([]);
+
+  /**
+   * 加载AI列表
+   */
+  async function loadAi() {
+    if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
+      return;
+    const { data, code } = await getAiRobotList(user.getToken);
+    if (data && code === StatusCode.SUCCESS) {
+      aiOptions.value = (data || []).map((u: RobotUserVO) => ({
+        label: u.nickname,
+        value: `${u.nickname}(#${u.username})`,
+        userId: u.userId,
+        avatar: u.avatar,
+        username: u.username,
+        nickName: u.nickname,
+        aiRobotInfo: u,
+      }));
+    }
+  }
+  // 加载AI
+  const ws = useWsStore();
+  watchDebounced(() => ws.wsMsgList.memberMsg.length, (len) => {
+    if (!len)
+      return;
+    loadAi();
+  }, {
+    debounce: 500,
+    immediate: true,
+  });
+  return {
+    aiOptions,
+    loadAi,
+  };
+}
+
+export function checkAiReplyWhole(context: string | undefined | null, pattern: string, prefix: string) {
+  const chat = useChatStore();
+  if (prefix !== "/")
+    return false;
+  const atUserListOpt = chat.atUserList.map(u => ({
+    ...u,
+    label: `${u.nickName}(#${u.username})`,
+    value: u.userId,
+  }));
+  if (pattern && context?.endsWith(`${prefix + pattern} `)) {
+    const user = atUserListOpt.find(u => u.label === pattern.trim());
+    if (user)
+      chat.removeAtByUsername(user.username);
+  }
+  return true;
+}
+
+
+export interface AtChatMemberOption {
+  label: string
+  value: string
+  userId: string
+  username: string
+  nickName?: string
+  avatar?: string
+}
+export interface AskAiRobotOption extends AtChatMemberOption {
+  aiRobotInfo?: RobotUserVO;
+}

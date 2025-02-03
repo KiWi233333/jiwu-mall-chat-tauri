@@ -50,7 +50,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     <slot name="left">
       <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
         <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
-          <CardElImage src="/logo.png" class="h-1.8rem w-1.8rem" />
+          <CardElImage src="/logo.png" class="h-2rem w-2rem" />
         </NuxtLink>
         <div
           class="btn-primary"
@@ -78,7 +78,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     <slot name="right">
       <div id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
         <BtnAppDownload />
-        <div class="flex items-center gap-3 rounded-2rem px-2 py-1 border-default card-default">
+        <div class="flex items-center gap-3 rounded-2rem px-2.2 py-1.5 border-default card-default">
           <!-- 刷新页面 -->
           <div
             v-show="!isPageReload"
@@ -109,7 +109,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
               <ElButton
                 text
                 size="small"
-                style="font-size: 1rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="toggleTop(data)"
+                style="font-size: 0.9rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="toggleTop(data)"
               >
                 <i
                   :title="isTop ? '取消置顶' : '置顶'"

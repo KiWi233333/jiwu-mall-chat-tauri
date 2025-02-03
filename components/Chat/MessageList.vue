@@ -132,12 +132,14 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0, isAnimated: boolean
     }, 120);
   }
   else {
-    clearTimeout(timer.value);
     timer.value = null;
     // 找到对应消息
     nextTick(() => {
       if (!el)
         return;
+      if (el.classList.contains("reply-shaing")) {
+        return;
+      }
       clearTimeout(timer.value);
       scrollTop((el?.offsetTop || 0) + offset, isAnimated);
       el.classList.add("reply-shaing");
@@ -224,14 +226,15 @@ defineExpose({
 <template>
   <el-scrollbar
     ref="scrollbarRef"
-    class="flex-1"
+    class="max-w-full flex-1"
     height="100%"
     wrap-class="px-0 shadow-inner-bg sm:px-2"
-    view-class="msg-list pb-2rem" @scroll="onScroll"
+    view-class="msg-list pb-2rem"
+    @scroll="onScroll"
   >
     <div
       v-bind="$attrs"
-      class="msg-list flex flex-col op-0 transition-(200 property-opacity)"
+      class="msg-list flex flex-col px-1 op-0 transition-(200 property-opacity) sm:px-2"
       :class="{ 'op-100': !isReload }"
     >
       <ListDisAutoIncre

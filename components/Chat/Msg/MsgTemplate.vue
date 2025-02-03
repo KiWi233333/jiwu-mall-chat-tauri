@@ -6,7 +6,7 @@
  * ctx-name 用于右键菜单
  */
 const { data } = defineProps<{
-  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO>
+  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO | AiChatBodyMsgVO>
   prevMsg?: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();
@@ -21,7 +21,6 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
 <template>
   <div
     v-bind="$attrs"
-    :label="data.roomId"
     class="msg"
     :class="{
       self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
@@ -58,7 +57,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
         v-if="body?.reply"
         title="点击跳转"
         ctx-name="reply"
-        class="max-w-20em w-fit flex-1 cursor-pointer truncate px-2 text-0.75em sm:max-w-30em card-default dark:text-light-900 border-default-hover"
+        class="max-w-20em w-fit flex-1 cursor-pointer truncate card-rounded-df px-2 text-0.75em sm:max-w-30em bg-color dark:text-light-900 border-default-hover"
         @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
       >
         <i class="i-solar:forward-2-bold-duotone mr-1 p-2" />
@@ -68,7 +67,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
       <small
         v-if="body?.atUidList?.length && body?.atUidList.includes(user?.userInfo?.id)"
         ctx-name="atUidList"
-        class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default"
+        class="flex-ml-a at-list w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default"
       >
         有人@我
       </small>

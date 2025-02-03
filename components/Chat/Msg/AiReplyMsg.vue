@@ -1,20 +1,16 @@
 <script lang="ts" setup>
 import { MdPreview } from "md-editor-v3";
-import "md-editor-v3/lib/preview.css";
+import "md-editor-v3/lib/style.css";
 
 /**
  * AI消息
  */
-const props = defineProps<{
-  data: ChatMessageVO<TextBodyMsgVO>
+defineProps<{
+  data: ChatMessageVO<AiChatReplyBodyMsgVO>;
   prevMsg: ChatMessageVO
   index: number
 }>();
-
-const user = useUserStore();
-const colorMode = useColorMode();
 </script>
-
 
 <template>
   <ChatMsgTemplate
@@ -24,23 +20,16 @@ const colorMode = useColorMode();
     v-bind="$attrs"
   >
     <template #body>
-      <!-- 内容 -->
-      <template v-if="data.fromUser.userId === user.userInfo.id">
-        <p class="msg-popper mt-2">
-          {{ data.message?.content }}
-        </p>
-      </template>
       <MdPreview
-        v-else
+        :id="`msg-md-${data.message.id}`"
         language="zh-CN"
-        :editor-id="data.id"
         show-code-row-number
-        :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
-        preview-theme="smart-blue"
+        :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
         code-theme="a11y"
         :code-foldable="false"
-        style="font-size: 1em;color: inherit;padding: 0.3em 0.8em;"
-        class="msg-popper markdown mt-2 sm:max-w-40rem text-color"
+        style="font-size: 1em;color: inherit;padding: 0.3em 0.8em; color: inherit;"
+        ctx-name="content"
+        class="msg-popper markdown !max-w-18em sm:!max-w-34vw"
         :model-value="data.message?.content || ''"
       />
     </template>
@@ -49,8 +38,10 @@ const colorMode = useColorMode();
 
 <style lang="scss" scoped>
 @use './msg.scss';
+// @use "md-editor-v3/lib/preview.css";
 .markdown {
   :deep(.md-editor-preview-wrapper)  {
+    color: inherit;
     padding: 0;
     img {
       border-radius: 0.25rem;
@@ -61,9 +52,16 @@ const colorMode = useColorMode();
     ol,
     ul {
       padding-left: 1.5em;
-      margin-top: .5em;
+      margin:  0.2em 0;
+    }
+    .md-editor-preview {
+      color: var(--el-text-color-primary);
+      line-height: 0;
     }
     .md-editor-code {
+      margin: 0.6em 0 0 0;
+      display: flex;
+      flex-direction: column;
       .md-editor-code-block {
          line-height: 1.6em;
         & ~ span[rn-wrapper] >span {

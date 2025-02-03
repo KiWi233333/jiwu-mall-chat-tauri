@@ -181,18 +181,18 @@ body .el-message {
 }
 /**  ------------------------------markdown---------------------------------------  **/
 
-.md-editor {
-  .md-editor-preview-wrapper {
-    img {
-      --at-apply: "card-default border-default";
-    }
-  }
-}
-.transition-200,
-.transition-300,
-.transition {
-  will-change: transform, opacity, height, width, background-color, shadow;
-}
+// .md-editor {
+//   .md-editor-preview-wrapper {
+//     img {
+//       --at-apply: "card-default border-default";
+//     }
+//   }
+// }
+// .transition-200,
+// .transition-300,
+// .transition {
+//   will-change: transform, opacity, height, width, background-color, shadow;
+// }
 
 /**  ------------------------------right-menu---------------------------------------  **/
 

@@ -230,7 +230,14 @@ onActivated(() => active());
     <el-scrollbar ref="scollRef" view-class="h-full p-2 md:p-4" class="relative sm:card-rounded-df shadow shadow-inset bg-color-2">
       <!-- 消息适配器 -->
       <div class="pb-24">
-        <ChatMsgMain
+        <!-- <ChatMsgMain
+          v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`"
+          :key="msg.message.id"
+          :index="i"
+          :data="msg"
+          :prev-msg="i > 0 ? msgList[i - 1] : undefined"
+        /> -->
+        <ChatAIJiwuMsg
           v-for="(msg, i) in msgList" :id="`chat-msg-${msg.message.id}`"
           :key="msg.message.id"
           :index="i"

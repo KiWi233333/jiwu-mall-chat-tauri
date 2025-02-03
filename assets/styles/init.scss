@@ -7,7 +7,7 @@
   margin: 0;
   font-family: var(--font-family), AlibabaHealthFont2, AlimamaDaoLiTi, sans-serif;
   box-sizing: border-box;
-  outline: none !important; // TODO:待定
+  outline: none;
 }
 .h-100dvh {
   min-height: 100vh;
@@ -28,7 +28,9 @@ a:active {
 }
 
 li {
-  list-style: none;
+  :not(.md-editor-preview-wrapper) {
+    list-style: none;
+  }
 }
 
 span {

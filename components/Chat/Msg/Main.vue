@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChatMsgAiMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText, ChatMsgVideo } from "#components";
+import { ChatMsgAiAskMsg, ChatMsgAiReplyMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText, ChatMsgVideo } from "#components";
 import { MessageType } from "@/composables/api/chat/message";
 import { onMsgContextMenu } from ".";
 
@@ -20,14 +20,15 @@ const map: MsgComType = {
   [MessageType.VIDEO]: ChatMsgVideo,
   [MessageType.FILE]: ChatMsgFile,
   [MessageType.SYSTEM]: ChatMsgSystem,
-  [MessageType.AI_CHAT]: ChatMsgAiMsg,
+  [MessageType.AI_CHAT]: ChatMsgAiAskMsg,
   [MessageType.SOUND]: ChatMsgSound,
   [MessageType.RTC]: ChatMsgRTC,
+  [MessageType.AI_CHAT_REPLY]: ChatMsgAiReplyMsg,
 };
 interface MsgComType {
   [property: number]: any
 }
-const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgVideo | typeof ChatMsgRecall | typeof ChatMsgDelete | typeof ChatMsgSystem | typeof ChatMsgSound | typeof ChatMsgRTC | typeof ChatMsgAiMsg | typeof ChatMsgOther | null>>();
+const msgRef = ref<InstanceType<typeof ChatMsgFile | typeof ChatMsgImg | typeof ChatMsgText | typeof ChatMsgVideo | typeof ChatMsgRecall | typeof ChatMsgDelete | typeof ChatMsgSystem | typeof ChatMsgSound | typeof ChatMsgRTC | typeof ChatMsgAiAskMsg | typeof ChatMsgOther | null>>();
 const chat = useChatStore();
 
 // 右键菜单

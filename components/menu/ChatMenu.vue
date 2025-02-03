@@ -138,7 +138,7 @@ export interface MenuItem {
           [`${p.class}`]: p.class,
         }"
         :title="p.title"
-        class="item group h-10 w-10 flex-row-c-c cursor-pointer transition-all"
+        class="group item h-10 w-10 flex-row-c-c cursor-pointer transition-all"
         @click="(e: MouseEvent) => {
           if (p.onClick) {
             e.stopPropagation();
@@ -146,7 +146,7 @@ export interface MenuItem {
           }
         }"
       >
-        <el-badge :value="p.tipValue || 0" :hidden="!p?.tipValue" :is-dot="!!p?.isDot" :offset="[-6, -1]" :max="99">
+        <el-badge :value="p.tipValue" :hidden="!p?.tipValue" :is-dot="!!p?.isDot" :offset="[-2, -2]" :max="99">
           <i class="icon p-2.5" :class="route.path === p.path ? p.activeIcon : p.icon" />
         </el-badge>
       </component>

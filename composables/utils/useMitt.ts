@@ -1,21 +1,25 @@
 import mitt from "mitt";
 
 export enum MittEventType {
-  // ws接收消息事件
-  MESSAGE = "chat-new-msg",
-  ONLINE_OFFLINE_NOTIFY = "chat-online-offline-notify",
-  RECALL = "chat-recall-notify",
-  APPLY = "chat-apply-notify",
-  MEMBER_CHANGE = "chat-member-change-notify",
-  TOKEN_EXPIRED_ERR = "chat-token-expired-err",
-  DELETE = "chat-delete",
-  RTC_CALL = "chat-rtc-call",
-  PIN_CONTACT = "chat-pin-contact",
+  // Ws推送消息事件
+  MESSAGE = "chat-new-msg", // 新消息
+  ONLINE_OFFLINE_NOTIFY = "chat-online-offline-notify", // 上下线通知
+  RECALL = "chat-recall-notify", // 撤回通知
+  APPLY = "chat-apply-notify", // 好友申请通知
+  MEMBER_CHANGE = "chat-member-change-notify", // 成员变更通知
+  TOKEN_EXPIRED_ERR = "chat-token-expired-err", // token过期错误
+  DELETE = "chat-delete", // 删除通知
+  RTC_CALL = "chat-rtc-call", // 视频通话通知
+  PIN_CONTACT = "chat-pin-contact", // 置顶通知
+  AI_STREAM = "chat-ai-msg", // AI消息
   OTHER = "chat-other",
+
   // 组件滚动事件
-  MSG_LIST_SCROLL = "msg-list-scroll",
+  MSG_LIST_SCROLL = "chat-msg-list-scroll",
   // 表单操作事件
-  MSG_FORM = "msg-form-focus",
+  MSG_FORM = "chat-msg-form",
+  CHAT_AT_USER = "chat-at-user", // @用户事件
+  CAHT_ASK_AI_ROBOT = "chat-ask-ai-robot", // 提问AI机器人事件
   // 视频组件事件
   VIDEO_READY = "video-ready",
 }
@@ -48,6 +52,17 @@ export interface MsgFormEventPlaoyload {
   payload?: any
 }
 
+// @用户事件载荷
+export interface AtUserPlaoyload {
+  type: "add" | "remove" | "clear",
+  payload?: string | null
+}
+// 提问AI机器人事件载荷
+export interface AskAiRobotPayload {
+  type: "add" | "remove" | "clear",
+  payload?: string // userId
+}
+
 // eslint-disable-next-line ts/consistent-type-definitions
 type EventPayloadMap = {
   // ws接收消息事件
@@ -60,11 +75,14 @@ type EventPayloadMap = {
   [MittEventType.DELETE]: WSMsgDelete;
   [MittEventType.RTC_CALL]: WSRtcCallMsg;
   [MittEventType.PIN_CONTACT]: WSPinContactMsg;
+  [MittEventType.AI_STREAM]: WSAiStreamMsg;
   [MittEventType.OTHER]: object;
   // 消息列表组件事件
   [MittEventType.MSG_LIST_SCROLL]: MsgListScrollPayload;
   // 表单操作事件
   [MittEventType.MSG_FORM]: MsgFormEventPlaoyload;
+  [MittEventType.CHAT_AT_USER]: AtUserPlaoyload;
+  [MittEventType.CAHT_ASK_AI_ROBOT]: AskAiRobotPayload;
   // 视频组件事件
   [MittEventType.VIDEO_READY]: VideoReadyPayload;
 };
@@ -85,7 +103,7 @@ const eventAndWsMap: Readonly<Record<WsMsgBodyType, MittEventType>> = {
   [WsMsgBodyType.DELETE]: MittEventType.DELETE,
   [WsMsgBodyType.RTC_CALL]: MittEventType.RTC_CALL,
   [WsMsgBodyType.PIN_CONTACT]: MittEventType.PIN_CONTACT,
-
+  [WsMsgBodyType.AI_STREAM]: MittEventType.AI_STREAM,
 } as const;
 export function resolteChatPath(type: WsMsgBodyType): MittEventType {
   return eventAndWsMap[type] || MittEventType.OTHER;
@@ -96,7 +114,7 @@ export function resolteChatPath(type: WsMsgBodyType): MittEventType {
 export const mitter = mitt<MittEvents>();
 
 
-export function removeWsEventListener() {
+export function removeAllEventListener() {
   mitter.off(MittEventType.MESSAGE);
   mitter.off(MittEventType.ONLINE_OFFLINE_NOTIFY);
   mitter.off(MittEventType.RECALL);
@@ -110,4 +128,6 @@ export function removeWsEventListener() {
   mitter.off(MittEventType.MSG_LIST_SCROLL);
   mitter.off(MittEventType.MSG_FORM);
   mitter.off(MittEventType.VIDEO_READY);
+  mitter.off(MittEventType.CHAT_AT_USER);
+  mitter.off(MittEventType.CAHT_ASK_AI_ROBOT);
 }

@@ -36,7 +36,6 @@ onLongPress(
     },
   },
 );
-const colorMode = useColorMode();
 // 表单
 const isSending = ref(false);
 const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
@@ -71,18 +70,8 @@ const SelfExistTextMap = { // 好友状态
 
 // 读取@用户列表 hook
 const { userOptions, userAtOptions, loadUser } = useLoadAtUserList();
-// const { aiOptions, loadAi } = useLoadAiList();
-watch(() => chat.atUidListTemp, (val) => {
-  if (val.length) {
-    chat.msgForm.content += val.map((uid) => {
-      const user = userOptions.value.find(u => u.userId === uid);
-      return user ? `@${user.nickName}(#${user.username}) ` : "";
-    }).join("");
-    inputAllRef.value?.input?.focus(); // 聚焦
-    chat.atUidListTemp.splice(0);
-  }
-}, { deep: true });
-
+const { aiOptions, loadAi } = useLoadAiList();
+const isReplyAI = computed(() => chat.msgForm.content?.startsWith("/") && chat.theContact.hotFlag);
 
 // 文件上传（图片）回调
 function onSubmitImg(key: string, pathList: string[]) {
@@ -252,6 +241,7 @@ async function onSubmit(e?: KeyboardEvent) {
     }
     if (e?.shiftKey && e?.key === "Enter")
       return;
+    // 回车
     if (e?.key !== "Enter")
       return;
     e.preventDefault && e.preventDefault();
@@ -265,19 +255,33 @@ async function onSubmit(e?: KeyboardEvent) {
     if (chat.msgForm.msgType === MessageType.TEXT && (!chat.msgForm.content || chat.msgForm.content?.trim().length > 500))
       return;
 
+    const formData = JSON.parse(JSON.stringify(chat.msgForm));
     // 处理 @用户
-    if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content?.includes("@")) {
-      const { uidList, atUidList } = useAtUsers(chat.msgForm.content, userOptions.value);
-      chat.atUserList = [...atUidList];
-      chat.msgForm.body.atUidList = [...new Set(uidList)];
+    if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content) {
+      const isAt = formData.content?.includes("@");
+      const isAi = formData.content?.startsWith("/");
       if (document.querySelector(".at-select")) // enter冲突at选择框
         return;
-    }
-    else {
-      chat.msgForm.body.atUidList = [];
-    }
+      if (isAt && !isAi) {
+        const { uidList, atUidList } = useAtUsers(formData.content, userOptions.value);
+        chat.atUserList = [...atUidList];
+        formData.body.atUidList = [...new Set(uidList)];
+      }
+      else if (!isAt && isAi) {
+        const { aiRobotList } = useAiReply(formData.content, userOptions.value);
+        if (aiRobotList[0]) {
+          formData.body = {
+            userId: aiRobotList[0].userId,
+            modelCode: 1,
+            businessCode: 1,
+          };
+          formData.content = formData.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
+          formData.msgType = MessageType.AI_CHAT; // 设置对应消息类型
+        }
+      };
+    };
     // 图片
-    if (chat.msgForm.msgType === MessageType.IMG) {
+    if (formData.msgType === MessageType.IMG) {
       if (isUploadImg.value) {
         ElMessage.warning("图片正在上传中，请稍等！");
         return;
@@ -288,29 +292,29 @@ async function onSubmit(e?: KeyboardEvent) {
       }
     }
     // 文件
-    if (chat.msgForm.msgType === MessageType.FILE && isUploadFile.value) {
+    if (formData.msgType === MessageType.FILE && isUploadFile.value) {
       ElMessage.warning("文件正在上传中，请稍等！");
       return;
     }
     // 视频
-    if (chat.msgForm.msgType === MessageType.VIDEO && isUploadVideo.value) {
+    if (formData.msgType === MessageType.VIDEO && isUploadVideo.value) {
       ElMessage.warning("视频正在上传中，请稍等！");
       return;
     }
     // 开始提交
     isSending.value = true;
     // 语音消息 二次处理
-    if (chat.msgForm.msgType === MessageType.SOUND) {
+    if (formData.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
-        chat.msgForm.body.url = key;
-        chat.msgForm.body.translation = audioTransfromText.value;
-        chat.msgForm.body.second = second.value;
-        submit(chat.msgForm);
+        formData.body.url = key;
+        formData.body.translation = audioTransfromText.value;
+        formData.body.second = second.value;
+        submit(formData);
       });
       return;
     }
     // 普通消息
-    submit(chat.msgForm);
+    submit(formData);
   });
 }
 
@@ -503,10 +507,13 @@ function resetForm() {
   videoList.value = []; // 清空视频
   // store
   chat.atUserList.splice(0);
+  chat.askAiRobotList.splice(0);
 
   // 重置上传
   inputOssImgUploadRef.value?.resetInput?.();
   inputOssFileUploadRef.value?.resetInput?.();
+  inputOssVideoUploadRef.value?.resetInput?.();
+  isSending.value = false;
   chat.setReplyMsg({});
   resetAudio();
 }
@@ -549,12 +556,14 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
     return;
   }
   resetForm();
+  // 加载数据
   loadUser();
+  loadAi();
   loadInputTimer.value && clearTimeout(loadInputTimer.value);
   if (!setting.isMobileSize) {
     loadInputDone.value = true;
   }
-  else { // TODO: 处理小尺寸设备动画input飘逸 (疑似popper组件的定位问题) 目前先懒加载输入框
+  else {
     loadInputTimer.value = setTimeout(() => {
       loadInputDone.value = true;
     }, 400);
@@ -581,6 +590,48 @@ onMounted(() => {
   // 监听快捷键
   window.addEventListener("keydown", startChating);
   !setting.isMobileSize && inputAllRef.value?.input?.focus(); // 聚焦
+  // At 用户
+  mitter.on(MittEventType.CHAT_AT_USER, (e) => {
+    if (isReplyAI.value) {
+      // TODO: 待后期考虑添加引用@信息，让去理解
+      ElMessage.warning("当前使用AI机器人无法@其他人");
+      return;
+    }
+    const { type, payload: userId } = e;
+    const user = userOptions.value.find(u => u.userId === userId);
+    if (type === "add" && user) {
+      if (user) {
+        chat.msgForm.content += `@${user.nickName}(#${user.username}) `;
+        inputAllRef.value?.input?.focus(); // 聚焦
+      }
+    }
+    else if (type === "remove" && user) {
+    // const atIndex = chat.msgForm.content.lastIndexOf(`@${payload.nickName}(#${payload.username}) `);
+    // if (atIndex > -1) {
+    //   chat.msgForm.content = chat.msgForm.content.slice(0, atIndex) + chat.msgForm.content.slice(atIndex + 3 + payload.username.length);
+    // }
+    }
+    else if (type === "clear") {
+    //
+    }
+  });
+  // / 询问ai机器人
+  mitter.on(MittEventType.CAHT_ASK_AI_ROBOT, (e) => {
+    const { type, payload: userId } = e;
+    const robot = aiOptions.value.find(u => u.userId === userId);
+    if (type === "add" && robot) {
+      if (robot) {
+        chat.msgForm.content += `/${robot.nickName}(#${robot.username}) `;
+        inputAllRef.value?.input?.focus(); // 聚焦
+      }
+    }
+    else if (type === "remove" && robot) {
+    //
+    }
+    else if (type === "clear") {
+    //
+    }
+  });
   // 处理聚焦
   mitter.on(MittEventType.MSG_FORM, ({
     type,
@@ -596,6 +647,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  mitter.off(MittEventType.CAHT_ASK_AI_ROBOT);
+  mitter.off(MittEventType.CHAT_AT_USER);
   window.removeEventListener("keydown", startChating);
   clearTimeout(timer);
   clearInterval(timer);
@@ -879,11 +932,11 @@ onUnmounted(() => {
       <el-form-item
         v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
-        class="input relative h-fit w-full"
+        class="input relative h-fit w-full !m-(b-2 t-4) sm:mt-0"
         :class="{
           'is-mobile': setting.isMobileSize,
         }"
-        style="padding: 0;margin: 1em 0;"
+        style="padding: 0;margin:  0;"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
         ]"
@@ -892,12 +945,13 @@ onUnmounted(() => {
           v-if="loadInputDone"
           ref="inputAllRef"
           v-model.lazy="chat.msgForm.content"
-          :options="userAtOptions"
-          :prefix="['@']"
+          :options="isReplyAI ? aiOptions : userAtOptions"
+          :prefix="isReplyAI ? ['/'] : ['@']"
           popper-class="at-select"
-          :check-is-whole="(pattern: string, value: string) => checkAtUserWhole(chat.msgForm.content, pattern, value)"
+          :check-is-whole="(pattern: string, value: string) => isReplyAI ? checkAiReplyWhole(chat.msgForm.content, pattern, value) : checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="setting.isMobileSize ? 1 : 6"
           :maxlength="500"
+          :placeholder="chat.theContact.hotFlag ? '/ 唤起AI助手' : ''"
           :autosize="setting.isMobileSize"
           type="textarea"
           resize="none"
@@ -923,7 +977,7 @@ onUnmounted(() => {
           </template>
           <template #header>
             <span ml-2 op-70>
-              群成员
+              {{ isReplyAI ? 'AI机器人' : '群成员' }}
             </span>
           </template>
         </el-mention>
@@ -1042,6 +1096,10 @@ onUnmounted(() => {
     font-size: 1rem;
     &:hover + .el-input__count  {
       opacity: 1;
+    }
+    &::-webkit-input-placeholder {
+      font-size: 0.9em;
+      line-height: 1.7em;
     }
   }
   :deep(.el-input) {

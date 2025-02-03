@@ -2,7 +2,6 @@
 import type { ChatContactVO } from "@/composables/api/chat/contact";
 import { RoomType } from "@/composables/api/chat/contact";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { WSMemberStatusEnum } from "~/types/chat/WsType";
 
 const props = defineProps<{
   dto?: ContactPageDTO
@@ -10,7 +9,6 @@ const props = defineProps<{
 const isLoading = ref<boolean>(false);
 const setting = useSettingStore();
 const user = useUserStore();
-const ws = useWsStore();
 const chat = useChatStore();
 const isReload = ref(false);
 const pageInfo = ref({
@@ -19,9 +17,6 @@ const pageInfo = ref({
   size: 20,
 });
 const isLoadRoomMap: Record<number, boolean> = {};
-
-// 状态
-const colorMode = useColorMode();
 
 // 添加群聊
 const showDialog = ref(false);
@@ -125,8 +120,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         icon: isPin ? "i-solar:pin-bold-duotone  group-hover:(i-solar:pin-outline scale-110)" : "i-solar:pin-outline group-hover:i-solar:pin-bold-duotone",
         label: isPin ? "取消置顶" : "置顶",
         onClick: () => {
-          chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE, () => {
-          });
+          chat.setPinContact(item.roomId, isPin ? isTrue.FALESE : isTrue.TRUE);
         },
       },
       {
@@ -170,73 +164,6 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 
   ContextMenu.showContextMenu(opt);
 }
-// 成员变动消息
-const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
-  immediate: false,
-});
-async function watchMemberChange(len: number) {
-  if (!len)
-    return;
-  // 成员变动消息
-  if (ws.wsMsgList.memberMsg.length) {
-    for (const p of ws.wsMsgList.memberMsg) {
-      // 自己新加入
-      if (p.changeType === WSMemberStatusEnum.JOIN) {
-        if (chat.contactMap[p.roomId])
-          return;
-        setTimeout(() => { // 创建会话有一定延迟
-          // 如果会话已经存在就不请求
-          if (chat.contactMap[p.roomId])
-            return;
-          getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
-            if (res) {
-              const item = chat.contactMap[p.roomId];
-              if (item) { // 更新
-                chat.contactMap[p.roomId] = res.data;
-              }
-              else { // 添加
-                res.data.unreadCount = 1;
-                chat.contactMap[res.data.roomId] = res.data;
-              // unshift();
-              }
-            }
-          }).finally(() => {
-          });
-        }, 300);
-        // 更新用户列表
-        if (!p.uid)
-          return;
-        getCommUserInfoSe(p.uid, user.getToken).then((res) => {
-          if (res.code === StatusCode.SUCCESS) {
-            chat.onOfflineList.push({
-              userId: p.uid,
-              avatar: res.data.avatar,
-              nickName: res.data.nickname,
-              activeStatus: 0,
-              lastOptTime: res.data.lastLoginTime,
-              roleType: ChatRoomRoleEnum.MEMBER,
-            });
-          }
-        });
-      }
-      else if (p.changeType === WSMemberStatusEnum.LEAVE) {
-        for (let i = 0; i < chat.onOfflineList.length; i++) {
-          const u = chat.onOfflineList[i];
-          // 下线删除用户
-          if (u && u.userId === p.uid) {
-            chat.onOfflineList.splice(i, 1);
-            break;
-          }
-        }
-      }
-      else if (p.changeType === WSMemberStatusEnum.DEL) {
-        // 删除会话
-        await chat.removeContact(p.roomId);
-      }
-    }
-    ws.wsMsgList.memberMsg.splice(0);
-  }
-}
 
 // 跳转好友页面
 async function toFriendPage() {
@@ -256,9 +183,6 @@ function onClickContact(room: ChatContactVO) {
 }
 
 reload();
-onBeforeUnmount(() => {
-  stopWatch?.();
-});
 </script>
 
 <template>

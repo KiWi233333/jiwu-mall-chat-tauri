@@ -1,6 +1,6 @@
 // @unocss-include
 .msg {
-  --at-apply: "w-full flex gap-2 pl-2 pr-4rem py-3 leading-1.5em";
+  --at-apply: "w-full flex gap-2 px-2 py-3 leading-1.5em";
   transition: background-color 0.2s;
 
   // 头像
@@ -47,7 +47,7 @@
     color: #010101 !important;
   }
   &.msg {
-    --at-apply: "pr-2 pl-4rem py-3 ";
+    --at-apply: "px-2 py-3 ";
   }
   .body {
     align-items: end;

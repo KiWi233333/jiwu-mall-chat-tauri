@@ -193,6 +193,11 @@ export interface ChatContactVO {
    */
   pinTime?: number
 
+  /**
+   * 最后一条消息id
+   */
+  lastMsgId?: number
+
   [property: string]: any
 
 }

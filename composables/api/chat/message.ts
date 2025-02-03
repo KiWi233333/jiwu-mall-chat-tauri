@@ -161,7 +161,6 @@ export interface ChatMessageVO<T extends object = any> {
    * 消息详情
    */
   message: Message<T>;
-  [property: string]: any;
 }
 
 /**
@@ -202,7 +201,7 @@ export interface Message<T extends object = object> {
 /**
  * 文本消息
  */
-export interface TextBodyMsgVO<T = object> {
+export interface TextBodyMsgVO {
   content: string;
   urlContentMap: { [key: string]: UrlInfoDTO };
   atUidList: string[];
@@ -213,7 +212,7 @@ export interface TextBodyMsgVO<T = object> {
     type: MessageType;
     canCallback: isTrue;
     gapCount: number;
-    body?: T;
+    body?: string
   };
 }
 export interface UrlInfoDTO {
@@ -229,7 +228,7 @@ export interface UrlInfoDTO {
 /**
  * 语音消息
  */
-export interface SoundBodyMsgVO<T = object> {
+export interface SoundBodyMsgVO {
   url: string;
   second: number;
   translation?: string; // 转文本
@@ -240,7 +239,6 @@ export interface SoundBodyMsgVO<T = object> {
     type: MessageType;
     canCallback: isTrue;
     gapCount: number;
-    body?: T;
   };
 }
 /**
@@ -346,6 +344,46 @@ export interface RtcLiteBodyMsgVO {
   durationText?: string;
 }
 
+/**
+ * AI发起人消息
+ */
+export interface AiChatBodyMsgVO {
+  /**
+   * 机器人id
+   */
+  userId: string;
+  /**
+   * 机器人信息
+   */
+  robotInfo: RobotUserVO;
+  modelCode: number;
+  /**
+   * 机器人业务类型
+   * 文生 1：文本 2：图片 3：视频
+   */
+  businessCode: AiBusinessType;
+}
+
+/**
+ * AI回复消息
+ */
+export interface AiChatReplyBodyMsgVO {
+  content: string;
+  urlContentMap: { [key: string]: UrlInfoDTO };
+  atUidList: string[];
+  reply: {
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
+    canCallback: isTrue;
+    gapCount: number;
+    body?: string
+  };
+  // imgMsgDTO?: ImgBodyMsgVO;
+  // videoMsgDTO?: VideoBodyMsgVO;
+}
+
 export enum FileBodyMsgTypeEnum {
   //  "TXT" | "EXCEL" | "XLSX" | "PDF" | "PPT" | "PPTX" | "DOC" | "DOCX"
   TXT = "TXT",
@@ -367,9 +405,10 @@ export enum MessageType {
   VIDEO = 6,
   EMOJI = 7, // 暂无
   SYSTEM = 8,
-  AI_CHAT = 9, // 暂无
+  AI_CHAT = 9, // AI发起人消息
   DELETE = 10,
   RTC = 11, // rtc通话
+  AI_CHAT_REPLY = 12, // AI回复消息
 }
 
 export const MessageTypeText = {
@@ -384,6 +423,7 @@ export const MessageTypeText = {
   [MessageType.AI_CHAT]: "机器人消息",
   [MessageType.DELETE]: "删除消息",
   [MessageType.RTC]: "RTC通讯消息",
+  [MessageType.AI_CHAT_REPLY]: "AI回复消息",
 };
 
 
@@ -410,6 +450,9 @@ export interface ChatMessageDTO<T = MessageType> {
   [property: string]: any;
 }
 
+/**
+ * 表单提交消息Body的类型
+ */
 interface MessageBodyMap {
   [MessageType.TEXT]: TextBodyDTO;
   [MessageType.IMG]: ImgBodyDTO;
@@ -435,17 +478,6 @@ export interface RecallBodyDTO {
   recallTime?: number;
 }
 
-export enum ChatReadType {
-  /**
-   * 已读
-   */
-  READ = 0,
-  /**
-   * 未读
-   */
-  UNREAD = 1,
-}
-
 
 /**
  * 消息已读未读VO
@@ -458,4 +490,15 @@ export interface ChatMessageReadVO {
    */
   uid?: null | string;
   [property: string]: any;
+}
+
+export enum ChatReadType {
+  /**
+   * 已读
+   */
+  READ = 0,
+  /**
+   * 未读
+   */
+  UNREAD = 1,
 }

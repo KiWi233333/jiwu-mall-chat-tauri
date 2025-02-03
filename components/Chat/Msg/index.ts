@@ -11,9 +11,19 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
   const chat = useChatStore();
   const user = useUserStore();
   const setting = useSettingStore();
-  const colorMode = useColorMode();
   const showTranslation = ref(false);
 
+
+  // @ts-expect-error
+  let ctxName = String(e?.target?.getAttribute?.("ctx-name") as DOMTokenList | undefined || "");
+  const isAiReplyMsg = data.message.type === MessageType.AI_CHAT_REPLY;
+  if (!ctxName && !isAiReplyMsg) {
+    return;
+  }
+
+  if (!ctxName && isAiReplyMsg) {
+    ctxName = "aiReply";
+  }
   // 显示右键菜单
   e.preventDefault();
   // 是否是自己
@@ -22,12 +32,6 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
   const isTheGroupPermission = computed(() => {
     return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN;
   });
-
-  // @ts-expect-error
-  const ctxName = String(e?.target?.getAttribute?.("ctx-name") as DOMTokenList | undefined || "");
-  if (!ctxName) {
-    return;
-  }
   // 右键菜单项配置
   // 默认有文字类型的右键菜单
   const defaultContextMenu = [
@@ -320,6 +324,45 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       },
       ...defaultContextMenu,
     ],
+    aiReply: [
+      {
+        label: "分享图片",
+        icon: "i-solar:share-line-duotone group-hover:(scale-110 i-solar:share-bold-duotone) group-btn-war",
+        customClass: "group",
+        onClick: () => {
+          ElMessage.warning("暂不支持分享图片");
+          // const dom = document.getElementById(`msg-md-${data.message.id}`);
+        },
+      },
+      {
+        label: "复制",
+        hidden: !txt, // 只支持文本消息
+        customClass: "group",
+        icon: "i-solar-copy-line-duotone group-hover:(scale-110 i-solar-copy-bold-duotone) group-btn-info",
+        onClick: () => {
+          // 待定是否匹配content内容
+          if (!txt) {
+            return ElMessage.error("复制失败，请选择文本！");
+          }
+          useCopyText(txt as string);
+        },
+      },
+      {
+        label: "搜一搜",
+        hidden: !data.message.content, // 暂时只支持文本消息
+        customClass: "group",
+        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold-duotone) group-btn-success",
+        onClick: () => {
+          if (!txt) {
+            return ElMessage.error("选择内容为空，无法搜索！");
+          }
+          // bing
+          const bingUrl = `https://bing.com/search?q=${encodeURIComponent(txt)}`;
+          window.open(bingUrl, "_blank");
+        },
+      },
+      ...defaultContextMenu,
+    ],
   };
   const getContextMenuItems = (ctxName: string, isSelf: boolean) => {
     return contextMenuType[ctxName] || [];
@@ -336,7 +379,6 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
     items,
   });
 }
-
 
 // 撤回消息
 async function refundMsg(data: ChatMessageVO, msgId: number) {
@@ -360,7 +402,7 @@ async function refundMsg(data: ChatMessageVO, msgId: number) {
 }
 
 // 删除消息
-function deleteMsg(data: ChatMessageVO, msgId: number) {
+function deleteMsg(data: ChatMessageVO<any>, msgId: number) {
   ElMessageBox.confirm("是否确认删除消息？", "删除提示", {
     lockScroll: false,
     confirmButtonText: "确 认",
@@ -375,8 +417,8 @@ function deleteMsg(data: ChatMessageVO, msgId: number) {
       const res = await deleteChatMessage(roomId, msgId, user.getToken);
       if (res.code === StatusCode.SUCCESS) {
         if (data.message.id === msgId) {
-          data.message.type = MessageType.RECALL;
-          data.message.content = `${data.deleteUid === user.userInfo.id ? "我删除了一条消息" : `我删除了一条"${data.fromUser.nickName}"成员消息`}`;
+          data.message.type = MessageType.DELETE;
+          data.message.content = `${data.fromUser.userId === user.userInfo.id ? "我删除了一条消息" : `我删除了一条"${data.fromUser.nickName}"成员消息`}`;
           data.message.body = undefined;
         }
       }
