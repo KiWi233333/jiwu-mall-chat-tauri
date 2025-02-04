@@ -179,18 +179,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
           });
         },
       },
-      {
-        label: "撤回",
-        hidden: !isSelf,
-        customClass: "group",
-        icon: "i-solar:backspace-broken group-hover:(scale-110 i-solar:backspace-bold) group-btn-danger",
-        onClick: () => refundMsg(data, data.message.id),
-      },
-      {
-        label: "回复",
-        icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-btn-info",
-        onClick: () => chat.setReplyMsg(data),
-      },
+      ...defaultContextMenu,
     ],
     file: [// 文件内容
       {
