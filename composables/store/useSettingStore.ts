@@ -474,6 +474,10 @@ export const useSettingStore = defineStore(
         notificationType: isWeb.value ? NotificationEnums.SYSTEM : NotificationEnums.TRAY, // 托盘通知
         rtcCallBellUrl: DEFAULT_RTC_CALL_BELL_URL, // 呼叫铃声铃声
       };
+      selectExtendMenuList.value = [];
+      fileDownloadMap.value = {};
+      appDataDownloadDirUrl.value = "";
+      downUpChangeContact.value = true;
       loadSystemFonts();
       if (!isWeb.value) {
         await nextTick();
