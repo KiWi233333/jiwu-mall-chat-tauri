@@ -90,7 +90,6 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 ![AI机器人](./.doc/group-ai-1.png)
 
-![AI机器人](./.doc/group-ai-2.png)
 
 
 - 语音视频聊天 WebRTC
@@ -121,13 +120,17 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 <div>
  <img src="./.doc/chat12.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
+ <img src="./.doc/chat14.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat13.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat7.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/rtc2.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/rtc_remove_desktop.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat8.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat10.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
+ <img src="./.doc/chat15.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat11.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
+ <img src="./.doc/chat17.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
+ <img src="./.doc/chat16.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
  <img src="./.doc/chat9.png" width = "190" style="display:inline-block;" alt="移动端适配" align=center />
 </div>
 
