@@ -8,6 +8,8 @@ const setting = useSettingStore();
 const online = useOnline();
 const chat = useChatStore();
 const showVideoDialog = ref(false);
+
+useMsgLinear(); // 聊天页面初始化
 </script>
 
 <template>

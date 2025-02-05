@@ -2,6 +2,7 @@
 const chat = useChatStore();
 const isLoading = ref<boolean>(false);
 const user = useUserStore();
+const setting = useSettingStore();
 const pageInfo = ref({
   cursor: null as null | string,
   isLast: true,
@@ -182,11 +183,12 @@ async function scrollTop(size: number, animated = false) {
   }
 }
 
+const offset = computed(() => setting.isMobileSize ? -730 : -678);
 // 滚动事件
 const onScroll = useDebounceFn((e) => {
   // 滚动到底部
-  const offset = 100;
-  if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight - 462 - offset) {
+  if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight + offset.value) {
+    // console.log(scrollbarRef?.value?.wrapRef?.scrollHeight - e.scrollTop);
     chat.setReadList(chat.theContact.roomId);
   }
 }, 300);

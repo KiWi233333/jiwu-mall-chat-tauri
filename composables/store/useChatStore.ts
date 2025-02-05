@@ -106,6 +106,19 @@ export const useChatStore = defineStore(
         },
       });
     };
+
+    /* ------------------------------------------- 房间操作 ------------------------------------------- */
+    // 房间
+    const onChangeRoom = async (newRoomId: number) => {
+      if (!newRoomId || theContact.value.roomId === newRoomId)
+        return;
+      const item = contactMap.value[newRoomId];
+      if (!item)
+        return;
+      await setContact(item); // 提前设置当前会话
+    };
+
+    /* ------------------------------------------- 会话操作 ------------------------------------------- */
     // 改变会话
     async function setContact(vo?: ChatContactVO) {
       if (!vo || !vo.roomId) {
@@ -128,7 +141,6 @@ export const useChatStore = defineStore(
         return;
       }
       // vo.unreadCount = 0;
-
       if (!contactMap.value[vo.roomId]) { // 追加
         contactMap.value[vo.roomId] = vo;
       }
@@ -155,9 +167,8 @@ export const useChatStore = defineStore(
         console.log(error);
       }
     }
-    // 重新加载会话列表
+    // 重新拉取会话
     function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => void) {
-      // 重新拉取会话
       getChatContactInfo(roomId, user.getToken)?.then((res) => {
         if (res.code !== StatusCode.SUCCESS) {
           ElMessage.closeAll("error");
@@ -189,237 +200,12 @@ export const useChatStore = defineStore(
         reloadContact(roomId);
       }
     }
-    // 监听 新消息
-    // 1、新消息 type=1
-    mitter.on(MittEventType.MESSAGE, (data: ChatMessageVO) => {
-      resolveNewMsg(data);
-    });
-    // 2、撤回消息 type=2
-    mitter.on(MittEventType.RECALL, (data: WSMsgRecall) => {
-      resolveRecallMsg(data);
-    });
-    // 3、删除消息 type=3
-    mitter.on(MittEventType.DELETE, (data: WSMsgDelete) => {
-      resolveDeleteMsg(data);
-    });
-    // 4、置顶会话消息 type=10 PIN_CONTACT
-    mitter.on(MittEventType.PIN_CONTACT, (data: WSPinContactMsg) => {
-      resolvePinContact(data);
-    });
-    // 5、ai推送消息 type=11
-    mitter.on(MittEventType.AI_STREAM, (data: WSAiStreamMsg) => {
-      resolveAiStream(data);
-    });
-    // 移除监听
-    function removeListeners() {
-      mitter.off(MittEventType.MESSAGE);
-      mitter.off(MittEventType.RECALL);
-      mitter.off(MittEventType.DELETE);
-      mitter.off(MittEventType.PIN_CONTACT);
-      mitter.off(MittEventType.AI_STREAM);
+    // 删除会话
+    async function removeContact(roomId: number) {
+      if (roomId === theContact.value.roomId)
+        await setContact();
+      delete contactMap.value[roomId];
     }
-    onUnmounted(removeListeners);
-
-    const setting = useSettingStore();
-    /**
-     * 1. 新消息处理
-     */
-    async function resolveNewMsg(msg: ChatMessageVO) {
-      // body文本
-      const body = resolveMsgContactText(msg) || "";
-      // 1）更新会话列表
-      updateContact(msg.message.roomId, {
-      }, (contact) => {
-        // 添加未读数量
-        if (msg.fromUser.userId !== user.userInfo.id)
-          contact.unreadCount += 1;
-        // 修改会话显示
-        contact.text = contact.type === RoomType.GROUP ? `${msg.fromUser.nickName}: ${body}` : body;
-        contact.lastMsgId = msg.message.id;
-        contact.activeTime = Date.now();
-        if (msg.message.roomId === theContact.value.roomId && contact !== theContact.value && msg.fromUser.userId !== user.userInfo.id) {
-          theContact.value.unreadCount += 1;
-          theContact.value.lastMsgId = msg.message.id;
-          theContact.value.activeTime = Date.now();
-        }
-      });
-      // 2）更新消息列表
-      if (msg.message.roomId !== theContact.value.roomId || (setting.isMobileSize && !isOpenContact.value)) {
-        ws.wsMsgList.newMsg.splice(0);
-        return;
-      }
-      setReadList(theContact.value.roomId);
-      // 3）本房间追加消息
-      const oldMsg = findMsg(msg.message.id);
-      if (!oldMsg) { // 说明是新消息
-        theContact.value.msgList.push(msg);
-        msg.message.type === MessageType.RTC && handleRTCMsg(msg); // 处理rtc消息 多一步滚动
-      }
-      ws.wsMsgList.newMsg.splice(0);
-    }
-    // 2. 处理rtc消息
-    function handleRTCMsg(msg: ChatMessageVO) {
-      const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
-      // 更新滚动位置
-      if (msg.message.roomId === theContact.value.roomId && rtcMsg.senderId === user.userInfo.id) {
-        nextTick(() => {
-          scrollBottom(true);
-        });
-      }
-    }
-    /**
-     * 3. 撤回消息处理
-     * @param msg 消息
-     */
-    function resolveRecallMsg(msg: WSMsgRecall) {
-      if (!msg)
-        return;
-      if (msg.roomId !== theContact.value.roomId) {
-        reloadContact(msg.roomId);
-        ws.wsMsgList.deleteMsg.splice(0);
-        return;
-      }
-      // 本房间修改状态
-      const oldMsg = findMsg(msg.msgId);
-      if (oldMsg) {
-        if (msg.msgId === theContact.value.lastMsgId) {
-          // 更新会话列表显示文本
-          const msgContent = `${oldMsg.fromUser.userId === user.userInfo.id ? "我" : `"${oldMsg.fromUser.nickName}"`}撤回了一条消息`;
-          const targetContact = contactMap.value[msg.roomId];
-          if (targetContact)
-            targetContact.text = msgContent;
-          oldMsg.message.content = msgContent;
-        }
-        oldMsg.message.type = MessageType.RECALL;
-        oldMsg.message.body = undefined;
-        ws.wsMsgList.recallMsg = ws.wsMsgList.recallMsg.filter(k => k.msgId !== msg.msgId);
-      }
-      // 消费消息
-      ws.wsMsgList.deleteMsg.splice(0);
-    }
-    /**
-     * 4. 删除消息处理
-     * @param msg 消息
-     */
-    function resolveDeleteMsg(msg: WSMsgDelete) {
-      if (!msg)
-        return;
-      if (msg.roomId !== theContact.value.roomId) {
-        reloadContact(msg.roomId);
-        ws.wsMsgList.deleteMsg.splice(0);
-        return;
-      }
-      // 本房间修改状态
-      const oldMsg = findMsg(msg.msgId);
-      if (oldMsg) {
-        // 更新会话显示文本
-        if (msg.msgId === theContact.value.lastMsgId) {
-          const msgContent = `${msg.deleteUid === user.userInfo.id ? "我删除了一条消息" : `"${oldMsg.fromUser.nickName}"删除了一条成员消息`}`;
-          const targetContact = contactMap.value[msg.roomId];
-          oldMsg.message.content = msgContent;
-          if (targetContact)
-            targetContact.text = msgContent;
-        }
-        // 修改旧消息
-        oldMsg.message.type = MessageType.DELETE;
-        oldMsg.message.body = undefined;
-        ws.wsMsgList.deleteMsg = ws.wsMsgList.deleteMsg.filter(k => k.msgId !== msg.msgId);
-      }
-      // 消费消息
-      ws.wsMsgList.deleteMsg.splice(0);
-    }
-    /**
-     * 5. 置顶会话消息处理
-     * @param data 数据
-     */
-    function resolvePinContact(data: WSPinContactMsg) {
-      if (data.roomId !== theContact.value.roomId) {
-        reloadContact(data.roomId);
-        return;
-      }
-      // 本房间修改状态
-      if (contactMap.value[data.roomId]) {
-        contactMap.value[data.roomId]!.pinTime = data.pinTime;
-      }
-      else { // 主动拉取
-        reloadContact(data.roomId);
-      }
-    }
-    /**
-     * 6. ai推送消息处理
-     * @param data 数据
-     */
-    function resolveAiStream(data: WSAiStreamMsg) {
-      const contact = contactMap.value[data.roomId];
-      if (!contact)
-        return;
-      if (data.roomId !== theContact.value.roomId) { // 修改会话
-        if (contact?.lastMsgId !== data.msgId)
-          return;
-        // 修改content内容
-        if (contact.text === "...") { // 初始状态
-          contact.text = "";
-        }
-        if (data.status === AiReplyStatusEnum.IN_PROGRESS)
-          contact.text += data.content;
-        else
-          contact.text = data.content;
-        return;
-      }
-      // 本房间修改状态
-      if (data.status === AiReplyStatusEnum.IN_PROGRESS)
-        contact.text += data.content;
-      else
-        contact.text = data.content;
-      theContact.value.text = contact?.text;
-
-      const oldMsg = findMsg(data.msgId);
-      if (oldMsg) {
-        if (oldMsg.message.content === "...") {
-          oldMsg.message.content = "";
-        }
-        if (data.status === AiReplyStatusEnum.IN_PROGRESS)
-          oldMsg.message.content += data.content;
-        else
-          oldMsg.message.content = data.content;
-        // await nextTick();
-        // scrollBottom(true);
-      }
-    }
-
-
-    /**
-     * 设置置顶会话
-     * @param roomId 房间id
-     * @param isPin 是否置顶
-     * @param callBack 回调
-     */
-    async function setPinContact(roomId: number, isPin: isTrue, callBack?: (contact?: Partial<ChatContactVO>) => void) {
-      const res = await pinContact(roomId, isPin, user.getToken);
-      if (res.code === StatusCode.SUCCESS && res.data) {
-        resolvePinContact(res.data);
-        callBack && callBack(contactMap.value[roomId]);
-      }
-    }
-
-    // 添加消息到列表
-    function appendMsg(data: ChatMessageVO, successSend: boolean = false) {
-      const existsMsg = findMsg(data.message.id);
-      !existsMsg && theContact.value.msgList.push(data); // 追加消息
-    }
-    function findMsg(msgId: number) {
-      if (!msgId)
-        return undefined;
-      return theContact.value.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
-    }
-    // 添加撤回消息
-    function setRecallMsg(msg: ChatMessageVO) {
-      if (!msg?.message?.id)
-        return false;
-      recallMsgMap.value[msg.message.roomId] = JSON.parse(JSON.stringify(msg));
-      return true;
-    }
-
     /**
      * 删除会话（不影响接收）
      * @param roomId 房间id
@@ -446,7 +232,82 @@ export const useChatStore = defineStore(
         },
       });
     }
+    /**
+     * 设置置顶会话
+     * @param roomId 房间id
+     * @param isPin 是否置顶
+     * @param callBack 回调
+     */
+    async function setPinContact(roomId: number, isPin: isTrue, callBack?: (contact?: Partial<ChatContactVO>) => void) {
+      const res = await pinContact(roomId, isPin, user.getToken);
+      if (res.code === StatusCode.SUCCESS && res.data) {
+        resolvePinContact(res.data);
+        callBack && callBack(contactMap.value[roomId]);
+      }
+    }
 
+
+    /* ------------------------------------------- 消息操作 ------------------------------------------- */
+    // 添加消息到列表
+    function appendMsg(data: ChatMessageVO, successSend: boolean = false) {
+      const existsMsg = findMsg(data.message.id);
+      !existsMsg && theContact.value.msgList.push(data); // 追加消息
+    }
+    // 查找消息
+    function findMsg(msgId: number) {
+      if (!msgId)
+        return undefined;
+      return theContact.value.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
+    }
+    // 添加撤回消息
+    function setRecallMsg(msg: ChatMessageVO) {
+      if (!msg?.message?.id)
+        return false;
+      recallMsgMap.value[msg.message.roomId] = JSON.parse(JSON.stringify(msg));
+      return true;
+    }
+    /**
+     * 设置消息已读
+     */
+    async function setReadList(roomId: number, lastMsg = "") {
+      if (!roomId)
+        return false;
+      if (!await isActiveWindow()) // 窗口未激活
+        return false;
+      if (!contactMap.value[roomId]?.unreadCount && (!theContact.value.unreadCount && theContact.value.roomId === roomId)) {
+        return;
+      }
+      // 标记已读
+      if (roomId === theContact.value.roomId) {
+        const msg = theContact.value.msgList[theContact.value.msgList.length - 1];
+        theContact.value.unreadCount = 0;
+        theContact.value.unreadMsgList = [];
+        theContact.value.text = msg ? resolveMsgContactText(msg) : theContact.value.text;
+        theContact.value.lastMsgId = msg?.message?.id || theContact.value.lastMsgId;
+      }
+      setMsgReadByRoomId(roomId, user.getToken).then((res) => {
+        if (res.code !== StatusCode.SUCCESS)
+          return false;
+        if (contactMap.value[roomId]) {
+          contactMap.value[roomId].unreadCount = 0;
+        }
+        // 消费消息
+        const ws = useWsStore();
+        ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== roomId);
+      }).catch(() => {
+      });
+    }
+    // 标记全部已读
+    const clearAllUnread = () => {
+      for (const key in contactMap.value) {
+        if (contactMap.value[key]) {
+          contactMap.value[key].unreadCount = 0;
+        }
+      }
+    };
+
+
+    /* ------------------------------------------- 群聊操作 ------------------------------------------- */
     /**
      * 退出群聊
      * @param roomId 房间id
@@ -475,25 +336,17 @@ export const useChatStore = defineStore(
       });
     }
 
-    // 删除会话
-    async function removeContact(roomId: number) {
-      if (roomId === theContact.value.roomId)
-        await setContact();
-      delete contactMap.value[roomId];
-    }
-
-    /** ---------------------------- 群聊成员 ---------------------------- */
+    /* ------------------------------------------- 群聊成员操作 ------------------------------------------- */
     const onOfflineList = ref<ChatMemberVO[]>([]);
     const roomGroupPageInfo = ref({
       cursor: null as null | string,
       isLast: false,
       size: 15,
     });
-
+    // 设置群成员
     function setGroupMember(list: ChatMemberVO[]) {
       onOfflineList.value = list;
     }
-
     // 成员变动消息
     const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
       immediate: false,
@@ -565,6 +418,7 @@ export const useChatStore = defineStore(
       stopWatch();
     });
 
+
     /** ---------------------------- 页面状态 ---------------------------- */
     async function isActiveWindow(): Promise<boolean> {
       const setting = useSettingStore();
@@ -583,49 +437,6 @@ export const useChatStore = defineStore(
       return true;
     }
 
-    /**
-     * 设置消息已读
-     */
-    async function setReadList(roomId: number, lastMsg = "") {
-      if (!roomId)
-        return false;
-      if (!await isActiveWindow()) // 窗口未激活
-        return false;
-      if (useRoute().path !== "/") { // 不在聊天页面
-        return;
-      }
-      if (!contactMap.value[roomId]?.unreadCount) {
-        return;
-      }
-
-      // 标记已读
-      if (roomId === theContact.value.roomId) {
-        theContact.value.unreadCount = 0;
-        theContact.value.unreadMsgList = [];
-        const msg = theContact.value.msgList[theContact.value.msgList.length - 1];
-        theContact.value.text = msg ? resolveMsgContactText(msg) : theContact.value.text;
-        theContact.value.lastMsgId = msg?.message?.id || theContact.value.lastMsgId;
-      }
-      setMsgReadByRoomId(roomId, user.getToken).then((res) => {
-        if (res.code !== StatusCode.SUCCESS)
-          return false;
-        if (contactMap.value[roomId]) {
-          contactMap.value[roomId].unreadCount = 0;
-        }
-        // 消费消息
-        const ws = useWsStore();
-        ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== roomId);
-      }).catch(() => {
-      });
-    }
-
-    const clearAllUnread = () => {
-      for (const key in contactMap.value) {
-        if (contactMap.value[key]) {
-          contactMap.value[key].unreadCount = 0;
-        }
-      }
-    };
 
     // 页面绑定
     const scrollTopSize = ref(0);
@@ -648,19 +459,9 @@ export const useChatStore = defineStore(
       });
     };
 
-    // 房间
-    const onChangeRoom = async (newRoomId: number) => {
-      if (!newRoomId || theContact.value.roomId === newRoomId)
-        return;
-      const item = contactMap.value[newRoomId];
-      if (!item)
-        return;
-      await setContact(item); // 提前设置当前会话
-    };
 
-
-    const onDownUpChangeRoomLoading = ref(false);
     // 向下/向上切换房间
+    const onDownUpChangeRoomLoading = ref(false);
     const onDownUpChangeRoom = async (type: "down" | "up") => {
       if (onDownUpChangeRoomLoading.value)
         return;
@@ -729,7 +530,7 @@ export const useChatStore = defineStore(
     }
 
 
-    /** ---------------------------- 联系人面板管理 ---------------------------- */
+    /** ------------------------------------------- 联系人面板管理 ------------------------------------------- */
     const theFriendOpt = ref<TheFriendOpt>({
       type: -1,
       data: {},
@@ -762,51 +563,6 @@ export const useChatStore = defineStore(
         setTheFriendOpt(FriendOptType.Empty);
       },
     }) as Ref<boolean>;
-    /** --------------------------- AI推送消息 --------------------------- */
-
-
-    /** ---------------------------- 重置 ---------------------------- */
-    function resetStore() {
-      contactMap.value = {};
-      theContact.value = {
-        activeTime: 0,
-        avatar: "",
-        roomId: 0,
-        hotFlag: 1,
-        name: "",
-        text: "",
-        type: 1,
-        selfExit: 1,
-        unreadCount: 0,
-        // 消息列表
-        msgList: [],
-        unreadMsgList: [],
-        roomGroup: undefined,
-        member: undefined,
-      };
-      delUserId.value = "";
-      isAddNewFriend.value = false;
-      showExtension.value = false;
-      isOpenContact.value = true;
-      roomGroupPageInfo.value = {
-        cursor: null,
-        isLast: false,
-        size: 15,
-      };
-      onOfflineList.value = [];
-      playSounder.value = {
-        state: "stop",
-        url: "",
-        msgId: 0,
-        currentSecond: 0,
-        duration: 0,
-        audio: undefined,
-      };
-      isVisible.value = false;
-      scrollTopSize.value = 0;
-      saveScrollTop();
-    }
-
 
     /** ---------------------------- RTC通话 ---------------------------- */
     const showRtcCall = ref(false);
@@ -820,7 +576,6 @@ export const useChatStore = defineStore(
       showRtcCall.value = true;
       confirmRtcFn.value = { confirmCall, rejectCall };
     });
-
     // 打开通话
     async function openRtcCall(roomId: number, type: CallTypeEnum, confirmOption?: { message?: string, title?: string }) {
       if (!roomId || !type)
@@ -864,13 +619,55 @@ export const useChatStore = defineStore(
         console.warn(e);
       });
     }
-
     // 重新回滚通话
     async function rollbackCall(roomId: number, type: CallTypeEnum, msg?: ChatMessageVO) {
       openRtcCall(roomId, type, { message: "是否确认重新拨打？" });
     }
     function useChatWebRTC() {
       return webRtc;
+    }
+
+
+    /** ------------------------------------------- 重置 ------------------------------------------- */
+    function resetStore() {
+      contactMap.value = {};
+      theContact.value = {
+        activeTime: 0,
+        avatar: "",
+        roomId: 0,
+        hotFlag: 1,
+        name: "",
+        text: "",
+        type: 1,
+        selfExit: 1,
+        unreadCount: 0,
+        // 消息列表
+        msgList: [],
+        unreadMsgList: [],
+        roomGroup: undefined,
+        member: undefined,
+      };
+      delUserId.value = "";
+      isAddNewFriend.value = false;
+      showExtension.value = false;
+      isOpenContact.value = true;
+      roomGroupPageInfo.value = {
+        cursor: null,
+        isLast: false,
+        size: 15,
+      };
+      onOfflineList.value = [];
+      playSounder.value = {
+        state: "stop",
+        url: "",
+        msgId: 0,
+        currentSecond: 0,
+        duration: 0,
+        audio: undefined,
+      };
+      isVisible.value = false;
+      scrollTopSize.value = 0;
+      saveScrollTop();
     }
 
 
@@ -906,7 +703,10 @@ export const useChatStore = defineStore(
       delGroupId,
       // 方法
       setContact,
+      updateContact,
+      reloadContact,
       setRecallMsg,
+      findMsg,
       removeContact,
       deleteContactConfirm,
       exitGroupConfirm,
