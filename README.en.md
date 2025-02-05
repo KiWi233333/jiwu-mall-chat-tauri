@@ -81,11 +81,14 @@ JiwuChat is a lightweight `(~10MB)` multi-platform chat application built with T
 
 ![Homepage](./.doc/chat.png)
 
-- AI Chatbot
+- AI Chatbot (DeepSeek, iFlytek Spark, Kimi AI) 🤩
+
+![AI Chatbot](./.doc/group-ai-ds.png)
 
 ![AI Chatbot](./.doc/group-ai-3.png)
 
 ![AI Chatbot](./.doc/group-ai-1.png)
+
 
 - Audio/Video Chat (WebRTC)
 

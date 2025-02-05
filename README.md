@@ -34,6 +34,11 @@
         <img src="https://img.shields.io/badge/QQ群:939204073 -blue?logo=tencentqq&logoColor=white" alt="QQ群"/>
       </a>
     </div>
+    <div>
+      <a href="https://www.deepseek.com/" target="_blank" style="margin: 2px;">
+        <img alt="Homepage" src="https://github.com/deepseek-ai/DeepSeek-V2/blob/main/figures/badge.svg?raw=true" />
+      </a>
+    </div>
 
 语言 : 简体中文 | [English](./README.en.md)
 
@@ -84,12 +89,13 @@ JiwuChat 是一款基于 Tauri2 和 Nuxt3 构建的轻量`(~10MB)`多平台聊�
 
 ![主页](./.doc/chat.png)
 
-- AI机器人 Chatbot
+- AI机器人 (DeepSeek、iFlytek Spark、Kimi AI) 🤩
 
-![AI机器人](./.doc/group-ai-3.png)
+![AI Chatbot](./.doc/group-ai-ds.png)
 
-![AI机器人](./.doc/group-ai-1.png)
+![AI Chatbot](./.doc/group-ai-3.png)
 
+![AI Chatbot](./.doc/group-ai-1.png)
 
 
 - 语音视频聊天 WebRTC
