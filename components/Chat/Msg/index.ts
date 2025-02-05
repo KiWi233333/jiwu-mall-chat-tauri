@@ -86,19 +86,20 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
             return;
           }
           const utls = txt?.match(/https?:\/\/[^\s]+/g);
-          if (utls?.length) {
-            ElMessageBox.confirm("是否打开链接？", "打开链接", {
-              confirmButtonText: "打开",
-              cancelButtonText: "取消",
-              center: true,
-              lockScroll: false,
-              callback: (action: string) => {
-                if (action === "confirm" && utls?.length) {
-                  window.open(utls[0], "_blank");
-                }
-              },
-            });
-          }
+          if (!utls?.length)
+            return ElMessage.error("抱歉找不到链接！");
+          if (utls.length === 1)
+            return window.open(utls[0], "_blank");
+          // ElMessageBox.confirm(`是否打开\`${utls[0]}\`？`, "打开链接", {
+          //   confirmButtonText: "打开",
+          //   cancelButtonText: "取消",
+          //   center: true,
+          //   lockScroll: false,
+          //   callback: (action: string) => {
+          //     if (action === "confirm" && utls?.length) {
+          //     }
+          //   },
+          // });
         },
       },
       {

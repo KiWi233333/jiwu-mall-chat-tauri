@@ -68,7 +68,7 @@ export const useChatStore = defineStore(
     const isNewMsg = computed(() => unReadContactList.value.length > 0);
     const isVisible = ref(false); // 是否可见
     const isMsgListScroll = ref(false); // 消息列表是否滚动
-    const theContact = ref<ChatContactDetailVO & { msgList: ChatMessageVO[], unreadMsgList: ChatMessageVO[], }>({
+    const theContact = ref<ChatContactDetailVO & { msgList: ChatMessageVO[], unreadMsgList: ChatMessageVO[] }>({
       activeTime: 0,
       avatar: "",
       roomId: 0,
@@ -127,8 +127,7 @@ export const useChatStore = defineStore(
         };
         return;
       }
-      if (vo?.roomId)
-        vo.unreadCount = 0;
+      // vo.unreadCount = 0;
 
       if (!contactMap.value[vo.roomId]) { // 追加
         contactMap.value[vo.roomId] = vo;
@@ -595,7 +594,7 @@ export const useChatStore = defineStore(
       if (useRoute().path !== "/") { // 不在聊天页面
         return;
       }
-      if (!contactMap.value[roomId]?.unreadCount && !theContact.value.unreadCount) {
+      if (!contactMap.value[roomId]?.unreadCount) {
         return;
       }
 

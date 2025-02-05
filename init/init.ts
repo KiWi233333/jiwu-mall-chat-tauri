@@ -281,8 +281,10 @@ async function handleChannelMsg(event: MessageEvent) {
           return false;
         p.unreadCount = 0;
         ws.wsMsgList.newMsg = ws.wsMsgList.newMsg.filter(k => k.message.roomId !== p.roomId);
-        if (p.roomId === chat.theContact.roomId)
+        if (p.roomId === chat.theContact.roomId) {
           chat.theContact.unreadCount = 0;
+          chat.theContact.unreadMsgList = [];
+        }
       }).catch(() => {
         console.warn("readAllContact error");
       });

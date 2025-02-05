@@ -29,7 +29,7 @@ defineProps<{
         :code-foldable="false"
         style="font-size: 1em;color: inherit;padding: 0.3em 0.8em; color: inherit;"
         ctx-name="content"
-        class="markdown msg-popper !max-w-18em sm:!max-w-34vw"
+        class="markdown msg-popper !max-w-18em sm:!max-w-30em"
         :model-value="data.message?.content || ''"
       />
     </template>

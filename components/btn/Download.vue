@@ -87,7 +87,7 @@ onMounted(() => {
             <div
               v-for="p in filterList"
               :key="p.downloadTime"
-              :title="`“${p.fileName} “ 打开文件`"
+              :title="`“${p.fileName}” 打开文件`"
               class="group mb-2 w-full flex cursor-pointer gap-2 rounded bg-white px-3 py-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:shadow"
               :class="FileStatusClassMap[p.status]"
               @click="setting.openFileByDefaultApp(p)"
