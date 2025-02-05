@@ -42,7 +42,7 @@ onDeactivated(() => {
   getApplyCount();
 });
 
-const { open: openExtendMenu, openItem } = useOpenExtendWind();
+const { open: openExtendMenu } = useOpenExtendWind();
 // @unocss-include
 const menuList = computed<MenuItem[]>(() => ([
   {
@@ -138,7 +138,7 @@ export interface MenuItem {
           [`${p.class}`]: p.class,
         }"
         :title="p.title"
-        class="group item h-10 w-10 flex-row-c-c cursor-pointer transition-all"
+        class="group item"
         @click="(e: MouseEvent) => {
           if (p.onClick) {
             e.stopPropagation();
@@ -167,9 +167,9 @@ export interface MenuItem {
   top:0;
 }
 .item {
-  --at-apply: "card-rounded-df hover:(bg-color-3)";
+  --at-apply: "card-rounded-df hover:(bg-color-3 text-color-[--el-color-primary]) h-10 w-10 flex-row-c-c cursor-pointer transition-200";
   &.action {
-    --at-apply: "!bg-[var(--el-color-primary)] shadow";
+    --at-apply: "shadow !bg-[--el-color-primary]";
     .icon {
       --at-apply: "bg-light dark:bg-light";
     }

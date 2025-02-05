@@ -29,7 +29,7 @@ defineProps<{
         :code-foldable="false"
         style="font-size: 1em;color: inherit;padding: 0.3em 0.8em; color: inherit;"
         ctx-name="content"
-        class="msg-popper markdown !max-w-18em sm:!max-w-34vw"
+        class="markdown msg-popper !max-w-18em sm:!max-w-34vw"
         :model-value="data.message?.content || ''"
       />
     </template>
@@ -52,6 +52,9 @@ defineProps<{
     ol,
     ul {
       padding-left: 1.5em;
+      margin:  0.2em 0;
+    }
+    p {
       margin:  0.2em 0;
     }
     .md-editor-preview {

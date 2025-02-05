@@ -149,7 +149,7 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
  * 加载数据
  */
 async function loadData() {
-  if (isLoading.value || pageInfo.value.isLast || chat.theContact.type !== RoomType.GROUP)
+  if (isLoading.value || isReload.value || pageInfo.value.isLast || chat.theContact.type !== RoomType.GROUP)
     return;
   isLoading.value = true;
   const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
@@ -161,7 +161,7 @@ async function loadData() {
 }
 
 async function reload() {
-  if (isLoading.value || isReload.value)
+  if (isLoading.value || isReload.value || chat.theContact.type !== RoomType.GROUP)
     return;
   chat.onOfflineList = [];
   pageInfo.value = {
@@ -169,10 +169,16 @@ async function reload() {
     isLast: false,
     size: 15,
   };
-  isReload.value = true;
   // 动画
   try {
-    await loadData();
+    isLoading.value = true;
+    isReload.value = true;
+    const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
+    pageInfo.value.isLast = data.isLast;
+    pageInfo.value.cursor = data.cursor;
+    if (data && data.list)
+      chat.onOfflineList.push(...data.list);
+    isLoading.value = false;
   }
   finally {
     isLoading.value = false;
@@ -410,8 +416,7 @@ function onAdd() {
     </div>
     <el-scrollbar ref="memberScrollbarRef" style="height: auto;">
       <ListAutoIncre
-        :immediate="true"
-        :auto-stop="false"
+        :immediate="false"
         :no-more="pageInfo.isLast"
         @load="loadData"
       >
