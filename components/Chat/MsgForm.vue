@@ -947,7 +947,7 @@ onUnmounted(() => {
           v-model.lazy="chat.msgForm.content"
           :options="isReplyAI ? aiOptions : userAtOptions"
           :prefix="isReplyAI ? ['/'] : ['@']"
-          popper-class="!border-default-hover"
+          popper-class="at-select border-default"
           :check-is-whole="(pattern: string, value: string) => isReplyAI ? checkAiReplyWhole(chat.msgForm.content, pattern, value) : checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="setting.isMobileSize ? 1 : 6"
           :maxlength="500"
@@ -1047,9 +1047,6 @@ onUnmounted(() => {
   }
 }
 .at-select {
-  // :deep(.el-mention-dropdown) {
-    // --at-apply: "animate-[popper-fade-anim_0.3s]";
-  // }
   :deep(.el-select__wrapper),
   :deep(.el-select-v2__input-wrapper),
   :deep(.el-input__wrapper) {
