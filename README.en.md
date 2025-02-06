@@ -61,7 +61,7 @@ JiwuChat is a lightweight `(~10MB)` multi-platform chat application built with T
 | Contacts Module | Supports viewing, adding, and deleting contacts | ✔ |
 | System Version Module | Supports automatic app updates, version announcements, etc. | ✔ |
 | Account & Security Module | Provides account login, password change, account management, device security, and online/offline status | ✔ |
-| AI Module | Supports multiple AI chat bots in group chats, such as `iFlytek Spark` and `KimiAI` | ✔ |
+| AI Module | Supports multiple AI chat bots in group chats, such as `DeepSeek`, `iFlytek Spark` and `KimiAI` | ✔ |
 | Smart Customer Service Module | AI shopping chat functionality, providing product recommendations from `JiwuMall` | ✔ |
 | File Download Management Module | Supports local file download, opening, and deletion | ✔ |
 | Audio/Video Module | WebRTC-based screen sharing, voice, and video chat | ✔ |
