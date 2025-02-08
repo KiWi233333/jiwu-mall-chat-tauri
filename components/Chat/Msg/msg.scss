@@ -21,20 +21,36 @@
     }
   }
   .msg-popper {
-    --at-apply: "max-w-full w-fit  p-2 px-3 leading-1.4em bg-color rounded-1.5";
+    --at-apply: "text-0.9rem max-w-full w-fit  p-2 px-3 leading-1.4em bg-color rounded-1.5";
     box-shadow:
       rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     border-radius: 4px 1rem 1rem 1rem;
   }
+
+  // 回复
   .reply {
-    --at-apply: "cursor-pointer w-fit card-rounded-df max-w-full truncate  px-2 text-0.75em  bg-color dark:text-light-900 border-default-hover";
+    --at-apply: "text-0.75rem cursor-pointer w-fit card-rounded-df max-w-full truncate  px-2  bg-color dark:text-light-900 border-default-hover";
+  }
+  // 问答
+  .ask-ai {
+    --at-apply: "w-fit flex cursor-pointer items-center truncate px-2 py-1 text-xs card-default border-default-hover ";
+  }
+  // @用户
+  .at-list {
+    --at-apply: "max-w-full text-0.75rem w-fit  truncate flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default";
   }
 }
-.at-list {
-  --at-apply: "max-w-full w-fit  truncate";
+// 系统
+.system {
+  --at-apply: "p-3 hover:(shadow-md) inline-block  cursor-pointer transition-all !bg-color";
 }
-
+// .self .system {
+//   .popper {
+//     --at-apply: "bg-[var(--el-color-primary)] dark:bg-[var(--el-color-primary)] text-white";
+//   }
+// }
+// 回复 - 闪动
 .reply-shaing {
   --at-apply: "rounded-6px w-full bg-[var(--el-color-primary-light-7)] op-100 transition-120 ";
 }

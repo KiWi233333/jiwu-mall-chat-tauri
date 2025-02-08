@@ -27,7 +27,7 @@ const body: Partial<AiChatBodyMsgVO> | undefined = props.data.message?.body || {
       <!--  询问的AI -->
       <div
         :title="body.robotInfo?.nickname"
-        class="flex-ml-a w-fit flex cursor-pointer items-center truncate px-2 py-1 text-xs card-default border-default-hover"
+        class="ask-ai flex-ml-a"
       >
         <img
           v-if="body.robotInfo?.avatar"
@@ -42,9 +42,4 @@ const body: Partial<AiChatBodyMsgVO> | undefined = props.data.message?.body || {
 
 <style lang="scss" scoped>
 @use './msg.scss';
-:deep(.el-image__wrapper) {
-  width: 9rem;
-  height: 9rem;
-  position: static;
-}
 </style>

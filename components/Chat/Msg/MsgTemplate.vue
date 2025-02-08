@@ -69,7 +69,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
       <small
         v-if="body?.atUidList?.length && body?.atUidList.includes(user?.userInfo?.id)"
         ctx-name="atUidList"
-        class="at-list flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default"
+        class="flex-ml-a at-list"
       >
         有人@我
       </small>
