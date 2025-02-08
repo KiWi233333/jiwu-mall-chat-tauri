@@ -1,15 +1,22 @@
 <script lang="ts" setup>
+import { ChatAIEllipsisBody } from "#components";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 
 /**
  * AI消息
  */
-defineProps<{
+const {
+  data,
+} = defineProps<{
   data: ChatMessageVO<AiChatReplyBodyMsgVO>;
   prevMsg: ChatMessageVO
   index: number
 }>();
+
+const chat = useChatStore();
+const initFold = data.message?.content?.length && data.message?.content?.length > 300 && chat.theContact.activeTime > data.message.sendTime;
+const isFold = ref(initFold);
 </script>
 
 <template>
@@ -17,10 +24,18 @@ defineProps<{
     :prev-msg="prevMsg"
     :index="index"
     :data="data"
+    class="group"
     v-bind="$attrs"
   >
+    <template #name-after>
+      <span v-if="initFold && !isFold" class="flex-res mx-2 ml-a flex-shrink-0 text-sm btn-info text-small group-hover:op-100 sm:op-0" @click="isFold = !isFold">
+        收起
+        <i i-solar:alt-arrow-up-line-duotone p-2 />
+      </span>
+    </template>
     <template #body>
-      <MdPreview
+      <component
+        :is="isFold ? ChatAIEllipsisBody : MdPreview"
         :id="`msg-md-${data.message.id}`"
         language="zh-CN"
         show-code-row-number
@@ -30,7 +45,8 @@ defineProps<{
         style="font-size: 1em;color: inherit;padding: 0.3em 0.8em; color: inherit;"
         ctx-name="content"
         class="markdown msg-popper !max-w-18em sm:!max-w-30em"
-        :model-value="data.message?.content || ''"
+        :model-value="data.message?.content"
+        @toggle="() => (isFold = !isFold)"
       />
     </template>
   </ChatMsgTemplate>
