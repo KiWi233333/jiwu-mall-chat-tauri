@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 
 <template>
-  <div class="flex items-center !py-9px">
+  <div class="flex items-center">
     <p class="truncate">
       {{ (modelValue || '').slice(0, 50) }}
     </p>
@@ -23,34 +23,4 @@ const emit = defineEmits<{
 </template>
 
 <style lang="scss" scoped>
-@use '../Msg/msg.scss';
-.markdown {
-  :deep(.md-editor-preview-wrapper)  {
-    padding: 0;
-    img {
-      border-radius: 0.25rem;
-      overflow: hidden;
-      max-width: 12rem !important;
-      max-height: 12rem !important;
-    }
-    ol,
-    ul {
-      padding-left: 1.5em;
-      margin-top: .5em;
-    }
-    .md-editor-code {
-      .md-editor-code-block {
-         line-height: 1.6em;
-        & ~ span[rn-wrapper] >span {
-         line-height: 1.6em;
-        }
-      }
-      --at-apply: 'overflow-hidden leading-2em card-default border-default hover:shadow transition-all mb-2';
-      code {
-        border-radius: 0 0 8px 8px;
-      }
-    }
-
-  }
-}
 </style>

@@ -57,8 +57,8 @@ function submit() {
           />
         </small>
       </template>
-      <li>1、通过钱包额度充值</li>
-      <li>2、通过每日签到</li>
+      <p>1、通过钱包额度充值</p>
+      <p>2、通过每日签到</p>
     </el-popover>
   </div>
 </template>

@@ -42,11 +42,10 @@ const isFold = ref(initFold);
         :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
         code-theme="a11y"
         :code-foldable="false"
-        style="font-size: 1em;color: inherit;padding: 0.3em 0.8em; color: inherit;"
         ctx-name="content"
-        class="markdown msg-popper !max-w-18em sm:!max-w-30em"
+        class="markdown msg-popper !max-w-18em sm:!max-w-50vw"
         :model-value="data.message?.content"
-        @toggle="() => (isFold = !isFold)"
+        @toggle="(val: boolean) => (isFold = val)"
       />
     </template>
   </ChatMsgTemplate>
@@ -67,11 +66,23 @@ const isFold = ref(initFold);
     }
     ol,
     ul {
-      padding-left: 1.5em;
-      margin:  0.2em 0;
+      --at-apply: 'pl-2em';
+      margin: 0;
+      li {
+        margin: 0.4em 0;
+        line-height: 1.2;
+        list-style-position: outside;
+        p {
+          display: inline-block;
+          margin-top: -1.4em;
+        }
+      }
     }
     p {
-      margin:  0.2em 0;
+      margin: 0;
+    }
+    p:not(p:last-of-type) {
+      margin: 0 0 0.5em 0;
     }
     .md-editor-preview {
       color: var(--el-text-color-primary);
