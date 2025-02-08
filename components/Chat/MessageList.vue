@@ -240,7 +240,7 @@ defineExpose({
   >
     <div
       v-bind="$attrs"
-      class="msg-list flex flex-col px-1 op-0 transition-(200 property-opacity) sm:px-2"
+      class="msg-list px-1 op-0 transition-(200 property-opacity) sm:px-2"
       :class="{ 'op-100': !isReload }"
     >
       <ListDisAutoIncre

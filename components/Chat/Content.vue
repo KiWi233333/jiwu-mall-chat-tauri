@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="content relative flex flex-col bg-color-3">
+  <div class="content relative max-wfull flex flex-col bg-color-3">
     <!-- 房间信息 -->
     <ChatRoomInfo class="border-default-b card-bg-color" />
     <!-- 消息列表 -->

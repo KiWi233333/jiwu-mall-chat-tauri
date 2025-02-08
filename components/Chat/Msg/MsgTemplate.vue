@@ -37,9 +37,9 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
     />
     <!-- 消息体 -->
     <div class="body">
-      <div class="flex-res truncate">
+      <div class="flex-res">
         <!-- 昵称 -->
-        <small class="nickname" ctx-name="nickname">
+        <small class="nickname flex-1 truncate" ctx-name="nickname">
           {{ data.fromUser.nickName }}
         </small>
         <!-- 插槽 -->
@@ -59,7 +59,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
         v-if="body?.reply"
         title="点击跳转"
         ctx-name="reply"
-        class="max-w-20em w-fit flex-1 cursor-pointer truncate card-rounded-df px-2 text-0.75em sm:max-w-30em bg-color dark:text-light-900 border-default-hover"
+        class="reply"
         @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
       >
         <i class="i-solar:forward-2-bold-duotone mr-1 p-2" />

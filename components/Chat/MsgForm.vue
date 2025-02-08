@@ -800,7 +800,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div class="form-tools relative">
+    <div class="form-tools relative sm:h-62">
       <!-- 工具栏 -->
       <div
         class="relative flex items-center gap-4 px-2"
@@ -817,7 +817,9 @@ onUnmounted(() => {
           <BtnElButton
             ref="pressHandleRef"
             type="primary" class="group tracking-0.1em hover:shadow"
-            :class="{ 'is-chating': isChating }" style="padding: 0.8rem 3rem;" round
+            :class="{ 'is-chating': isChating }"
+            style="padding: 0.8rem 3rem;"
+            round
             size="small"
           >
             <i i-solar:soundwave-line-duotone class="icon" p-2.5 />
@@ -985,7 +987,8 @@ onUnmounted(() => {
           v-if="setting.isMobileSize"
           :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
           type="primary"
-          class="mb-1px ml-2 mr-2"
+          style="height: 2.2rem !important;"
+          class="mb-1px ml-2 mr-2 w-4.5rem"
           :loading="isBtnLoading"
           @click="onSubmit()"
         >
@@ -995,7 +998,7 @@ onUnmounted(() => {
       <!-- 录音 -->
       <p
         v-if="chat.msgForm.msgType === MessageType.SOUND"
-        class="relative mt-2 h-fit max-h-40 w-full flex-row-c-c overflow-y-auto p-4 text-wrap sm:(h-36.5 p-8) text-small"
+        class="relative mt-2 h-fit w-full flex-row-c-c flex-1 overflow-y-auto p-4 text-wrap sm:p-6 text-small"
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
@@ -1131,6 +1134,7 @@ onUnmounted(() => {
       .el-textarea {
         padding-left: 0.6em;
         .el-textarea__inner {
+          min-height: 2.2rem !important;
           --at-apply: "bg-light-900 dark:bg-[#111111] shadow-lg shadow-inset";
         }
       }

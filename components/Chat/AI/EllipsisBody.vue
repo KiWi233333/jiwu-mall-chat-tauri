@@ -12,15 +12,18 @@ const emit = defineEmits<{
 
 
 <template>
-  <div class="flex items-center">
-    <p class="truncate">
+  <div class="max-w-full flex items-center truncate">
+    <p class="msg-poper flex-1 truncate">
       {{ (modelValue || '').slice(0, 50) }}
     </p>
-    <span class="mx-2 flex-shrink-0 btn-info text-small" @click="emit('toggle', true)">展开
+    <span class="mx-2 flex-shrink-0 btn-info text-mini" @click="emit('toggle', false)">展开
       <i i-solar:alt-arrow-down-line-duotone p-2 />
     </span>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.text {
+  --at-apply: "flex items-center";
+}
 </style>

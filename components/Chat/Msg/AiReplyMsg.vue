@@ -43,7 +43,7 @@ const isFold = ref(initFold);
         code-theme="a11y"
         :code-foldable="false"
         ctx-name="content"
-        class="markdown msg-popper !max-w-18em sm:!max-w-50vw"
+        class="markdown msg-popper"
         :model-value="data.message?.content"
         @toggle="(val: boolean) => (isFold = val)"
       />
