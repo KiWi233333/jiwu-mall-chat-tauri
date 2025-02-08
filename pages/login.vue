@@ -48,7 +48,6 @@ onMounted(async () => {
       />
     </div>
     <!-- 表单 -->
-
     <div
       class="flex flex-row-c-c flex-col select-none rounded-t-8 shadow-lg sm:(mt-0 h-full animate-none border-0 rounded-t-0 shadow-none) bg-color"
       :class="setting.isDesktop ? 'w-full h-full !rounded-0 animate-none pt-4' : 'h-fit pt-16 pb-10 min-h-7/10 sm:static absolute bottom-0 left-0 w-full   shadow-lg border-default-t'"
@@ -66,7 +65,7 @@ onMounted(async () => {
             style="--anima: blur-in;"
             class="login-logo absolute left-6 top-6 mb-4 block flex items-center gap-3 sm:(static mb-6)"
           >
-            <ElImage src="/logo.png" class="logo" />
+            <ElImage src="/logo.png" class="logo h-8 w-8" />
             <h3 class="app-name text-1.2rem font-bold tracking-0.2em">
               {{ appName }}
             </h3>
