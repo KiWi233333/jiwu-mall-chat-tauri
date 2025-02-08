@@ -21,9 +21,7 @@ const userForm = useLocalStorage("userForm", {
   email: "", // 邮箱登录
   phone: "", // 手机登录
 });
-onMounted(() => {
-  userForm.value.code = "";
-});
+
 const rules = reactive({
   username: [
     { required: true, message: "该项不能为空！", trigger: "blur" },

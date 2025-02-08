@@ -1,12 +1,14 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
 
-const dev = import.meta.env.MODE === "development";
+// const dev = import.meta.env.MODE === "development";
 async function onKeyDown(e: KeyboardEvent) {
   const setting = useSettingStore();
   // 关闭打印 搜索快捷键
-  const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
-  if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey) || (!dev && isReload))
+
+  // 允许刷新
+  // const isReload = e.key === "F5" || (e.key === "R" && e.ctrlKey) || (e.key === "F" && e.ctrlKey && e.shiftKey);
+  if ((e.key === "p" && e.ctrlKey) || (e.key === "f" && e.ctrlKey))
     e.preventDefault();
     // esc 最小化窗口
   if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {

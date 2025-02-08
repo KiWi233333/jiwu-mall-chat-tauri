@@ -105,7 +105,7 @@ watch(() => chat.theContact.roomId, (val, oldVal) => {
 
 
 // 滚动
-const scrollbarRef = ref();
+const scrollbarRef = useTemplateRef("scrollbarRef");
 const timer = ref<any>(0);
 /**
  * 滚动到指定消息
@@ -154,12 +154,16 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0, isAnimated: boolean
 
 // 滚动到底部
 function scrollBottom(animate = true) {
+  if (!scrollbarRef?.value?.wrapRef?.scrollHeight) {
+    console.warn("scrollBottom error", scrollbarRef?.value?.wrapRef);
+    return;
+  }
   scrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight, animate);
 }
 
 // 保存上一个位置
 function saveScrollTop() {
-  chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight;
+  chat.scrollTopSize = scrollbarRef?.value?.wrapRef?.scrollHeight || 0;
 }
 
 // 滚动到指定位置
@@ -187,7 +191,7 @@ const offset = computed(() => setting.isMobileSize ? -730 : -678);
 // 滚动事件
 const onScroll = useDebounceFn((e) => {
   // 滚动到底部
-  if (e.scrollTop >= scrollbarRef?.value?.wrapRef?.scrollHeight + offset.value) {
+  if (e.scrollTop >= (scrollbarRef?.value?.wrapRef?.scrollHeight || 0) + offset.value) {
     // console.log(scrollbarRef?.value?.wrapRef?.scrollHeight - e.scrollTop);
     chat.setReadList(chat.theContact.roomId);
   }

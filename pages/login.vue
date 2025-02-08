@@ -16,10 +16,6 @@ const setting = useSettingStore();
 
 onMounted(async () => {
   user.showLoginAndRegister = "login";
-  // if (setting.isDesktop) {
-  //   const wind = getCurrentWindow();
-  //   await wind.setSize(new LogicalSize(380.0, 420.0));
-  // }
 });
 </script>
 
@@ -70,8 +66,8 @@ onMounted(async () => {
             style="--anima: blur-in;"
             class="login-logo absolute left-6 top-6 mb-4 block flex items-center gap-3 sm:(static mb-6)"
           >
-            <ElImage src="/logo.png" class="logo h-8 w-8" />
-            <h3 class="app-name font-bold tracking-0.2em">
+            <ElImage src="/logo.png" class="logo" />
+            <h3 class="app-name text-1.2rem font-bold tracking-0.2em">
               {{ appName }}
             </h3>
           </div>
@@ -80,7 +76,7 @@ onMounted(async () => {
             v-if="user.showLoginAndRegister === 'login'"
             key="login-form"
             style="--anima: blur-in;"
-            class="login-form"
+            class="login-form mt-a"
           />
           <!-- 注册 -->
           <FormRegisterForm
@@ -110,7 +106,7 @@ onMounted(async () => {
   .login-logo {
     --at-apply: ' !static mb-4 p-0  flex-row-c-c';
     .logo {
-      --at-apply: 'w-7 h-7';
+      --at-apply: 'w-8 h-8';
     }
     .app-name {
       --at-apply: 'text-1.2em';

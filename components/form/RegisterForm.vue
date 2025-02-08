@@ -14,16 +14,17 @@ const {
   size?: "large" | "small" | "default"
 }>();
 
+const setting = useSettingStore();
 // 注册方式
-const registerType = ref<number>(RegisterType.PHONE);
+const registerType = ref<number>(RegisterType.EMAIL);
 const options = [
-  { label: "手机号注册", value: RegisterType.PHONE },
   { label: "邮箱注册", value: RegisterType.EMAIL },
+  { label: "手机号注册", value: RegisterType.PHONE },
   { label: "常规注册", value: RegisterType.PASSWORD },
 ];
 // 请求加载
 const isLoading = ref<boolean>(false);
-const loadingText = ref<string>("");
+const loadingText = ref<string>("自动登录中...");
 const formRef = ref();
 // 表单
 const formUser = reactive({
@@ -349,18 +350,28 @@ async function checkUsername() {
 function toLoginForm() {
   store.showLoginAndRegister = "login";
 }
+
+// onMounted(() => {
+//   if (setting.isDesktop) {
+//     const windows = getCurrentWebviewWindow();
+//     windows.setSize(new LogicalSize(340, 460));
+//   }
+// });
 </script>
 
 <template>
   <!-- 注册 -->
   <el-form
     ref="formRef"
+    v-loading="isLoading"
     :disabled="isLoading"
     label-position="top"
     style="border: none;"
+    :element-loading-text="loadingText"
+    element-loading-background="transparent"
+    :element-loading-spinner="defaultLoadingIcon"
     hide-required-asterisk :rules="rules" :model="formUser" class="form relative"
   >
-    <small v-if="isLoading" class="z-999 absolute-center-center">{{ loadingText }}</small>
     <h4 mb-4 tracking-0.2em op-80 sm:mb-6>
       开启你的专属圈子✨
     </h4>
