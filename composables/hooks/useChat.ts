@@ -12,7 +12,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
   const mediaRecorderContext = shallowRef<MediaRecorder>(); // 录音对象
   const isChating = ref(); // 是否正在聊天
   let audioChunks: Blob[] = [];
-  const theAudioFile = shallowRef<OssFile>(); // 录音文件
+  const theAudioFile = shallowRef<Partial<OssFile>>(); // 录音文件
   const isPalyAudio = ref(false); // 是否正在播放音频
   const palyAudioContext = ref<HTMLAudioElement>();
   const startEndTime = reactive({ // 录音时间
@@ -24,9 +24,8 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
   const fileSizeLimit = computed(() => setting.systemConstant.ossInfo?.audio?.fileSize || 20 * 1024 * 1024); // 默认限制为20MB
   // 录音秒数
   const second = computed(() => {
-    const diff = (startEndTime.endTime - startEndTime.startTime) / 1000 || 0;
-    if (diff > 0 && startEndTime.endTime > 0)
-      return +diff.toFixed(0);
+    if (startEndTime.startTime > 0 && startEndTime.endTime > 0)
+      return +((startEndTime.endTime - startEndTime.startTime) / 1000 || 0).toFixed(0);
     else
       return 0;
   }); // 录音时长
@@ -57,12 +56,16 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
    * 重置
    */
   const reset = () => {
+    isPalyAudio.value = false;
+    palyAudioContext.value?.pause();
     audioChunks = [];
+    if (theAudioFile.value) {
+      theAudioFile.value.id = "";
+    }
     theAudioFile.value = undefined;
     startEndTime.startTime = 0;
     startEndTime.endTime = 0;
     isChating.value = false;
-    isPalyAudio.value = false;
     palyAudioContext.value = undefined;
     audioTransfromTextList.value = [];
   };
@@ -72,6 +75,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
     if (isChating.value) {
       if (second.value < 1) {
         ElMessage.warning("录音时间过短！");
+        reset();
         return;
       }
       speechRecognition.stop();

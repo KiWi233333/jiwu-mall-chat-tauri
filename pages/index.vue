@@ -1,5 +1,6 @@
 
 <script lang="ts" setup>
+import { appName } from "~/constants";
 import { WsStatusEnum } from "~/types/chat/WsType";
 
 const user = useUserStore();
@@ -25,6 +26,11 @@ useMsgLinear(); // 聊天页面初始化
       class="h-full flex flex-1 flex-col overflow-hidden"
     >
       <MenuHeaderMenuBar class="flex-shrink-0">
+        <template #center>
+          <div class="block tracking-0.1em absolute-center-center sm:hidden" data-tauri-drag-region>
+            {{ appName }}
+          </div>
+        </template>
         <template #drag-content>
           <div
             v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin"

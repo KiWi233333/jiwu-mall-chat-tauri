@@ -523,11 +523,11 @@ function resetForm() {
  * @param callback 上传成功回调
  */
 async function onSubmitSound(callback: (key: string) => void) {
-  if (!theAudioFile.value || !theAudioFile.value.id) {
+  if (!theAudioFile.value || !theAudioFile?.value?.id) {
     isSending.value = false;
     return false;
   }
-  return await useOssUpload(OssFileType.SOUND, theAudioFile.value, user.getToken, {
+  return await useOssUpload(OssFileType.SOUND, theAudioFile.value as OssFile, user.getToken, {
     callback(event, data, file) {
       if (event === "error") {
         isSending.value = false;
