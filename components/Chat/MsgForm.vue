@@ -43,7 +43,7 @@ const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); /
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
 // 状态
-const showLordMsg = ref(false);
+const showGroupNoticeDialog = ref(false);
 const loadInputDone = ref(false); // 用于移动尺寸动画
 const loadInputTimer = shallowRef<NodeJS.Timeout>();
 
@@ -115,7 +115,7 @@ function onSubmitFile(key: string, pathList: string[]) {
       msgType: MessageType.FILE, // 文件
       content: chat.msgForm.content,
       body: {
-        atUidList: chat.msgForm.body.atUidList,
+        atUidList: chat.msgForm?.body?.atUidList,
         url: key,
         fileName: file?.file?.name,
         size: file?.file?.size,
@@ -358,7 +358,7 @@ async function multiSubmitImg() {
       msgType: MessageType.IMG, // 默认
       content: "",
       body: {
-        url: file.key,
+        url: file.key!,
         size: file?.file?.size || 0,
       },
     };
@@ -384,25 +384,31 @@ async function multiSubmitImg() {
 }
 
 /**
- * 发送群广播消息
+ * 发送群通知消息
  */
-function onSubmitLordMsg(formData: ChatMessageDTO) {
+function onSubmitGroupNoticeMsg(formData: ChatMessageDTO) {
   if (!isLord.value) {
-    ElMessage.error("仅群主可发送广播消息！");
+    ElMessage.error("仅群主可发送群通知消息！");
     return;
   }
+  const replyMsgId = chat.msgForm?.body?.replyMsgId;
   chat.msgForm = {
     roomId: chat.theContact.roomId,
-    msgType: MessageType.SYSTEM, // 默认
+    msgType: MessageType.GROUP_NOTICE,
     content: "",
     body: {
     },
   };
+  const body = formData?.body as any;
   submit({
     roomId: chat.theContact.roomId,
-    msgType: MessageType.SYSTEM, // 默认
+    msgType: MessageType.GROUP_NOTICE,
     content: formData.content,
     body: {
+      // TODO: 后期可支持富文本编辑
+      noticeAll: body?.noticeAll, // 是否群发
+      imgList: body?.imgList, // 图片列表
+      replyMsgId: body?.replyMsgId || replyMsgId || undefined, // 回复消息ID
     },
   });
 }
@@ -578,7 +584,10 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
 
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
-  chat.msgForm.body.replyMsgId = val;
+  chat.msgForm.body = {
+    ...chat.msgForm.body,
+    replyMsgId: val,
+  };
   nextTick(() => {
     if (inputAllRef.value?.input)
       inputAllRef.value?.input?.focus(); // 聚焦
@@ -908,12 +917,12 @@ onUnmounted(() => {
           />
         </div>
         <i ml-a block w-0 />
-        <!-- 群广播消息 -->
+        <!-- 群通知消息 -->
         <div
           v-if="isLord"
-          title="群广播消息"
+          title="群通知消息"
           class="i-solar-confetti-minimalistic-line-duotone inline-block p-3.2 transition-200 btn-primary sm:p-2.8"
-          @click="showLordMsg = true"
+          @click="showGroupNoticeDialog = true"
         />
         <!-- 语音通话 -->
         <div
@@ -1034,7 +1043,7 @@ onUnmounted(() => {
       </div>
     </div>
   </el-form>
-  <ChatGroupNoticeMsgDialog v-model:show="showLordMsg" @submit="onSubmitLordMsg" />
+  <ChatGroupNoticeMsgDialog v-model:show="showGroupNoticeDialog" @submit="onSubmitGroupNoticeMsg" />
 </template>
 
 <style lang="scss" scoped>

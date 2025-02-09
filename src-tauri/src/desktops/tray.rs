@@ -11,14 +11,14 @@ struct Payload {
     message: String,
 }
 
-const HOST_URL: &str = "https://kiwi233.top";
+const HOST_URL: &str = "https://jiwuchat.kiwi233.top";
 // msgbox宽高
 // const MSGBOX_WIDTH: f64 = 240.0;
 // const MSGBOX_HEIGHT: f64 = 300.0;
 
 pub fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     let setting = MenuItemBuilder::with_id("setting", "设置").build(app)?;
-    let to_host = MenuItemBuilder::with_id("to_host", "博客").build(app)?;
+    let to_host = MenuItemBuilder::with_id("to_host", "官网").build(app)?;
     let restart = MenuItemBuilder::with_id("restart", "重启").build(app)?;
     let quit = MenuItemBuilder::with_id("quit", "退出").build(app)?;
 

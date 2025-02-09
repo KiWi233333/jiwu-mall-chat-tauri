@@ -12,8 +12,8 @@ const props = defineProps<{
 }>();
 const { data } = toRefs(props);
 // 具体
-const body: Partial<FileBodyMsgVO> | undefined = props.data.message?.body || {};
-const fileName = body.fileName || `${body?.url?.split("/").pop() || "未知文件"}.${body.fileType?.toLocaleLowerCase()}`;
+const body: Partial<FileBodyMsgVO> = props.data.message?.body || {};
+const fileName = body?.fileName || `${body?.url?.split("/").pop() || "未知文件"}.${body.fileType?.toLocaleLowerCase()}`;
 const setting = useSettingStore();
 function onDownloadFile(url: string, fileName: string) {
   const item = setting.fileDownloadMap?.[url];

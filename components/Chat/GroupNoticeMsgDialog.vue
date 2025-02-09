@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 /**
- * 广播消息弹窗
+ * 群通知弹窗
  */
 const props = defineProps<{
   show: boolean | undefined | null
@@ -14,18 +14,20 @@ const isShow = computed({
   set: value => emit("update:show", value),
 });
 
-// 消息广播
+// 消息群通知
 const chat = useChatStore();
 const applyFormRef = ref();
 const applyForm = ref<ChatMessageDTO>({
   roomId: chat.theContact.roomId,
-  msgType: MessageType.SYSTEM, // 系统消息
+  msgType: MessageType.GROUP_NOTICE, // 系统消息
   content: "",
   body: {
+    noticeAll: isTrue.TRUE, // 是否群发
+    imgList: [], // 图片列表
+    replyMsgId: undefined, // 回复消息ID
   },
 });
-const user = useUserStore();
-// 群广播消息
+// 群通知
 async function addMsg() {
   applyFormRef?.value?.validate(async (valid: boolean) => {
     if (!valid)
@@ -40,16 +42,22 @@ async function addMsg() {
 </script>
 
 <template>
-  <el-dialog v-model="isShow" title="群广播消息" width="fit-content" center append-to-body>
+  <el-dialog v-model="isShow" width="fit-content" center append-to-body>
+    <template #title>
+      <div class="flex-row-c-c">
+        <i i-carbon:bullhorn p-2 />
+        <span ml-2>群通知</span>
+      </div>
+    </template>
     <el-form ref="applyFormRef" :model="applyForm">
       <el-form-item
         label=""
-        style="margin: 1rem 0;"
+        style="margin: 0.5rem 0 0 0;"
         prop="content"
         :rules="[{
                    min: 1,
                    max: 500,
-                   message: '广播消息不能超过500字！',
+                   message: '群通知不能超过500字！',
                  },
                  {
                    required: true,
@@ -61,9 +69,23 @@ async function addMsg() {
           v-model="applyForm.content"
           class="text-input card-rounded-df border-default-hover"
           autofocus type="textarea" :rows="4"
-          placeholder="请输入广播消息内容"
+          placeholder="请输入群通知内容"
           @keydown.enter.prevent="addMsg"
         />
+      </el-form-item>
+      <el-form-item
+        label=""
+        style="margin: 0.5rem 0 0 0;"
+        prop="body.noticeAll"
+      >
+        <!-- 是否群发 -->
+        <el-checkbox
+          v-model="applyForm.body.noticeAll"
+          :true-value="1"
+          :false-value="0"
+        >
+          群发
+        </el-checkbox>
       </el-form-item>
     </el-form>
     <template #footer>

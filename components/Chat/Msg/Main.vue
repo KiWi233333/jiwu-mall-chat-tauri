@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChatMsgAiAskMsg, ChatMsgAiReplyMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText, ChatMsgVideo } from "#components";
+import { ChatMsgAiAskMsg, ChatMsgAiReplyMsg, ChatMsgDelete, ChatMsgFile, ChatMsgImg, ChatMsgNotice, ChatMsgOther, ChatMsgRecall, ChatMsgRTC, ChatMsgSound, ChatMsgSystem, ChatMsgText, ChatMsgVideo } from "#components";
 import { MessageType } from "@/composables/api/chat/message";
 import { onMsgContextMenu } from ".";
 
@@ -24,6 +24,7 @@ const map: MsgComType = {
   [MessageType.SOUND]: ChatMsgSound,
   [MessageType.RTC]: ChatMsgRTC,
   [MessageType.AI_CHAT_REPLY]: ChatMsgAiReplyMsg,
+  [MessageType.GROUP_NOTICE]: ChatMsgNotice, // 群通知消息
 };
 interface MsgComType {
   [property: number]: any

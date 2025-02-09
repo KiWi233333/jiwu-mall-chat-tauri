@@ -146,13 +146,30 @@ export function setMsgReadByRoomId(roomId: number, token: string) {
 }
 
 
+export enum MessageType {
+  TEXT = 1,
+  RECALL = 2,
+  IMG = 3,
+  FILE = 4,
+  SOUND = 5,
+  VIDEO = 6,
+  EMOJI = 7, // 暂无
+  SYSTEM = 8,
+  AI_CHAT = 9, // AI发起人消息
+  DELETE = 10,
+  RTC = 11, // rtc通话
+  AI_CHAT_REPLY = 12, // AI回复消息
+  GROUP_NOTICE = 13, // 群通知消息
+}
+
+
 /**
  * 消息返回体
  * Date: 2023-03-23
  *
  * ChatMessageVO
  */
-export interface ChatMessageVO<T extends object = any> {
+export interface ChatMessageVO<T = MessageType> {
   /**
    * 发送者信息
    */
@@ -180,7 +197,7 @@ export interface ChatUserInfo {
  *
  * Message
  */
-export interface Message<T extends object = object> {
+export interface Message<T> {
   id: number;
   roomId: number;
   sendTime: number;
@@ -195,14 +212,30 @@ export interface Message<T extends object = object> {
   /**
    * 消息内容不同的消息类型，内容体不同，见https://www.yuque.com/snab/mallcaht/rkb2uz5k1qqdmcmd
    */
-  body?: T;
+  body?: MessageBodyMap[MessageType];
+}
+
+export interface MessageBodyMap {
+  [MessageType.TEXT]: TextBodyMsgVO;
+  [MessageType.RECALL]: string;
+  [MessageType.IMG]: ImgBodyMsgVO;
+  [MessageType.FILE]: FileBodyMsgVO;
+  [MessageType.SOUND]: SoundBodyMsgVO;
+  [MessageType.VIDEO]: VideoBodyMsgVO;
+  [MessageType.EMOJI]: any; //   暂无
+  [MessageType.SYSTEM]: SystemBodyMsgVO;
+  [MessageType.AI_CHAT]: AiChatBodyMsgVO;
+  [MessageType.DELETE]: string;
+  [MessageType.RTC]: RtcLiteBodyMsgVO;
+  [MessageType.AI_CHAT_REPLY]: AiChatReplyBodyMsgVO;
+  [MessageType.GROUP_NOTICE]: GroupNoticeBodyMsgVO;
 }
 
 /**
  * 文本消息
  */
 export interface TextBodyMsgVO {
-  content: string;
+  // content: string;
   urlContentMap: { [key: string]: UrlInfoDTO };
   atUidList: string[];
   reply: {
@@ -215,6 +248,28 @@ export interface TextBodyMsgVO {
     body?: string
   };
 }
+/**
+ * 系统消息
+ */
+export type SystemBodyMsgVO = string;
+
+/**
+ * 群通知
+ */
+export interface GroupNoticeBodyMsgVO {
+  content: string;
+  imgList: string[];
+  reply: {
+    id: number;
+    uid: string;
+    nickName: string;
+    type: MessageType;
+    canCallback: isTrue;
+    gapCount: number;
+    body?: string
+  }
+}
+
 export interface UrlInfoDTO {
   title?: string;
   description?: string;
@@ -395,22 +450,6 @@ export enum FileBodyMsgTypeEnum {
   DOC = "DOC",
   DOCX = "DOCX",
 }
-
-export enum MessageType {
-  TEXT = 1,
-  RECALL = 2,
-  IMG = 3,
-  FILE = 4,
-  SOUND = 5,
-  VIDEO = 6,
-  EMOJI = 7, // 暂无
-  SYSTEM = 8,
-  AI_CHAT = 9, // AI发起人消息
-  DELETE = 10,
-  RTC = 11, // rtc通话
-  AI_CHAT_REPLY = 12, // AI回复消息
-}
-
 export const MessageTypeText = {
   [MessageType.TEXT]: "正常消息",
   [MessageType.RECALL]: "撤回消息",
@@ -424,13 +463,16 @@ export const MessageTypeText = {
   [MessageType.DELETE]: "删除消息",
   [MessageType.RTC]: "RTC通讯消息",
   [MessageType.AI_CHAT_REPLY]: "AI回复消息",
+  [MessageType.GROUP_NOTICE]: "群通知消息",
 };
 
+
+export type CanSendMessageType = MessageType.TEXT | MessageType.IMG | MessageType.SOUND | MessageType.VIDEO | MessageType.FILE | MessageType.AI_CHAT | MessageType.GROUP_NOTICE;
 
 /**
  * ChatMessageDTO
  */
-export interface ChatMessageDTO<T = MessageType> {
+export interface ChatMessageDTO {
   /**
    * 房间id
    */
@@ -442,22 +484,25 @@ export interface ChatMessageDTO<T = MessageType> {
   /**
    * 消息类型
    */
-  msgType?: MessageType;
+  msgType?: CanSendMessageType;
   /**
    * 消息内容，类型不同传值不同
    */
-  body: any;
-  [property: string]: any;
+  body?: MessageBodyDTOMap[CanSendMessageType] | any;
 }
 
 /**
  * 表单提交消息Body的类型
  */
-interface MessageBodyMap {
+interface MessageBodyDTOMap {
   [MessageType.TEXT]: TextBodyDTO;
   [MessageType.IMG]: ImgBodyDTO;
   [MessageType.SOUND]: SoundBodyDTO;
   [MessageType.RECALL]: RecallBodyDTO;
+  [MessageType.VIDEO]: VideoBodyDTO;
+  [MessageType.FILE]: FileBodyDTO;
+  [MessageType.AI_CHAT]: AiChatBodyDTO;
+  [MessageType.GROUP_NOTICE]: GroupNoticeBodyDTO;
 }
 export interface TextBodyDTO {
   replyMsgId?: string;
@@ -468,9 +513,11 @@ export interface ImgBodyDTO {
   size?: number;
   width?: number;
   height?: number;
+  replyMsgId?: string;
 }
 export interface SoundBodyDTO {
   fileName: string;
+  url: string;
   second: number;
 }
 export interface RecallBodyDTO {
@@ -478,6 +525,34 @@ export interface RecallBodyDTO {
   recallTime?: number;
 }
 
+export interface FileBodyDTO {
+  url: string;
+  size: number;
+  fileType?: FileBodyMsgTypeEnum;
+  mimeType?: string;
+}
+
+export interface VideoBodyDTO {
+  url: string;
+  size?: number;
+  duration: number;
+  thumbUrl: string;
+  thumbSize?: number;
+  thumbWidth?: number;
+  thumbHeight?: number;
+}
+
+export interface AiChatBodyDTO {
+  modelCode: number;
+  businessCode: AiBusinessType;
+  content: string;
+}
+
+export interface GroupNoticeBodyDTO {
+  replyMsgId?: string;
+  noticeAll?: isTrue;
+  imgList?: string[];
+}
 
 /**
  * 消息已读未读VO

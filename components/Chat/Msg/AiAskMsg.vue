@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 const { data } = toRefs(props);
 // 具体
-const body: Partial<AiChatBodyMsgVO> | undefined = props.data.message?.body || {};
+const body: Partial<AiChatBodyMsgVO> = props.data.message?.body || {};
 </script>
 
 <template>
