@@ -178,6 +178,12 @@ body .el-message {
       }
     }
   }
+  .el-dropdown-menu__item--divided {
+    --at-apply: "border-default-t";
+  }
+}
+.el-dropdown__popper  {
+  --at-apply: "!border-default-hover";
 }
 /**  ------------------------------markdown---------------------------------------  **/
 

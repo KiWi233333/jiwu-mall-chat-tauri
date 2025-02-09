@@ -24,9 +24,10 @@ async function toggleFn(e: MouseEvent) {
     <img
       v-else
       src="/images/icon/moon.svg"
-      class="h-1.3em w-1.3em fill-light-5"
+      class="h-1.3em w-1.3em"
       alt="moon 夜间模式"
     >
+    <slot />
   </div>
 </template>
 

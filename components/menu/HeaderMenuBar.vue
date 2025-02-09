@@ -65,6 +65,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" data-tauri-drag-region>
       <slot name="drag-content" />
     </div>
+    <slot name="center" />
     <!-- 会话搜索框 -->
     <slot name="search-contact">
       <i
@@ -76,7 +77,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
+      <div v-if="!setting.isMobileSize || setting.isWeb" id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
         <BtnAppDownload />
         <div class="flex items-center gap-3 rounded-2rem px-2.2 py-1.5 border-default card-default">
           <!-- 刷新页面 -->
@@ -122,6 +123,45 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
           </MenuController>
         </div>
       </div>
+      <!-- 移动尺寸 -->
+      <el-dropdown v-else placement="bottom-end" popper-class="dropdown-btns">
+        <div class="p-1">
+          <i i-solar:menu-dots-circle-linear p-2.6 btn-primary />
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>
+              <div class="group flex items-center py-1" @click="reloadPage">
+                <div
+                  title="刷新页面"
+                  class="i-solar:refresh-outline h-4.5 w-4.5 transition-transform group-hover:rotate-180"
+                />
+                <span ml-2>刷新页面</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item divided>
+              <BtnTheme
+                id="toggle-theme-btn"
+                class="relative z-1 py-1"
+                title="切换主题"
+              >
+                <span ml-2>切换主题</span>
+              </BtnTheme>
+            </el-dropdown-item>
+            <el-dropdown-item divided>
+              <div class="group flex items-center py-1" @click="user.exitLogin">
+                <i
+                  class="cursor-pointer btn-danger"
+                  title="退出登录"
+                  transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
+                  circle plain i-solar:logout-3-broken mr-1 p-2
+                />
+                <span ml-2>退出登录</span>
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </slot>
   </menu>
 </template>
