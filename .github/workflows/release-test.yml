@@ -46,7 +46,7 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-1-dev librsvg2-dev libgtk-3-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-1 librsvg2-dev libgtk-3-dev patchelf
         # webkitgtk（libwebkit2gtk-4.0-dev） 4.0 is for Tauri v1  - webkitgtk 4.1 is for Tauri v2. 版本不同，需要安装不同的依赖。 libappindicator3-dev 
         # libgtk-3-dev 用于构建 Debian deb 
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
@@ -67,15 +67,15 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Create Release
-        uses: tauri-apps/tauri-action@v0.5.15
+        uses: tauri-apps/tauri-action@v0.5.18
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           
         with:
-          # tagName: test-v__VERSION__
-          releaseName: 🔥 Release v__VERSION__
+          tag_name: test-$(date +%Y%m%d%H%M%S)
+          release_name: Test Release $(date +%Y-%m-%d_%H-%M-%S)
           releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
           # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
           releaseDraft: true
