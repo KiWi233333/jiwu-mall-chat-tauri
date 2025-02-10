@@ -274,17 +274,19 @@ async function onSubmit(e?: KeyboardEvent) {
         chat.atUserList = [...atUidList];
         formData.body.atUidList = [...new Set(uidList)];
       }
-      else if (!isAt && isAi) {
-        const { aiRobotList } = useAiReply(formData.content, userOptions.value);
-        if (aiRobotList[0]) {
-          formData.body = {
-            userId: aiRobotList[0].userId,
-            modelCode: 1,
-            businessCode: 1,
-          };
-          formData.content = formData.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
-          formData.msgType = MessageType.AI_CHAT; // 设置对应消息类型
+      else if (!isAt && isAi) { // ai问答
+        const { aiRobotList } = useAiReply(formData.content, aiOptions.value);
+        if (!aiRobotList[0]) {
+          ElMessage.warning("该AI已经下线！");
+          return;
         }
+        formData.body = {
+          userId: aiRobotList[0].userId,
+          modelCode: 1,
+          businessCode: 1,
+        };
+        formData.content = formData.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
+        formData.msgType = MessageType.AI_CHAT; // 设置对应消息类型
       };
     };
     // 图片

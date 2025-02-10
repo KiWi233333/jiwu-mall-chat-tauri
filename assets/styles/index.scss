@@ -221,10 +221,18 @@ body .el-message {
 .mx-context-menu {
   --popper-fade-anima-scale: 0.9;
   --at-apply: "!border-default-2 dark:!bg-[#111111] !bg-white  animate-[popper-fade-anim_0.15s]";
-  .mx-context-menu-items .mx-item-row {
-    --at-apply: "text-color";
-    margin: 4px 2px;
+  .mx-context-menu-items {
+    .mx-context-menu-item {
+      .mx-item-row {
+        --at-apply: "text-color ";
+        margin: 4px 2px;
+      }
+      &:hover .mx-item-row {
+        --at-apply: "text-white";
+      }
+    }
   }
+
   .mx-context-menu-item-sperator {
     --mx-menu-divider: rgba(132, 132, 132, 0.2);
     background-color: transparent;

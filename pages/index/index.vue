@@ -17,7 +17,7 @@ const openRoomDrawer = computed({
 <template>
   <div class="h-full flex flex-1 overflow-x-hidden">
     <ChatContactList
-      class="transition-anima absolute left-0 top-0 h-full w-full flex-1 scale-100 sm:(relative left-auto top-auto min-w-300px w-1/4 flex-none transform-none)"
+      class="transition-anima absolute left-0 top-0 h-full w-full flex-1 scale-100 sm:(relative left-auto top-auto flex-none transform-none) !sm:w-320px"
       :class="{
         '-translate-x-full css-will-change': !chat.isOpenContact,
       }"

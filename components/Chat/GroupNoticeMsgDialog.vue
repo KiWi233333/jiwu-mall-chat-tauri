@@ -43,7 +43,7 @@ async function addMsg() {
 
 <template>
   <el-dialog v-model="isShow" width="fit-content" center append-to-body>
-    <template #title>
+    <template #header>
       <div class="flex-row-c-c">
         <i i-carbon:bullhorn p-2 />
         <span ml-2>群通知</span>
