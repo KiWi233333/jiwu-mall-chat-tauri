@@ -182,8 +182,24 @@ body .el-message {
     --at-apply: "border-default-t";
   }
 }
-.el-dropdown__popper  {
+.el-dropdown__popper {
   --at-apply: "!border-default-hover";
+}
+
+.el-popper.el-mention__popper {
+  --at-apply: "bg-color-2 rounded-3 border-default";
+  .el-scrollbar__wrap {
+    padding: 0 0.5em;
+  }
+
+  // .el-mention-dropdown__header {
+  //   padding: 0.2rem;
+  // }
+  .el-mention-dropdown__item {
+    --el-mention-option-hover-background: #958c9b44;
+    padding: 0.5em;
+    border-radius: 6px;
+  }
 }
 /**  ------------------------------markdown---------------------------------------  **/
 
@@ -204,9 +220,14 @@ body .el-message {
 
 .mx-context-menu {
   --popper-fade-anima-scale: 0.9;
-  --at-apply: "!border-default-hover bg-color-2 animate-[popper-fade-anim_0.15s]";
+  --at-apply: "!border-default-2 dark:!bg-[#111111] !bg-white  animate-[popper-fade-anim_0.15s]";
   .mx-context-menu-items .mx-item-row {
+    --at-apply: "text-color";
     margin: 4px 2px;
+  }
+  .mx-context-menu-item-sperator {
+    --mx-menu-divider: rgba(132, 132, 132, 0.2);
+    background-color: transparent;
   }
   .mx-icon-placeholder {
     i {

@@ -43,16 +43,18 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
       onClick: () => refundMsg(data, data.message.id),
     },
     {
+      label: "回复",
+      customClass: "group",
+      icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90  group-hover:(translate-x-1 translate-x-2px) group-btn-info",
+      onClick: () => chat.setReplyMsg(data),
+    },
+    {
       label: "删除",
       customClass: "group",
+      divided: "up",
       icon: "i-solar:trash-bin-minimalistic-outline group-hover:(shake i-solar:trash-bin-minimalistic-bold) group-btn-danger",
       hidden: !isTheGroupPermission.value,
       onClick: () => deleteMsg(data, data.message.id),
-    },
-    {
-      label: "回复",
-      icon: "i-solar:arrow-to-down-right-line-duotone -rotate-90 group-hover:(translate-x-1 translate-y-2px) group-btn-info",
-      onClick: () => chat.setReplyMsg(data),
     },
   ];
   const txt = window.getSelection()?.toString() || data.message.content;

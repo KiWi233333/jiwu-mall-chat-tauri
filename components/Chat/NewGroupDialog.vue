@@ -173,7 +173,7 @@ defineExpose({
                       <div class="avatar-icon">
                         <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
                       </div>
-                      <strong truncate>{{ p.nickName || "未填写" }}</strong>
+                      <strong class="truncate !text-color">{{ p.nickName || "未填写" }}</strong>
                     </div>
                   </el-checkbox>
                 </ListAutoIncre>
@@ -283,13 +283,13 @@ defineExpose({
   --at-apply:"h-2.4rem card-default  w-2.4rem flex-row-c-c rounded-6px  shadow-sm border-default"
 }
 .item {
-  --at-apply:"flex flex-col relative items-center gap-4 px-2 py-3.6 cursor-pointer rounded-6px hover:(bg-[#b8b8b818] ) transition-300"
+  --at-apply:"flex flex-col relative items-center gap-4 px-2 py-3.6 cursor-pointer rounded-6px hover:(bg-color-3 ) transition-300"
 }
 .check-item {
-  --at-apply:"flex items-center px-4 gap-2 cursor-pointer rounded-6px p-2 hover:(bg-[#b8b8b818] ) transition-300"
+  --at-apply:"flex items-center px-4 gap-2 cursor-pointer rounded-6px p-2 hover:(bg-color-3 ) transition-300"
 }
 :deep(.el-checkbox.is-checked){
-  --at-apply:" bg-[#b8b8b818] shadow-sm"
+  --at-apply:" bg-color-3 shadow-sm"
 }
 .avatar {
   :deep(.el-form-item__error) {

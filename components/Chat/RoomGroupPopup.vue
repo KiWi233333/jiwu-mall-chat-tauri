@@ -214,31 +214,16 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
     items: [
       {
         label: "@ 他",
+        customClass: "group",
         hidden: isSelf,
         onClick: () => {
           chat.setAtUid(item.userId);
         },
       },
       {
-        icon: "btn-info i-solar:user-bold ",
-        label: "联系他",
-        hidden: isSelf,
-        onClick: () => {
-          chat.setTheFriendOpt(FriendOptType.User, {
-            id: item.userId,
-          });
-          navigateTo({
-            path: "/friend",
-            query: {
-              id: item.userId,
-            },
-            replace: false,
-          });
-        },
-      },
-      {
         label: "添加好友",
-        icon: "i-carbon:add-large btn-info",
+        customClass: "group",
+        icon: "group-hover:scale-110 transition-transform i-solar:user-plus-broken btn-info",
         hidden: isSelf,
         onClick: () => {
           // 确认是否为好友
@@ -256,14 +241,34 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         },
       },
       {
+        icon: "group-hover:scale-110 transition-transform btn-info i-solar:user-bold ",
+        label: "联系他",
+        customClass: "group",
+        hidden: isSelf,
+        onClick: () => {
+          chat.setTheFriendOpt(FriendOptType.User, {
+            id: item.userId,
+          });
+          navigateTo({
+            path: "/friend",
+            query: {
+              id: item.userId,
+            },
+            replace: false,
+          });
+        },
+      },
+      {
         label: "管理员",
-        icon: "i-solar:shield-user-bold-duotone btn-warning",
+        customClass: "group",
+        icon: "group-hover:scale-110 transition-transform i-solar:shield-user-bold-duotone btn-warning",
         hidden: isSelf || !isTheGroupOwner.value,
         children: [
           {
             label: "添加",
+            customClass: "group",
             hidden: item.roleType === ChatRoomRoleEnum.ADMIN,
-            icon: "i-carbon:add-large btn-info",
+            icon: "group-hover:scale-110 transition-transform i-carbon:add-large btn-info",
             onClick: () => {
               toggleAdminRole({
                 userId: item.userId,
@@ -273,7 +278,8 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
           },
           {
             label: "移除",
-            // icon: "i-carbon:add-large btn-info",
+            customClass: "group",
+            icon: "group-hover:scale-110 transition-transform i-solar:add-circle-linear btn-info",
             hidden: !item.roleType || item.roleType !== ChatRoomRoleEnum.ADMIN,
             onClick: () => {
               toggleAdminRole({
@@ -286,10 +292,12 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
       },
       {
         label: "其他",
+        customClass: "group",
         children: [
           {
             label: "分享",
-            icon: "i-solar:share-line-duotone",
+            customClass: "group",
+            icon: "group-hover:scale-110 transition-transform i-solar:share-line-duotone",
             onClick: async () => {
               const res = await useAsyncCopyText(`${window.location.origin}/user/info?id=${item.userId}`);
               ElMessage.success({
@@ -303,7 +311,9 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
       },
       {
         label: "踢出群聊",
-        icon: "i-solar:logout-3-broken",
+        customClass: "group",
+        icon: "group-hover:scale-110 transition-transform i-solar:logout-3-broken",
+        divided: "up",
         hidden: isSelf || !isTheGroupPermission.value,
         onClick: () => {
           ElMessageBox.confirm("是否将该用户踢出群聊？", {

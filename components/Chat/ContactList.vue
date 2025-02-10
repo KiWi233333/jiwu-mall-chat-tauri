@@ -125,6 +125,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
       },
       {
         customClass: "group",
+        divided: "up",
         icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger group-hover:i-solar:trash-bin-minimalistic-bold-duotone",
         label: "不显示聊天",
         onClick: () => {
@@ -320,7 +321,7 @@ reload();
 }
 
 .header {
-  --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height border-default-b  card-bg-color";
+  --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height  card-bg-color";
   :deep(.el-input) {
     .el-input__wrapper {
       --at-apply: "!shadow-none !outline-none bg-color-2 dark:bg-dark-7";

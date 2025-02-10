@@ -235,10 +235,17 @@ const setReadListDebounce = useDebounceFn(() => {
 async function onSubmit(e?: KeyboardEvent) {
   if (e) {
     // 上下键
-    if (!chat.msgForm.content?.trim() && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    const val = chat.msgForm.content?.trim();
+    if (!val && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
       chat.onDownUpChangeRoom(e.key === "ArrowDown" ? "down" : "up");
       return;
     }
+    // 退格
+    if (!val && e?.key === "Backspace") {
+      resetForm();
+      return;
+    }
+    // 回车
     if (e?.shiftKey && e?.key === "Enter")
       return;
     // 回车
@@ -981,16 +988,16 @@ onUnmounted(() => {
           @keydown="(e: KeyboardEvent) => onSubmit(e)"
         >
           <template #label="{ item }">
-            <div class="h-full flex items-center pr-1">
-              <CardElImage class="h-6 w-6 rounded-full" :src="BaseUrlImg + item.avatar" />
-              <span class="ml-2 inline-block max-w-10em truncate">{{ item.label }}</span>
+            <div class="h-full w-10em flex items-center pr-1" :title="item.label">
+              <CardElImage class="h-6 w-6 rounded-full border-default" :src="BaseUrlImg + item.avatar" />
+              <span class="ml-2 flex-1 truncate">{{ item.label }}</span>
             </div>
           </template>
-          <template #header>
+          <!-- <template #header>
             <span ml-2 op-70>
               {{ isReplyAI ? 'AI机器人' : '群成员' }}
             </span>
-          </template>
+          </template> -->
         </el-mention>
         <BtnElButton
           v-if="setting.isMobileSize"
@@ -1068,14 +1075,6 @@ onUnmounted(() => {
   }
   :deep(.el-form-item__error) {
     padding-left: 1rem;
-  }
-}
-:deep(.el-mention-popper) {
-  .el-mention-dropdown__header {
-    padding: 0.2rem;
-  }
-  .el-mention-dropdown__item {
-    padding: 0 0.4rem;
   }
 }
 :deep(.el-form-item__content) {

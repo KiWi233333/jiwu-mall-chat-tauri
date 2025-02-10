@@ -68,7 +68,14 @@ async function addFrendApplyById() {
                  }]"
         class="w-20rem"
       >
-        <el-input v-model="applyForm.msg" type="textarea" :rows="4" placeholder="发送一条有趣的问候语吧~" @keyup.enter="addFrendApplyById" />
+        <el-input
+          v-model="applyForm.msg"
+          class="text-input card-rounded-df border-default-hover"
+          type="textarea"
+          :rows="4"
+          placeholder="发送一条有趣的问候语吧~"
+          @keyup.enter="addFrendApplyById"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -90,4 +97,16 @@ async function addFrendApplyById() {
     </template>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+.text-input {
+  :deep(.el-textarea__inner) {
+    resize: none;
+    box-shadow: none !important;
+    background-color: transparent;
+    caret-color: var(--el-color-primary);
+  }
+}
+</style>
+
 

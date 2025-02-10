@@ -160,6 +160,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
       {
         label: "踢出群聊",
         icon: "i-solar:logout-3-broken",
+        divided: "up",
         hidden: isSelf || !isTheGroupPermission.value,
         onClick: () => {
           ElMessageBox.confirm("是否将该用户踢出群聊？", {

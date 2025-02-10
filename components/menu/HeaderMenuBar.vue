@@ -77,7 +77,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div v-if="!setting.isMobileSize || setting.isWeb" id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
+      <div v-if="setting.isDesktop || setting.isWeb" id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
         <BtnAppDownload />
         <div class="flex items-center gap-3 rounded-2rem px-2.2 py-1.5 border-default card-default">
           <!-- 刷新页面 -->
@@ -100,7 +100,7 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
             class="cursor-pointer btn-danger"
             title="退出登录"
             transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-            circle plain i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
+            plain circle i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
           />
         </div>
         <!-- 关闭按钮 -->

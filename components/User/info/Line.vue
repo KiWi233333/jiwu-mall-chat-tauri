@@ -365,6 +365,7 @@ onMounted(() => {
 }
 :deep(.el-select) {
   .el-select__wrapper {
+    background-color: transparent;
     box-shadow: none;
   }
 }

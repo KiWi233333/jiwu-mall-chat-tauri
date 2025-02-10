@@ -27,7 +27,7 @@ useMsgLinear(); // 聊天页面初始化
     >
       <MenuHeaderMenuBar class="flex-shrink-0">
         <template #center>
-          <div class="block tracking-0.1em absolute-center-center sm:hidden" data-tauri-drag-region>
+          <div v-if="setting.isMobile" class="block tracking-0.1em absolute-center-center sm:hidden" data-tauri-drag-region>
             {{ appName }}
           </div>
         </template>

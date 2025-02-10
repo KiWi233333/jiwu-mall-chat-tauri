@@ -239,8 +239,8 @@ const {
     </section>
     <div class="btns mt-a flex flex-col items-center gap-4 sm:flex-row">
       <BtnElButton
-        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit) card-bg-color" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
-        style="--el-color-primary: var(--el-color-danger);--el-button-hover-border-color: var(--el-color-danger);background-color: transparent;"
+        class="h-10 w-full rounded-4rem shadow sm:(ml-a h-fit w-fit) !card-bg-color" icon-class="i-solar:trash-bin-trash-outline" :transition-icon="true"
+        style="--el-color-primary: var(--el-color-danger);--el-button-hover-border-color: var(--el-color-danger);background-color: inherit;"
         @click="setting.reset()"
       >
         重置
