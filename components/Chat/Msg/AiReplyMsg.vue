@@ -38,11 +38,11 @@ const isResonFold = ref(initFold);
         <!-- 思考内容 -->
         <p
           v-if="data.message?.body?.reasoningContent && !isFold" class="reson-content"
-          :class="isResonFold ? 'h-2.5em truncate' : 'h-auto'"
+          :class="isResonFold ? 'h-2.5em truncate is-reson-open' : 'h-auto'"
         >
           思考：{{ data.message?.body?.reasoningContent }}
           <span
-            class="absolute bottom-0 right-0 z-2 card-rounded-df p-2 btn-info bg-color-2 text-mini"
+            class="text absolute bottom-0 right-0 z-2 h-3em px-3 leading-3em shadow btn-info text-mini"
             @click="isResonFold = !isResonFold"
           >
             {{ isResonFold ? '展开' : '收起' }}
@@ -136,5 +136,8 @@ const isResonFold = ref(initFold);
     --at-apply: "bg-dark absolute z-1 left-0 bottom-0 w-full h-1/5 hover:(op-0 -z-1) op-100 transition-opacity";
     background: linear-gradient(to top, var(--el-bg-color), transparent);
   }
+}
+.is-reson-open .text {
+  --at-apply: "bg-color-br";
 }
 </style>

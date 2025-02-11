@@ -234,7 +234,7 @@ export function useRecording(options: { timeslice?: number } = { timeslice: 1000
  *  uidList: 识别到的@用户的uid列表
  *  atUidList: 识别到的@用户的{userId, nickName}列表
  */
-export function useAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(#(\S+)\)\s/g }): { uidList: string[]; atUidList: AtChatMemberOption[] } {
+export function resolveAtUsers(text: string, userOptions: AtChatMemberOption[], configs: AtConfigs = { regExp: /@\S+\(#(\S+)\)\s/g }): { atUidList: AtChatMemberOption[] } {
   const { regExp } = configs;
   if (!regExp || !text)
     throw new Error("regExp is required");
@@ -249,39 +249,12 @@ export function useAtUsers(text: string, userOptions: AtChatMemberOption[], conf
     }
   }
   return {
-    uidList: atUidList.map(p => p.userId) || [],
     atUidList: JSON.parse(JSON.stringify(atUidList)),
-  };
-}
-/**
- * 处理/AI回复
- * @param text 文本内容
- * @param aiOptions 所有AI列表
- * @returns
- *  aiReply: 识别到的/AI回复
- */
-export function useAiReply(text: string, aiOptions: AskAiRobotOption[], configs: AtConfigs = { regExp: /\/\S+\(#(\S+)\)\s/g }): { aiRobitUidList: string[]; aiRobotList: AskAiRobotOption[] } {
-  const { regExp } = configs;
-  if (!regExp || !text)
-    throw new Error("regExp is required");
-  const aiRobotList: AskAiRobotOption[] = [];
-  const matches = text.matchAll(regExp);
-  for (const match of matches) {
-    // 识别/和括号直接的昵称
-    if (match[1]) {
-      const aiRobot = aiOptions.find(u => u.username === match[1]);
-      if (aiRobot)
-        aiRobotList.push(aiRobot);
-    }
-  }
-  return {
-    aiRobitUidList: aiRobotList.map(p => p.userId) || [],
-    aiRobotList: JSON.parse(JSON.stringify(aiRobotList)),
   };
 }
 
 export function formatAiReplyTxt(item: AskAiRobotOption) {
-  return `/${item.nickName}(#${item.username}) `;
+  return `/${item.nickName} `;
 }
 
 export interface AtConfigs {
@@ -383,7 +356,7 @@ export function useLoadAiList() {
     if (data && code === StatusCode.SUCCESS) {
       aiOptions.value = (data || []).map((u: RobotUserVO) => ({
         label: u.nickname,
-        value: `${u.nickname}(#${u.username})`,
+        value: u.nickname,
         userId: u.userId,
         avatar: u.avatar,
         username: u.username,
@@ -432,6 +405,39 @@ export function checkAiReplyWhole(context: string | undefined | null, pattern: s
   return true;
 }
 
+/**
+ * 处理/AI回复
+ * @param text 文本内容
+ * @param aiOptions 所有AI列表
+ * @returns
+ *  aiReply: 识别到的/AI回复
+ */
+export function resolteAiReply(text: string, aiOptions: AskAiRobotOption[], configs: AtConfigs = { regExp: /^\/(\S+)\s/ }): { aiRobitUidList: string[]; aiRobotList: AskAiRobotOption[], replaceText: string } {
+  const { regExp = /\/(\S+)\s/ } = configs;
+  if (!regExp || !text)
+    throw new Error("regExp is required");
+  const aiRobotList: AskAiRobotOption[] = [];
+  const matches = text.match(regExp);
+  // 测试
+  if (matches && matches?.[1]) {
+    const aiRobot = aiOptions.find(u => u.nickName === matches[1]);
+    if (aiRobot)
+      aiRobotList.push(aiRobot);
+  }
+  // for (const match of matches) {
+  //   // 识别/和括号直接的昵称
+  //   if (match[1]) {
+  //     const aiRobot = aiOptions.find(u => u.username === match[1]);
+  //     if (aiRobot)
+  //       aiRobotList.push(aiRobot);
+  //   }
+  // }
+  return {
+    aiRobitUidList: aiRobotList.map(p => p.userId) || [],
+    aiRobotList: JSON.parse(JSON.stringify(aiRobotList)),
+    replaceText: matches?.[1] || "",
+  };
+}
 
 export interface AtChatMemberOption {
   label: string

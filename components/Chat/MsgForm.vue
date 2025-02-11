@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { FILE_TYPE_ICON_DEFAULT, FILE_TYPE_ICON_MAP, formatFileSize } from "~/composables/api/res/file";
-import { checkAtUserWhole, useAtUsers, useLoadAtUserList, useRecording } from "~/composables/hooks/useChat";
 
 const emit = defineEmits<{
   (e: "submit", newMsg: ChatMessageVO): void
@@ -260,23 +259,20 @@ async function onSubmit(e?: KeyboardEvent) {
       return;
 
     const formData = JSON.parse(JSON.stringify(chat.msgForm));
-    // 处理 @用户
     if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content) {
-      const isAt = formData.content?.includes("@");
-      const isAi = formData.content?.startsWith("/");
       if (document.querySelector(".at-select")) // enter冲突at选择框
         return;
-      if (isAt && !isAi) {
-        const { uidList, atUidList } = useAtUsers(formData.content, userOptions.value);
+
+      // 处理 @用户
+      const { atUidList } = resolveAtUsers(formData.content, userOptions.value);
+      if (atUidList?.length) {
         chat.atUserList = [...atUidList];
-        formData.body.atUidList = [...new Set(uidList)];
+        formData.body.atUidList = [...new Set(atUidList)];
       }
-      else if (!isAt && isAi) { // ai问答
-        const { aiRobotList } = useAiReply(formData.content, aiOptions.value);
-        if (!aiRobotList[0]) {
-          ElMessage.warning("该AI已经下线！");
-          return;
-        }
+
+      // 处理 AI机器人
+      const { aiRobotList } = resolteAiReply(formData.content, aiOptions.value);
+      if (aiRobotList[0]) {
         formData.body = {
           userId: aiRobotList[0].userId,
           modelCode: 1,
@@ -284,7 +280,7 @@ async function onSubmit(e?: KeyboardEvent) {
         };
         formData.content = formData.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
         formData.msgType = MessageType.AI_CHAT; // 设置对应消息类型
-      };
+      }
     };
     // 图片
     if (formData.msgType === MessageType.IMG) {
@@ -927,7 +923,7 @@ onUnmounted(() => {
         <div
           v-if="isLord"
           title="群通知消息"
-          class="i-solar-confetti-minimalistic-line-duotone inline-block p-3.2 transition-200 btn-primary sm:p-2.8"
+          class="i-carbon:bullhorn inline-block p-3.2 transition-200 btn-primary sm:p-2.8"
           @click="showGroupNoticeDialog = true"
         />
         <!-- 语音通话 -->
