@@ -408,6 +408,13 @@ export function useLoadAiList() {
   };
 }
 
+/**
+ * 处理/AI删除 mention
+ * @param context 文本内容
+ * @param pattern 正则
+ * @param prefix 前缀
+ * @returns 是否匹配删除
+ */
 export function checkAiReplyWhole(context: string | undefined | null, pattern: string, prefix: string) {
   const chat = useChatStore();
   if (prefix !== "/")

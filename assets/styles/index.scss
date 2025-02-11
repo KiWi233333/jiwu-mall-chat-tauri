@@ -187,9 +187,17 @@ body .el-message {
 }
 
 .el-popper.el-mention__popper {
-  --at-apply: "bg-color-2 rounded-3 border-default";
-  .el-scrollbar__wrap {
-    padding: 0 0.5em;
+  --at-apply: "bg-color-2 rounded-10px border-default";
+  .el-mention-dropdown {
+    padding: 0.5em;
+  }
+  .el-scrollbar {
+    .el-scrollbar__wrap {
+      padding: 0;
+    }
+    .el-scrollbar__view.el-mention-dropdown__list {
+      padding: 0;
+    }
   }
 
   // .el-mention-dropdown__header {

@@ -50,7 +50,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
       </div>
       <!-- 内容 -->
       <slot name="body">
-        <p class="msg-popper" ctx-name="content">
+        <p class="msg-popper msg-wrap" ctx-name="content">
           {{ data.message.content }}
         </p>
       </slot>
@@ -69,7 +69,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
       <small
         v-if="body?.atUidList?.length && body?.atUidList.includes(user?.userInfo?.id)"
         ctx-name="atUidList"
-        class="flex-ml-a at-list"
+        class="at-list flex-ml-a"
       >
         有人@我
       </small>

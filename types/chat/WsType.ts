@@ -218,6 +218,7 @@ export interface WSAiStreamMsg {
   roomId: number; // 房间ID
   userId: string; // 机器人ID
   content: string; // AI回复内容
+  reasoningContent?: string; // 思考过程
   replyTime: Date; // 当前块的回复时间
   role: AiRoleEnums; // 角色，默认为ASSISTANT
   modelCode: number; // 大模型类型 动态

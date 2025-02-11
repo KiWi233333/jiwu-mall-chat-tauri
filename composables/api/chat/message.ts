@@ -411,6 +411,7 @@ export interface AiChatBodyMsgVO {
    * 机器人信息
    */
   robotInfo: RobotUserVO;
+
   modelCode: number;
   /**
    * 机器人业务类型
@@ -435,6 +436,10 @@ export interface AiChatReplyBodyMsgVO {
     gapCount: number;
     body?: string
   };
+  /**
+   * 部分模型的思考经过
+   */
+  reasoningContent?: string;
   // imgMsgDTO?: ImgBodyMsgVO;
   // videoMsgDTO?: VideoBodyMsgVO;
 }

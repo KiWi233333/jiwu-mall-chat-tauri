@@ -233,23 +233,20 @@ const setReadListDebounce = useDebounceFn(() => {
  * 发送消息
  */
 async function onSubmit(e?: KeyboardEvent) {
-  if (e) {
+  if (e?.key) {
     // 上下键
     const val = chat.msgForm.content?.trim();
     if (!val && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
       chat.onDownUpChangeRoom(e.key === "ArrowDown" ? "down" : "up");
       return;
     }
-    // 退格
-    if (!val && e?.key === "Backspace") {
-      resetForm();
-      return;
-    }
-    // 回车
-    if (e?.shiftKey && e?.key === "Enter")
-      return;
-    // 回车
-    if (e?.key !== "Enter")
+    // // 退格
+    // if (!val && e?.key === "Backspace") {
+    //   resetForm();
+    //   return;
+    // }
+    // 回车 且没有按下其他快捷键
+    if (e.key !== "Enter" || (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey))
       return;
     e.preventDefault && e.preventDefault();
     e.stopPropagation && e.stopPropagation();

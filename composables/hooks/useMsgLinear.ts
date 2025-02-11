@@ -210,13 +210,17 @@ function resolveAiStream(data: WSAiStreamMsg) {
 
   const oldMsg = chat.findMsg(data.msgId);
   if (oldMsg) {
-    if (oldMsg.message.content === "...") {
-      oldMsg.message.content = "";
-    }
-    if (data.status === AiReplyStatusEnum.IN_PROGRESS)
+    if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
       oldMsg.message.content += data.content;
-    else
+      if (!oldMsg.message.body.reasoningContent) {
+        oldMsg.message.body.reasoningContent = "";
+      }
+      oldMsg.message.body.reasoningContent += data.reasoningContent || "";
+    }
+    else {
       oldMsg.message.content = data.content;
+      oldMsg.message.body.reasoningContent = data.reasoningContent || "";
+    }
     // await nextTick();
     // scrollBottom(true);
   }

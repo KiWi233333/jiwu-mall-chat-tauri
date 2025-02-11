@@ -235,7 +235,7 @@ defineExpose({
     class="max-w-full flex-1"
     height="100%"
     wrap-class="px-0 shadow-inner-bg sm:px-2"
-    view-class="msg-list pb-2rem"
+    view-class="pb-2rem"
     @scroll="onScroll"
   >
     <div
@@ -275,16 +275,8 @@ defineExpose({
 .shadow-inner-bg {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px inset, rgba(0, 0, 0, 0.1) 0px -2px 8px 0px inset;
 }
-.msg-list {
-  div,
-  small,
-  span,
-  p {
-    word-break: break-all;
-    white-space: pre-wrap;
-    line-height: 1.5;
-  }
-}
+// .msg-list { // 禁止复用
+// }
 .isReload {
   .animate {
     animation: none !important;
