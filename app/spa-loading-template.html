@@ -63,18 +63,18 @@
 <body data-tauri-drag-region>
   <!-- 获取模式 -->
   <script>
-      const mode = localStorage.getItem("vueuse-color-scheme");
-      const osType = window.localStorage.getItem("osType");
-      if (["windows", "macos", "linux"].includes(osType)) {
-        document.documentElement.classList.add("desktop");
-      } else if (["ios", "android"].includes(osType)) {
-        document.documentElement.classList.add("mobile");
-      } else {
-        document.documentElement.classList.add("web");
-      }
+    const mode = localStorage.getItem("vueuse-color-scheme");
+    const osType = window.localStorage.getItem("osType");
+    if (["windows", "macos", "linux"].includes(osType)) {
+      document.documentElement.classList.add("desktop");
+    } else if (["ios", "android"].includes(osType)) {
+      document.documentElement.classList.add("mobile");
+    } else {
+      document.documentElement.classList.add("web");
+    }
     if (mode) document.documentElement.classList.toggle(mode);
   </script>
-  <div class="first-app-loading" id="__nuxt">
+  <div data-tauri-drag-region class="first-app-loading" id="__nuxt">
     <h3 style="display: flex; align-items: center">
       <img src="/logo.png" style="width: 1.9rem; height: 1.9rem; margin-right: 0.6em" />
       极物聊天

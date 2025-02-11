@@ -40,9 +40,13 @@
   .ask-ai {
     --at-apply: "w-fit flex cursor-pointer items-center truncate px-2 py-1 text-xs card-default border-default-hover ";
   }
+  // 通知
+  .notice-all {
+    --at-apply: "max-w-full text-0.75rem w-fit  truncate flex-ml-a w-fit cursor-pointer truncate px-2 text-[--el-color-warning] card-default";
+  }
   // @用户
   .at-list {
-    --at-apply: "max-w-full text-0.75rem w-fit  truncate flex-ml-a w-fit cursor-pointer truncate px-2 text-[var(--el-color-info)] card-default";
+    --at-apply: "max-w-full text-0.75rem w-fit  truncate flex-ml-a w-fit cursor-pointer truncate px-2 text-color-info card-default";
   }
 }
 // 系统

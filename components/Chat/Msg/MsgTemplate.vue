@@ -63,7 +63,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
         @click="chat.scrollReplyMsg(body?.reply?.id || 0, body?.reply?.gapCount, false)"
       >
         <i class="i-solar:forward-2-bold-duotone mr-1 p-2" />
-        {{ `${body.reply.nickName} : ${body.reply?.body || ''}` }}
+        {{ `${body.reply.nickName} : ${body.reply?.body?.substring(0, 50) || ''}` }}
       </small>
       <!-- AT @ -->
       <small

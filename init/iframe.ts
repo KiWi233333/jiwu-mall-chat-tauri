@@ -14,7 +14,7 @@ export function useIframeInit() {
         theme = "",
         isAnimated = false,
       } = data.message || {};
-      if (["dark", "light", "auto"].includes(theme))
+      if (["dark", "light", "system"].includes(theme))
         useModeToggle(theme, undefined, isAnimated);
     }
   };

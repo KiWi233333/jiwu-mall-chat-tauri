@@ -7,8 +7,11 @@
  */
 export function useSyncSettingStore() {
   const listener = (e: StorageEvent) => {
-    if (e.key === "nuxt-color-mode")
-      useColorMode().value = e.newValue || "system" as any;
+    if (e.key === "nuxt-color-mode") {
+      const val = e.newValue || "system" as any;
+      useColorMode().value = val;
+      useModeToggle(val, undefined, false);
+    }
   };
   // window.addEventListener("storage", (e) => {
   //   if (e.key === SETTING_STORE_KEY)

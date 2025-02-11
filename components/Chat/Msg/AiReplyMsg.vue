@@ -42,13 +42,13 @@ const isResonFold = ref(initFold);
         >
           思考：{{ data.message?.body?.reasoningContent }}
           <span
-            class="text absolute bottom-0 right-0 z-2 h-3em px-3 leading-3em shadow btn-info text-mini"
+            class="text absolute bottom-1.5 right-1.5 z-2 h-2em px-3 leading-2em shadow btn-info text-mini"
             @click="isResonFold = !isResonFold"
           >
             {{ isResonFold ? '展开' : '收起' }}
             <i
               :class="isResonFold ? 'i-solar:alt-arrow-down-line-duotone' : 'i-solar:alt-arrow-up-line-duotone'"
-              p-1.5
+              ml-1 p-1.5
             />
           </span>
         </p>

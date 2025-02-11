@@ -257,7 +257,7 @@ export type SystemBodyMsgVO = string;
  * 群通知
  */
 export interface GroupNoticeBodyMsgVO {
-  content: string;
+  noticeAll?: isTrue;
   imgList: string[];
   reply: {
     id: number;

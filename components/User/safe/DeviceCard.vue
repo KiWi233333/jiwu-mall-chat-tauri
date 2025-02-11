@@ -22,15 +22,10 @@ const { data } = defineProps<{
       </el-tag>
     </small>
     <small text-0.7em>IP：{{ data.ip }}</small>
-    <small
-
-      text-0.7em opacity-80
-    >
+    <small text-0.7em opacity-80>
       系统：{{ data.operatingSystem }}
     </small>
-    <small
-      text-0.7em opacity-80
-    >
+    <small text-0.7em opacity-80>
       浏览器：{{ data.browser }}
     </small>
     <!-- <small

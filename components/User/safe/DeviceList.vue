@@ -100,7 +100,7 @@ function exitLogin(ua?: string) {
             size="small"
             type="danger"
             style="padding: 0 8px"
-            class="position-absolute bottom-0 right-0"
+            class="absolute bottom-4 right-4"
             plain
             @click="exitLogin(p.userAgentString)"
           >
