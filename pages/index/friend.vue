@@ -37,13 +37,13 @@ async function clearHistory() {
     >
       <div
         v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
-        class="i-solar:alt-arrow-left-line-duotone absolute right-16 top-4 z-1000 hidden p-3 sm:block btn-danger"
+        class="i-solar:alt-arrow-left-line-duotone absolute right-16 top-5 z-1000 hidden p-3 sm:block btn-danger"
         title="关闭"
         @click="undo()"
       />
       <div
         v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
-        class="i-carbon:close absolute right-4 top-4 z-1000 block p-3 btn-danger"
+        class="i-carbon:close absolute right-4 top-5 z-1000 block p-3 btn-danger"
         title="关闭"
         @click="clearHistory"
       />

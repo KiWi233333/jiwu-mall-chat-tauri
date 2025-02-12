@@ -39,14 +39,13 @@ function handleRepo(type: "github" | "gitee", isStar: boolean = true) {
 <template>
   <template v-if="setting.isWeb">
     <el-tooltip content="JiwuChat 官网" placement="bottom">
-      ad
       <a
         href="https://jiwuchat.kiwi233.top/" target="_blank"
         title="JiwuChat 官网"
         class="h-2rem w-2rem flex-row-c-c cursor-pointer rounded-full shadow-sm border-default card-default"
         v-bind="$attrs"
       >
-        <i i-carbon:earth-southeast-asia p-2 text-color />
+        <i i-carbon:earth-southeast-asia p-3 text-color />
       </a>
     </el-tooltip>
     <el-popconfirm

@@ -21,11 +21,11 @@
     }
   }
   .msg-popper {
-    --at-apply: "text-0.9rem max-w-full w-fit  p-2 px-3 leading-1.5em bg-color rounded-1.5";
+    --at-apply: "text-0.9rem max-w-full w-fit  p-2 px-3 leading-1.5em bg-color";
     box-shadow:
       rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
-    border-radius: 4px 1rem 1rem 1rem;
+    border-radius: 6px 1rem 1rem 1rem;
   }
   .msg-wrap {
     word-break: break-all;

@@ -79,6 +79,7 @@ watch(() => chat.theContact.avatar, (val) => {
   }
   else { imgList.value = []; }
 }, { deep: true, immediate: true });
+
 /**
  * 修改群聊详情
  * @param field 修改字段
@@ -145,6 +146,7 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
     },
   });
 }
+
 /**
  * 加载数据
  */
@@ -189,6 +191,7 @@ async function reload() {
     isReload.value = false;
   }
 }
+
 // 添加好友
 const theUser = ref<ChatMemberVO>();
 const isShowApply = ref();

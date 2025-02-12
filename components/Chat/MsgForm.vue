@@ -9,32 +9,10 @@ const user = useUserStore();
 const chat = useChatStore();
 const setting = useSettingStore();
 
-// hooks
-const {
-  isChating,
-  second, // 获取录音时间
-  theAudioFile,
-  speechRecognition,
-  audioTransfromText,
-  isPalyAudio,
-  toggle: toggleChating, // 开始/停止录音
-  reset: resetAudio,
-  handlePlayAudio, // 播放录音
-} = useRecording();
-const pressHandleRef = useTemplateRef<HTMLElement>("pressHandleRef");
-// 长按
-onLongPress(
-  pressHandleRef,
-  toggleChating,
-  {
-    delay: 300,
-    onMouseUp: toggleChating,
-    distanceThreshold: 20,
-    modifiers: {
-      stop: true,
-    },
-  },
-);
+// 读取@用户列表 hook
+const { userOptions, userAtOptions, loadUser } = useLoadAtUserList();
+const { aiOptions, loadAi } = useLoadAiList();
+const isReplyAI = computed(() => chat.msgForm.content?.startsWith("/") && chat.theContact.hotFlag);
 // 表单
 const isSending = ref(false);
 const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
@@ -47,180 +25,8 @@ const loadInputDone = ref(false); // 用于移动尺寸动画
 const loadInputTimer = shallowRef<NodeJS.Timeout>();
 
 // ref
-const inputOssImgUploadRef = useTemplateRef("inputOssImgUploadRef");
-const inputOssVideoUploadRef = useTemplateRef("inputOssVideoUploadRef");
 const inputAllRef = useTemplateRef("inputAllRef"); // 输入框
 const formRef = useTemplateRef("formRef"); // 表单
-const inputOssFileUploadRef = useTemplateRef("inputOssFileUploadRef"); // 文件上传
-const imgList = ref<OssFile[]>([]);
-const fileList = ref<OssFile[]>([]);
-const videoList = ref<OssFile[]>([]);
-
-// 计算 computed
-const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
-const isUploadFile = computed(() => chat.msgForm.msgType === MessageType.FILE && !!fileList?.value?.filter(f => f.status === "")?.length);
-const isUploadVideo = computed(() => chat.msgForm.msgType === MessageType.VIDEO && !!videoList?.value?.filter(f => f.status === "")?.length);
-const isBtnLoading = computed(() => isSending.value || isUploadImg.value || isUploadFile.value || isUploadVideo.value);
-const SelfExistTextMap = { // 好友状态
-  [RoomType.SELFT]: "已经不是好友",
-  [RoomType.GROUP]: "已经不是群成员",
-  [RoomType.AICHAT]: "已经被AI拉黑",
-};
-
-// 读取@用户列表 hook
-const { userOptions, userAtOptions, loadUser } = useLoadAtUserList();
-const { aiOptions, loadAi } = useLoadAiList();
-const isReplyAI = computed(() => chat.msgForm.content?.startsWith("/") && chat.theContact.hotFlag);
-
-// 文件上传（图片）回调
-function onSubmitImg(key: string, pathList: string[]) {
-  fileList.value = [];
-  // imgList.value = [];
-  videoList.value = [];
-  const file = imgList.value.find(f => f.key === key);
-  if (key && file?.file) {
-    const url = window.URL || window.webkitURL;
-    let width = 0;
-    let height = 0;
-    const img = new Image(); // 手动创建一个Image对象
-    img.src = url.createObjectURL(file?.file);// 创建Image的对象的url
-    img.onload = () => {
-      width = img.width || 0;
-      height = img.height || 0;
-    };
-    chat.msgForm = {
-      roomId: chat.theContact.roomId,
-      msgType: MessageType.IMG, // 图片
-      content: chat.msgForm.content,
-      body: {
-        url: key,
-        width,
-        height,
-        size: file?.file?.size,
-      },
-    };
-  }
-}
-
-// 文件上传（文件）回调
-function onSubmitFile(key: string, pathList: string[]) {
-  // fileList.value = [];
-  imgList.value = [];
-  videoList.value = [];
-  const file = fileList.value.find(f => f.key === key);
-  if (key && file?.file) {
-    chat.msgForm = {
-      roomId: chat.theContact.roomId,
-      msgType: MessageType.FILE, // 文件
-      content: chat.msgForm.content,
-      body: {
-        atUidList: chat.msgForm?.body?.atUidList,
-        url: key,
-        fileName: file?.file?.name,
-        size: file?.file?.size,
-      },
-    };
-  }
-}
-
-// 视频上传回调
-function onSubmitVideo(key: string, pathList: string[]) {
-  fileList.value = [];
-  imgList.value = [];
-  // videoList.value = [];
-  const file = videoList.value.find(f => f.key === key);
-  if (key && file?.file) {
-    chat.msgForm = {
-      roomId: chat.theContact.roomId,
-      msgType: MessageType.VIDEO, // 视频
-      content: chat.msgForm.content,
-      body: {
-        url: key,
-        fileName: file?.file?.name,
-        size: file?.file?.size,
-        duration: file?.children?.[0]?.duration || 0,
-        thumbUrl: file?.children?.[0]?.key || undefined,
-        thumbSize: file?.children?.[0]?.thumbSize || 0,
-        thumbWidth: file?.children?.[0]?.thumbWidth || 0,
-        thumbHeight: file?.children?.[0]?.thumbHeight || 0,
-      },
-    };
-  }
-}
-
-// 开始录音
-async function startChating(e: KeyboardEvent) {
-  if (e.key === "t" && e.ctrlKey && !isChating.value) {
-    e.preventDefault();
-    isChating.value = true;
-    chat.msgForm.msgType = MessageType.SOUND; // 语音
-  }
-  else if (e.key === "c" && e.ctrlKey && isChating.value) {
-    e.preventDefault();
-    isChating.value = false;
-    chat.msgForm.msgType = MessageType.SOUND; // 语音
-  }
-}
-
-/**
- * 粘贴上传
- * @param e 事件对象
- */
-async function onPaste(e: ClipboardEvent) {
-  // 判断粘贴上传
-  if (!e.clipboardData?.items?.length)
-    return;
-  // 拿到粘贴板上的 image file 对象
-  const fileArr = Array.from(e.clipboardData.items);
-  const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
-  const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
-  const video = fileArr.find(v => v.type.includes("video"))?.getAsFile();
-  if ((!img && !file && !video) || !inputOssImgUploadRef.value)
-    return;
-  if (video) {
-    inputOssImgUploadRef.value?.resetInput?.();
-    inputOssFileUploadRef.value?.resetInput?.();
-    await inputOssVideoUploadRef.value?.onUpload({
-      id: URL.createObjectURL(video),
-      key: undefined,
-      status: "",
-      percent: 0,
-      file: video,
-    });
-    chat.msgForm.msgType = MessageType.VIDEO; // 视频
-  }
-  else
-    if (file) {
-      if (isUploadFile.value) {
-        ElMessage.warning("文件正在上传中，请稍后再试！");
-        return;
-      }
-      inputOssImgUploadRef.value?.resetInput?.();
-      inputOssFileUploadRef.value?.resetInput?.();
-      fileList.value = [];
-      await inputOssFileUploadRef.value?.onUpload({
-        id: URL.createObjectURL(file),
-        key: undefined,
-        status: "",
-        percent: 0,
-        file,
-      });
-      chat.msgForm.msgType = MessageType.FILE; // 文件
-    }
-    else
-      if (img) {
-        inputOssImgUploadRef.value?.resetInput?.();
-        inputOssFileUploadRef.value?.resetInput?.();
-        await inputOssImgUploadRef.value?.onUpload({
-          id: URL.createObjectURL(img),
-          key: undefined,
-          status: "",
-          percent: 0,
-          file: img,
-        });
-        chat.msgForm.msgType = MessageType.IMG; // 图片
-      }
-}
 
 // 阅读本房间（防抖）
 const setReadListDebounce = useDebounceFn(() => {
@@ -228,28 +34,44 @@ const setReadListDebounce = useDebounceFn(() => {
   chat.theContact.roomId && chat.setReadList(chat.theContact.roomId);
 }, 400);
 
+// hooks
+// Oss上传
+const {
+  imgList,
+  fileList,
+  videoList,
+  isUploadImg,
+  isUploadFile,
+  isUploadVideo,
+  onSubmitImg,
+  onSubmitFile,
+  onSubmitVideo,
+  onPaste,
+  showVideoDialog,
+  inputOssImgUploadRef,
+  inputOssVideoUploadRef,
+  inputOssFileUploadRef,
+} = useFileUpload({ img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" });
+// 录音
+const {
+  isChating,
+  second, // 获取录音时间
+  theAudioFile,
+  speechRecognition,
+  audioTransfromText,
+  isPalyAudio,
+  pressHandleRef,
+  reset: resetAudio,
+  start: startAudio,
+  handlePlayAudio, // 播放录音
+} = useRecording({ pressHandleRefName: "pressHandleRef", timeslice: 1000 });
+// computed
+const isBtnLoading = computed(() => isSending.value || isUploadImg.value || isUploadFile.value || isUploadVideo.value);
+
 /**
  * 发送消息
  */
-async function onSubmit(e?: KeyboardEvent) {
-  if (e?.key) {
-    // 上下键
-    const val = chat.msgForm.content?.trim();
-    if (!val && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
-      chat.onDownUpChangeRoom(e.key === "ArrowDown" ? "down" : "up");
-      return;
-    }
-    // // 退格
-    // if (!val && e?.key === "Backspace") {
-    //   resetForm();
-    //   return;
-    // }
-    // 回车 且没有按下其他快捷键
-    if (e.key !== "Enter" || (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey))
-      return;
-    e.preventDefault && e.preventDefault();
-    e.stopPropagation && e.stopPropagation();
-  }
+async function onSubmit() {
   if (isSending.value)
     return;
   formRef.value?.validate(async (action: boolean) => {
@@ -321,7 +143,7 @@ async function onSubmit(e?: KeyboardEvent) {
 }
 
 /**
- * 发送消息
+ *
  */
 async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: ChatMessageVO) => void) {
   const res = await addChatMessage({
@@ -416,6 +238,63 @@ function onSubmitGroupNoticeMsg(formData: ChatMessageDTO) {
 }
 
 /**
+ * 单按键触发事件
+ */
+function onInputExactKey(key: "ArrowUp" | "ArrowDown") {
+  if (!chat.msgForm.content?.trim() && (key === "ArrowUp" || key === "ArrowDown")) {
+    chat.onDownUpChangeRoom(key === "ArrowDown" ? "down" : "up");
+  }
+}
+
+/**
+ * 发送语音
+ * @param callback 上传成功回调
+ */
+async function onSubmitSound(callback: (key: string) => void) {
+  if (!theAudioFile.value || !theAudioFile?.value?.id) {
+    isSending.value = false;
+    return false;
+  }
+  return await useOssUpload(OssFileType.SOUND, theAudioFile.value as OssFile, user.getToken, {
+    callback(event, data, file) {
+      if (event === "error") {
+        isSending.value = false;
+        ElMessage.error("发送语音失败，请稍后再试！");
+      }
+      else if (event === "success") {
+        callback(data);
+      }
+    },
+  });
+}
+
+// 重置表单
+function resetForm() {
+  chat.msgForm = {
+    roomId: chat.theContact.roomId,
+    msgType: MessageType.TEXT, // 默认
+    content: "",
+    body: {
+      atUidList: [],
+    },
+  };
+  imgList.value = [];
+  fileList.value = [];
+  videoList.value = []; // 清空视频
+  // store
+  chat.atUserList.splice(0);
+  chat.askAiRobotList.splice(0);
+
+  // 重置上传
+  inputOssImgUploadRef.value?.resetInput?.();
+  inputOssFileUploadRef.value?.resetInput?.();
+  inputOssVideoUploadRef.value?.resetInput?.();
+  isSending.value = false;
+  chat.setReplyMsg({});
+  resetAudio();
+}
+
+/**
  * 右键菜单
  * @param e 事件对象
  * @param key key
@@ -473,81 +352,6 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
   ContextMenu.showContextMenu(opt);
 }
 
-/**
- * 显示视频详情
- * @param e 事件对象
- * @param video 视频对象
- *
- */
-function showVideoDetail(e: MouseEvent, video: OssFile) {
-  const thumb = video.children?.[0];
-  if (!video?.key) {
-    return;
-  }
-  mitter.emit(MittEventType.VIDEO_READY, {
-    type: "play",
-    payload: {
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-      url: BaseUrlVideo + video.key,
-      duration: video?.duration || 0,
-      thumbUrl: BaseUrlImg + thumb?.key,
-      size: video.file?.size || 0,
-      thumbSize: thumb?.thumbSize || 0,
-      thumbWidth: thumb?.thumbWidth || 0,
-      thumbHeight: thumb?.thumbHeight || 0,
-    },
-  });
-}
-
-// 重置表单
-function resetForm() {
-  chat.msgForm = {
-    roomId: chat.theContact.roomId,
-    msgType: MessageType.TEXT, // 默认
-    content: "",
-    body: {
-      atUidList: [],
-    },
-  };
-  imgList.value = [];
-  fileList.value = [];
-  videoList.value = []; // 清空视频
-  // store
-  chat.atUserList.splice(0);
-  chat.askAiRobotList.splice(0);
-
-  // 重置上传
-  inputOssImgUploadRef.value?.resetInput?.();
-  inputOssFileUploadRef.value?.resetInput?.();
-  inputOssVideoUploadRef.value?.resetInput?.();
-  isSending.value = false;
-  chat.setReplyMsg({});
-  resetAudio();
-}
-
-/**
- * 发送语音
- * @param callback 上传成功回调
- */
-async function onSubmitSound(callback: (key: string) => void) {
-  if (!theAudioFile.value || !theAudioFile?.value?.id) {
-    isSending.value = false;
-    return false;
-  }
-  return await useOssUpload(OssFileType.SOUND, theAudioFile.value as OssFile, user.getToken, {
-    callback(event, data, file) {
-      if (event === "error") {
-        isSending.value = false;
-        ElMessage.error("发送语音失败，请稍后再试！");
-      }
-      else if (event === "success") {
-        callback(data);
-      }
-    },
-  });
-}
-
 // 到底部并消费消息
 function setReadAndScrollBottom() {
   if (chat.theContact.roomId) {
@@ -583,7 +387,6 @@ watch(() => chat.theContact.roomId, (newVal, oldVal) => {
   immediate: true,
 });
 
-
 // 回复消息
 watch(() => chat.replyMsg?.message?.id, (val) => {
   chat.msgForm.body = {
@@ -599,7 +402,7 @@ watch(() => chat.replyMsg?.message?.id, (val) => {
 // 生命周期
 onMounted(() => {
   // 监听快捷键
-  window.addEventListener("keydown", startChating);
+  window.addEventListener("keydown", startAudio);
   !setting.isMobileSize && inputAllRef.value?.input?.focus(); // 聚焦
   // At 用户
   mitter.on(MittEventType.CHAT_AT_USER, (e) => {
@@ -660,11 +463,11 @@ onMounted(() => {
 onUnmounted(() => {
   mitter.off(MittEventType.CAHT_ASK_AI_ROBOT);
   mitter.off(MittEventType.CHAT_AT_USER);
-  window.removeEventListener("keydown", startChating);
   clearTimeout(timer);
   clearInterval(timer);
-  loadInputTimer.value && clearTimeout(loadInputTimer.value);
   timer = null;
+  loadInputTimer.value && clearTimeout(loadInputTimer.value);
+  window.removeEventListener("keydown", startAudio);
 });
 </script>
 
@@ -729,7 +532,7 @@ onUnmounted(() => {
           :key="i"
           title="点击播放[视频]"
           class="relative"
-          @click="showVideoDetail($event, video)"
+          @click="showVideoDialog($event, video)"
           @contextmenu="onContextMenu($event, video.key, i, OssFileType.VIDEO)"
         >
           <div
@@ -775,10 +578,10 @@ onUnmounted(() => {
           :key="i" class="flex-row-c-c p-3.2 shadow-sm transition-all border-default card-default bg-color sm:p-2.8 hover:shadow"
           @contextmenu="onContextMenu($event, file.key, i, OssFileType.FILE)"
         >
-          <img :src="file?.file?.type ? (FILE_TYPE_ICON_MAP[file?.file?.type] || FILE_TYPE_ICON_DEFAULT) : FILE_TYPE_ICON_DEFAULT" class="h-8 w-8">
+          <img :src="file?.file?.type ? (FILE_TYPE_ICON_MAP[file?.file?.type] || FILE_TYPE_ICON_DEFAULT) : FILE_TYPE_ICON_DEFAULT" class="mr-2 h-8 w-8">
           <div class="max-w-16rem min-w-8rem">
             <p class="truncate text-sm">
-              {{ file?.file?.name || file.key }}
+              {{ (file?.file?.name || file.key)?.replace(/(.{10}).*(\..+)/, '$1****$2') }}
             </p>
             <el-progress
               striped
@@ -979,8 +782,10 @@ onUnmounted(() => {
           :popper-options="{
             placement: 'top-start',
           }"
-          @paste.stop="onPaste"
-          @keydown="(e: KeyboardEvent) => onSubmit(e)"
+          @paste.stop="onPaste($event)"
+          @keydown.exact.enter="onSubmit()"
+          @keydown.exact.arrow-up="onInputExactKey('ArrowUp')"
+          @keydown.exact.arrow-down="onInputExactKey('ArrowDown')"
         >
           <template #label="{ item }">
             <div class="h-full w-10em flex items-center pr-1" :title="item.label">

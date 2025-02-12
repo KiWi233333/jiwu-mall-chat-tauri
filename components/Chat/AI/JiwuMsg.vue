@@ -37,7 +37,7 @@ const user = useUserStore();
         code-theme="a11y"
         :code-foldable="false"
         style="font-size: 1em;color: inherit;padding: 0.3em 0.8em;"
-        class="msg-popper markdown mt-2 sm:max-w-40rem text-color"
+        class="msg-popper markdown sm:max-w-40rem text-color"
         :model-value="data.message?.content || ''"
       />
     </template>
@@ -46,33 +46,58 @@ const user = useUserStore();
 
 <style lang="scss" scoped>
 @use '../Msg/msg.scss';
-.markdown {
-  :deep(.md-editor-preview-wrapper)  {
-    padding: 0;
-    img {
-      border-radius: 0.25rem;
-      overflow: hidden;
-      max-width: 12rem !important;
-      max-height: 12rem !important;
-    }
-    ol,
-    ul {
-      padding-left: 1.5em;
-      margin-top: .5em;
-    }
-    .md-editor-code {
-      .md-editor-code-block {
-         line-height: 1.6em;
-        & ~ span[rn-wrapper] >span {
-         line-height: 1.6em;
-        }
-      }
-      --at-apply: 'overflow-hidden leading-2em card-default border-default hover:shadow transition-all mb-2';
-      code {
-        border-radius: 0 0 8px 8px;
-      }
-    }
 
+.markdown {
+  --at-apply: "text-0.8rem p-0 bg-color";
+  // line-height: initial !important;
+  font-size: inherit;
+
+  :deep(.md-editor-preview-wrapper) {
+    color: inherit;
+    padding: 0 !important;
+    font-size: inherit;
+
+    .md-editor-preview {
+      color: var(--el-text-color-primary);
+      font-size: inherit;
+
+      img {
+        border-radius: 0.25rem;
+        overflow: hidden;
+        max-width: 12rem !important;
+        max-height: 12rem !important;
+      }
+
+      p {
+        margin: 0.4em 0;
+      }
+
+      p:not(p:last-of-type) {
+        margin: 0 0 0.4em 0;
+      }
+
+      p:first-of-type {
+        margin: 0;
+      }
+
+      .md-editor-code {
+        line-height: 1.6;
+        --at-apply: 'm-0 mt-2 flex flex-col overflow-hidden card-default border-default hover:shadow transition-all';
+
+        .md-editor-code-block {
+          line-height: 1.6;
+
+          &~span[rn-wrapper]>span {
+            line-height: 1.6;
+          }
+        }
+
+        code {
+          border-radius: 0 0 8px 8px;
+        }
+
+      }
+    }
   }
 }
 </style>
