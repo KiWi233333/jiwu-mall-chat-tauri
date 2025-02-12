@@ -1,6 +1,21 @@
 <script lang="ts" setup>
 const unReadContactList = ref<ChatContactVO[]>([]);
 const channel = new BroadcastChannel("main_channel");
+const unreadCount = computed(() => unReadContactList.value?.reduce((acc, cur) => acc + cur.unreadCount, 0) || 0);
+
+// 监听消息
+async function handleReadMessage(p: ChatContactVO) {
+  // 标记已读
+  channel.postMessage({ type: "readContact", data: JSON.parse(JSON.stringify(p)) });
+  unReadContactList.value = unReadContactList.value.filter(item => item.roomId !== p.roomId);
+}
+
+// 全部已读
+async function readAllContact() {
+  channel.postMessage({ type: "readAllContact" });
+  unReadContactList.value = [];
+}
+
 onMounted(async () => {
   // 监听locakStorage
   window.addEventListener("storage", (e) => {
@@ -19,19 +34,6 @@ onBeforeUnmount(() => {
   channel.close();
   window.removeEventListener("storage", () => {});
 });
-async function handleReadMessage(p: ChatContactVO) {
-  // 标记已读
-  channel.postMessage({ type: "readContact", data: JSON.parse(JSON.stringify(p)) });
-  unReadContactList.value = unReadContactList.value.filter(item => item.roomId !== p.roomId);
-}
-
-// 全部已读
-async function readAllContact() {
-  channel.postMessage({ type: "readAllContact" });
-  unReadContactList.value = [];
-}
-
-const unreadCount = computed(() => unReadContactList.value?.reduce((acc, cur) => acc + cur.unreadCount, 0) || 0);
 
 definePageMeta({
   key: route => route.fullPath,
