@@ -190,9 +190,9 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
     :model="userForm"
     class="form"
   >
-    <h3 mb-4 mt-2 text-center tracking-0.2em>
+    <div my-2 text-center text-lg font-500 tracking-0.2em>
       密码修改
-    </h3>
+    </div>
     <transition-group :name="setting.settingPage.isCloseAllTransition ? '' : 'group-list'" mode="ease-in-out" class="relative">
       <!-- 二步验证 -->
       <el-form-item v-if="isSecondCheck" type="password" :label="`${chooseType === CheckTypeEnum.PHONE ? '手机号' : '邮箱'}`" prop="password" class="animated">
@@ -207,7 +207,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
           @keyup.enter="onUpdatePwd(userFormRefs)"
         >
           <template #append>
-            <el-button type="primary" :disabled="codeStorage > 0" @click="getCheckCodeReq(chooseType)">
+            <el-button type="primary" class="code-btn" :disabled="codeStorage > 0" @click="getCheckCodeReq(chooseType)">
               {{ codeStorage > 0 ? `${codeStorage}s后重新发送` : "获取验证码" }}
             </el-button>
           </template>
@@ -270,8 +270,8 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
       <el-form-item mt-1em>
         <el-button
           type="danger"
-          class="submit mb-4 w-full"
-          style="padding: 1em 0"
+          class="submit"
+          style="padding: 1.2em 0"
           @keyup.enter="onUpdatePwd(userFormRefs)"
           @click="onUpdatePwd(userFormRefs)"
         >
@@ -284,16 +284,13 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
 
 <style scoped lang="scss">
 .form {
-	width: 360px;
-	display: block;
-	padding: 1em 0;
-	background-color: #ffffff98;
-	border-radius: var(--el-border-radius-base);
-	backdrop-filter: blur(5px);
-	border: 1px solid rgba(109, 109, 109, 0.2);
-	box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
-	overflow: hidden;
-	animation-delay: 0.1s;
+  --at-apply: "sm:w-360px w-95vw block overflow-hidden border-default-hover backdrop-blur-5px card-default py-2em";
+
+  :deep(.el-input-group__append) {
+    .el-button {
+      --at-apply: "h-full text-[--el-color-danger]";
+    }
+  }
 
 	:deep(.el-input__wrapper) {
 		padding: 0 1em;
@@ -304,8 +301,13 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
     margin-left: auto;
     .el-radio {
       height: fit-content;
-      border-right: 1px solid #ffffff98;
+      --at-apply: "border-default-r";
       padding-right: 1em;
+      &.is-checked {
+        .el-radio__label {
+          color: var(--el-color-danger);
+        }
+      }
       &:nth-last-child(1) {
         border: none;
         padding-right: 2.4em;
@@ -376,9 +378,7 @@ async function getCheckCodeReq(type?: CheckTypeEnum) {
 }
 
 .submit {
-	font-size: 1.2em;
-	transition: 0.3s;
-	cursor: pointer;
+  --at-apply: "mb-4 w-full shadow-sm text-1em transition-300 "
 
 	:deep(.el-input__wrapper) {
 		background-color: var(--el-color-danger);

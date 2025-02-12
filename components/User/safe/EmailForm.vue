@@ -106,9 +106,9 @@ async function getEmailCode() {
     class="form"
     @submit.prevent="() => {}"
   >
-    <h3 mb-4 mt-2 text-center tracking-0.2em>
+    <div mb-4 mt-2 text-center text-lg font-500 tracking-0.2em>
       {{ user.userInfo.isEmailVerified ? "更换" : "绑定" }}邮箱
-    </h3>
+    </div>
     <el-form-item type="newEmail" label="" prop="newEmail" class="animated">
       <el-input
         v-model.trim="form.newEmail"
@@ -145,8 +145,8 @@ async function getEmailCode() {
     <el-form-item mt-1em>
       <el-button
         type="primary"
-        size="large"
         class="submit w-full"
+        style="padding: 1.2em 0;"
         @keyup.enter="onUpdatePhone(formRef)"
         @click="onUpdatePhone(formRef)"
       >
@@ -230,7 +230,8 @@ async function getEmailCode() {
 }
 
 .submit {
-	font-size: 1.2em;
+	font-size: 1em;
+  letter-spacing: 0.2em;
 	transition: 0.3s;
 	cursor: pointer;
 

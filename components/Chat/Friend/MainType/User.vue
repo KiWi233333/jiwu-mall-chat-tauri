@@ -104,19 +104,19 @@ function deleteFriend(userId: string) {
     lockScroll: false,
     callback: async (action: string) => {
       if (action === "confirm") {
-        const contactInfoRes = await getSelfContactInfoByFriendUid(userId, store.getToken);
-        if (!contactInfoRes)
-          return;
-        if (contactInfoRes && contactInfoRes.code !== StatusCode.SUCCESS)
-          return ElMessage.error(contactInfoRes ? contactInfoRes.message : "没有找到对应好友！");
-
         const res = await deleteFriendById(userId, store.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("删除成功！");
           chat.setTheFriendOpt(FriendOptType.Empty, {});
           chat.setDelUserId(userId);// 删除的好友 好友列表也前端移除
           chat.setIsAddNewFriend(true);// 设置未非好友
-          chat.removeContact(contactInfoRes.data.roomId); // 清除对应会话
+          const contactInfoRes = await getSelfContactInfoByFriendUid(userId, store.getToken);
+          if (contactInfoRes && contactInfoRes.code !== StatusCode.SUCCESS) {
+            return ElMessage.closeAll("error");
+          }
+          else {
+            chat.removeContact(contactInfoRes.data.roomId); // 清除对应会话
+          }
         }
         chat.setIsAddNewFriend(true);
       }

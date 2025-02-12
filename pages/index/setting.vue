@@ -52,7 +52,7 @@ const {
 </script>
 
 <template>
-  <main v-loading.fullscreen.lock="isFullLoading" class="h-full w-full flex flex-1 flex-col p-4 p-6 pt-12 card-bg-color-2">
+  <main v-loading.fullscreen.lock="isFullLoading" class="h-full w-full flex flex-1 flex-col p-4 pt-12 card-bg-color-2 sm:p-6">
     <h3 flex items-center>
       系统设置
       <i i-solar:settings-bold ml-2 inline-block p0.6em opacity-60 hover:animate-spin />
@@ -166,7 +166,7 @@ const {
               <ElButton
                 v-if="setting.isDesktop"
                 class="flex-row-c-c cursor-pointer transition-all"
-                round plain
+                plain round
                 style="height: 2em;padding: 0 0.8em;"
                 :type="setting.appUploader.isUpdating ? 'warning' : 'info'"
                 @click="!setting.appUploader.isCheckUpdatateLoad && setting.checkUpdates(true)"

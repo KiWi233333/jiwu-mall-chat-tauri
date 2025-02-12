@@ -106,9 +106,9 @@ async function getPhoneCode() {
     class="form"
     @submit.prevent="() => {}"
   >
-    <h3 mb-4 mt-2 text-center tracking-0.2em>
+    <div mb-4 mt-2 text-center text-lg font-500 tracking-0.2em>
       {{ user.userInfo.isPhoneVerified ? "更换" : "绑定" }}手机号
-    </h3>
+    </div>
     <el-form-item label="" prop="newPhone" class="animated">
       <el-input
         v-model.trim="form.newPhone"
@@ -145,8 +145,8 @@ async function getPhoneCode() {
     <el-form-item>
       <el-button
         type="primary"
-        size="large"
-        class="submit w-full"
+        style="padding: 1.2em 0;"
+        class="submit"
         @keyup.enter="onUpdatePhone(formRef)"
         @click="onUpdatePhone(formRef)"
       >
@@ -158,16 +158,7 @@ async function getPhoneCode() {
 
 <style scoped lang="scss">
 .form {
-  width: 360px;
-  display: block;
-  padding: 1em 2em;
-  background-color: #ffffff98;
-  border-radius: var(--el-border-radius-base);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(109, 109, 109, 0.2);
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
-  overflow: hidden;
-  animation-delay: 0.1s;
+  --at-apply: "sm:w-360px w-95vw block overflow-hidden border-default-hover backdrop-blur-5px card-default p-1.2em";
 
   :deep(.el-input__wrapper) {
     padding: 0.3em 1em;
@@ -230,9 +221,8 @@ async function getPhoneCode() {
 }
 
 .submit {
-  font-size: 1.1em;
-  transition: 0.3s;
-  cursor: pointer;
+  --at-apply: "mb-4 w-full shadow-sm text-1em transition-300 "
+  letter-spacing: 0.2em;
 
   :deep(.el-input__wrapper) {
     background-color: var(--el-color-danger);
