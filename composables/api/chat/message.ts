@@ -169,7 +169,7 @@ export enum MessageType {
  *
  * ChatMessageVO
  */
-export interface ChatMessageVO<T = MessageType> {
+export interface ChatMessageVO<T = TextBodyMsgVO> {
   /**
    * 发送者信息
    */
@@ -212,7 +212,7 @@ export interface Message<T> {
   /**
    * 消息内容不同的消息类型，内容体不同，见https://www.yuque.com/snab/mallcaht/rkb2uz5k1qqdmcmd
    */
-  body?: MessageBodyMap[MessageType];
+  body?: MessageBodyMap[MessageType] | T;
 }
 
 export interface MessageBodyMap {
@@ -420,9 +420,7 @@ export interface AiChatBodyMsgVO {
   businessCode: AiBusinessType;
 }
 
-/**
- * AI回复消息
- */
+/** AI回复消息 */
 export interface AiChatReplyBodyMsgVO {
   content: string;
   urlContentMap: { [key: string]: UrlInfoDTO };
@@ -436,6 +434,7 @@ export interface AiChatReplyBodyMsgVO {
     gapCount: number;
     body?: string
   };
+  status: AiReplyStatusEnum;
   /**
    * 部分模型的思考经过
    */

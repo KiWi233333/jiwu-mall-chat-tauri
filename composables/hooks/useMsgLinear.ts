@@ -192,14 +192,10 @@ function resolveAiStream(data: WSAiStreamMsg) {
     if (contact?.lastMsgId !== data.msgId)
       return;
     // 修改content内容
-    if (contact.text === "...") { // 初始状态
+    if (contact.text === "..." && data.status === AiReplyStatusEnum.START) { // 初始状态
       contact.text = "";
+      return;
     }
-    if (data.status === AiReplyStatusEnum.IN_PROGRESS)
-      contact.text += data.content;
-    else
-      contact.text = data.content;
-    return;
   }
   // 本房间修改状态
   if (data.status === AiReplyStatusEnum.IN_PROGRESS)
@@ -207,12 +203,15 @@ function resolveAiStream(data: WSAiStreamMsg) {
   else
     contact.text = data.content;
   chat.theContact.text = contact?.text;
-
-  const oldMsg = chat.findMsg(data.msgId);
-  if (oldMsg) {
+  if (data.roomId !== chat.theContact.roomId) { // 非本房间消息
+    return;
+  }
+  // 本房间追加消息
+  const oldMsg = chat.findMsg(data.msgId) as ChatMessageVO<AiChatReplyBodyMsgVO> | undefined;
+  if (oldMsg?.message?.body) {
     if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
       oldMsg.message.content += data.content;
-      if (!oldMsg.message.body.reasoningContent) {
+      if (!oldMsg?.message?.body?.reasoningContent) {
         oldMsg.message.body.reasoningContent = "";
       }
       oldMsg.message.body.reasoningContent += data.reasoningContent || "";
@@ -221,6 +220,7 @@ function resolveAiStream(data: WSAiStreamMsg) {
       oldMsg.message.content = data.content;
       oldMsg.message.body.reasoningContent = data.reasoningContent || "";
     }
+    oldMsg.message.body.status = data.status; // 修改消息状态
     // await nextTick();
     // scrollBottom(true);
   }

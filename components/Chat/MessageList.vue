@@ -234,7 +234,7 @@ defineExpose({
     ref="scrollbarRef"
     class="max-w-full flex-1"
     height="100%"
-    wrap-class="px-0 shadow-inner-bg sm:px-2"
+    wrap-class="px-0 shadow-inner-bg"
     view-class="pb-2rem"
     @scroll="onScroll"
   >
