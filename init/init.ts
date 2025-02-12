@@ -44,14 +44,13 @@ export async function userTauriInit() {
   if (!isMobileSystem) { // 非移动端才有该功能
     restoreStateCurrent(StateFlags.ALL);
   }
-
-
   // msgbox 默认不调整
-  const msgbox = WebviewWindow.getCurrent();
-  if (msgbox.label === "msgbox" && useRoute().path !== "/msg") {
+  const main = WebviewWindow.getCurrent();
+  if (main.label === "msgbox" && useRoute().path !== "/msg") {
     navigateTo("/msg");
     return;
   }
+  main.show();
 
   // 监听open_url事件
   const unListenOpenUrl = await listen<PayloadType>("open_url", (e) => {

@@ -783,9 +783,9 @@ onUnmounted(() => {
             placement: 'top-start',
           }"
           @paste.stop="onPaste($event)"
-          @keydown.exact.enter="onSubmit()"
-          @keydown.exact.arrow-up="onInputExactKey('ArrowUp')"
-          @keydown.exact.arrow-down="onInputExactKey('ArrowDown')"
+          @keydown.exact.enter.stop.prevent="onSubmit()"
+          @keydown.exact.arrow-up.stop.prevent="onInputExactKey('ArrowUp')"
+          @keydown.exact.arrow-down.stop.prevent="onInputExactKey('ArrowDown')"
         >
           <template #label="{ item }">
             <div class="h-full w-10em flex items-center pr-1" :title="item.label">
