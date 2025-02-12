@@ -28,7 +28,7 @@
     border-radius: 4px 1rem 1rem 1rem;
   }
   .msg-wrap {
-    --at-apply: "break-all";
+    word-break: break-all;
     white-space: pre-wrap;
   }
 

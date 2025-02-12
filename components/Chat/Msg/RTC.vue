@@ -19,8 +19,8 @@ const chat = useChatStore();
     v-bind="$attrs"
   >
     <template #body>
-      <div ctx-name="rtc" class="msg-popper min-w-6em flex cursor-pointer items-center leading-1em hover:op-80" @click="data.message.body?.type && chat.rollbackCall(data.message.roomId, data.message.body?.type, data)">
-        <i ctx-name="rtc" class="icon ml-2 p-2.4" :class="data.message.body?.type === CallTypeEnum.AUDIO ? 'i-solar:end-call-outline' : 'i-solar:videocamera-record-outline'" />
+      <div ctx-name="rtc" class="msg-popper msg-wrap min-w-6em flex cursor-pointer items-center leading-1em hover:op-80" @click="data.message.body?.type && chat.rollbackCall(data.message.roomId, data.message.body?.type, data)">
+        <i ctx-name="rtc" class="icon p-2.4" :class="data.message.body?.type === CallTypeEnum.AUDIO ? 'i-solar:end-call-outline' : 'i-solar:videocamera-record-outline'" />
         {{ data.message.content }}
       </div>
     </template>
@@ -31,14 +31,14 @@ const chat = useChatStore();
 @use './msg.scss';
 
 .icon {
-  margin: 0 0.5rem 0 0;
+  margin: 0 0.5em 0.1em 0;
 }
 .self {
   .msg-popper {
 
     .icon {
       order: 1;
-      margin: 0 0 0 0.5rem;
+      margin: 0 0 0.1em 0.5em;
     }
   }
 }

@@ -78,7 +78,7 @@ const {
         </div>
       </div>
       <!-- 内容 -->
-      <p v-if="data.message?.content?.trim()" ctx-name="content" class="msg-popper">
+      <p v-if="data.message?.content?.trim()" ctx-name="content" class="msg-popper msg-wrap">
         {{ data.message.content }}
       </p>
     </template>

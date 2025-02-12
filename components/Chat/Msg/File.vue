@@ -75,7 +75,7 @@ const fileItem = computed(() => setting.fileDownloadMap[BaseUrlFile + body.url])
         </div>
       </div>
       <!-- 内容 -->
-      <p v-if="data.message?.content?.trim()" class="msg-popper" ctx-name="content">
+      <p v-if="data.message?.content?.trim()" class="msg-popper msg-wrap" ctx-name="content">
         {{ data.message.content }}
       </p>
     </template>

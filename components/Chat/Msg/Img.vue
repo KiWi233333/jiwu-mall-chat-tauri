@@ -33,7 +33,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
         :preview-src-list="[BaseUrlImg + body?.url]"
       />
       <!-- 内容 -->
-      <p v-if="data.message?.content?.trim()" ctx-name="content" class="msg-popper">
+      <p v-if="data.message?.content?.trim()" ctx-name="content" class="msg-popper msg-wrap">
         {{ data.message.content }}
       </p>
     </template>

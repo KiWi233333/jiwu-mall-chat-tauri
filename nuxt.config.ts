@@ -26,6 +26,10 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["popperjs/core", "resize-detector"],
+    analyze: {
+      analyzerMode: "static", // 或其他配置
+      reportFilename: "report.html",
+    },
   },
   // spa情况下loading状态 web端使用 "./app/spa-loading-template.html"，桌面端使用 "./app/desktop-loading-template.html"
   spaLoadingTemplate: "./app/spa-loading-template.html",

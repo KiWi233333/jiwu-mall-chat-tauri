@@ -173,7 +173,11 @@ async function reload() {
   try {
     isLoading.value = true;
     isReload.value = true;
-    const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
+    const roomId = chat.theContact.roomId;
+    const { data } = await getRoomGroupUserPage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
+    if (roomId !== chat.theContact.roomId) {
+      return;
+    }
     pageInfo.value.isLast = data.isLast;
     pageInfo.value.cursor = data.cursor;
     if (data && data.list)

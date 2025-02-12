@@ -41,23 +41,4 @@ function editRecallMsg() {
 </template>
 
 <style lang="scss" scoped>
-.avatar {
-  order: 1;
-}
-.msg-popper {
-  border-radius: 4px 2rem 2rem 2rem;
-}
-.self {
-  justify-content: right;
-  margin-left: auto;
-  .flex-row {
-   flex-direction: row-reverse;
-
-  }
-  flex-direction: row-reverse;
-
-  .msg-popper {
-    border-radius: 2rem 4px 2rem 2rem;
-  }
-}
 </style>

@@ -17,3 +17,4 @@ debug.json
 errors.json 
 .idea
 .env.*.local
+report.html
