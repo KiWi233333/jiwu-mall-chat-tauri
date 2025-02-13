@@ -360,7 +360,7 @@ export interface UpdateRoomGroupExtJsonDTO {
   notice?: null | string
 }
 
-export const ChatRoomRoleEnumMap = {
+export const ChatRoomRoleEnumMap: Record<ChatRoomRoleEnum, string> = {
   [ChatRoomRoleEnum.OWNER]: "群主",
   [ChatRoomRoleEnum.ADMIN]: "管理员",
   [ChatRoomRoleEnum.MEMBER]: "成员",

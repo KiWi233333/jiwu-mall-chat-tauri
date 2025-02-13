@@ -36,7 +36,7 @@ const openRoomDrawer = computed({
       <small>快开始聊天吧 ✨</small>
     </div>
     <!-- 在线人数 -->
-    <template v-if="chat.theContact.roomId && chat.theContact.type === RoomType.GROUP ">
+    <template v-if="chat.theContact.roomId">
       <!-- 移动尺寸 popup -->
       <el-drawer
         v-if="setting.isMobileSize"
@@ -49,7 +49,6 @@ const openRoomDrawer = computed({
       </el-drawer>
       <template v-else>
         <ChatRoomGroupPopup
-          v-if="setting.isOpenGroupMember"
           class="ml-a h-full max-w-300px w-1/4 flex flex-col gap-2 border-r-0 rounded-r-0 p-4 border-default-l bg-color"
         />
       </template>

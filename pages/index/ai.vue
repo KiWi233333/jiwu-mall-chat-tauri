@@ -291,6 +291,7 @@ onActivated(() => active());
           </el-form-item>
           <BtnElButton
             class="group ml-a"
+            style="height: 2rem !important;"
             :class="isChat ? 'animate-pulse' : ''"
             :icon-class="`hidden sm:block mr-1 ${isChat ? 'i-solar:menu-dots-bold-duotone ' : 'i-solar:map-arrow-right-bold-duotone'}`"
             :type="isChat ? 'danger' : 'info'"
@@ -330,7 +331,9 @@ onActivated(() => active());
     .el-textarea__inner {
       box-shadow: none !important;
       outline: none !important;
+      min-height: 2rem;
       border-radius: inherit;
+      max-height: 10em;
       --at-apply: "bg-color-2";
     }
   }

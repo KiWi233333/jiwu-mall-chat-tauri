@@ -80,32 +80,34 @@ async function onSubmit() {
     if (chat.msgForm.msgType === MessageType.TEXT && (!chat.msgForm.content || chat.msgForm.content?.trim().length > 500))
       return;
 
-    const formData = JSON.parse(JSON.stringify(chat.msgForm));
+    const formDataTemp = JSON.parse(JSON.stringify(chat.msgForm));
     if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content) {
       if (document.querySelector(".at-select")) // enter冲突at选择框
         return;
 
       // 处理 @用户
-      const { atUidList } = resolveAtUsers(formData.content, userOptions.value);
+      const { atUidList } = resolveAtUsers(formDataTemp.content, userOptions.value);
       if (atUidList?.length) {
         chat.atUserList = [...atUidList];
-        formData.body.atUidList = [...new Set(atUidList)];
+        formDataTemp.body.atUidList = [...new Set(atUidList)];
       }
 
       // 处理 AI机器人
-      const { aiRobotList } = resolteAiReply(formData.content, aiOptions.value);
+      const { aiRobotList } = resolteAiReply(formDataTemp.content, aiOptions.value);
       if (aiRobotList[0]) {
-        formData.body = {
+        formDataTemp.content = formDataTemp.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
+        if (!formDataTemp.content.trim())
+          return;
+        formDataTemp.body = {
           userId: aiRobotList[0].userId,
           modelCode: 1,
           businessCode: 1,
         };
-        formData.content = formData.content.replace(formatAiReplyTxt(aiRobotList[0]), ""); // 剔除ai的显示
-        formData.msgType = MessageType.AI_CHAT; // 设置对应消息类型
+        formDataTemp.msgType = MessageType.AI_CHAT; // 设置对应消息类型
       }
     };
     // 图片
-    if (formData.msgType === MessageType.IMG) {
+    if (formDataTemp.msgType === MessageType.IMG) {
       if (isUploadImg.value) {
         ElMessage.warning("图片正在上传中，请稍等！");
         return;
@@ -116,29 +118,29 @@ async function onSubmit() {
       }
     }
     // 文件
-    if (formData.msgType === MessageType.FILE && isUploadFile.value) {
+    if (formDataTemp.msgType === MessageType.FILE && isUploadFile.value) {
       ElMessage.warning("文件正在上传中，请稍等！");
       return;
     }
     // 视频
-    if (formData.msgType === MessageType.VIDEO && isUploadVideo.value) {
+    if (formDataTemp.msgType === MessageType.VIDEO && isUploadVideo.value) {
       ElMessage.warning("视频正在上传中，请稍等！");
       return;
     }
     // 开始提交
     isSending.value = true;
     // 语音消息 二次处理
-    if (formData.msgType === MessageType.SOUND) {
+    if (formDataTemp.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
-        formData.body.url = key;
-        formData.body.translation = audioTransfromText.value;
-        formData.body.second = second.value;
-        submit(formData);
+        formDataTemp.body.url = key;
+        formDataTemp.body.translation = audioTransfromText.value;
+        formDataTemp.body.second = second.value;
+        submit(formDataTemp);
       });
       return;
     }
     // 普通消息
-    submit(formData);
+    submit(formDataTemp);
   });
 }
 
@@ -159,13 +161,13 @@ async function submit(formData: ChatMessageDTO = chat.msgForm, callback?: (msg: 
     await nextTick();
     chat.scrollBottom?.(false);
     // 消息阅读上报（延迟）
+    resetForm();
     setReadListDebounce();
     typeof callback === "function" && callback(res.data); // 执行回调
   }
   else if (res.message === "您和对方已不是好友！") {
-    return;
+    resetForm();
   }
-  resetForm();
 }
 
 /**

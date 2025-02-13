@@ -41,8 +41,11 @@ onUnmounted(useUmounted);
     class="h-100dvh flex-row-c-c"
   >
     <div
-      class="h-full w-full overflow-hidden sm:(border-default rounded-1.5) bg-color"
-      :class="{ 'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px) shadow-lg shadow-[#00000010]': !isIframe && setting.isWeb }"
+      class="h-full w-full overflow-hidden bg-color"
+      :class="{
+        'sm:(w-1150px mx-a h-860px) md:(w-1360px mx-a h-860px) shadow-lg shadow-[#00000010]': !isIframe && setting.isWeb,
+        'rounded-1.5 border-default': setting.isDesktop || !setting.isMobileSize,
+      }"
     >
       <NuxtLayout>
         <NuxtPage

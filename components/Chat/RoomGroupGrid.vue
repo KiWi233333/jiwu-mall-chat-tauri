@@ -1,63 +1,69 @@
 <script lang="ts" setup>
 import type { ChatRoomAdminAddDTO } from "~/composables/api/chat/room";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { ChatRoomRoleEnum } from "~/composables/api/chat/room";
+import { useAsyncCopyText } from "~/composables/utils";
 
-const props = defineProps<{ data: ChatRoomGroupVO }>();
+const { data } = defineProps<{ data: ChatRoomGroupVO }>();
 const ws = useWsStore();
-const chat = useChatStore();
-const isLoading = ref<boolean>(false);
 const user = useUserStore();
 const setting = useSettingStore();
-chat.onOfflineList.splice(0);
+const chat = useChatStore();
 
-/**
- * 加载数据
- */
+// 组件内变量
+const isReload = ref(false); // 是否正在重新加载
+const isLoading = ref(false); // 是否正在加载
+const pageInfo = ref<PageInfo>({
+  size: 20,
+  cursor: null,
+  isLast: false,
+});
+const memberList = ref<ChatMemberVO[]>([]);
+
+// 加载数据
 async function loadData() {
-  if (isLoading.value || chat.roomGroupPageInfo.isLast)
+  if (isReload.value || isLoading.value || pageInfo.value.isLast) {
     return;
+  }
   isLoading.value = true;
-  const { data } = await getRoomGroupUserPage(props.data.roomId, chat.roomGroupPageInfo.size, chat.roomGroupPageInfo.cursor, user.getToken);
-  chat.roomGroupPageInfo.isLast = data.isLast;
-  chat.roomGroupPageInfo.cursor = data.cursor;
-  if (data && data.list)
-    chat.onOfflineList.push(...data.list);
+  const res = await getRoomGroupUserPage(
+    data.roomId,
+    pageInfo.value.size,
+    pageInfo.value.cursor,
+    user.getToken,
+  );
+  if (res.code === StatusCode.SUCCESS) {
+    pageInfo.value.isLast = res.data.isLast;
+    pageInfo.value.cursor = res.data.cursor;
+    if (res.data.list) {
+      memberList.value.push(...res.data.list);
+    }
+  }
+  else {
+    ElMessage.error(res.msg || "加载失败，请稍后再试！");
+  }
   isLoading.value = false;
 }
 
-function reload() {
-  chat.onOfflineList = [];
-  chat.roomGroupPageInfo.cursor = null;
-  chat.roomGroupPageInfo.isLast = false;
-  if (!isLoading.value) {
-    isLoading.value = false;
-    loadData();
+// 重新加载数据
+async function reload() {
+  memberList.value = [];
+  pageInfo.value.cursor = null;
+  pageInfo.value.isLast = false;
+  if (!isReload.value) {
+    isReload.value = true;
+    await loadData();
+    isReload.value = false;
   }
 }
+
 // 添加好友
-const theUser = ref<ChatMemberVO>();
-const isShowApply = ref();
+const theUser = ref<ChatMemberVO | null>(null);
+const isShowApply = ref(false);
 
-onUnmounted(() => {
-  chat.roomGroupPageInfo = {
-    size: 20,
-    cursor: null,
-    isLast: false,
-  };
-});
-
-// 权限
-const getTheRoleType = computed(() => {
-  return props.data?.role;
-});
-const isTheGroupOwner = computed(() => {
-  return props.data?.role === ChatRoomRoleEnum.OWNER;
-});
-// 是否有权限（踢出群聊）
-const isTheGroupPermission = computed(() => {
-  return props.data?.role === ChatRoomRoleEnum.OWNER || props.data?.role === ChatRoomRoleEnum.ADMIN;
-});
+// 权限相关
+const getTheRoleType = computed(() => data?.role);
+const isTheGroupOwner = computed(() => data?.role === ChatRoomRoleEnum.OWNER);
+const isTheGroupPermission = computed(() => data?.role === ChatRoomRoleEnum.OWNER || data?.role === ChatRoomRoleEnum.ADMIN);
 
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
@@ -72,7 +78,8 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         label: "@ 他",
         hidden: isSelf,
         onClick: () => {
-          chat.setAtUid(item.userId);
+          // 模拟设置 @ 功能
+          console.log(`@ 用户：${item.nickName}`);
         },
       },
       {
@@ -80,16 +87,8 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         label: "联系他",
         hidden: isSelf,
         onClick: () => {
-          chat.setTheFriendOpt(FriendOptType.User, {
-            id: item.userId,
-          });
-          navigateTo({
-            path: "/friend",
-            query: {
-              id: item.userId,
-            },
-            replace: false,
-          });
+          // 模拟导航到用户详情
+          console.log(`导航到用户详情：${item.userId}`);
         },
       },
       {
@@ -97,18 +96,18 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         icon: "i-carbon:add-large btn-info",
         hidden: isSelf,
         onClick: () => {
-          // 确认是否为好友
           isChatFriend({ uidList: [item.userId] }, user.getToken).then((res) => {
-            if (res.code !== StatusCode.SUCCESS)
+            if (res.code !== StatusCode.SUCCESS) {
               return ElMessage.error(res.msg || "申请失败，请稍后再试！");
-            const user = res.data.checkedList.find((p: FriendCheck) => p.uid === item.userId);
-            if (user && user.isFriend)
+            }
+            const userFriend = res.data.checkedList.find((p: FriendCheck) => p.uid === item.userId);
+            if (userFriend && userFriend.isFriend) {
               return ElMessage.warning("申请失败，和对方已是好友！");
-            // 开启申请
+            }
             theUser.value = item;
             isShowApply.value = true;
           }).catch(() => {
-
+            ElMessage.error("操作失败，请稍后再试！");
           });
         },
       },
@@ -124,18 +123,17 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
             onClick: () => {
               toggleAdminRole({
                 userId: item.userId,
-                roomId: props.data.roomId,
+                roomId: data.roomId,
               }, ChatRoomRoleEnum.ADMIN);
             },
           },
           {
             label: "移除",
-            // icon: "i-carbon:add-large btn-info",
             hidden: !item.roleType || item.roleType !== ChatRoomRoleEnum.ADMIN,
             onClick: () => {
               toggleAdminRole({
                 userId: item.userId,
-                roomId: props.data.roomId,
+                roomId: data.roomId,
               }, ChatRoomRoleEnum.MEMBER);
             },
           },
@@ -149,10 +147,9 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
             icon: "i-solar:share-line-duotone",
             onClick: async () => {
               const res = await useAsyncCopyText(`${window.location.origin}/user/info?id=${item.userId}`);
-              ElMessage.success({
-                message: "成功复制至剪贴板！",
-                grouping: true,
-              });
+              if (res) {
+                ElMessage.success("成功复制至剪贴板！");
+              }
             },
           },
         ],
@@ -172,10 +169,13 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
             lockScroll: false,
             callback: async (action: string) => {
               if (action === "confirm") {
-                const res = await exitRoomGroupByUid(props.data.roomId, item.userId, user.getToken);
+                const res = await exitRoomGroupByUid(data.roomId, item.userId, user.getToken);
                 if (res.code === StatusCode.SUCCESS) {
                   ElNotification.success("踢出成功！");
-                  chat.onOfflineList = chat.onOfflineList.filter(e => e.userId !== item.userId);
+                  memberList.value = memberList.value.filter(e => e.userId !== item.userId);
+                }
+                else {
+                  ElMessage.error(res.msg || "操作失败，请稍后再试！");
                 }
               }
             },
@@ -186,11 +186,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   });
 }
 
-/**
- * 切花管理员角色
- * @param dto 参数
- * @param type 转化类型
- */
+// 切换管理员角色
 function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
   const isAdmin = type === ChatRoomRoleEnum.ADMIN;
   ElMessageBox.confirm(`是否将该用户${isAdmin ? "设为" : "取消"}管理员？`, {
@@ -205,33 +201,38 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
         const res = await fn(dto, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("操作成功！");
-          for (const p of chat.onOfflineList) {
-            if (p.userId === dto.userId)
-              return p.roleType = type;
+          for (const p of memberList.value) {
+            if (p.userId === dto.userId) {
+              p.roleType = type;
+              break;
+            }
           }
+        }
+        else {
+          ElMessage.error(res.msg || "操作失败，请稍后再试！");
         }
       }
     },
   });
 }
 
-watchDebounced(() => props.data.roomId, (val) => {
-  if (val)
-    reload();
+// 监听 roomId 变化，自动加载数据
+watch(() => data.roomId, (newRoomId) => {
+  if (!newRoomId) {
+    return;
+  }
+  reload();
 }, {
   immediate: true,
 });
 
-/**
- * 上下线消息
- */
+// 上下线消息更新
 watchThrottled(() => ws.wsMsgList.onlineNotice, (list) => {
-  // 上下线消息
   if (list.length) {
     for (const p of list) {
       if (!p.changeList)
         return;
-      for (const item of chat.onOfflineList) {
+      for (const item of memberList.value) {
         for (const k of p.changeList) {
           if (k.userId === item.userId) {
             item.activeStatus = k.activeStatus;
@@ -246,22 +247,23 @@ watchThrottled(() => ws.wsMsgList.onlineNotice, (list) => {
   immediate: true,
 });
 
-
-const merberList = computed(() => {
-  return chat.onOfflineList.sort((a, b) => b.activeStatus - a.activeStatus);
+const memberFilterList = computed(() => {
+  return memberList.value.sort((a, b) => b.activeStatus - a.activeStatus);
 });
 
-const ChatNewGroupDialogRef = ref();
-const showAddDialog = ref(false);
 // 邀请进群
+const chatNewGroupDialogRef = useTemplateRef("chatNewGroupDialogRef");
+const showAddDialog = ref(false);
+
 function onAdd() {
-  if (ChatNewGroupDialogRef.value) {
-    ChatNewGroupDialogRef.value?.reload();
-    if (ChatNewGroupDialogRef.value?.form)
-      ChatNewGroupDialogRef.value.form.roomId = props.data.roomId;
+  if (chatNewGroupDialogRef.value) {
+    chatNewGroupDialogRef.value.reload();
+    if (chatNewGroupDialogRef.value.form) {
+      chatNewGroupDialogRef.value.form.roomId = data.roomId;
+    }
     showAddDialog.value = true;
   }
-};
+}
 </script>
 
 <template>
@@ -288,7 +290,7 @@ function onAdd() {
       >
         <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 gap-4)">
           <div
-            v-for="p in merberList"
+            v-for="p in memberFilterList"
             :key="p.userId"
             :title="p.nickName"
             :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
@@ -326,7 +328,7 @@ function onAdd() {
     </BtnElButton>
 
     <!-- 邀请进群 -->
-    <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showAddDialog" />
+    <LazyChatNewGroupDialog ref="chatNewGroupDialogRef" v-model="showAddDialog" />
 
     <!-- 好友申请 -->
     <LazyChatFriendApplyDialog v-model:show="isShowApply" :user-id="theUser?.userId" />

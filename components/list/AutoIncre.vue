@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   immediate: true,
   ssr: true,
   autoStop: true,
-  delay: 400,
+  delay: 800,
   loadingClass: "mx-a my-0.6em h-1.2em w-1.2em animate-[spin_2s_infinite_linear] rounded-6px bg-[var(--el-color-primary)]",
   appendLoadingClass: "",
 });
