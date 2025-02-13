@@ -29,7 +29,16 @@ const show = computed({
   },
 });
 
-
+// 好友用户列表
+const isLoading = ref<boolean>(false);
+const pageInfo = ref({
+  cursor: null as null | string,
+  isLast: false,
+  size: 10,
+  total: -1,
+});
+const userList = ref<ChatUserFriendVO[]>([]);
+const showImg = ref(false);
 // 表单相关
 const form = ref({
   roomId: null as number | null | undefined,
@@ -63,20 +72,12 @@ function addGroupApply() {
       title: "发起邀请提醒",
       message: +res.data === form.value.uidList.length ? "群聊邀请已发送！" : "部分邀请未送达！",
     });
-    reload();
+    form.value.roomId = null;
+    form.value.uidList = [];
+    form.value.avatar = null;
+    showImg.value = false;
   });
 }
-
-
-// 好友用户列表
-const isLoading = ref<boolean>(false);
-const pageInfo = ref({
-  cursor: null as null | string,
-  isLast: false,
-  size: 10,
-  total: -1,
-});
-const userList = ref<ChatUserFriendVO[]>([]);
 
 // 加载数据
 async function loadData() {
@@ -87,7 +88,7 @@ async function loadData() {
   if (data?.list)
     userList.value.push(...data.list);
   pageInfo.value.isLast = data.isLast;
-  pageInfo.value.cursor = data.cursor;
+  pageInfo.value.cursor = data.cursor || null;
   isLoading.value = false;
 }
 
@@ -100,7 +101,6 @@ function remove(id: string) {
 }
 
 // 上传头像
-const showImg = ref(false);
 const inputOssFileUploadRef = ref();
 function onSubmitImages(key: string, pathList: string[], fileList: OssFile[]) {
   form.value.avatar = key;

@@ -6,18 +6,46 @@ import { ChatRoomRoleEnum } from "~/composables/api/chat/room";
 
 const ws = useWsStore();
 const chat = useChatStore();
-const isLoading = ref<boolean>(false);
-const isReload = ref<boolean>(false);
-const memberScrollbarRef = ref();
+const setting = useSettingStore();
 const user = useUserStore();
+
+// ref
+// const memberScrollbarRef = useTemplateRef("memberScrollbarRef");
+const chatNewGroupDialogRef = useTemplateRef("chatNewGroupDialogRef");
+// state
+const theUser = ref<ChatMemberVO>(); // 添加好友
+const showSearch = ref(false);
+const searchUserWord = ref("");
+const searchInputRef = useTemplateRef("searchInputRef");
+const isShowApply = ref(false);
+const showAddDialog = ref(false);
 const isGrid = useLocalStorage(`chat_room_group_member_show_type_${user.userInfo.id}`, false);
-const pageInfo = ref({
-  cursor: null as null | string,
-  isLast: false,
-  size: 15,
+// 计算
+const getTheRoleType = computed(() => chat.theContact?.member?.role); // 角色
+const isTheGroupOwner = computed(() => chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER);
+const isTheGroupPermission = computed(() => chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN); // 是否有权限（踢出群聊、）
+
+const memberList = computed(() => {
+  const str = searchUserWord.value.trim();
+  if (str) {
+    return (chat.currentMemberList || []).filter(user => !!user?.nickName?.toLocaleLowerCase()?.includes(str));
+  }
+  return (chat.currentMemberList || []).sort((a, b) => b.activeStatus - a.activeStatus);
 });
-chat.onOfflineList.splice(0);
-// 编辑群聊
+const { list: vMemberList, scrollTo, containerProps, wrapperProps } = useVirtualList(
+  memberList,
+  {
+    itemHeight: 50,
+    overscan: 10,
+  },
+);
+const onScroll = useDebounceFn((e) => {
+  const dom = e.target as HTMLElement;
+  if (dom.scrollHeight - dom.scrollTop <= 360) {
+    loadData();
+  }
+}, 400);
+const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0 || chat.contactMap?.[chat.theContact.roomId]?.isFriend === 0); // 自己不存在 或 不是好友
 const theContactClone = ref<Partial<ChatContactDetailVO>>();
 const editFormFieldRaw = ref("");
 const nameInputRef = ref();
@@ -42,12 +70,6 @@ const TextMap = {
   notice: "群公告",
   avatar: "群头像",
 };
-watch(() => chat.theContact, (val) => {
-  const data = JSON.parse(JSON.stringify(val)) as ChatContactDetailVO;
-  if (data.roomGroup && !data.roomGroup?.detail)
-    data.roomGroup.detail = {};
-  theContactClone.value = data;
-}, { deep: true, immediate: true });
 
 // 群头像
 const inputOssFileUploadRef = ref();
@@ -67,18 +89,6 @@ async function toggleImage() {
   }
   await inputOssFileUploadRef.value?.resetInput();
 }
-watch(() => chat.theContact.avatar, (val) => {
-  if (val) {
-    imgList.value = [{
-      id: BaseUrlImg + val,
-      key: val,
-      file: {} as File,
-      percent: 100,
-      status: "success",
-    }];
-  }
-  else { imgList.value = []; }
-}, { deep: true, immediate: true });
 
 /**
  * 修改群聊详情
@@ -103,6 +113,7 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
     : {
         [field]: val?.trim(),
       } as UpdateRoomGroupDTO;
+
   ElMessageBox.confirm(`是否确认修改${TextMap[field]}？`, {
     title: TextMap[field] || "提示",
     center: true,
@@ -128,8 +139,8 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
           }
           else if (field === "notice") {
             if (!chat.theContact?.roomGroup)
-              chat.theContact.roomGroup = { detail: {} } as ChatRoomGroup;
-            if (!chat.theContact?.roomGroup?.detail)
+              return;
+            if (!chat.theContact.roomGroup.detail)
               chat.theContact.roomGroup.detail = {};
             chat.theContact.roomGroup.detail.notice = val?.trim() as string;
           }
@@ -150,65 +161,61 @@ async function submitUpdateRoom(field: "name" | "avatar" | "notice", val: string
 /**
  * 加载数据
  */
-async function loadData() {
-  if (isLoading.value || isReload.value || pageInfo.value.isLast || chat.theContact.type !== RoomType.GROUP)
+async function loadData(roomId?: number) {
+  roomId = roomId || chat.theContact.roomId;
+  if (chat?.roomMapCache?.[roomId]?.isLoading || chat.roomMapCache[roomId]?.isReload || chat.memberPageInfo.isLast || chat.theContact.type !== RoomType.GROUP)
     return;
-  isLoading.value = true;
-  const { data } = await getRoomGroupUserPage(chat.theContact.roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
-  pageInfo.value.isLast = data.isLast;
-  pageInfo.value.cursor = data.cursor;
-  if (data && data.list)
-    chat.onOfflineList.push(...data.list);
-  isLoading.value = false;
+  chat.roomMapCache[roomId]!.isLoading = true;
+  const { data } = await getRoomGroupUserPage(roomId, chat.roomMapCache[roomId]?.pageInfo.size || 20, chat.roomMapCache[roomId]?.pageInfo.cursor || undefined, user.getToken);
+  chat.memberPageInfo.isLast = data.isLast;
+  chat.memberPageInfo.cursor = data.cursor || undefined;
+  if (data && data.list) {
+    chat?.roomMapCache?.[roomId]!.userList.push(...data.list);
+  }
+  await nextTick();
+  chat.roomMapCache[roomId]!.isLoading = false;
 }
 
-async function reload() {
-  if (isLoading.value || isReload.value || chat.theContact.type !== RoomType.GROUP)
+/**
+ * 重新加载
+ * @param roomId 房间id
+ */
+async function reload(roomId?: number) {
+  roomId = roomId || chat.theContact.roomId;
+  if (chat.roomMapCache[roomId]?.isLoading || chat.roomMapCache[roomId]?.isReload || chat.theContact.type !== RoomType.GROUP)
     return;
-  chat.onOfflineList = [];
-  pageInfo.value = {
-    cursor: null,
-    isLast: false,
-    size: 15,
+  chat.roomMapCache[roomId] = {
+    isLoading: false,
+    isReload: false,
+    cacheTime: Date.now(),
+    pageInfo: {
+      cursor: undefined,
+      isLast: false,
+      size: 20,
+    },
+    userList: [],
   };
   // 动画
   try {
-    isLoading.value = true;
-    isReload.value = true;
-    const roomId = chat.theContact.roomId;
-    const { data } = await getRoomGroupUserPage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken);
+    chat.roomMapCache[roomId]!.isLoading = true;
+    chat.roomMapCache[roomId]!.isReload = true;
+    const { data } = await getRoomGroupUserPage(roomId, chat.roomMapCache[roomId]?.pageInfo.size || 20, chat.roomMapCache[roomId]?.pageInfo.cursor || undefined, user.getToken);
     if (roomId !== chat.theContact.roomId) {
       return;
     }
-    pageInfo.value.isLast = data.isLast;
-    pageInfo.value.cursor = data.cursor;
-    if (data && data.list)
-      chat.onOfflineList.push(...data.list);
-    isLoading.value = false;
+    chat.memberPageInfo.isLast = data.isLast;
+    chat.memberPageInfo.cursor = data.cursor || undefined;
+    if (data && data.list) {
+      chat?.roomMapCache?.[roomId]!.userList.push(...data.list);
+    }
+    chat.roomMapCache[roomId]!.isLoading = false;
   }
   finally {
-    isLoading.value = false;
-    isReload.value = false;
+    await nextTick();
+    chat.roomMapCache[roomId]!.isLoading = false;
+    chat.roomMapCache[roomId]!.isReload = false;
   }
 }
-
-// 添加好友
-const theUser = ref<ChatMemberVO>();
-const isShowApply = ref();
-
-// 权限
-const getTheRoleType = computed(() => {
-  return chat.theContact?.member?.role;
-});
-const isTheGroupOwner = computed(() => {
-  return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER;
-});
-// 是否有权限（踢出群聊、）
-const isTheGroupPermission = computed(() => {
-  return chat.theContact?.member?.role === ChatRoomRoleEnum.OWNER || chat.theContact?.member?.role === ChatRoomRoleEnum.ADMIN;
-});
-
-const setting = useSettingStore();
 // 右键菜单
 function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
   e.preventDefault();
@@ -335,7 +342,9 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
                 const res = await exitRoomGroupByUid(chat.theContact.roomId, item.userId, user.getToken);
                 if (res.code === StatusCode.SUCCESS) {
                   ElNotification.success("踢出成功！");
-                  chat.onOfflineList = chat.onOfflineList.filter(e => e.userId !== item.userId);
+                  chat.currentMemberList = chat.currentMemberList.filter(e => e.userId !== item.userId);
+                  await nextTick();
+                  containerProps.onScroll();
                 }
               }
             },
@@ -365,20 +374,16 @@ function toggleAdminRole(dto: ChatRoomAdminAddDTO, type: ChatRoomRoleEnum) {
         const res = await fn(dto, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
           ElNotification.success("操作成功！");
-          for (const p of chat.onOfflineList) {
-            if (p.userId === dto.userId)
-              return p.roleType = type;
-          }
+          // 更新缓存中的角色信息
+          const index = chat.currentMemberList.findIndex(p => p.userId === dto.userId);
+          if (index !== -1 && chat.currentMemberList[index])
+            chat.currentMemberList[index].roleType = type;
         }
       }
     },
   });
 }
 
-watchDebounced(() => chat.theContact.roomId, (val) => {
-  if (val && chat.theContact.type === RoomType.GROUP)
-    reload();
-});
 /**
  * 上下线消息
  */
@@ -387,10 +392,13 @@ watchThrottled(() => ws.wsMsgList.onlineNotice, (list: WSOnlineOfflineNotify[] =
   list.forEach((p) => {
     if (!p.changeList)
       return;
-    for (const item of chat.onOfflineList) {
+    for (const item of (chat.roomMapCache?.[chat.theContact.roomId]?.userList || [])) {
       for (const k of p.changeList) {
         if (k.userId === item.userId) {
           item.activeStatus = k.activeStatus;
+          const find = chat.currentMemberList?.find(p => p.userId === item.userId);
+          if (find)
+            find.activeStatus = k.activeStatus; // 更新缓存中的状态
           break;
         }
       }
@@ -401,91 +409,169 @@ watchThrottled(() => ws.wsMsgList.onlineNotice, (list: WSOnlineOfflineNotify[] =
   immediate: true,
 });
 
+watch(() => chat.theContact, (val) => {
+  const data = JSON.parse(JSON.stringify(val)) as ChatContactDetailVO;
+  if (data.roomGroup && !data.roomGroup?.detail)
+    data.roomGroup.detail = {};
+  theContactClone.value = data;
+}, { deep: true, immediate: true });
 
-const merberList = computed(() => chat.onOfflineList.sort((a, b) => b.activeStatus - a.activeStatus));
 
-const ChatNewGroupDialogRef = ref();
-const showAddDialog = ref(false);
+watch(() => chat.theContact.avatar, (val) => {
+  if (val) {
+    imgList.value = [{
+      id: BaseUrlImg + val,
+      key: val,
+      file: {} as File,
+      percent: 100,
+      status: "success",
+    }];
+  }
+  else { imgList.value = []; }
+}, { deep: true, immediate: true });
+
+// 监听群成员列表变化
+watch(() => chat.theContact.roomId, async (newRoomId) => {
+  await nextTick();
+  containerProps.onScroll();
+  scrollTo(0);
+  if (chat.roomMapCache[newRoomId]?.userList) {
+    return;
+  }
+  await reload();
+  await nextTick();
+  containerProps.onScroll();
+  scrollTo(0);
+}, {
+});
 // 邀请进群
 function onAdd() {
-  if (ChatNewGroupDialogRef.value) {
-    ChatNewGroupDialogRef.value?.reload();
-    if (ChatNewGroupDialogRef.value?.form)
-      ChatNewGroupDialogRef.value.form.roomId = chat.theContact.roomId;
+  if (chatNewGroupDialogRef.value) {
+    chatNewGroupDialogRef.value?.reload();
+    if (chatNewGroupDialogRef.value?.form)
+      chatNewGroupDialogRef.value.form.roomId = chat.theContact.roomId;
     showAddDialog.value = true;
   }
 };
+
+function onExitOrClearGroup() {
+  if (isNotExistOrNorFriend.value) {
+    // 不显示聊天
+    chat.deleteContactConfirm(chat.theContact.roomId, () => {
+    });
+    return;
+  }
+  chat.exitGroupConfirm(chat.theContact.roomId, isTheGroupOwner.value, () => {
+    chat.removeContact(chat.theContact.roomId);
+  });
+}
+// 监听群成员列表变化
+onMounted(() => {
+  reload();
+  // 整个生命周期不能解除
+  mitter.on(MittEventType.RELOAD_MEMBER_LIST, ({ type, payload: { roomId, userId } }) => {
+    if (chat.roomMapCache[roomId] === undefined) {
+      return;
+    }
+    reload(roomId);
+  });
+});
 </script>
 
 <template>
   <div
+    v-if="setting.isOpenGroupMember && chat.theContact.type === RoomType.GROUP"
     v-bind="$attrs"
     class="group relative"
   >
-    <div flex-row-bt-c flex-shrink-0 flex-row gap-4 truncate pb-4>
-      <div class="flex p-1.5" @click="isGrid = !isGrid">
+    <div flex-row-bt-c flex-shrink-0 flex-row truncate>
+      <i
+        class="i-solar:magnifer-linear block h-4.5 w-4.5 btn-info"
+        @click="() => {
+          showSearch = !showSearch
+          if (showSearch) {
+            searchInputRef?.focus?.()
+          }
+        }"
+      />
+      <!-- <div class="flex p-1.5" @click="isGrid = !isGrid">
         <i class="block h-5 w-5 op-80 btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-4 h-4' : 'i-solar:widget-bold-duotone w-2 h-2'" />
-      </div>
+      </div> -->
       <small>群成员</small>
       <div class="rounded-2rem p-1.5" @click="onAdd">
         <i class="block h-1.8em h-5 w-1.8em w-5 rounded-2rem btn-info border-default" i-carbon:add-large />
       </div>
     </div>
-    <el-scrollbar ref="memberScrollbarRef" style="height: auto;">
-      <ListAutoIncre
-        :immediate="false"
-        :no-more="pageInfo.isLast"
-        @load="loadData"
+    <!-- 搜索群聊 -->
+    <div
+      class="header h-2em transition-height"
+      :class="!showSearch ? '!h-0 overflow-y-hidden' : ''"
+    >
+      <ElInput
+        ref="searchInputRef"
+        v-model.lazy="searchUserWord"
+        style="height: 2em;"
+        name="search-content"
+        type="text"
+        clearable
+        autocomplete="off"
+        :prefix-icon="ElIconSearch"
+        minlength="2"
+        maxlength="30"
+        placeholder="搜索群友"
+        @input="scrollTo(0)"
+      />
+    </div>
+    <div
+      v-bind="containerProps"
+      class="relative h-300px"
+      :class="{ 'scroll-bar': !chat.isMemberReload }"
+      @scroll="onScroll"
+    >
+      <div
+        v-bind="wrapperProps"
+        class="relative"
       >
         <div
-          :class="[
-            isGrid ? 'flex-row is-grid' : 'flex-col',
-            isReload ? 'op-0' : 'op-100',
-          ]"
-          relative flex flex-wrap gap-0 op-0 transition-opacity
+          v-for="p in vMemberList"
+          :key="`${chat.theContact.roomId}_${p.data.userId}`"
+          :class="p.data.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
+          class="user-card h-50px flex-shrink-0 cursor-pointer"
+          @contextmenu="onContextMenu($event, p.data)"
+          @click="onContextMenu($event, p.data)"
         >
-          <div
-            v-for="p in merberList" :key="p.userId"
-            :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-            class="user-card flex-shrink-0 cursor-pointer"
-            @contextmenu="onContextMenu($event, p)"
-            @click="onContextMenu($event, p)"
-          >
-            <div class="relative flex-row-c-c" :title="p.nickName || '未知'">
-              <CardElImage
-                v-if="p.avatar"
-                :src="BaseUrlImg + p.avatar" fit="cover"
-                class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
-              />
-              <small
-                v-else
-                class="h-2.4rem w-2.4rem flex-row-c-c flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
-              >
-                <i class="i-solar-user-line-duotone p-2.5 op-80" />
-              </small>
-              <span class="g-avatar" />
-            </div>
-            <small v-if="!isGrid" truncate>{{ p.nickName || "未填写" }}</small>
-            <div v-if="!isGrid" class="tags ml-a block pl-1">
-              <el-tag v-if="p.userId === user.userInfo.id" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" type="warning">
-                我
-              </el-tag>
-              <el-tag v-if="p.roleType !== null && p.roleType !== ChatRoomRoleEnum.MEMBER" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" effect="dark" type="info">
-                {{ ChatRoomRoleEnumMap[p.roleType || ChatRoomRoleEnum.MEMBER] }}
-              </el-tag>
-            </div>
+          <div class="relative flex-row-c-c" :title="p.data.nickName || '未知'">
+            <CardElImage
+              v-if="p.data.avatar"
+              :src="BaseUrlImg + p.data.avatar" fit="cover"
+              class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+            />
+            <small
+              v-else
+              class="h-2.4rem w-2.4rem flex-row-c-c flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
+            >
+              <i class="i-solar-user-line-duotone p-2.5 op-80" />
+            </small>
+            <span class="g-avatar" />
+          </div>
+          <small truncate>{{ p.data.nickName || "未填写" }}</small>
+          <div class="tags ml-a block pl-1">
+            <el-tag v-if="p.data.userId === user.userInfo.id" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" type="warning">
+              我
+            </el-tag>
+            <el-tag v-if="p.data.roleType !== null && p.data.roleType !== ChatRoomRoleEnum.MEMBER" class="mr-1" style="font-size: 0.6em;border-radius: 2rem;" size="small" effect="dark" type="info">
+              {{ ChatRoomRoleEnumMap[p.data.roleType || ChatRoomRoleEnum.MEMBER] }}
+            </el-tag>
           </div>
         </div>
-        <template #done />
-      </ListAutoIncre>
-      <small
-        class="shadow-bt sticky bottom-0 left-0 block w-full cursor-pointer pb-2 text-center" @click="() => {
-          memberScrollbarRef.scrollTo({ left: 0, top: memberScrollbarRef?.wrapRef?.scrollHeight || 0, behavior: 'smooth' })
-        }"
+      </div>
+      <!-- <small
+        class="shadow-bt fixed bottom-0 left-0 block h-2em w-full cursor-pointer text-center"
+        @click="scrollTo(chat.currentMemberList.length - 1)"
       >
         <i i-solar:alt-arrow-down-outline p-2 btn-info />
-      </small>
-    </el-scrollbar>
+      </small> -->
+    </div>
     <div class="mt-2 w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em border-default">
       <div relative mt-3>
         群头像
@@ -556,17 +642,18 @@ function onAdd() {
       </div>
     </div>
     <btn-el-button
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
-      @click="chat.exitGroupConfirm(chat.theContact.roomId, isTheGroupOwner, () => {
-        chat.removeContact(chat.theContact.roomId);
-      })"
+      v-show="!chat.contactMap[chat.theContact.roomId]?.hotFlag" v-memo="[isNotExistOrNorFriend, isTheGroupOwner]" class="group-hover:op-100 sm:op-0" icon-class="i-solar:logout-3-broken mr-2"
+      type="danger"
+      round
+      plain
+      @click="onExitOrClearGroup"
     >
       <span>
-        {{ isTheGroupOwner ? '解散群聊' : '退出群聊' }}
+        {{ isNotExistOrNorFriend ? '不显示聊天' : isTheGroupOwner ? '解散群聊' : '退出群聊' }}
       </span>
     </btn-el-button>
     <!-- 邀请进群 -->
-    <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showAddDialog" />
+    <LazyChatNewGroupDialog ref="chatNewGroupDialogRef" v-model="showAddDialog" />
     <!-- 好友申请 -->
     <LazyChatFriendApplyDialog v-model:show="isShowApply" :user-id="theUser?.userId" />
   </div>
@@ -652,4 +739,19 @@ function onAdd() {
 .dark .shadow-bt {
   background: linear-gradient(to bottom, rgba(31, 31, 31, 0) 0%, rgba(31, 31, 31, 1) 100%);
 }
+
+.header {
+  :deep(.el-input) {
+    .el-input__wrapper {
+      --at-apply: "!shadow-none text-sm !outline-none bg-color-2 dark:bg-dark-7";
+    }
+  }
+  .icon {
+    --at-apply: "h-2rem w-2rem flex-row-c-c btn-primary-bg  bg-color-2 dark:bg-dark-7";
+  }
+}
+
+// .scroll-bar {
+//   // scroll-behavior: smooth;
+// }
 </style>

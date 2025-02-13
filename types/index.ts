@@ -50,5 +50,5 @@ export interface CursorPage<T> {
   /**
    * 游标（下次翻页带上这参数）
    */
-  cursor: null | string
+  cursor?: null | string
 }

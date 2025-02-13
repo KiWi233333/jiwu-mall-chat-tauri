@@ -22,6 +22,8 @@ export enum MittEventType {
   CAHT_ASK_AI_ROBOT = "chat-ask-ai-robot", // 提问AI机器人事件
   // 视频组件事件
   VIDEO_READY = "video-ready",
+  // 成员列表事件
+  RELOAD_MEMBER_LIST = "chat-reload-member-list", // 重新加载成员列表
 }
 
 // 组件滚动事件载荷
@@ -85,6 +87,8 @@ type EventPayloadMap = {
   [MittEventType.CAHT_ASK_AI_ROBOT]: AskAiRobotPayload;
   // 视频组件事件
   [MittEventType.VIDEO_READY]: VideoReadyPayload;
+  // 成员列表事件
+  [MittEventType.RELOAD_MEMBER_LIST]: { type: "reload", payload: { userId: string, roomId: number } };
 };
 
 export type MittEvents = {
@@ -113,7 +117,6 @@ export function resolteChatPath(type: WsMsgBodyType): MittEventType {
 /** mitt instance */
 export const mitter = mitt<MittEvents>();
 
-
 export function removeAllEventListener() {
   mitter.off(MittEventType.MESSAGE);
   mitter.off(MittEventType.ONLINE_OFFLINE_NOTIFY);
@@ -130,4 +133,5 @@ export function removeAllEventListener() {
   mitter.off(MittEventType.VIDEO_READY);
   mitter.off(MittEventType.CHAT_AT_USER);
   mitter.off(MittEventType.CAHT_ASK_AI_ROBOT);
+  mitter.off(MittEventType.RELOAD_MEMBER_LIST);
 }

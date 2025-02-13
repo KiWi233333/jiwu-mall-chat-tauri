@@ -10,6 +10,8 @@ export interface PlaySounder {
   audio?: HTMLAudioElement
 }
 
+export interface PageInfo { cursor?: string, isLast: boolean, size: number }
+export interface RoomChacheData { pageInfo: PageInfo; userList: ChatMemberVO[], isReload: boolean, cacheTime: number, isLoading: boolean }
 
 // @unocss-include
 export const defaultLoadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 4.5a7.5 7.5 0 1 0 0 15a7.5 7.5 0 0 0 0-15M1.5 12C1.5 6.201 6.201 1.5 12 1.5S22.5 6.201 22.5 12S17.799 22.5 12 22.5S1.5 17.799 1.5 12" opacity=".1"/><path fill="currentColor" d="M12 4.5a7.46 7.46 0 0 0-5.187 2.083a1.5 1.5 0 0 1-2.075-2.166A10.46 10.46 0 0 1 12 1.5a1.5 1.5 0 0 1 0 3"/></g></svg>`;
@@ -96,7 +98,7 @@ export const useChatStore = defineStore(
     // store
     const ws = useWsStore();
     const user = useUserStore();
-    const updateContactList = ref< { [key: number]: boolean }>({});
+    const updateContactList = ref<{ [key: number]: boolean }>({});
     // 消息列表滚动
     const scrollBottom = (animate = true) => {
       mitter.emit(MittEventType.MSG_LIST_SCROLL, {
@@ -117,6 +119,144 @@ export const useChatStore = defineStore(
         return;
       await setContact(item); // 提前设置当前会话
     };
+
+    /* ------------------------------------------- 群聊成员操作 ------------------------------------------- */
+    const roomMapCache = ref<Record<string, RoomChacheData>>({}); // 缓存当前房间的成员列表
+    const currentRoomCache = computed(() => roomMapCache.value[theContact.value?.roomId] || { // 当前房间
+      pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
+      userList: [],
+      isReload: false,
+      isLoading: false,
+    });
+    const currentMemberList = computed<ChatMemberVO[]>({ // 缓存当前房间的成员列表
+      get: () => currentRoomCache.value.userList,
+      set: (newUserList) => {
+        if (!roomMapCache.value[theContact.value?.roomId]) {
+          roomMapCache.value[theContact.value?.roomId] = {
+            pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
+            userList: newUserList,
+            isReload: false,
+            isLoading: false,
+            cacheTime: Date.now(),
+          };
+          return;
+        }
+        // @ts-expect-error
+        roomMapCache.value[theContact.value?.roomId].newUserList = newUserList;
+      },
+    });
+    const isMemberLoading = computed({
+      get: () => !!currentRoomCache.value.isLoading,
+      set: (val) => {
+        if (roomMapCache.value?.[theContact.value?.roomId]) {
+          // @ts-expect-error
+          roomMapCache.value[theContact.value?.roomId].isLoading = val;
+        }
+      },
+    });
+    const isMemberReload = computed({
+      get: () => !!currentRoomCache.value.isReload,
+      set: (val) => {
+        if (roomMapCache.value?.[theContact.value?.roomId]) {
+          // @ts-expect-error
+          roomMapCache.value[theContact.value?.roomId].isReload = val;
+        }
+      },
+    });
+    const memberPageInfo = computed({ // 缓存当前房间的分页信息
+      get: () => currentRoomCache.value.pageInfo,
+      set: (newPageInfo) => {
+        if (!roomMapCache.value[theContact.value?.roomId]) {
+          roomMapCache.value[theContact.value?.roomId] = {
+            pageInfo: newPageInfo,
+            userList: [],
+            isReload: false,
+            isLoading: false,
+            cacheTime: Date.now(),
+          };
+          return;
+        }
+        // @ts-expect-error
+        roomMapCache.value[theContact.value?.roomId].pageInfo = newPageInfo;
+      },
+    });
+    const roomGroupPageInfo = ref({
+      cursor: null as null | string,
+      isLast: false,
+      size: 15,
+    });
+    // 成员变动消息
+    const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
+      immediate: false,
+    });
+    async function watchMemberChange(len: number) {
+      if (!len)
+        return;
+      // 成员变动消息
+      if (ws.wsMsgList.memberMsg.length) {
+        for (const p of ws.wsMsgList.memberMsg) {
+          if (p.changeType === WSMemberStatusEnum.JOIN) { // 新加入
+            if (contactMap.value[p.roomId] || p.uid !== user.userId) {
+              // 本地大群获取物料插入
+              const exsitUser = roomMapCache.value[1]?.userList.find(item => item.userId === p.uid);
+              if (exsitUser && roomMapCache.value[1]) {
+                roomMapCache.value[1].userList.unshift(exsitUser);
+                return;
+              }
+              mitter.emit(MittEventType.RELOAD_MEMBER_LIST, {
+                type: "reload",
+                payload: {
+                  roomId: p.roomId,
+                  userId: p.uid,
+                },
+              });
+              return;
+            }
+            setTimeout(() => { // 创建会话有一定延迟
+              // 如果会话已经存在就不请求
+              if (contactMap.value[p.roomId])
+                return;
+              getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
+                if (res) {
+                  const item = contactMap.value[p.roomId];
+                  if (item) { // 更新
+                    contactMap.value[p.roomId] = res.data;
+                  }
+                  else { // 添加
+                    res.data.unreadCount = 1;
+                    contactMap.value[res.data.roomId] = res.data;
+                    // unshift();
+                  }
+                }
+              }).finally(() => {
+              });
+            }, 300);
+          }
+          else if (p.changeType === WSMemberStatusEnum.LEAVE) {
+            if (user.userId === p.uid) { // 自己被退出
+              if (!contactMap.value[p.roomId])
+                return;
+              contactMap.value[p.roomId]!.selfExit = isTrue.FALESE;
+              // await removeContact(p.roomId);
+              return;
+            }
+            if (!roomMapCache.value[p.roomId]?.userList) {
+              return;
+            }
+            // 别人退出
+            const index = roomMapCache.value[p.roomId]!.userList.findIndex(item => item.userId === p.uid);
+            if (index !== -1) {
+              roomMapCache.value[p.roomId]!.userList.splice(index, 1);
+            }
+          }
+          else if (p.changeType === WSMemberStatusEnum.DEL) {
+            // 删除会话
+            await removeContact(p.roomId);
+          }
+        }
+        ws.wsMsgList.memberMsg.splice(0);
+      }
+    }
 
     /* ------------------------------------------- 会话操作 ------------------------------------------- */
     // 改变会话
@@ -205,6 +345,8 @@ export const useChatStore = defineStore(
       if (roomId === theContact.value.roomId)
         await setContact();
       delete contactMap.value[roomId];
+      // 成员列表删除
+      delete roomMapCache.value[roomId];
     }
     /**
      * 删除会话（不影响接收）
@@ -336,89 +478,6 @@ export const useChatStore = defineStore(
       });
     }
 
-    /* ------------------------------------------- 群聊成员操作 ------------------------------------------- */
-    const onOfflineList = ref<ChatMemberVO[]>([]);
-    const roomGroupPageInfo = ref({
-      cursor: null as null | string,
-      isLast: false,
-      size: 15,
-    });
-    // 设置群成员
-    function setGroupMember(list: ChatMemberVO[]) {
-      onOfflineList.value = list;
-    }
-    // 成员变动消息
-    const stopWatch = watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
-      immediate: false,
-    });
-    async function watchMemberChange(len: number) {
-      if (!len)
-        return;
-      // 成员变动消息
-      if (ws.wsMsgList.memberMsg.length) {
-        for (const p of ws.wsMsgList.memberMsg) {
-          // 自己新加入
-          if (p.changeType === WSMemberStatusEnum.JOIN) {
-            if (contactMap.value[p.roomId])
-              return;
-            setTimeout(() => { // 创建会话有一定延迟
-              // 如果会话已经存在就不请求
-              if (contactMap.value[p.roomId])
-                return;
-              getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
-                if (res) {
-                  const item = contactMap.value[p.roomId];
-                  if (item) { // 更新
-                    contactMap.value[p.roomId] = res.data;
-                  }
-                  else { // 添加
-                    res.data.unreadCount = 1;
-                    contactMap.value[res.data.roomId] = res.data;
-                    // unshift();
-                  }
-                }
-              }).finally(() => {
-              });
-            }, 300);
-            // 更新用户列表
-            if (!p.uid)
-              return;
-            getCommUserInfoSe(p.uid, user.getToken).then((res) => {
-              if (res.code === StatusCode.SUCCESS) {
-                onOfflineList.value.push({
-                  userId: p.uid,
-                  avatar: res.data.avatar,
-                  nickName: res.data.nickname,
-                  activeStatus: 0,
-                  lastOptTime: res.data.lastLoginTime,
-                  roleType: ChatRoomRoleEnum.MEMBER,
-                });
-              }
-            });
-          }
-          else if (p.changeType === WSMemberStatusEnum.LEAVE) {
-            for (let i = 0; i < onOfflineList.value.length; i++) {
-              const u = onOfflineList.value[i];
-              // 下线删除用户
-              if (u && u.userId === p.uid) {
-                onOfflineList.value.splice(i, 1);
-                break;
-              }
-            }
-          }
-          else if (p.changeType === WSMemberStatusEnum.DEL) {
-            // 删除会话
-            await removeContact(p.roomId);
-          }
-        }
-        ws.wsMsgList.memberMsg.splice(0);
-      }
-    }
-    onUnmounted(() => {
-      stopWatch();
-    });
-
-
     /** ---------------------------- 页面状态 ---------------------------- */
     async function isActiveWindow(): Promise<boolean> {
       const setting = useSettingStore();
@@ -458,7 +517,6 @@ export const useChatStore = defineStore(
         payload: { size },
       });
     };
-
 
     // 向下/向上切换房间
     const onDownUpChangeRoomLoading = ref(false);
@@ -656,7 +714,7 @@ export const useChatStore = defineStore(
         isLast: false,
         size: 15,
       };
-      onOfflineList.value = [];
+      // onOfflineList.value = [];
       playSounder.value = {
         state: "stop",
         url: "",
@@ -665,9 +723,37 @@ export const useChatStore = defineStore(
         duration: 0,
         audio: undefined,
       };
+      msgForm.value = {
+        roomId: -1,
+        msgType: MessageType.TEXT, // 默认
+        content: undefined,
+        body: {
+        },
+      };
+      replyMsg.value = undefined;
+      atUserList.value = [];
+      askAiRobotList.value = [];
+      theFriendOpt.value = {
+        type: -1,
+        data: {},
+      };
+      showTheFriendPanel.value = false;
+      delGroupId.value = undefined;
+      isMsgListScroll.value = false;
       isVisible.value = false;
       scrollTopSize.value = 0;
       saveScrollTop();
+
+      // 群成员
+      memberPageInfo.value = {
+        cursor: undefined,
+        isLast: false,
+        size: 20,
+      };
+      roomMapCache.value = {};
+      currentMemberList.value = [];
+      isMemberLoading.value = false;
+      isMemberReload.value = false;
     }
 
 
@@ -697,10 +783,17 @@ export const useChatStore = defineStore(
       isOpenContact,
       isMsgListScroll,
       roomGroupPageInfo,
-      onOfflineList,
       playSounder,
       isVisible,
       delGroupId,
+
+      // 群成员
+      memberPageInfo,
+      currentRoomCache,
+      currentMemberList,
+      isMemberLoading,
+      isMemberReload,
+      roomMapCache,
       // 方法
       setContact,
       updateContact,
@@ -712,7 +805,6 @@ export const useChatStore = defineStore(
       exitGroupConfirm,
       setReadList,
       clearAllUnread,
-      setGroupMember,
       setIsAddNewFriend,
       setAtUid,
       removeAtByUsername,

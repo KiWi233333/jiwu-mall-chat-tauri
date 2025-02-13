@@ -16,7 +16,7 @@ const isReplyAI = computed(() => chat.msgForm.content?.startsWith("/") && chat.t
 // 表单
 const isSending = ref(false);
 const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExist === 0);
-const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0); // 自己不存在 或 不是好友
+const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0 || chat.contactMap?.[chat.theContact.roomId]?.isFriend === 0); // 自己不存在 或 不是好友
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
 // 状态

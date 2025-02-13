@@ -17,7 +17,7 @@ const chat = useChatStore();
 const user = useUserStore();
 
 const pageInfo = ref({
-  cursor: null as null | string,
+  cursor: undefined as undefined | string,
   isLast: false,
   size: 10,
 });
@@ -31,13 +31,13 @@ async function loadData() {
   isLoading.value = true;
   try {
     const { data } = props.type === "friend"
-      ? await getChatFriendPage(pageInfo.value.size, pageInfo.value.cursor, user.getToken)
-      : await getChatGroupRoomPage(pageInfo.value.size, pageInfo.value.cursor, user.getToken);
+      ? await getChatFriendPage(pageInfo.value.size, pageInfo.value.cursor || null, user.getToken)
+      : await getChatGroupRoomPage(pageInfo.value.size, pageInfo.value.cursor || null, user.getToken);
 
     if (data?.list)
       list.value.push(...data.list as any[]);
     pageInfo.value.isLast = data.isLast;
-    pageInfo.value.cursor = data.cursor;
+    pageInfo.value.cursor = data.cursor || undefined;
   }
   catch (e) {
     console.error(e);
@@ -50,7 +50,7 @@ async function loadData() {
 
 // 重新加载数据
 async function reloadData() {
-  pageInfo.value.cursor = null;
+  pageInfo.value.cursor = undefined;
   pageInfo.value.isLast = false;
   lastLoadTime.value = Date.now();
   list.value = [];

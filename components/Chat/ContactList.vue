@@ -12,7 +12,7 @@ const user = useUserStore();
 const chat = useChatStore();
 const isReload = ref(false);
 const pageInfo = ref({
-  cursor: null as null | string,
+  cursor: undefined as undefined | string,
   isLast: false,
   size: 20,
 });
@@ -52,7 +52,7 @@ async function loadData(dto?: ContactPageDTO) {
     }
   }
   pageInfo.value.isLast = data.isLast;
-  pageInfo.value.cursor = data.cursor;
+  pageInfo.value.cursor = data.cursor || undefined;
   isLoading.value = false;
   return data.list;
 }
@@ -64,7 +64,7 @@ async function reload(size: number = 20, dto?: ContactPageDTO, isAll: boolean = 
   isReload.value = true;
   if (isAll) {
     chat.contactMap = {};
-    pageInfo.value.cursor = null;
+    pageInfo.value.cursor = undefined;
     pageInfo.value.isLast = false;
     pageInfo.value.size = size;
     if (setting.isMobileSize) { // 移动端

@@ -14,7 +14,7 @@ const isReload = ref(false); // 是否正在重新加载
 const isLoading = ref(false); // 是否正在加载
 const pageInfo = ref<PageInfo>({
   size: 20,
-  cursor: null,
+  cursor: undefined,
   isLast: false,
 });
 const memberList = ref<ChatMemberVO[]>([]);
@@ -33,7 +33,7 @@ async function loadData() {
   );
   if (res.code === StatusCode.SUCCESS) {
     pageInfo.value.isLast = res.data.isLast;
-    pageInfo.value.cursor = res.data.cursor;
+    pageInfo.value.cursor = res.data.cursor || undefined;
     if (res.data.list) {
       memberList.value.push(...res.data.list);
     }
@@ -47,7 +47,7 @@ async function loadData() {
 // 重新加载数据
 async function reload() {
   memberList.value = [];
-  pageInfo.value.cursor = null;
+  pageInfo.value.cursor = undefined;
   pageInfo.value.isLast = false;
   if (!isReload.value) {
     isReload.value = true;
@@ -57,7 +57,7 @@ async function reload() {
 }
 
 // 添加好友
-const theUser = ref<ChatMemberVO | null>(null);
+const theUser = ref<ChatMemberVO | undefined>(undefined);
 const isShowApply = ref(false);
 
 // 权限相关

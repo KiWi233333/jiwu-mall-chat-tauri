@@ -4,7 +4,7 @@ const isLoading = ref<boolean>(false);
 const user = useUserStore();
 const setting = useSettingStore();
 const pageInfo = ref({
-  cursor: null as null | string,
+  cursor: undefined as undefined | string,
   isLast: true,
   size: 20,
 });
@@ -47,11 +47,11 @@ async function loadData(call?: (data?: ChatMessageVO[]) => void) {
       isLoading.value = false;
     });
     pageInfo.value.isLast = data.isLast;
-    pageInfo.value.cursor = data.cursor;
+    pageInfo.value.cursor = data.cursor || undefined;
   }).catch(() => {
     isLoading.value = false;
     pageInfo.value.isLast = false;
-    pageInfo.value.cursor = null;
+    pageInfo.value.cursor = undefined;
   });
 }
 // 重新加载
@@ -59,7 +59,7 @@ function reload(roomId: number) {
   // 重置滚动位置
   chat.scrollTopSize = 0;
   pageInfo.value = {
-    cursor: null as null | string,
+    cursor: undefined as undefined | string,
     isLast: false,
     size: 20,
   };
@@ -74,7 +74,7 @@ function reload(roomId: number) {
       return;
     chat.theContact.msgList = data.list;
     pageInfo.value.isLast = data.isLast;
-    pageInfo.value.cursor = data.cursor;
+    pageInfo.value.cursor = data.cursor || undefined;
     await nextTick();
     isLoading.value = false;
     isReload.value = false;

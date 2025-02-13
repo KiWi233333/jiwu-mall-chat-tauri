@@ -27,6 +27,7 @@ export function getRoomGroupInfo(id = 10, token: string) {
  * @returns 分页
  */
 export function getRoomGroupUserPage(roomId: number | null = null, pageSize = 10, cursor: string | number | null = null, token: string) {
+  console.log(cursor);
   return useHttp.get<Result<CursorPage<ChatMemberVO>>>(
     "/chat/room/group/member/page",
     {
