@@ -432,6 +432,7 @@ watch(() => chat.theContact.avatar, (val) => {
 
 // 监听群成员列表变化
 watch(() => chat.theContactId, async (newRoomId) => {
+  searchUserWord.value = "";
   await nextTick();
   containerProps.onScroll();
   scrollTo(0);

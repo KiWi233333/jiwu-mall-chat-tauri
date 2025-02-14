@@ -26,6 +26,7 @@ function onContextMenu(e: MouseEvent) {
 function onVisibilityChange() {
   const chat = useChatStore();
   const route = useRoute();
+  console.log("visibilitychange", !document.hidden);
   if (route.path === "/")
     chat.isVisible = !document.hidden;
   else
@@ -213,10 +214,9 @@ export function useHotkeyInit() {
  * 初始化窗口监听可见性
  */
 export function useWindowVisibilityInit() {
-  const chat = useChatStore();
-  chat.isVisible = true;
   document.addEventListener("visibilitychange", onVisibilityChange);
   return () => {
+    console.log("remove visibilitychange");
     document.removeEventListener("visibilitychange", onVisibilityChange);
   };
 }

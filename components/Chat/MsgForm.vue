@@ -356,8 +356,8 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
 
 // 到底部并消费消息
 function setReadAndScrollBottom() {
-  if (chat.theContact.roomId) {
-    chat.setReadList(chat.theContact.roomId);
+  if (chat.theContactId) {
+    chat.setReadList(chat.theContactId);
     chat.scrollBottom();
   }
 }

@@ -314,9 +314,6 @@ export const useChatStore = defineStore(
           pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
         };
       }
-      else {
-        setContact();
-      }
     }
     // 重新拉取会话
     function reloadContact(roomId: number, callBack?: (contact: ChatContactVO) => void) {
@@ -431,9 +428,10 @@ export const useChatStore = defineStore(
       if (!await isActiveWindow()) // 窗口未激活
         return false;
       const contact = contactDetailMapCache.value?.[roomId];
-      if (!contactMap.value[roomId]?.unreadCount && (!contact?.unreadCount && contact?.roomId === roomId)) {
+      if (!contactMap.value[roomId]?.unreadCount && !contact?.unreadCount) {
         return;
       }
+
       // 标记已读
       if (roomId === contact?.roomId) {
         const msg = contact?.msgList[contact?.msgList.length - 1];
@@ -442,6 +440,7 @@ export const useChatStore = defineStore(
         contact.text = msg ? resolveMsgContactText(msg) : contact?.text;
         contact.lastMsgId = msg?.message?.id || contact?.lastMsgId;
       }
+
       setMsgReadByRoomId(roomId, user.getToken).then((res) => {
         if (res.code !== StatusCode.SUCCESS)
           return false;
@@ -497,8 +496,8 @@ export const useChatStore = defineStore(
     async function isActiveWindow(): Promise<boolean> {
       const setting = useSettingStore();
       if (setting.isWeb) { // web端
-        if (!isVisible.value)
-          return false;
+        isVisible.value = document?.visibilityState === "visible";
+        return isVisible.value;
       }
       else if (setting.isDesktop) { // 桌面端
         const win = WebviewWindow.getCurrent();
