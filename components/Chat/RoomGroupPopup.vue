@@ -438,12 +438,12 @@ watch(() => chat.theContactId, async (newRoomId) => {
   if (!newRoomId) {
     return;
   }
-  if (chat.roomMapCache[newRoomId]?.userList) {
+  if (chat.roomMapCache[newRoomId]?.cacheTime && Date.now() - chat.roomMapCache[newRoomId]?.cacheTime < 300000) { // 缓存5分钟
     return;
   }
   await reload();
   await nextTick();
-  containerProps.onScroll();
+  containerProps.onScroll(); // 切换会话成员列表滚动条位置重置
   scrollTo(0);
 }, {
 });
@@ -535,7 +535,6 @@ onMounted(() => {
         <div
           v-for="p in vMemberList"
           :key="`${chat.theContact.roomId}_${p.data.userId}`"
-          v-memo="[p.data.activeStatus, p.data.userId, p.data.roleType]"
           :class="p.data.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-60 filter-grayscale filter-grayscale-100 '"
           class="user-card"
           @contextmenu="onContextMenu($event, p.data)"

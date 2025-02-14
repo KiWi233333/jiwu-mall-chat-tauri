@@ -29,7 +29,7 @@ const showContentLoading = computed(() => (data.message?.body.status === AiReply
       <!-- 折叠 -->
       <span
         v-if="!isFold && data.message?.content && data.message?.content.length > 40"
-        class="flex-res mx-2 ml-a flex-shrink-0 text-sm btn-info text-mini group-hover:op-100 sm:op-0"
+        class="flex-res mx-2 ml-a flex-shrink-0 btn-info text-small sm:(op-0 group-hover:op-100)"
         @click="isFold = !isFold"
       >
         收起

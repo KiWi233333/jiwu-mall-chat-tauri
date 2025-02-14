@@ -177,7 +177,6 @@ function scrollReplyMsg(msgId: number, gapCount: number = 0, isAnimated: boolean
 // 滚动到底部
 function scrollBottom(animate = true) {
   if (!scrollbarRef?.value?.wrapRef?.scrollHeight) {
-    console.warn("scrollBottom error", scrollbarRef?.value?.wrapRef);
     return;
   }
   scrollTop(scrollbarRef?.value?.wrapRef?.scrollHeight, animate);
