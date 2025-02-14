@@ -465,8 +465,10 @@ function onExitOrClearGroup() {
     chat.removeContact(chat.theContact.roomId);
   });
 }
-// 监听群成员列表变化
+
+
 onMounted(() => {
+  // 初始化加载
   reload();
   // 整个生命周期不能解除
   mitter.on(MittEventType.RELOAD_MEMBER_LIST, ({ type, payload: { roomId, userId } }) => {
@@ -494,9 +496,6 @@ onMounted(() => {
           }
         }"
       />
-      <!-- <div class="flex p-1.5" @click="isGrid = !isGrid">
-        <i class="block h-5 w-5 op-80 btn-info border-default" :class="isGrid ? 'i-solar:hamburger-menu-line-duotone w-4 h-4' : 'i-solar:widget-bold-duotone w-2 h-2'" />
-      </div> -->
       <small>群成员</small>
       <div class="rounded-2rem p-1.5" @click="onAdd">
         <i class="block h-1.8em h-5 w-1.8em w-5 rounded-2rem btn-info border-default" i-carbon:add-large />

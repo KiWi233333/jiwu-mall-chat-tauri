@@ -491,8 +491,7 @@ onUnmounted(() => {
       <!-- 新消息 -->
       <div
         v-show="chat.theContact.unreadCount"
-        class="w-full cursor-pointer"
-        style="padding: 0 0.5rem;margin:0;margin-bottom:0.4rem;display: flex;justify-content: right;"
+        class="mb-2 w-full flex cursor-pointer justify-right px-2"
         @click="setReadAndScrollBottom"
       >
         <el-tag type="warning" effect="light" round class="ml-a">
@@ -795,11 +794,6 @@ onUnmounted(() => {
               <span class="ml-2 flex-1 truncate">{{ item.label }}</span>
             </div>
           </template>
-          <!-- <template #header>
-            <span ml-2 op-70>
-              {{ isReplyAI ? 'AI机器人' : '群成员' }}
-            </span>
-          </template> -->
         </el-mention>
         <BtnElButton
           v-if="setting.isMobileSize"

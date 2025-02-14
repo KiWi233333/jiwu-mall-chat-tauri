@@ -4,10 +4,7 @@ import { giteeReportUrl, githubReportUrl } from "~/constants";
 const setting = useSettingStore();
 const downloadUrl = ref();
 const latestVersion = ref<AppPlatformsJSON>();
-const res = await getLatestVersion();
-if (res) {
-  latestVersion.value = res;
-}
+
 watch([() => setting.isWeb, () => setting.isMobileSize, latestVersion], async ([isWeb, isMobileSize]) => {
   if (!isWeb)
     return;
@@ -34,6 +31,12 @@ watch([() => setting.isWeb, () => setting.isMobileSize, latestVersion], async ([
 function handleRepo(type: "github" | "gitee", isStar: boolean = true) {
   window.open(type === "github" ? `${githubReportUrl}` : `${giteeReportUrl}`, "_blank");
 }
+onMounted(async () => {
+  const res = await getLatestVersion();
+  if (res) {
+    latestVersion.value = res;
+  }
+});
 </script>
 
 <template>

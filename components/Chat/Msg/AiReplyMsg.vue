@@ -140,7 +140,7 @@ const showContentLoading = computed(() => (data.message?.body.status === AiReply
 }
 
 .reson-content {
-  --at-apply: "my-1 relative leading-1.5em overflow-hidden card-rounded-df p-2 shadow-(sm inset) bg-color-2 text-small";
+  --at-apply: "my-1 relative z-0 leading-1.5em overflow-hidden card-rounded-df p-2 shadow-(sm inset) bg-color-2 text-small";
 
   &::after {
     content: "";
