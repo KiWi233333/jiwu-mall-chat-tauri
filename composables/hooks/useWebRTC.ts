@@ -36,7 +36,7 @@ export function useWebRTC(
     senderId: undefined,
   });
 
-  const theContact = ref<Partial<ChatContactVO>>({
+  const theContact = ref<Partial<ChatContactDetailVO>>({
     activeTime: undefined,
     avatar: undefined,
     roomId: undefined,
@@ -44,7 +44,7 @@ export function useWebRTC(
     name: undefined,
     text: undefined,
     type: undefined,
-    selfExit: undefined,
+    selfExist: undefined,
     unreadCount: undefined,
     roomGroup: undefined,
     member: undefined,
@@ -132,7 +132,7 @@ export function useWebRTC(
       name: undefined,
       text: undefined,
       type: undefined,
-      selfExit: undefined,
+      selfExist: undefined,
       unreadCount: undefined,
       roomGroup: undefined,
       member: undefined,

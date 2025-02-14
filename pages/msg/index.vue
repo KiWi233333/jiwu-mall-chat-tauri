@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-const unReadContactList = ref<ChatContactVO[]>([]);
+const unReadContactList = ref<ChatContactDetailVO[]>([]);
 const channel = new BroadcastChannel("main_channel");
 const unreadCount = computed(() => unReadContactList.value?.reduce((acc, cur) => acc + cur.unreadCount, 0) || 0);
 
 // 监听消息
-async function handleReadMessage(p: ChatContactVO) {
+async function handleReadMessage(p: ChatContactDetailVO) {
   // 标记已读
   channel.postMessage({ type: "readContact", data: JSON.parse(JSON.stringify(p)) });
   unReadContactList.value = unReadContactList.value.filter(item => item.roomId !== p.roomId);
@@ -54,7 +54,7 @@ definePageMeta({
           <!-- 消息 -->
           <div
             v-for="p in unReadContactList"
-            :key="p.message"
+            :key="p.roomId"
             title="读消息"
             class="group w-full flex cursor-pointer gap-2 rounded bg-white p-2 shadow-sm transition-all !items-center dark:bg-dark-7 hover:(bg-[var(--el-color-primary)] text-light shadow-lg)"
             @click="handleReadMessage(p)"

@@ -186,7 +186,7 @@ export interface ChatContactVO {
    */
   unreadCount: number
 
-  selfExit?: number
+  selfExist?: number
 
   /**
    * 置顶时间
@@ -197,9 +197,6 @@ export interface ChatContactVO {
    * 最后一条消息id
    */
   lastMsgId?: number
-
-  [property: string]: any
-
 }
 
 export const RoomTypeTextMap = {

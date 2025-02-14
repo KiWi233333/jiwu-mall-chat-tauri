@@ -12,7 +12,13 @@ export interface PlaySounder {
 
 export interface PageInfo { cursor?: string, isLast: boolean, size: number }
 export interface RoomChacheData { pageInfo: PageInfo; userList: ChatMemberVO[], isReload: boolean, cacheTime: number, isLoading: boolean }
-export interface ChatContactExtra extends ChatContactVO { msgList: ChatMessageVO[], unreadMsgList: ChatMessageVO[] }
+export interface ChatContactExtra extends ChatContactDetailVO {
+  msgList: ChatMessageVO[],
+  unreadMsgList: ChatMessageVO[]
+  pageInfo: PageInfo
+  isReload: boolean
+  isLoading: boolean
+}
 // @unocss-include
 export const defaultLoadingIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 4.5a7.5 7.5 0 1 0 0 15a7.5 7.5 0 0 0 0-15M1.5 12C1.5 6.201 6.201 1.5 12 1.5S22.5 6.201 22.5 12S17.799 22.5 12 22.5S1.5 17.799 1.5 12" opacity=".1"/><path fill="currentColor" d="M12 4.5a7.46 7.46 0 0 0-5.187 2.083a1.5 1.5 0 0 1-2.075-2.166A10.46 10.46 0 0 1 12 1.5a1.5 1.5 0 0 1 0 3"/></g></svg>`;
 // @unocss-include
@@ -37,10 +43,12 @@ export const useChatStore = defineStore(
     });
     /** ---------------------------- 撤回的消息map ---------------------------- */
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
+
     /** ---------------------------- 会话 ---------------------------- */
+    const theContactId = ref<number | undefined>(undefined); // 当前会话id
     const isOpenContact = ref(true); // 用于移动尺寸
     const searchKeyWords = ref("");
-    const contactMap = ref<Record<number, ChatContactVO>>({});
+    const contactMap = ref<Record<number, ChatContactDetailVO>>({});
     const sortedContacts = ref<ChatContactVO[]>([]);
     watch(contactMap, (val) => {
       sortedContacts.value = Object.values(val).sort((a, b) => {
@@ -69,21 +77,37 @@ export const useChatStore = defineStore(
     const isNewMsg = computed(() => unReadContactList.value.length > 0);
     const isVisible = ref(false); // 是否可见
     const isMsgListScroll = ref(false); // 消息列表是否滚动
-    const theContact = ref<ChatContactExtra>({
-      activeTime: 0,
-      avatar: "",
-      roomId: 0,
-      hotFlag: 1,
-      name: "",
-      text: "",
-      type: 1,
-      selfExit: 1,
-      unreadCount: 0,
-      roomGroup: undefined,
-      member: undefined,
-      // 消息列表
-      msgList: [],
-      unreadMsgList: [],
+    const contactDetailMapCache = ref<Record<number, ChatContactExtra>>({}); // 缓存会话描述
+    const theContact = computed<ChatContactExtra>({
+      get: () => {
+        const roomId = Number(theContactId.value);
+        if (!contactDetailMapCache.value[roomId]) {
+          contactDetailMapCache.value[roomId] = {
+            roomId,
+            name: "",
+            avatar: "",
+            pinTime: 0,
+            activeTime: 0,
+            selfExist: isTrue.TRUE,
+            unreadCount: 0,
+            msgList: [],
+            unreadMsgList: [],
+            type: RoomType.GROUP,
+            text: "",
+            hotFlag: isTrue.FALESE,
+            isReload: false,
+            isLoading: false,
+            pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
+          };
+        }
+        return contactDetailMapCache.value![roomId];
+      },
+      set: (val: ChatContactExtra) => {
+        if (val) {
+          theContactId.value = val.roomId;
+          contactDetailMapCache.value[val.roomId] = val;
+        }
+      },
     });
     const playSounder = ref<PlaySounder>({
       state: "stop",
@@ -111,8 +135,9 @@ export const useChatStore = defineStore(
     /* ------------------------------------------- 房间操作 ------------------------------------------- */
     // 房间
     const onChangeRoom = async (newRoomId: number) => {
-      if (!newRoomId || theContact.value.roomId === newRoomId)
+      if (!newRoomId || theContact.value?.roomId === newRoomId)
         return;
+      theContactId.value = newRoomId;
       const item = contactMap.value[newRoomId];
       if (!item)
         return;
@@ -235,7 +260,7 @@ export const useChatStore = defineStore(
             if (user.userId === p.uid) { // 自己被退出
               if (!contactMap.value[p.roomId])
                 return;
-              contactMap.value[p.roomId]!.selfExit = isTrue.FALESE;
+              contactMap.value[p.roomId]!.selfExist = isTrue.FALESE;
               // await removeContact(p.roomId);
               return;
             }
@@ -269,13 +294,16 @@ export const useChatStore = defineStore(
           name: "",
           text: "",
           type: 1,
-          selfExit: 1,
+          selfExist: 1,
           unreadCount: 0,
           // 消息列表
           msgList: [],
           unreadMsgList: [],
           roomGroup: undefined,
           member: undefined,
+          isReload: false,
+          isLoading: false,
+          pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
         };
         return;
       }
@@ -286,16 +314,22 @@ export const useChatStore = defineStore(
       theContact.value = {
         ...(vo || {}),
         // 消息列表
-        msgList: theContact.value.msgList || [],
-        unreadMsgList: theContact.value.unreadMsgList || [],
+        msgList: contactDetailMapCache.value?.[vo.roomId]?.msgList || [],
+        unreadMsgList: contactDetailMapCache.value?.[vo.roomId]?.unreadMsgList || [],
+        isReload: contactDetailMapCache.value?.[vo.roomId]?.isReload || false,
+        isLoading: contactDetailMapCache.value?.[vo.roomId]?.isLoading || false,
+        pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
       };
       try {
         const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type);
         if (res && res.code === StatusCode.SUCCESS) {
           theContact.value = {
             ...(res?.data || {}),
-            msgList: theContact.value.msgList || [],
-            unreadMsgList: theContact.value.unreadMsgList || [],
+            msgList: contactDetailMapCache.value?.[vo.roomId]?.msgList || [],
+            unreadMsgList: contactDetailMapCache.value?.[vo.roomId]?.unreadMsgList || [],
+            isReload: contactDetailMapCache.value?.[vo.roomId]?.isReload || false,
+            isLoading: contactDetailMapCache.value?.[vo.roomId]?.isLoading || false,
+            pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
           };
         }
         else {
@@ -341,7 +375,7 @@ export const useChatStore = defineStore(
     }
     // 删除会话
     async function removeContact(roomId: number) {
-      if (roomId === theContact.value.roomId)
+      if (roomId && roomId === theContactId.value)
         await setContact();
       delete contactMap.value[roomId];
       // 成员列表删除
@@ -391,14 +425,17 @@ export const useChatStore = defineStore(
     /* ------------------------------------------- 消息操作 ------------------------------------------- */
     // 添加消息到列表
     function appendMsg(data: ChatMessageVO, successSend: boolean = false) {
-      const existsMsg = findMsg(data.message.id);
-      !existsMsg && theContact.value.msgList.push(data); // 追加消息
+      const roomId = data.message.roomId;
+      const existsMsg = findMsg(roomId, data.message.id);
+      if (!existsMsg && contactDetailMapCache.value?.[roomId]?.msgList) {
+        contactDetailMapCache.value[roomId].msgList.push(data); // 追加消息
+      }
     }
     // 查找消息
-    function findMsg(msgId: number) {
-      if (!msgId)
+    function findMsg(roomId: number, msgId: number) {
+      if (!msgId || !roomId)
         return undefined;
-      return theContact.value.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
+      return contactDetailMapCache.value?.[roomId]?.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
     }
     // 添加撤回消息
     function setRecallMsg(msg: ChatMessageVO) {
@@ -415,16 +452,17 @@ export const useChatStore = defineStore(
         return false;
       if (!await isActiveWindow()) // 窗口未激活
         return false;
-      if (!contactMap.value[roomId]?.unreadCount && (!theContact.value.unreadCount && theContact.value.roomId === roomId)) {
+      const contact = contactDetailMapCache.value?.[roomId];
+      if (!contactMap.value[roomId]?.unreadCount && (!contact?.unreadCount && contact?.roomId === roomId)) {
         return;
       }
       // 标记已读
-      if (roomId === theContact.value.roomId) {
-        const msg = theContact.value.msgList[theContact.value.msgList.length - 1];
-        theContact.value.unreadCount = 0;
-        theContact.value.unreadMsgList = [];
-        theContact.value.text = msg ? resolveMsgContactText(msg) : theContact.value.text;
-        theContact.value.lastMsgId = msg?.message?.id || theContact.value.lastMsgId;
+      if (roomId === contact?.roomId) {
+        const msg = contact?.msgList[contact?.msgList.length - 1];
+        contact.unreadCount = 0;
+        contact.unreadMsgList = [];
+        contact.text = msg ? resolveMsgContactText(msg) : contact?.text;
+        contact.lastMsgId = msg?.message?.id || contact?.lastMsgId;
       }
       setMsgReadByRoomId(roomId, user.getToken).then((res) => {
         if (res.code !== StatusCode.SUCCESS)
@@ -522,7 +560,7 @@ export const useChatStore = defineStore(
     const onDownUpChangeRoom = async (type: "down" | "up") => {
       if (onDownUpChangeRoomLoading.value)
         return;
-      const index = getContactList.value.findIndex(p => p.roomId === theContact.value.roomId);
+      const index = getContactList.value.findIndex(p => p.roomId === theContact.value?.roomId);
       onDownUpChangeRoomLoading.value = true;
       const chat = useChatStore();
       if (index === -1 && getContactList?.value?.[0]?.roomId) {
@@ -645,7 +683,7 @@ export const useChatStore = defineStore(
         message = "是否确认发起通话？",
         title = type === CallTypeEnum.AUDIO ? "语音通话" : "视频通话",
       } = confirmOption || {};
-      if (theContact.value.type === RoomType.GROUP) {
+      if (theContact.value?.type === RoomType.GROUP) {
         ElMessage.warning("群聊无法进行通话！");
         return;
       }
@@ -696,13 +734,16 @@ export const useChatStore = defineStore(
         name: "",
         text: "",
         type: 1,
-        selfExit: 1,
+        selfExist: 1,
         unreadCount: 0,
         // 消息列表
         msgList: [],
         unreadMsgList: [],
         roomGroup: undefined,
         member: undefined,
+        isReload: false,
+        isLoading: false,
+        pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
       };
       delUserId.value = "";
       isAddNewFriend.value = false;
@@ -769,6 +810,7 @@ export const useChatStore = defineStore(
       unReadContactList,
       searchKeyWords,
       getContactList,
+      theContactId,
       theContact,
       replyMsg,
       atUserList,
@@ -785,6 +827,7 @@ export const useChatStore = defineStore(
       playSounder,
       isVisible,
       delGroupId,
+      contactDetailMapCache,
 
       // 群成员
       memberPageInfo,

@@ -48,6 +48,8 @@ function onClickAvatar() {
     navigateTo("/friend");
   });
 }
+
+const conponentName = computed(() => map[data.message?.type || MessageType.TEXT] || ChatMsgOther);
 </script>
 
 <template>
@@ -55,7 +57,7 @@ function onClickAvatar() {
     {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component
-    :is="map[data.message?.type || MessageType.TEXT] || ChatMsgOther"
+    :is="conponentName"
     ref="msgRef"
     :show-translation="showTranslation"
     :prev-msg="prevMsg"

@@ -25,7 +25,7 @@ const ChatNewGroupDialogRef = ref();
 // 计算
 const theContactId = computed({
   get() {
-    return chat.theContact.roomId;
+    return chat.theContactId;
   },
   set(contactId: number) {
     chat.onChangeRoom(contactId);

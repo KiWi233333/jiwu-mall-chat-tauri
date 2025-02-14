@@ -45,7 +45,7 @@ const onScroll = useDebounceFn((e) => {
     loadData();
   }
 }, 400);
-const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === 0 || chat.contactMap?.[chat.theContact.roomId]?.isFriend === 0); // 自己不存在 或 不是好友
+const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === isTrue.FALESE); // 自己不存在 或 不是好友  || chat.contactMap?.[chat.theContact.roomId]?.isFriend === 0
 const theContactClone = ref<Partial<ChatContactDetailVO>>();
 const editFormFieldRaw = ref("");
 const nameInputRef = ref();
@@ -431,10 +431,13 @@ watch(() => chat.theContact.avatar, (val) => {
 }, { deep: true, immediate: true });
 
 // 监听群成员列表变化
-watch(() => chat.theContact.roomId, async (newRoomId) => {
+watch(() => chat.theContactId, async (newRoomId) => {
   await nextTick();
   containerProps.onScroll();
   scrollTo(0);
+  if (!newRoomId) {
+    return;
+  }
   if (chat.roomMapCache[newRoomId]?.userList) {
     return;
   }
