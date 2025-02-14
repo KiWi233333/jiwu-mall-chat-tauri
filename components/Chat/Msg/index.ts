@@ -3,6 +3,8 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { appName } from "~/constants";
 
+export const RECALL_TIME_OUT = 300000; // 默认5分钟
+
 // 剪切板支持的图片格式
 const CopyImgType = ["image/png", "image/jpg", "image/svg+xml"];
 
@@ -12,8 +14,6 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
   const user = useUserStore();
   const setting = useSettingStore();
   const showTranslation = ref(false);
-
-
   // @ts-expect-error
   let ctxName = String(e?.target?.getAttribute?.("ctx-name") as DOMTokenList | undefined || "");
   const isAiReplyMsg = data.message.type === MessageType.AI_CHAT_REPLY;
@@ -37,7 +37,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadF
   const defaultContextMenu = [
     {
       label: "撤回",
-      hidden: !isSelf,
+      hidden: !isSelf || data.message.sendTime < Date.now() - RECALL_TIME_OUT, // 超过5min
       customClass: "group",
       icon: "i-solar:backspace-broken group-hover:(scale-110 i-solar:backspace-bold) group-btn-danger",
       onClick: () => refundMsg(data, data.message.id),

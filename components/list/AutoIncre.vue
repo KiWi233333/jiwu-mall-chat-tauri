@@ -34,6 +34,7 @@ const { stop, isSupported } = useIntersectionObserver(
 );
 // 监听
 watch(isSee, (val) => {
+  emit("load");
   callBack();
 });
 

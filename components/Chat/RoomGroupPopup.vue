@@ -41,10 +41,10 @@ const { list: vMemberList, scrollTo, containerProps, wrapperProps } = useVirtual
 );
 const onScroll = useDebounceFn((e) => {
   const dom = e.target as HTMLElement;
-  if (dom.scrollHeight - dom.scrollTop <= 360) {
+  if (dom.scrollHeight - dom.scrollTop <= 400) {
     loadData();
   }
-}, 400);
+}, 300);
 const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === isTrue.FALESE); // 自己不存在 或 不是好友  || chat.contactMap?.[chat.theContact.roomId]?.isFriend === 0
 const theContactClone = ref<Partial<ChatContactDetailVO>>();
 const editFormFieldRaw = ref("");
@@ -469,7 +469,6 @@ function onExitOrClearGroup() {
   });
 }
 
-
 onMounted(() => {
   // 初始化加载
   reload();
@@ -527,7 +526,6 @@ onMounted(() => {
     <div
       v-bind="containerProps"
       class="relative h-300px"
-      :class="{ 'scroll-bar': !chat.isMemberReload }"
       @scroll="onScroll"
     >
       <div
@@ -537,23 +535,18 @@ onMounted(() => {
         <div
           v-for="p in vMemberList"
           :key="`${chat.theContact.roomId}_${p.data.userId}`"
-          :class="p.data.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-          class="user-card h-50px flex-shrink-0 cursor-pointer"
+          v-memo="[p.data.activeStatus, p.data.userId, p.data.roleType]"
+          :class="p.data.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-60 filter-grayscale filter-grayscale-100 '"
+          class="user-card"
           @contextmenu="onContextMenu($event, p.data)"
           @click="onContextMenu($event, p.data)"
         >
           <div class="relative flex-row-c-c" :title="p.data.nickName || '未知'">
             <CardElImage
-              v-if="p.data.avatar"
-              :src="BaseUrlImg + p.data.avatar" fit="cover"
+              :default-src="p.data.avatar" fit="cover"
+              error-class="i-solar-user-line-duotone p-2.5 op-80"
               class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
             />
-            <small
-              v-else
-              class="h-2.4rem w-2.4rem flex-row-c-c flex-shrink-0 overflow-auto rounded-1/2 object-cover border-default"
-            >
-              <i class="i-solar-user-line-duotone p-2.5 op-80" />
-            </small>
             <span class="g-avatar" />
           </div>
           <small truncate>{{ p.data.nickName || "未填写" }}</small>
@@ -663,18 +656,15 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .g-avatar {
-  display: block;
-  width: 0.4em;
-  height: 0.4em;
-  border-radius: 50%;
-  position: absolute;
-  right: 0.2em;
-  bottom: 0.2em;
-  --at-apply: "border-default";
-  z-index: 1;
+  --at-apply: "border-default z-1 absolute bottom-0.2em right-0.2em rounded-full block w-2 h-2 ";
 }
 .user-card {
-  --at-apply:'h-fit flex-row-c-c p-1.6 relative gap-2 truncate rounded-2rem filter-grayscale transition-300 transition-all w-full hover:(border-[var(--el-color-primary)] bg-white op-100 shadow shadow-inset dark:bg-dark-9)';
+  --at-apply: "h-50px flex-shrink-0 cursor-pointer flex-row-c-c p-1.5 relative gap-2 truncate rounded-2rem filter-grayscale w-full hover:(bg-color-2 op-100)";
+  .tags {
+    :deep(.el-tag) {
+      transition: none;
+    }
+  }
 }
 
 .is-grid {
@@ -686,16 +676,10 @@ onMounted(() => {
 }
 
 .live {
-  position: relative;
-  opacity: 60;
-  --at-apply: "animate-[fade-in_0.3s]";
-
   .g-avatar {
     background-color: var(--el-color-info);
   }
-
-  filter: grayscale(0);
-
+  filter: none;
 }
 :deep(.el-scrollbar__thumb) {
   opacity: 0.5;

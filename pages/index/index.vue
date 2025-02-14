@@ -31,7 +31,7 @@ const openRoomDrawer = computed({
       }"
     />
     <!-- 空白 -->
-    <div v-else-if="!setting.isMobileSize" data-fades class="h-full w-full flex flex-col items-center justify-center rounded-0 text-gray-600 bg-color-2 dark:(text-gray-500)">
+    <div v-else-if="!setting.isMobileSize" data-fades class="h-full w-full flex flex-col items-center justify-center rounded-0 text-gray-600 sm:border-default-l bg-color-2 dark:(text-gray-500)">
       <i i-solar:chat-line-bold-duotone class="mb-2 h-12 w-12" />
       <small>快开始聊天吧 ✨</small>
     </div>

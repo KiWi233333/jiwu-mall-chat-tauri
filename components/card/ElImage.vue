@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-defineProps<{
-  src: string
+const props = defineProps<{
+  src?: string
+  defaultSrc?: string
   loadClass?: string
   loadRootClass?: string
   errorRootClass?: string
@@ -8,6 +9,7 @@ defineProps<{
   ctxName?: string
 }>();
 const setting = useSettingStore();
+const src = computed(() => props.defaultSrc ? BaseUrlImg + props.defaultSrc : props.src);
 </script>
 
 <template>

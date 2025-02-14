@@ -10,7 +10,6 @@ const pageInfo = computed({
     chat.theContact.pageInfo = val;
   },
 });
-const theRequest = ref<Promise<any> | null>(null);
 const isLoading = computed({
   get: () => chat.theContact.isLoading,
   set: (val: boolean) => {
@@ -39,37 +38,41 @@ async function loadData(roomId?: number, call?: (data?: ChatMessageVO[]) => void
     return;
   }
   isLoading.value = true;
-  getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).then(({ data }) => {
-    if (roomId !== chat.theContact.roomId)
-      return;
-    // 追加数据
-    if (data?.list && data.list.length)
-      chat.theContact.msgList.unshift(...data.list);
-    const oldSize = chat.scrollTopSize;
-    nextTick(() => {
-      // 更新滚动位置
-      chat.saveScrollTop && chat.saveScrollTop();
-      if (pageInfo.value.cursor === null && !chat.theContact.msgList.length) { // 第一次加载默认没有动画
-        chat.scrollBottom(false);
-        call && call(chat.theContact.msgList || []);
-      }
-      else {
-        // 更新滚动位置
-        const newSize = chat.scrollTopSize;
-        // 距离顶部
-        const msgRangeSize = newSize - oldSize;
-        if (msgRangeSize > 0)
-          chat.scrollTop(msgRangeSize);
-      }
-      isLoading.value = false;
-    });
-    pageInfo.value.isLast = data.isLast;
-    pageInfo.value.cursor = data.cursor || undefined;
-  }).catch(() => {
+  const res = await getChatMessagePage(roomId, pageInfo.value.size, pageInfo.value.cursor, user.getToken).catch(() => {
     isLoading.value = false;
     pageInfo.value.isLast = false;
     pageInfo.value.cursor = undefined;
   });
+  if (res?.code !== StatusCode.SUCCESS) {
+    console.warn("加载消息失败");
+    return;
+  }
+  const data = res.data;
+  if (roomId !== chat.theContact.roomId)
+    return;
+    // 追加数据
+  if (data?.list && data.list.length)
+    chat.theContact.msgList.unshift(...data.list);
+  const oldSize = chat.scrollTopSize;
+  nextTick(() => {
+    // 更新滚动位置
+    chat.saveScrollTop && chat.saveScrollTop();
+    if (pageInfo.value.cursor === null && !chat.theContact.msgList.length) { // 第一次加载默认没有动画
+      chat.scrollBottom(false);
+      call && call(chat.theContact.msgList || []);
+    }
+    else {
+      // 更新滚动位置
+      const newSize = chat.scrollTopSize;
+      // 距离顶部
+      const msgRangeSize = newSize - oldSize;
+      if (msgRangeSize > 0)
+        chat.scrollTop(msgRangeSize);
+    }
+    isLoading.value = false;
+  });
+  pageInfo.value.isLast = data.isLast;
+  pageInfo.value.cursor = data.cursor || undefined;
 }
 // 重新加载
 function reload(roomId?: number) {
@@ -85,7 +88,7 @@ function reload(roomId?: number) {
   chat.theContact.msgList.splice(0);
   isReload.value = true;
   isLoading.value = true;
-  theRequest.value = getChatMessagePage(roomId, 20, null, user.getToken).then(async ({ data }) => {
+  getChatMessagePage(roomId, 20, null, user.getToken).then(async ({ data }) => {
     if (roomId !== chat.theContact.roomId)
       return;
     // 追加数据
@@ -109,14 +112,15 @@ function reload(roomId?: number) {
 }
 
 // 监听房间
-watch(() => chat.theContactId, (val, oldVal) => {
+watch(() => chat.theContactId, async (val, oldVal) => {
   if (val) {
-    scrollbarRef.value && scrollBottom(false);
-    if (!chat.contactDetailMapCache[val]?.msgList.length || chat.contactMap[val]?.lastMsgId !== chat.contactDetailMapCache[val].lastMsgId) { // 会话判断是否同步
-      reload(val);
-    }
     // 消息阅读上报
     chat.setReadList(val);
+    await nextTick();
+    scrollbarRef.value && scrollBottom(false);
+    if (!chat.contactDetailMapCache[val]?.msgList.length || chat.contactMap[val]?.lastMsgId !== chat.contactDetailMapCache[val].lastMsgId) { // 会话判断是否同步
+      await reload(val);
+    }
   }
   if (oldVal) { // 旧会话消息上报
     chat.setReadList(oldVal);

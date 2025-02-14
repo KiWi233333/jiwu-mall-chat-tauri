@@ -286,32 +286,14 @@ export const useChatStore = defineStore(
     // 改变会话
     async function setContact(vo?: ChatContactVO) {
       if (!vo || !vo.roomId) {
-        theContact.value = {
-          activeTime: 0,
-          avatar: "",
-          roomId: 0,
-          hotFlag: 1,
-          name: "",
-          text: "",
-          type: 1,
-          selfExist: 1,
-          unreadCount: 0,
-          // 消息列表
-          msgList: [],
-          unreadMsgList: [],
-          roomGroup: undefined,
-          member: undefined,
-          isReload: false,
-          isLoading: false,
-          pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
-        };
+        theContactId.value = undefined;
         return;
       }
       // vo.unreadCount = 0;
       if (!contactMap.value[vo.roomId]) { // 追加
         contactMap.value[vo.roomId] = vo;
       }
-      theContact.value = {
+      contactDetailMapCache.value[vo.roomId] = {
         ...(vo || {}),
         // 消息列表
         msgList: contactDetailMapCache.value?.[vo.roomId]?.msgList || [],
@@ -320,24 +302,20 @@ export const useChatStore = defineStore(
         isLoading: contactDetailMapCache.value?.[vo.roomId]?.isLoading || false,
         pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
       };
-      try {
-        const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type);
-        if (res && res.code === StatusCode.SUCCESS) {
-          theContact.value = {
-            ...(res?.data || {}),
-            msgList: contactDetailMapCache.value?.[vo.roomId]?.msgList || [],
-            unreadMsgList: contactDetailMapCache.value?.[vo.roomId]?.unreadMsgList || [],
-            isReload: contactDetailMapCache.value?.[vo.roomId]?.isReload || false,
-            isLoading: contactDetailMapCache.value?.[vo.roomId]?.isLoading || false,
-            pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
-          };
-        }
-        else {
-          setContact();
-        }
+      // 补充会话详情
+      const res = await getChatContactInfo(vo.roomId, user.getToken, vo.type)?.catch(() => {});
+      if (res && res.code === StatusCode.SUCCESS) {
+        contactDetailMapCache.value[vo.roomId] = {
+          ...(res?.data || {}),
+          msgList: contactDetailMapCache.value?.[vo.roomId]?.msgList || [],
+          unreadMsgList: contactDetailMapCache.value?.[vo.roomId]?.unreadMsgList || [],
+          isReload: contactDetailMapCache.value?.[vo.roomId]?.isReload || false,
+          isLoading: contactDetailMapCache.value?.[vo.roomId]?.isLoading || false,
+          pageInfo: contactDetailMapCache.value?.[vo.roomId]?.pageInfo || { cursor: undefined, isLast: false, size: 20 } as PageInfo,
+        };
       }
-      catch (error) {
-        console.log(error);
+      else {
+        setContact();
       }
     }
     // 重新拉取会话
