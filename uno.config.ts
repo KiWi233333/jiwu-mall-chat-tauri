@@ -117,6 +117,11 @@ export default defineConfig({
     colors: {
       theme: {
         primary: "var(--el-color-primary)",
+        danger: "var(--el-color-danger)",
+        error: "var(--el-color-error)",
+        warning: "var(--el-color-warning)",
+        info: "var(--el-color-info)",
+        success: "var(--el-color-success)",
       }, // class="text-very-cool"
       tip: {
         main: "var(--el-color-primary)", // class="--el-color-primary"

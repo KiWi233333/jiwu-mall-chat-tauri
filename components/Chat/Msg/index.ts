@@ -9,7 +9,7 @@ export const RECALL_TIME_OUT = 300000; // 默认5分钟
 const CopyImgType = ["image/png", "image/jpg", "image/svg+xml"];
 
 // @unocss-include
-export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO, onDownLoadFile?: () => any) {
+export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO<any>, onDownLoadFile?: () => any) {
   const chat = useChatStore();
   const user = useUserStore();
   const setting = useSettingStore();

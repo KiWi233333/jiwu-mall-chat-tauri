@@ -19,6 +19,7 @@ const isDisabledFile = computed(() => !user?.isLogin || chat.theContact.selfExis
 const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === isTrue.FALESE); // 自己不存在 或 不是好友  || chat.contactMap?.[chat.theContact.roomId]?.isFriend === isTrue.FALESE
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
+const isAiRoom = computed(() => chat.theContact.type === RoomType.AICHAT); // 机器人
 // 状态
 const showGroupNoticeDialog = ref(false);
 const loadInputDone = ref(false); // 用于移动尺寸动画
@@ -30,7 +31,6 @@ const formRef = useTemplateRef("formRef"); // 表单
 
 // 阅读本房间（防抖）
 const setReadListDebounce = useDebounceFn(() => {
-  // console.log("read room");
   chat.theContact.roomId && chat.setReadList(chat.theContact.roomId);
 }, 400);
 
@@ -81,15 +81,16 @@ async function onSubmit() {
       return;
 
     const formDataTemp = JSON.parse(JSON.stringify(chat.msgForm));
-    if (chat.theContact.type === RoomType.GROUP && chat.msgForm.content) {
+    if (chat.msgForm.content) {
       if (document.querySelector(".at-select")) // enter冲突at选择框
         return;
 
-      // 处理 @用户
-      const { atUidList } = resolveAtUsers(formDataTemp.content, userOptions.value);
-      if (atUidList?.length) {
-        chat.atUserList = [...atUidList];
-        formDataTemp.body.atUidList = [...new Set(atUidList)];
+      if (chat.theContact.type === RoomType.GROUP) { // 处理 @用户
+        const { atUidList } = resolveAtUsers(formDataTemp.content, userOptions.value);
+        if (atUidList?.length) {
+          chat.atUserList = [...atUidList];
+          formDataTemp.body.atUidList = [...new Set(atUidList)];
+        }
       }
 
       // 处理 AI机器人
@@ -101,7 +102,7 @@ async function onSubmit() {
         formDataTemp.body = {
           userId: aiRobotList[0].userId,
           modelCode: 1,
-          businessCode: 1,
+          businessCode: AiBusinessType.TEXT,
         };
         formDataTemp.msgType = MessageType.AI_CHAT; // 设置对应消息类型
       }
@@ -129,7 +130,7 @@ async function onSubmit() {
     }
     // 开始提交
     isSending.value = true;
-    // 语音消息 二次处理
+    // 1) 语音消息
     if (formDataTemp.msgType === MessageType.SOUND) {
       await onSubmitSound((key) => {
         formDataTemp.body.url = key;
@@ -139,7 +140,28 @@ async function onSubmit() {
       });
       return;
     }
-    // 普通消息
+    // 2) AI私聊房间
+    if (isAiRoom.value) {
+      const content = formDataTemp.content?.trim();
+      if (!content)
+        return;
+      if (!chat.theContact?.targetUid) {
+        ElMessage.error("房间信息不完整！");
+        return;
+      }
+      await submit({
+        roomId: chat.theContact.roomId,
+        msgType: MessageType.AI_CHAT, // AI消息
+        content,
+        body: {
+          userId: chat.theContact?.targetUid,
+          modelCode: 1,
+          businessCode: AiBusinessType.TEXT,
+        },
+      });
+      return;
+    }
+    // 3) 普通消息
     submit(formDataTemp);
   });
 }
@@ -616,9 +638,10 @@ onUnmounted(() => {
       </div>
     </div>
     <div class="form-tools relative sm:h-62">
-      <!-- 工具栏 -->
+      <!-- 工具栏 TODO: AI机器人张不支持 -->
       <div
-        class="relative flex items-center gap-4 px-2"
+        v-if="!isAiRoom"
+        class="relative m-b-2 flex items-center gap-4 px-2 sm:mb-0"
       >
         <el-tooltip popper-style="padding: 0.2em 0.5em;" :content="chat.msgForm.msgType !== MessageType.SOUND ? (setting.isMobileSize ? '语音' : '语音 Ctrl+T') : '键盘'" placement="top">
           <i
@@ -749,10 +772,7 @@ onUnmounted(() => {
       <el-form-item
         v-if="chat.msgForm.msgType !== MessageType.SOUND"
         prop="content"
-        class="input relative h-fit w-full !m-(b-2 t-4) sm:mt-0"
-        :class="{
-          'is-mobile': setting.isMobileSize,
-        }"
+        class="input relative h-fit w-full !m-(b-2 t-2) sm:mt-0"
         style="padding: 0;margin:  0;"
         :rules="[
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
@@ -928,7 +948,8 @@ onUnmounted(() => {
     }
   }
 
-  &.is-mobile {
+  // 移动端尺寸下scss
+  @media (max-width: 768px) {
     :deep(.el-form-item__content) {
       .el-input__count {
         left: auto;

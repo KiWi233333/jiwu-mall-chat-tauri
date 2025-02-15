@@ -169,7 +169,7 @@ export enum MessageType {
  *
  * ChatMessageVO
  */
-export interface ChatMessageVO<T = TextBodyMsgVO> {
+export interface ChatMessageVO<T = any> {
   /**
    * 发送者信息
    */
@@ -212,7 +212,8 @@ export interface Message<T> {
   /**
    * 消息内容不同的消息类型，内容体不同，见https://www.yuque.com/snab/mallcaht/rkb2uz5k1qqdmcmd
    */
-  body?: MessageBodyMap[MessageType] | T;
+  body?: T;
+  // body?:T  MessageBodyMap[MessageType] | ;
 }
 
 export interface MessageBodyMap {
@@ -423,9 +424,9 @@ export interface AiChatBodyMsgVO {
 /** AI回复消息 */
 export interface AiChatReplyBodyMsgVO {
   content: string;
-  urlContentMap: { [key: string]: UrlInfoDTO };
-  atUidList: string[];
-  reply: {
+  urlContentMap?: { [key: string]: UrlInfoDTO };
+  atUidList?: string[];
+  reply?: {
     id: number;
     uid: string;
     nickName: string;

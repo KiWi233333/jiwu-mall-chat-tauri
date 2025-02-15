@@ -402,6 +402,9 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     // 判断粘贴上传
     if (!e.clipboardData?.items?.length)
       return;
+    if (chat.theContact.type === RoomType.AICHAT) {
+      return;
+    }
     // 拿到粘贴板上的 image file 对象
     const fileArr = Array.from(e.clipboardData.items);
     const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
@@ -604,7 +607,7 @@ export function useLoadAiList() {
    * 加载AI列表
    */
   async function loadAi() {
-    if (!chat.theContact.roomId || chat.theContact.type !== RoomType.GROUP)
+    if (!chat.theContact.roomId)
       return;
     const { data, code } = await getAiRobotList(user.getToken);
     if (data && code === StatusCode.SUCCESS) {

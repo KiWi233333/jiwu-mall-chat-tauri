@@ -81,7 +81,7 @@ async function resolveNewMsg(msg: ChatMessageVO) {
   //   msg.message.type === MessageType.RTC && handleRTCMsg(msg); // 处理rtc消息 多一步滚动
   // }
   chat.appendMsg(msg); // 追加消息
-  msg.message.type === MessageType.RTC && chat.theContact.roomId === msg.message.roomId && handleRTCMsg(msg); // 处理rtc消息 多一步滚动
+  msg.message.type === MessageType.RTC && msg.message.roomId === chat.theContactId && handleRTCMsg((msg as any)); // 处理rtc消息 多一步滚动
   ws.wsMsgList.newMsg.splice(0);
 }
 /**
@@ -155,8 +155,10 @@ export function resolvePinContact(data: WSPinContactMsg) {
   }
 }
 // 5. 处理rtc消息
-function handleRTCMsg(msg: ChatMessageVO) {
-  const rtcMsg = msg.message.body as RtcLiteBodyMsgVO;
+function handleRTCMsg(msg: ChatMessageVO<RtcLiteBodyMsgVO>) {
+  const rtcMsg = msg.message.body;
+  if (!rtcMsg)
+    return;
   const chat = useChatStore();
   const user = useUserStore();
   const targetCtx = chat.contactMap?.[msg.message.roomId];
@@ -167,6 +169,7 @@ function handleRTCMsg(msg: ChatMessageVO) {
     });
   }
 }
+
 /**
  * 6. ai推送消息处理
  * @param data 数据
@@ -176,37 +179,50 @@ function resolveAiStream(data: WSAiStreamMsg) {
   const contact = chat.contactMap[data.roomId];
   if (!contact)
     return;
-  if (data.roomId !== chat.theContact.roomId) { // 修改会话
-    if (contact?.lastMsgId !== data.msgId)
-      return;
-    // 修改content内容
-    if (contact.text === "..." && data.status === AiReplyStatusEnum.START) { // 初始状态
-      contact.text = "";
-      return;
-    }
-  }
-  // 本房间修改状态
-  if (data.status === AiReplyStatusEnum.IN_PROGRESS)
-    contact.text += data.content;
-  else
-    contact.text = data.content;
-  chat.theContact.text = contact?.text;
-  // 本房间追加消息
   const oldMsg = chat.findMsg(data.roomId, data.msgId) as ChatMessageVO<AiChatReplyBodyMsgVO> | undefined;
-  if (oldMsg?.message?.body) {
-    if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
+  // 本房间修改状态
+  oldMsg?.message?.body && (oldMsg.message.body.status = data.status); // 修改消息状态
+  if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
+    contact.text += data.content;
+    if (oldMsg) {
       oldMsg.message.content += data.content;
-      if (!oldMsg?.message?.body?.reasoningContent) {
-        oldMsg.message.body.reasoningContent = "";
+      if (!oldMsg.message.body?.reasoningContent) {
+        oldMsg.message.body = {
+          reasoningContent: "",
+        } as AiChatReplyBodyMsgVO;
       }
       oldMsg.message.body.reasoningContent += data.reasoningContent || "";
     }
-    else {
-      oldMsg.message.content = data.content;
-      oldMsg.message.body.reasoningContent = data.reasoningContent || "";
-    }
-    oldMsg.message.body.status = data.status; // 修改消息状态
-    // await nextTick();
-    // scrollBottom(true);
   }
+  else if (contact.text === "..." && data.status === AiReplyStatusEnum.START) { // 初始状态
+    contact.text = "";
+  }
+  else {
+    contact.text = data.content.substring(0, 100); // 裁切100字
+    if (oldMsg) {
+      oldMsg.message.content = data.content;
+      if (!oldMsg.message.body?.reasoningContent) {
+        oldMsg.message.body = {
+          reasoningContent: "",
+        } as AiChatReplyBodyMsgVO;
+      }
+      oldMsg.message.body!.reasoningContent = data.reasoningContent || "";
+    }
+  }
+
+  // // 更新消息
+  // if (oldMsg?.message?.body) {
+  //   if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
+  //     oldMsg.message.content += data.content;
+  //     if (!oldMsg?.message?.body?.reasoningContent) {
+  //       oldMsg.message.body.reasoningContent = "";
+  //     }
+  //     oldMsg.message.body.reasoningContent += data.reasoningContent || "";
+  //   }
+  //   else {
+  //     oldMsg.message.content = data.content;
+  //     oldMsg.message.body.reasoningContent = data.reasoningContent || "";
+  //   }
+  //   oldMsg.message.body.status = data.status; // 修改消息状态
+  // }
 }

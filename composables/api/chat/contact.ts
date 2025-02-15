@@ -63,6 +63,17 @@ export function getChatContactInfo(roomId: number, token: string, roomType: Room
       },
     );
   }
+  else if (roomType === RoomType.AICHAT) {
+    return useHttp.get<Result<ChatContactDetailVO>>(
+      `/chat/contact/self/room/${roomId}`,
+      { },
+      {
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+  }
 }
 
 /**
@@ -199,10 +210,10 @@ export interface ChatContactVO {
   lastMsgId?: number
 }
 
-export const RoomTypeTextMap = {
-  [RoomType.GROUP]: "群聊",
-  [RoomType.SELFT]: "单聊",
-  [RoomType.AICHAT]: "AI聊",
+export const RoomTypeTextMap: Record<RoomType, string> = {
+  [RoomType.GROUP]: "群",
+  [RoomType.SELFT]: "个",
+  [RoomType.AICHAT]: "AI",
 };
 
 
@@ -215,6 +226,11 @@ export interface ChatContactDetailVO extends ChatContactVO {
    * 详细信息
    */
   roomGroup?: ChatRoomGroup
+
+  /**
+   * 好友id
+   */
+  targetUid?: string
 
 }
 

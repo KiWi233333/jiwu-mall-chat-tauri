@@ -19,12 +19,18 @@ const initFold = data.message?.content?.length && data.message?.content?.length 
 const isFold = ref(initFold);
 const isResonFold = ref(initFold);
 
-const showReasonLoading = computed(() => data.message?.body.status === AiReplyStatusEnum.IN_PROGRESS && !data.message?.content);
-const showContentLoading = computed(() => (data.message?.body.status === AiReplyStatusEnum.IN_PROGRESS && data.message?.content) || (data.message?.body.status === undefined && !data.message?.content));
+const showReasonLoading = computed(() => data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && !data.message?.content);
+const showContentLoading = computed(() => (data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && data.message?.content) || (data?.message?.body?.status === undefined && !data.message?.content));
 </script>
 
 <template>
-  <ChatMsgTemplate :prev-msg="prevMsg" :index="index" :data="data" class="group" v-bind="$attrs">
+  <ChatMsgTemplate
+    :prev-msg="prevMsg"
+    :index="index"
+    :data="data"
+    class="group"
+    v-bind="$attrs"
+  >
     <template #name-after>
       <!-- 折叠 -->
       <span
@@ -40,10 +46,10 @@ const showContentLoading = computed(() => (data.message?.body.status === AiReply
       <div class="msg-popper relative min-h-2.5em min-w-2.6em">
         <!-- 思考内容 -->
         <p
-          v-if="data.message?.body?.reasoningContent && !isFold" class="reson-content"
+          v-if="data?.message?.body?.reasoningContent && !isFold" class="reson-content"
           :class="isResonFold ? 'h-2.5em truncate is-reson-open' : 'h-auto'"
         >
-          思考：{{ data.message?.body?.reasoningContent }}
+          思考：{{ data?.message?.body?.reasoningContent }}
           <span
             class="text absolute bottom-1.5 right-1.5 z-2 h-2em px-3 leading-2em shadow btn-info text-mini"
             @click="isResonFold = !isResonFold"

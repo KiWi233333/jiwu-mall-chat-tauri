@@ -6,7 +6,7 @@
  * ctx-name 用于右键菜单
  */
 const { data } = defineProps<{
-  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO | AiChatBodyMsgVO>
+  data: ChatMessageVO<TextBodyMsgVO | ImgBodyMsgVO | RtcBodyMsgVO | AiChatBodyMsgVO | GroupNoticeBodyMsgVO | AiChatReplyBodyMsgVO>;
   prevMsg?: Partial<ChatMessageVO<TextBodyMsgVO>>
   index: number
 }>();

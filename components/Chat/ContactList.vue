@@ -184,6 +184,12 @@ function onClickContact(room: ChatContactVO) {
 }
 
 reload();
+
+const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
+  // [RoomType.GROUP]: "primary",
+  // [RoomType.SELFT]: "",
+  [RoomType.AICHAT]: "warning",
+};
 </script>
 
 <template>
@@ -266,13 +272,15 @@ reload();
                 <p class="text truncate text-black dark:text-white">
                   {{ room.name }}
                 </p>
-                <span class="text ml-a w-fit flex-shrink-0 text-right text-10px text-mini">
+                <!-- AI机器人 -->
+                <svg v-if="RoomTypeTagType[room.type]" xmlns="http://www.w3.org/2000/svg" class="ai-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M6 7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-4 3H0v6h2zm20 0h2v6h-2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m6 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" /></svg>
+                <span class="text ml-a w-fit flex-shrink-0 text-right text-0.7em leading-2em text-mini">
                   {{ formatContactDate(room.activeTime) }}
                 </span>
               </div>
               <p class="text mt-1 flex text-small">
                 <small
-                  class="flex-1 truncate"
+                  class="h-1.5em flex-1 truncate"
                   :class="{ 'text-[var(--el-color-info)] font-600': room.unreadCount }"
                 >
                   {{ room.text }}
@@ -308,6 +316,10 @@ reload();
     .text {
       --at-apply: "transition-none";
     }
+
+    .ai-icon {
+      --at-apply: "mx-1 h-1.2em w-1.2em text-theme-primary dark:text-theme-info";
+    }
     &.is-pin {
       --at-apply: "sm:border-default";
     }
@@ -315,6 +327,9 @@ reload();
       --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";
       .text {
         --at-apply: "sm:(color-white dark:text-light)";
+      }
+      .ai-icon {
+        --at-apply: "sm:!text-light";
       }
     }
   }

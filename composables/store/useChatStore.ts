@@ -293,6 +293,7 @@ export const useChatStore = defineStore(
       if (!contactMap.value[vo.roomId]) { // 追加
         contactMap.value[vo.roomId] = vo;
       }
+      theContactId.value = vo.roomId;
       contactDetailMapCache.value[vo.roomId] = {
         ...(vo || {}),
         // 消息列表
@@ -406,11 +407,26 @@ export const useChatStore = defineStore(
         contactDetailMapCache.value[roomId].msgList.push(data); // 追加消息
       }
     }
+    const findMsgCache = new Map<string, ChatMessageVO>();
     // 查找消息
     function findMsg(roomId: number, msgId: number) {
       if (!msgId || !roomId)
         return undefined;
-      return contactDetailMapCache.value?.[roomId]?.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
+      if (findMsgCache.has(`${roomId}_${msgId}`)) {
+        console.log("命中缓存");
+        return findMsgCache.get(`${roomId}_${msgId}`) as ChatMessageVO;
+      }
+      const msg = contactDetailMapCache.value?.[roomId]?.msgList.find((k: ChatMessageVO) => k?.message?.id === msgId);
+      if (msg) {
+        findMsgCache.set(`${roomId}_${msgId}`, msg);
+      }
+      return msg;
+    }
+    // 删除缓存
+    function removeMsgCache(roomId: number, msgId: number) {
+      if (!msgId || !roomId)
+        return;
+      findMsgCache.delete(`${roomId}_${msgId}`);
     }
     // 添加撤回消息
     function setRecallMsg(msg: ChatMessageVO) {
@@ -771,6 +787,13 @@ export const useChatStore = defineStore(
       currentMemberList.value = [];
       isMemberLoading.value = false;
       isMemberReload.value = false;
+      findMsgCache.clear();
+      contactDetailMapCache.value = {};
+      sortedContacts.value = [];
+      currentMemberList.value = [];
+      updateContactList.value = {};
+      isMemberLoading.value = false;
+      isMemberReload.value = false;
     }
 
 
@@ -837,6 +860,7 @@ export const useChatStore = defineStore(
       useChatWebRTC,
       setPinContact,
       appendMsg,
+      removeMsgCache,
       confirmRtcFn,
       // dom
       scrollTopSize,
