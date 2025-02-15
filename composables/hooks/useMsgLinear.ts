@@ -199,7 +199,7 @@ function resolveAiStream(data: WSAiStreamMsg) {
     contact.text = "";
   }
   else {
-    contact.text = data.content.substring(0, 100); // 裁切100字
+    contact.text = (data.content || "...").substring(0, 100); // 裁切100字
     if (oldMsg) {
       oldMsg.message.content = data.content;
       if (!oldMsg.message.body?.reasoningContent) {

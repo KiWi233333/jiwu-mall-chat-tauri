@@ -11,6 +11,7 @@ const setting = useSettingStore();
 const user = useUserStore();
 const chat = useChatStore();
 const isReload = ref(false);
+const visiblePopper = ref(false);
 const pageInfo = ref({
   cursor: undefined as undefined | string,
   isLast: false,
@@ -168,6 +169,8 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
 
 // 跳转好友页面
 async function toFriendPage() {
+  visiblePopper.value = false;
+  await nextTick();
   await navigateTo("/friend");
   setTimeout(async () => {
     chat.setTheFriendOpt(FriendOptType.Empty);
@@ -204,7 +207,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
       <ElInput
         id="search-contact"
         v-model.lazy="chat.searchKeyWords"
-        class="mr-2 text-0.8rem"
+        class="mr-2 text-0.8rem hover:op-80"
         style="height: 2rem;"
         name="search-content"
         type="text"
@@ -216,22 +219,36 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
         placeholder="搜索"
       />
       <!-- 添加 -->
-      <el-dropdown placement="bottom-end" popper-class="dropdown-btns" trigger="click">
-        <div class="icon">
-          <i i-carbon:add-large p-2 />
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item :icon="ElIconUser" @click="toFriendPage">
-              添加好友
-            </el-dropdown-item>
-            <!-- divided -->
-            <el-dropdown-item divided :icon="ElIconPlus" @click="showDialog = true">
-              新建群聊
-            </el-dropdown-item>
-          </el-dropdown-menu>
+      <el-popover
+        v-model:visible="visiblePopper"
+        placement="bottom-end"
+        width="fit-content"
+        :teleported="true"
+        popper-class="dropdown-btns shadow-sm"
+        popper-style="padding:0;min-width: 0;"
+        transition="popper-fade"
+        trigger="click"
+        append-to-body
+      >
+        <template #reference>
+          <div class="icon">
+            <i i-carbon:add-large p-2 />
+          </div>
         </template>
-      </el-dropdown>
+        <template #default>
+          <div w-fit p-1>
+            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="toFriendPage">
+              <ElIconUser size="1.2em" class="mr-2" />
+              添加好友
+            </div>
+            <div my-1 border-default-t />
+            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="() => { showDialog = true; visiblePopper = false }">
+              <ElIconPlus size="1.2em" class="mr-2" />
+              新建群聊
+            </div>
+          </div>
+        </template>
+      </el-popover>
     </div>
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list" wrapper-class="relative">
@@ -345,7 +362,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
     }
   }
   .icon {
-    --at-apply: "h-2rem w-2rem flex-row-c-c btn-primary-bg  bg-color-2 dark:bg-dark-7";
+    --at-apply: "h-2rem px-2 w-2rem  !btn-primary-bg flex-row-c-c bg-color-2 dark:bg-dark-7";
   }
 }
 

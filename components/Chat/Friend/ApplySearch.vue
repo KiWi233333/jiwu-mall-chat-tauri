@@ -169,7 +169,7 @@ function clickTag(val: string, i: number) {
       <BtnElButton
         type="primary"
         class="w-5rem text-sm shadow"
-        style="position: relative; transition: 0.2s; height: 2rem;"
+        style="position: relative; transition: 0.2s; height: 2rem;font-size: 0.8em;"
         :disabled="isLoading"
         icon-class="i-solar:magnifer-outline mr-1"
         @focus="isShowModel = true"

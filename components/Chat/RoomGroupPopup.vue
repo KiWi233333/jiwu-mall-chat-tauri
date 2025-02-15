@@ -739,13 +739,16 @@ onMounted(() => {
 
 .scroll-bar {
   &::-webkit-scrollbar {
-    width: 0.5em;
-    height: 0.5em;
+    width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #85858525;
+    background-color: transparent;
     border-radius: 0.25rem;
-    border: 0.25rem solid transparent;
+  }
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: #85858538;
+    }
   }
   &::-webkit-scrollbar-track {
     background-color: transparent;
