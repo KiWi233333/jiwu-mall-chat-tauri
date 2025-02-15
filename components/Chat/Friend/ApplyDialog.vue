@@ -15,13 +15,14 @@ const isShowApply = computed({
   set: value => emit("update:show", value),
 });
 
+
+const user = useUserStore();
 // 添加好友
-const applyFormRef = ref();
+const applyFormRef = useTemplateRef("applyFormRef");
 const applyForm = ref<ChatUserFriendApplyDTO>({
-  msg: "",
+  msg: `我是 ${user?.userInfo?.nickname}`,
   targetUid: "",
 });
-const user = useUserStore();
 // 好友申请
 async function addFrendApplyById() {
   applyFormRef?.value?.validate(async (valid: boolean) => {
@@ -40,7 +41,7 @@ async function addFrendApplyById() {
     if (res.code !== StatusCode.SUCCESS)
       return;
     applyForm.value = {
-      msg: "",
+      msg: `我是 ${user?.userInfo?.nickname}`,
       targetUid: "",
     };
     emit("submit", props.userId);

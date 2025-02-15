@@ -526,7 +526,7 @@ onMounted(() => {
     </div>
     <div
       v-bind="containerProps"
-      class="relative h-300px"
+      class="scroll-bar relative h-300px"
       @scroll="onScroll"
     >
       <div
@@ -737,7 +737,19 @@ onMounted(() => {
   }
 }
 
-// .scroll-bar {
+.scroll-bar {
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    height: 0.5em;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #85858525;
+    border-radius: 0.25rem;
+    border: 0.25rem solid transparent;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 //   // scroll-behavior: smooth;
-// }
+}
 </style>

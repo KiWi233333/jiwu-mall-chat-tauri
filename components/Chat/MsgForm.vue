@@ -637,7 +637,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div class="form-tools relative sm:h-62">
+    <div class="form-tools">
       <!-- 工具栏 TODO: AI机器人张不支持 -->
       <div
         v-if="!isAiRoom"
@@ -834,6 +834,7 @@ onUnmounted(() => {
       >
         {{ (isChating && speechRecognition.isSupported || theAudioFile?.id) ? (audioTransfromText || '...') : `识别你的声音 🎧${speechRecognition.isSupported ? '' : '（不支持）'}` }}
       </p>
+      <!-- 工具栏 -->
       <div
         v-if="!setting.isMobileSize"
         class="hidden items-end p-1 pt-0 sm:flex"
@@ -871,7 +872,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .form-tools {
-    --at-apply: "flex flex-col justify-center p-2 border-default-t";
+    --at-apply: "relative sm:h-62 flex flex-col justify-center p-2 border-default-t";
     .tip {
     --at-apply: "op-0";
   }

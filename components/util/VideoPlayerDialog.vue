@@ -31,7 +31,7 @@ const videoInfo = ref<{
 // 拖拽
 const dragHandler = useTemplateRef<HTMLDivElement>("dragHandler");
 const dragRef = useTemplateRef<HTMLDivElement>("dragRef");
-const disabledDrag = computed(() => setting.isMobileSize);
+const disabledDrag = computed(() => setting.isMobileSize || !props.modelValue);
 const dragRefStyle = ref({
   maxWidth: 0,
   maxHeight: 0,
@@ -275,8 +275,8 @@ const videoSize = computed(() => {
           ref="videoPlayerRef"
           :style="{ width: videoSize.width, height: videoSize.height }"
           :src="src"
-          controls
-          autoplay
+
+          autoplay controls
           :muted="!!videoInfo.muted"
           class="block h-full w-full overflow-hidden card-rounded-df object-contain"
           @play="onPlay"

@@ -48,6 +48,9 @@
   .at-list {
     --at-apply: "max-w-full text-0.75rem w-fit  truncate flex-ml-a w-fit cursor-pointer truncate px-2 text-color-info card-default";
   }
+  .flex-mr-a {
+    margin-left: auto;
+  }
 }
 // 系统
 .notice {
@@ -95,6 +98,9 @@
   .flex-ml-a {
     margin-left: auto;
     align-items: end;
+  }
+  .flex-mr-a {
+    margin-right: auto;
   }
   flex-direction: row-reverse;
   .flex-row {

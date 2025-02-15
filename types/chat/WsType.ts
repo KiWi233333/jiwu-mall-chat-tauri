@@ -208,6 +208,10 @@ export enum AiReplyStatusEnum {
   IN_PROGRESS = 1,
   FINISHED = 2,
   ERROR = 3,
+  /**
+   * 继续对话
+   */
+  COTINUE = 4,
 }
 
 /**

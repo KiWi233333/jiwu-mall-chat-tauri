@@ -11,6 +11,7 @@ const { data, prevMsg, index } = defineProps<{
   data: ChatMessageVO
   prevMsg?: Partial<ChatMessageVO>
   index: number
+  id?: string
 }>();
 const map: MsgComType = {
   [MessageType.TEXT]: ChatMsgText,
@@ -35,7 +36,7 @@ const chat = useChatStore();
 // 右键菜单
 const showTranslation = ref(false);
 // 是否显示时间
-const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟内显示时间
+const showTime = prevMsg?.message?.sendTime && (data.message.sendTime - prevMsg?.message?.sendTime) > 300000; // 5分钟外显示时间
 
 // 点击头像
 function onClickAvatar() {
@@ -53,11 +54,12 @@ const conponentName = computed(() => map[data.message?.type || MessageType.TEXT]
 </script>
 
 <template>
-  <p v-if="showTime" :key="`${index}_time`" w-full py-2 text-center text-0.8em op-60>
+  <p v-if="showTime" v-once :key="`${index}_time`" w-full py-2 text-center text-0.8em op-60>
     {{ formatFriendlyDate(new Date(data.message.sendTime)) }}
   </p>
   <component
     :is="conponentName"
+    :id="id"
     ref="msgRef"
     :show-translation="showTranslation"
     :prev-msg="prevMsg"

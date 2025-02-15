@@ -99,7 +99,7 @@ const dragRefStyle = ref({
   maxWidth: 0,
   maxHeight: 0,
 });
-const disableDrag = computed(() => setting.isMobileSize && !isMinWind.value);
+const disableDrag = computed(() => (setting.isMobileSize && !isMinWind.value) || !modelValue);
 const { x, y, style } = useDraggable(dragRef, {
   disabled: disableDrag,
   stopPropagation: true,

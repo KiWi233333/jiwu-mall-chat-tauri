@@ -188,6 +188,7 @@ function resolveAiStream(data: WSAiStreamMsg) {
       oldMsg.message.content += data.content;
       if (!oldMsg.message.body?.reasoningContent) {
         oldMsg.message.body = {
+          ...oldMsg.message.body,
           reasoningContent: "",
         } as AiChatReplyBodyMsgVO;
       }
@@ -203,6 +204,7 @@ function resolveAiStream(data: WSAiStreamMsg) {
       oldMsg.message.content = data.content;
       if (!oldMsg.message.body?.reasoningContent) {
         oldMsg.message.body = {
+          ...oldMsg.message.body,
           reasoningContent: "",
         } as AiChatReplyBodyMsgVO;
       }

@@ -1,24 +1,30 @@
 let timer = null;
-let time = new Date();
+let status = null; // 用于存储状态
+let lastHeartbeatTime = new Date(); // 上次心跳时间
+
 // 监听来自主线程的初始化消息
 self.onmessage = function (e) {
-  const { status, noticeType } = e.data;
-  // 发送
+  const { status: newStatus, noticeType } = e.data;
+  // 更新状态
+  status = newStatus;
+  // 发送日志消息
   self.postMessage({ type: "log", data: `Web Worker 初始化，ws状态：${status} ${noticeType}` });
+  // 清理旧的定时器
   clearInterval(timer);
-  // 定时发送心跳消息
+
+  // 如果状态不正常，直接通知主线程重新加载
+  if (status !== 1) {
+    self.postMessage({ type: "reload" });
+    return;
+  }
+
+  // 启动心跳定时器
   timer = setInterval(() => {
-    const newTime = new Date();
-    if (status !== 1) {
-      clearInterval(timer);
-      timer = null;
-      // 这里可以发送消息回主线程，通知主线程进行 reload()
-      self.postMessage({ type: "reload" });
-    }
-    else {
-      // 并通过某种方式在 Web Worker 中可用
-      self.postMessage({ type: "heart", data: `${newTime.getTime() - time.getTime()}ms` });
-    }
-    time = newTime;
+    const now = new Date();
+    const elapsedTime = now.getTime() - lastHeartbeatTime.getTime();
+    // 发送心跳消息
+    self.postMessage({ type: "heart", data: `${elapsedTime}ms` });
+    // 更新上次心跳时间
+    lastHeartbeatTime = now;
   }, 20000);
 };

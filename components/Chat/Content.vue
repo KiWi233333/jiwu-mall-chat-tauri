@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="content relative max-wfull flex flex-col bg-color-3">
+  <div class="content relative max-wfull flex flex-col">
     <!-- 房间信息 -->
     <ChatRoomInfo class="border-default-b card-bg-color" />
     <!-- 消息列表 -->
@@ -17,6 +17,8 @@ defineProps<{
 
 <style lang="scss" scoped>
 .content {
+  --at-apply: "bg-color-3";
+
   :deep(.el-scrollbar) {
     .el-scrollbar__bar {
       opacity: 0.6;

@@ -70,7 +70,7 @@ async function addMsg() {
           class="text-input card-rounded-df border-default-hover"
           autofocus type="textarea" :rows="4"
           placeholder="请输入群通知内容"
-          @keydown.enter.prevent="addMsg"
+          @keydown.enter.exact.stop.prevent="addMsg"
         />
       </el-form-item>
       <el-form-item

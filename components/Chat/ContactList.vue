@@ -204,9 +204,9 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
       <ElInput
         id="search-contact"
         v-model.lazy="chat.searchKeyWords"
+        class="mr-2 text-0.8rem"
         style="height: 2rem;"
         name="search-content"
-        class="mr-2"
         type="text"
         clearable
         autocomplete="off"
@@ -263,7 +263,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
               class="h-3em w-3em flex-shrink-0"
             >
               <CardElImage
-                :src="BaseUrlImg + room.avatar" fit="cover"
+                :default-src="room.avatar" fit="cover"
                 class="h-full w-full object-cover shadow-sm card-default"
               />
             </el-badge>
@@ -273,7 +273,9 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
                   {{ room.name }}
                 </p>
                 <!-- AI机器人 -->
-                <svg v-if="RoomTypeTagType[room.type]" xmlns="http://www.w3.org/2000/svg" class="ai-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M6 7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-4 3H0v6h2zm20 0h2v6h-2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m6 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" /></svg>
+                <svg
+                  v-if="RoomTypeTagType[room.type]" xmlns="http://www.w3.org/2000/svg" class="ai-icon" viewBox="0 0 24 24"
+                ><path fill="currentColor" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M6 7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-4 3H0v6h2zm20 0h2v6h-2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m6 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" /></svg>
                 <span class="text ml-a w-fit flex-shrink-0 text-right text-0.7em leading-2em text-mini">
                   {{ formatContactDate(room.activeTime) }}
                 </span>
@@ -318,7 +320,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
     }
 
     .ai-icon {
-      --at-apply: "mx-1 h-1.2em w-1.2em text-theme-primary dark:text-theme-info";
+      --at-apply: "mx-0.5em pt-2px h-1.4em w-1.4em text-theme-primary dark:text-theme-info";
     }
     &.is-pin {
       --at-apply: "sm:border-default";

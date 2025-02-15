@@ -15,12 +15,12 @@ const {
 }>();
 const OVERFLOW_LENGTH = 250;
 const chat = useChatStore();
-const initFold = data.message?.content?.length && data.message?.content?.length > OVERFLOW_LENGTH && chat.theContact.activeTime > data.message.sendTime;
+const initFold = data.message?.content?.length && data.message?.content?.length > 200 && chat.theContact.lastMsgId !== data.message.id;
+const initReasonFold = data.message?.body?.reasoningContent?.length && data.message?.body?.reasoningContent?.length > 200 && chat.theContact.lastMsgId !== data.message.id;
 const isFold = ref(initFold);
-const isResonFold = ref(initFold);
-
+const isResonFold = ref(initReasonFold);
 const showReasonLoading = computed(() => data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && !data.message?.content);
-const showContentLoading = computed(() => (data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && data.message?.content) || (data?.message?.body?.status === undefined && !data.message?.content));
+const showContentLoading = computed(() => (data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && (data.message?.content || !data.message?.body?.reasoningContent)));
 </script>
 
 <template>
@@ -45,11 +45,9 @@ const showContentLoading = computed(() => (data?.message?.body?.status === AiRep
     <template #body>
       <div class="msg-popper relative min-h-2.5em min-w-2.6em">
         <!-- 思考内容 -->
-        <p
-          v-if="data?.message?.body?.reasoningContent && !isFold" class="reson-content"
-          :class="isResonFold ? 'h-2.5em truncate is-reson-open' : 'h-auto'"
-        >
-          思考：{{ data?.message?.body?.reasoningContent }}
+        <p v-if="data?.message?.body?.reasoningContent && !isFold" :class="isResonFold ? 'h-2.5em truncate is-reson-open' : ''" class="reson-content" style="white-space: pre-wrap;">
+          思考：
+          {{ isResonFold ? `${data?.message?.body?.reasoningContent.slice(0, OVERFLOW_LENGTH)}...` : data?.message?.body?.reasoningContent }}
           <span
             class="text absolute bottom-1.5 right-1.5 z-2 h-2em px-3 leading-2em shadow btn-info text-mini"
             @click="isResonFold = !isResonFold"
@@ -78,6 +76,15 @@ const showContentLoading = computed(() => (data?.message?.body?.status === AiRep
         />
         <svg v-if="showContentLoading" class="absolute bottom-0.75em right-0.75em h-1.2em w-1.2em animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" /><path fill="currentColor" d="M12 4.5a7.5 7.5 0 1 0 0 15a7.5 7.5 0 0 0 0-15M1.5 12C1.5 6.201 6.201 1.5 12 1.5S22.5 6.201 22.5 12S17.799 22.5 12 22.5S1.5 17.799 1.5 12" opacity=".1" /><path fill="currentColor" d="M12 4.5a7.46 7.46 0 0 0-5.187 2.083a1.5 1.5 0 0 1-2.075-2.166A10.46 10.46 0 0 1 12 1.5a1.5 1.5 0 0 1 0 3" /></g></svg>
       </div>
+      <!-- 状态 -->
+      <small
+        v-if="data.message.body?.status === AiReplyStatusEnum.COTINUE"
+        ctx-name="ai-status"
+        class="at-list flex-mr-a border-default-hover"
+        @click.stop="ElMessage.warning('此问答已达最大回答长度，该能力敬请期待！')"
+      >
+        继续
+      </small>
     </template>
   </ChatMsgTemplate>
 </template>
@@ -150,7 +157,7 @@ const showContentLoading = computed(() => (data?.message?.body?.status === AiRep
 
   &::after {
     content: "";
-    --at-apply: "bg-dark absolute z-1 left-0 bottom-0 w-full h-1/5 hover:(op-0 -z-1) op-100 transition-opacity";
+    --at-apply: "bg-dark absolute z-1 left-0 bottom-0 w-full h-3em hover:(op-0 -z-1) op-100 transition-opacity";
     background: linear-gradient(to top, var(--el-bg-color), transparent);
   }
 }

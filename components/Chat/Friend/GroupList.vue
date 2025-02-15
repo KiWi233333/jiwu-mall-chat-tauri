@@ -66,18 +66,6 @@ if (props.type === "friend") {
       chat.isAddNewFriend = false;
     }
   });
-}
-
-// 群组相关监听
-if (props.type === "group") {
-  watchDebounced(() => chat.delGroupId, (val) => {
-    if (val) {
-      list.value = list.value.filter(p => (p as ChatRoomGroupVO).roomId !== val) as ChatRoomGroupVO[];
-      chat.setDelGroupId(undefined);
-    }
-  });
-}
-else if (props.type === "friend") {
   watch(() => chat.delUserId, (val) => {
     if (val) {
       list.value = list.value.filter(p => (p as ChatUserFriendVO).userId !== val) as ChatUserFriendVO[];
@@ -85,7 +73,14 @@ else if (props.type === "friend") {
     }
   });
 }
-
+else if (props.type === "group") { // 群组相关监听
+  watchDebounced(() => chat.delGroupId, (val) => {
+    if (val) {
+      list.value = list.value.filter(p => (p as ChatRoomGroupVO).roomId !== val) as ChatRoomGroupVO[];
+      chat.setDelGroupId(undefined);
+    }
+  });
+}
 // 首次加载动画
 const isFirstLoad = ref(false);
 const isFriendPanel = computed(() => props.type === "friend");
@@ -119,13 +114,13 @@ onActivated(() => {
       loading-class="op-0"
       @load="loadData"
     >
-      <!-- 骨架屏
+      <!-- 骨架屏 -->
       <div v-if="isReload" class="animate-(fade-in duration-200)">
         <div v-for="p in 2" :key="p" class="item">
           <div class="avatar-icon !bg-skeleton" />
-          <span class="bg-skeleton h-1.2em w-8em rounded-4px" />
+          <span class="h-1.2em w-8em rounded-4px bg-skeleton" />
         </div>
-      </div> -->
+      </div>
       <div
         v-for="p in list"
         :key="p.id"

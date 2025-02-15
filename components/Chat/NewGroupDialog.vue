@@ -173,7 +173,7 @@ defineExpose({
                       <div class="avatar-icon">
                         <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.avatar" fit="cover" />
                       </div>
-                      <strong class="truncate !text-color">{{ p.nickName || "未填写" }}</strong>
+                      <span class="truncate text-color">{{ p.nickName || "未填写" }}</span>
                     </div>
                   </el-checkbox>
                 </ListAutoIncre>

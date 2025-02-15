@@ -43,11 +43,11 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
       <el-collapse v-model="activeNames.arr">
         <!-- 群聊 -->
         <el-collapse-item name="1" title="群聊">
-          <LazyChatFriendGroupList type="group" />
+          <ChatFriendGroupList type="group" />
         </el-collapse-item>
         <!-- 好友 -->
         <el-collapse-item name="2" title="好友">
-          <LazyChatFriendGroupList type="friend" />
+          <ChatFriendGroupList type="friend" />
         </el-collapse-item>
       </el-collapse>
     </el-scrollbar>
@@ -70,6 +70,14 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
 :deep(.el-scrollbar) {
   .el-scrollbar__bar.is-vertical {
     display: none;
+  }
+}
+:deep(.el-collapse) {
+  .el-collapse-item__header:not(.is-active) {
+    --at-apply: "border-default-b";
+  }
+  .el-collapse-item__wrap {
+    --at-apply: "border-default-b";
   }
 }
 </style>

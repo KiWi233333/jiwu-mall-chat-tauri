@@ -16,6 +16,7 @@ const chat = useChatStore();
 const user = useUserStore();
 // 具体
 const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undefined);
+const isSelf = user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id;
 </script>
 
 <template>
@@ -23,7 +24,7 @@ const body = computed(() => data.message?.body as Partial<TextBodyMsgVO> | undef
     v-bind="$attrs"
     class="msg"
     :class="{
-      self: user?.userInfo?.id && data?.fromUser?.userId === user?.userInfo?.id,
+      self: isSelf,
     }"
   >
     <!-- 头像 -->
