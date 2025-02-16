@@ -1,5 +1,10 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { disable as disableAutoStart, enable as enableAutoStart, isEnabled as isAutoStartEnabled } from "@tauri-apps/plugin-autostart";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import {
+  disable as disableAutoStart,
+  enable as enableAutoStart,
+  isEnabled as isAutoStartEnabled,
+} from "@tauri-apps/plugin-autostart";
 
 // const dev = import.meta.env.MODE === "development";
 async function onKeyDown(e: KeyboardEvent) {
@@ -14,8 +19,13 @@ async function onKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape" && setting.settingPage.isEscMin && !document.querySelector(".el-image-viewer__wrapper")) {
     if (!setting.isWeb) {
       e.preventDefault();
-      const appWindow = getCurrentWebviewWindow();
-      await appWindow.hide();
+      const appWindow = getCurrentWindow();
+      if (await appWindow.isFullscreen()) {
+        await appWindow.setFullscreen(false);
+      }
+      else {
+        await appWindow.hide();
+      }
     }
   }
 }

@@ -83,31 +83,19 @@ const { x, y } = useDraggable(dragRef, {
 const show = computed({
   get: () => props.modelValue,
   set: (val: boolean) => {
-    if (val && videoInfo.value.url !== "") {
-      // 添加监听
-      document.addEventListener("fullscreenchange", onFullscreenChange);
-    }
     emit("update:modelValue", val);
   },
 });
-const isFullscreen = ref(false);
+
+// 监听全屏切换
 const videoPlayerRef = useTemplateRef<HTMLVideoElement | null>("videoPlayerRef");
 const status = ref<"playing" | "play-dbsound" | "paused" | "ended">("paused");
 const src = computed(() => videoInfo.value.url);
+const { isFullscreen } = useFullscreenListener(videoPlayerRef);
 
 // 全屏切换
-function toggleFullscreen() {
-  if (videoPlayerRef.value) {
-    if (isFullscreen.value) {
-      document.exitFullscreen().catch(() => {}); // 捕获可能的错误
-    }
-    else {
-      if ("fullscreenElement" in document) {
-        videoPlayerRef.value.requestFullscreen().catch(() => {}); // 捕获可能的错误
-      }
-    }
-    isFullscreen.value = !isFullscreen.value;
-  }
+async function toggleFullscreen() {
+  isFullscreen.value = !isFullscreen.value;
 }
 
 // 关闭弹窗
@@ -129,10 +117,6 @@ function onEnded() {
   status.value = "ended";
 }
 
-// 全屏事件监听
-function onFullscreenChange() {
-  isFullscreen.value = !!document.fullscreenElement;
-}
 
 // 挂载时添加监听
 onMounted(() => {
@@ -172,7 +156,6 @@ onMounted(() => {
         break;
     }
   });
-  document.addEventListener("fullscreenchange", onFullscreenChange);
 });
 
 // 卸载时移除监听
@@ -188,9 +171,9 @@ function destroy() {
       muted: true,
     };
   }, 350);
-  document.removeEventListener("fullscreenchange", onFullscreenChange);
   show.value = false;
 }
+
 onDeactivated(() => {
   destroy();
 });
@@ -260,7 +243,7 @@ const videoSize = computed(() => {
               @click.stop="toggleFullscreen"
             >
               <i
-                class="i-tabler:maximize"
+                :class="isFullscreen ? 'i-tabler:minimize' : 'i-tabler:maximize'"
                 title="全屏"
                 p-2.4 filter-drop-shadow-lg btn-info
               />

@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-
 
 const {
   modelValue,
@@ -270,7 +268,6 @@ function onDblClickWindow() {
   }
 }
 // 右键菜单
-const colorMode = useColorMode();
 function onMaxWindContextmenu(e: MouseEvent) {
   e.stopPropagation();
   e.preventDefault();
@@ -299,41 +296,14 @@ function onMaxWindContextmenu(e: MouseEvent) {
   };
   ContextMenu.showContextMenu(opt);
 }
+
+// 全屏监听
+const {
+  isFullscreen,
+} = useFullscreenListener(mainVideoRef);
 async function openMaxVideo() {
-  if (!mainVideoRef.value?.requestFullscreen) {
-    ElNotification.warning({
-      title: "兼容性",
-      message: "当前浏览器不支持全屏",
-      duration: 2000,
-    });
-    return;
-  }
-  // 桌面端
-  if (setting.isDesktop) {
-    const appWindow = getCurrentWindow();
-    const isMax = await appWindow.isMaximized();
-    if (isMax) {
-      await appWindow.unmaximize();
-    }
-    else {
-      await appWindow.maximize();
-    }
-  }
-  mainVideoRef.value?.requestFullscreen();
+  isFullscreen.value = !isFullscreen.value;
 }
-
-// 最大化是否结合窗口
-// watch(() => isMaxWind.value && !isMinWind.value && setting.isDesktop, async (val) => {
-//   const appWindow = getCurrentWindow();
-//   const isMax = await appWindow.isMaximized();
-//   if (isMax) {
-//     await appWindow.unmaximize();
-//   }
-//   else {
-//     await appWindow.maximize();
-//   }
-// });
-
 
 defineExpose({
   connectionStatus,

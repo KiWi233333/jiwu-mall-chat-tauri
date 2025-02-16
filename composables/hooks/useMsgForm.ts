@@ -1,3 +1,5 @@
+import type { UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
 
 const MAX_CHAT_SECONDS = 120;
 const MimeType = "audio/mp3";
@@ -272,7 +274,7 @@ export function useRecording(options: { timeslice?: number, pressHandleRefName?:
  *  onSubmitFile: 文件上传回调
  *  onSubmitVideo: 视频上传回调
  */
-export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }) {
+export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, disabled?: Ref<boolean>) {
   const {
     img: imgRefName = "inputOssImgUploadRef",
     file: fileRefName = "inputOssFileUploadRef",
@@ -283,7 +285,6 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
   const imgList = ref<OssFile[]>([]); // 图片列表
   const fileList = ref<OssFile[]>([]); // 文件列表
   const videoList = ref<OssFile[]>([]); // 视频列表
-
 
   // 计算 computed
   const isUploadImg = computed(() => chat.msgForm.msgType === MessageType.IMG && !!imgList?.value?.filter(f => f.status === "")?.length);
@@ -296,6 +297,8 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
 
   // 图片上传回调
   function onSubmitImg(key: string, pathList: string[]) {
+    if (disabled?.value === true)
+      return;
     fileList.value = [];
     videoList.value = [];
     const file = imgList.value.find(f => f.key === key);
@@ -325,6 +328,8 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
 
   // 文件上传回调
   function onSubmitFile(key: string, pathList: string[]) {
+    if (disabled?.value === true)
+      return;
     imgList.value = [];
     videoList.value = [];
     const file = fileList.value.find(f => f.key === key);
@@ -345,6 +350,8 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
 
   // 视频上传回调
   function onSubmitVideo(key: string, pathList: string[]) {
+    if (disabled?.value === true)
+      return;
     imgList.value = [];
     fileList.value = [];
     const file = videoList.value.find(f => f.key === key);
@@ -373,6 +380,8 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
    * @param video 视频对象
    */
   function showVideoDialog(e: MouseEvent, video: OssFile) {
+    if (disabled?.value === true)
+      return;
     const thumb = video.children?.[0];
     if (!video?.key) {
       return;
@@ -399,6 +408,8 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
    * @returns void
    */
   async function onPaste(e: ClipboardEvent) {
+    if (disabled?.value === true)
+      return;
     // 判断粘贴上传
     if (!e.clipboardData?.items?.length)
       return;
@@ -457,10 +468,57 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
         }
   }
 
+  // 监听拖拽上传
+  const isDragDropOver = ref(false);
+  const dragDropInfo = ref<{
+    type?: "over" | "drop" | "cancel";
+    position?: { x: number; y: number };
+  }>({
+    type: undefined,
+    position: undefined,
+  });
+  const dragDropFileList = ref<File[]>([]);
+  let unlisten: UnlistenFn;
+  async function listenDragDrop() {
+    const setting = useSettingStore();
+    if (!setting.isDesktop) {
+      return;
+    }
+    unlisten = await getCurrentWebview().onDragDropEvent(async (event) => {
+      if (event.payload.type === "over") {
+        if (!isDragDropOver.value) {
+          isDragDropOver.value = true;
+          const { x, y } = event.payload.position;
+          console.log(`User is dragging over ${x}, ${y}`);
+        }
+      }
+      else if (event.payload.type === "drop") {
+        if (isDragDropOver.value) {
+          isDragDropOver.value = false;
+          const { x, y } = event.payload.position;
+          console.log(`User dropped ${x}, ${y}`);
+        }
+        console.log("User dropped", event.payload.position);
+      }
+      else {
+        console.log("File drop cancelled");
+        isDragDropOver.value = false;
+      }
+    });
+  }
+  // 生命周期
+  onMounted(listenDragDrop);
+  onActivated(listenDragDrop);
+  onBeforeUnmount(() => unlisten?.());
+  onDeactivated(() => unlisten?.());
+
+
   return {
     imgList,
     fileList,
     videoList,
+    isDragDropOver,
+    dragDropFileList,
 
     isUploadImg,
     isUploadFile,
