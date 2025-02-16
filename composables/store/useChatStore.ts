@@ -46,20 +46,17 @@ export const useChatStore = defineStore(
 
     /** ---------------------------- 会话 ---------------------------- */
     const theContactId = ref<number | undefined>(undefined); // 当前会话id
+    const showNewGroupDialog = ref(false); // 新建群聊
     const isOpenContact = ref(true); // 用于移动尺寸
     const searchKeyWords = ref("");
     const contactMap = ref<Record<number, ChatContactDetailVO>>({});
-    const sortedContacts = ref<ChatContactVO[]>([]);
-    watch(contactMap, (val) => {
-      sortedContacts.value = Object.values(val).sort((a, b) => {
-        const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
-        if (pinDiff !== 0)
-          return pinDiff;
-        return b.activeTime - a.activeTime;
-      });
-    }, {
-      deep: true,
-    });
+    const sortedContacts = computed(() => Object.values(contactMap.value).sort((a, b) => {
+      const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
+      if (pinDiff !== 0)
+        return pinDiff;
+      return b.activeTime - a.activeTime;
+    }));
+
     const getContactList = computed(() => {
       if (searchKeyWords.value) {
         const lowerCaseSearchKey = searchKeyWords.value.toLowerCase();
@@ -137,10 +134,10 @@ export const useChatStore = defineStore(
     const onChangeRoom = async (newRoomId: number) => {
       if (!newRoomId || theContact.value?.roomId === newRoomId)
         return;
-      theContactId.value = newRoomId;
       const item = contactMap.value[newRoomId];
       if (!item)
         return;
+      theContactId.value = newRoomId;
       await setContact(item); // 提前设置当前会话
     };
 
@@ -340,7 +337,7 @@ export const useChatStore = defineStore(
       if (contactMap.value[roomId]) {
         contactMap.value[roomId].text = data.text || contactMap.value[roomId].text;
         contactMap.value[roomId].unreadCount = data.unreadCount !== undefined ? data.unreadCount : contactMap.value[roomId].unreadCount;
-        contactMap.value[roomId].activeTime = data.activeTime !== undefined ? data.activeTime : contactMap.value[roomId].activeTime;
+        contactMap.value[roomId].activeTime = data.activeTime ? data.activeTime : contactMap.value[roomId].activeTime;
         contactMap.value[roomId].avatar = data.avatar !== undefined ? data.avatar : contactMap.value[roomId].avatar;
         callBack && callBack(contactMap.value[roomId]);
         delete updateContactList.value[roomId]; // 删除正在修改的load
@@ -789,7 +786,6 @@ export const useChatStore = defineStore(
       isMemberReload.value = false;
       findMsgCache.clear();
       contactDetailMapCache.value = {};
-      sortedContacts.value = [];
       currentMemberList.value = [];
       updateContactList.value = {};
       isMemberLoading.value = false;
@@ -822,6 +818,7 @@ export const useChatStore = defineStore(
       delUserId,
       isAddNewFriend,
       isOpenContact,
+      showNewGroupDialog,
       isMsgListScroll,
       roomGroupPageInfo,
       playSounder,

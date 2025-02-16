@@ -84,16 +84,18 @@ export async function useWsInit() {
     isReload.value = false;
   }
   // 自动重连
-  watchDebounced([() => ws.status, () => user.isLogin], (val: [WsStatusEnum, boolean]) => {
-    if (val[0] !== WsStatusEnum.OPEN && val[1]) {
+  reload();
+  watchDebounced([() => ws.status, () => user.isLogin], ([status, isLogin]: [WsStatusEnum, boolean]) => {
+    if (status !== WsStatusEnum.OPEN && isLogin) {
       reload();
     }
-    else if (!val[1]) {
+    else if (!isLogin) {
+      worker.value?.terminate?.();
       ws.close(false);
+      worker.value = undefined;
     }
   }, {
-    debounce: 500,
-    immediate: true,
+    debounce: 3000,
     deep: true,
   });
 

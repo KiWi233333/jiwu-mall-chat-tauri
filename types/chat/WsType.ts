@@ -17,6 +17,7 @@ export enum WsMsgType {
 
 
 export enum WsStatusEnum {
+  CONNECTION = 0,
   OPEN = 1,
   SAFE_CLOSE = 2,
   CLOSE = 3,

@@ -1,3 +1,4 @@
+
 export function useMsgLinear() {
   function addListeners() {
     // 1、新消息 type=1
@@ -170,8 +171,17 @@ function handleRTCMsg(msg: ChatMessageVO<RtcLiteBodyMsgVO>) {
   }
 }
 
+
+// 创建消息缓冲区
+const bufferMap = new WeakMap<ChatMessageVO<AiChatReplyBodyMsgVO>, {
+  content: string
+  reasoning: string
+  timer: number
+}>();
+
 /**
  * 6. ai推送消息处理
+ *
  * @param data 数据
  */
 function resolveAiStream(data: WSAiStreamMsg) {
@@ -179,52 +189,108 @@ function resolveAiStream(data: WSAiStreamMsg) {
   const contact = chat.contactMap[data.roomId];
   if (!contact)
     return;
+
   const oldMsg = chat.findMsg(data.roomId, data.msgId) as ChatMessageVO<AiChatReplyBodyMsgVO> | undefined;
-  // 本房间修改状态
-  oldMsg?.message?.body && (oldMsg.message.body.status = data.status); // 修改消息状态
-  if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
-    contact.text += data.content;
-    if (oldMsg) {
-      oldMsg.message.content += data.content;
-      if (!oldMsg.message.body?.reasoningContent) {
-        oldMsg.message.body = {
-          ...oldMsg.message.body,
-          reasoningContent: "",
-        } as AiChatReplyBodyMsgVO;
-      }
-      oldMsg.message.body.reasoningContent += data.reasoningContent || "";
-    }
-  }
-  else if (contact.text === "..." && data.status === AiReplyStatusEnum.START) { // 初始状态
-    contact.text = "";
-  }
-  else {
-    contact.text = (data.content || "...").substring(0, 100); // 裁切100字
-    if (oldMsg) {
-      oldMsg.message.content = data.content;
-      if (!oldMsg.message.body?.reasoningContent) {
-        oldMsg.message.body = {
-          ...oldMsg.message.body,
-          reasoningContent: "",
-        } as AiChatReplyBodyMsgVO;
-      }
-      oldMsg.message.body!.reasoningContent = data.reasoningContent || "";
-    }
+
+  // 统一状态更新
+  if (oldMsg?.message?.body) {
+    oldMsg.message.body.status = data.status;
   }
 
-  // // 更新消息
-  // if (oldMsg?.message?.body) {
-  //   if (data.status === AiReplyStatusEnum.IN_PROGRESS) {
-  //     oldMsg.message.content += data.content;
-  //     if (!oldMsg?.message?.body?.reasoningContent) {
-  //       oldMsg.message.body.reasoningContent = "";
-  //     }
-  //     oldMsg.message.body.reasoningContent += data.reasoningContent || "";
-  //   }
-  //   else {
-  //     oldMsg.message.content = data.content;
-  //     oldMsg.message.body.reasoningContent = data.reasoningContent || "";
-  //   }
-  //   oldMsg.message.body.status = data.status; // 修改消息状态
-  // }
+  // 处理不同状态
+  switch (data.status) {
+    case AiReplyStatusEnum.IN_PROGRESS:
+      handleProgressUpdate(data, contact, oldMsg);
+      break;
+    case AiReplyStatusEnum.START:
+      handleStartState(oldMsg);
+      break;
+    default:
+      handleFinalState(data, contact, oldMsg);
+  }
+}
+
+// 处理进度更新
+function handleProgressUpdate(
+  data: WSAiStreamMsg,
+  contact: ChatContactDetailVO,
+  oldMsg?: ChatMessageVO<AiChatReplyBodyMsgVO>,
+) {
+  // 初始化缓冲区
+  if (oldMsg && !bufferMap.has(oldMsg)) {
+    bufferMap.set(oldMsg, {
+      content: oldMsg?.message?.content || "",
+      reasoning: oldMsg?.message?.body?.reasoningContent || "",
+      timer: 0,
+    });
+  }
+
+  const buffer = bufferMap.get(oldMsg!)!;
+
+  // 累积更新内容
+  buffer.content += data.content;
+  buffer.reasoning += data.reasoningContent || "";
+
+  // 使用节流更新
+  if (!buffer.timer) {
+    const delay = contact.roomId === data.roomId ? 1000 : 200; // 当前房间则更快
+    buffer.timer = setTimeout(() => {
+      applyBufferUpdate(contact, oldMsg, buffer);
+      oldMsg && bufferMap.delete(oldMsg);
+    }, delay) as unknown as number;
+  }
+}
+
+function applyBufferUpdate(
+  contact: ChatContactDetailVO,
+  oldMsg?: ChatMessageVO<AiChatReplyBodyMsgVO>,
+  buffer?: { content: string; reasoning: string },
+) {
+  if (!buffer || !oldMsg)
+    return;
+  // 批量更新逻辑
+  const update = {
+    content: buffer.content, // 限制最大长度
+    reasoning: buffer.reasoning,
+  };
+
+  // 使用 Object.assign 减少响应式触发
+  if (oldMsg?.message) {
+    oldMsg.message.body && (oldMsg.message.body.reasoningContent = update.reasoning);
+    oldMsg.message.content = update.content;
+  }
+  // 更新联系人文本（截断处理）
+  contact.text = update.content.substring(0, 100);
+}
+
+function handleStartState(
+  oldMsg?: ChatMessageVO<AiChatReplyBodyMsgVO>,
+) {
+  // 初始化缓冲区
+  if (oldMsg) {
+    bufferMap.set(oldMsg, {
+      content: "",
+      reasoning: "",
+      timer: 0,
+    });
+  }
+}
+
+// 直接更新
+function handleFinalState(
+  data: WSAiStreamMsg,
+  contact: ChatContactDetailVO,
+  oldMsg?: ChatMessageVO<AiChatReplyBodyMsgVO>,
+) {
+  const finalContent = (data.content || "...").substring(0, 100);
+  contact.text = finalContent;
+  if (oldMsg) {
+    // 删除缓冲区
+    clearTimeout(bufferMap.get(oldMsg!)?.timer);
+    bufferMap.delete(oldMsg!);
+    if (oldMsg?.message) {
+      oldMsg.message.body && (oldMsg.message.body.reasoningContent = data.reasoningContent || "");
+      oldMsg.message.content = data.content;
+    }
+  }
 }

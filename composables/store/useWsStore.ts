@@ -108,6 +108,7 @@ export const useWsStore = defineStore(
         // 1、连接
         if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
           return webSocketHandler.value;
+        status.value = WsStatusEnum.CONNECTION;
         fullWsUrl.value = `${BaseWSUrl}?Authorization=${user.getToken}`;
         webSocketHandler.value = new WebSocket(fullWsUrl.value);
         status.value = WsStatusEnum.OPEN;
@@ -130,10 +131,9 @@ export const useWsStore = defineStore(
         return true;
       }
       // rust websocket 连接
-      const url = BaseWSUrl;
       if (webSocketHandler.value && status.value === WsStatusEnum.OPEN)
         return webSocketHandler.value;
-      fullWsUrl.value = `${url}?Authorization=${user.getToken}`;
+      fullWsUrl.value = `${BaseWSUrl}?Authorization=${user.getToken}`;
       const ws = await BackWebSocket.connect(fullWsUrl.value);
       webSocketHandler.value = ws; // 保存连接
       // 1、打开

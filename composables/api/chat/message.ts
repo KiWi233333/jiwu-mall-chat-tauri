@@ -423,7 +423,7 @@ export interface AiChatBodyMsgVO {
 
 /** AI回复消息 */
 export interface AiChatReplyBodyMsgVO {
-  content: string;
+  content?: string;
   urlContentMap?: { [key: string]: UrlInfoDTO };
   atUidList?: string[];
   reply?: {

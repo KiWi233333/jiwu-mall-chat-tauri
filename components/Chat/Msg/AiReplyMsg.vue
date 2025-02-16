@@ -87,6 +87,13 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
       >
         继续
       </small>
+      <!-- <small
+        v-else-if="data.message.body?.status === AiReplyStatusEnum.ERROR"
+        ctx-name="ai-status"
+        class="at-list flex-ml-a border-default !text-theme-error"
+      >
+        出错了
+      </small> -->
     </template>
   </ChatMsgTemplate>
 </template>
@@ -120,7 +127,7 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
       }
 
       p:not(p:last-of-type) {
-        margin: 0 0 0.4em 0;
+        margin: 0.4em 0 0 0;
       }
 
       p:first-of-type {

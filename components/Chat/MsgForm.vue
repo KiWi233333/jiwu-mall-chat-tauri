@@ -20,6 +20,7 @@ const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === isTru
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
 const isAiRoom = computed(() => chat.theContact.type === RoomType.AICHAT); // 机器人
+const maxContentLen = computed(() => chat.theContact.type === RoomType.AICHAT ? 512 : 500);
 // 状态
 const showGroupNoticeDialog = ref(false);
 const loadInputDone = ref(false); // 用于移动尺寸动画
@@ -77,7 +78,7 @@ async function onSubmit() {
   formRef.value?.validate(async (action: boolean) => {
     if (!action)
       return;
-    if (chat.msgForm.msgType === MessageType.TEXT && (!chat.msgForm.content || chat.msgForm.content?.trim().length > 500))
+    if (chat.msgForm.msgType === MessageType.TEXT && (!chat.msgForm.content || chat.msgForm.content?.trim().length > maxContentLen.value))
       return;
 
     const formDataTemp = JSON.parse(JSON.stringify(chat.msgForm));
@@ -777,7 +778,7 @@ onUnmounted(() => {
         class="input relative h-fit w-full !m-(b-2 t-2) sm:mt-0"
         style="padding: 0;margin:  0;"
         :rules="[
-          { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: `change` },
+          { min: 1, max: maxContentLen, message: `长度在 1 到 ${maxContentLen} 个字符`, trigger: `change` },
         ]"
       >
         <el-mention
@@ -789,7 +790,7 @@ onUnmounted(() => {
           popper-class="at-select border-default"
           :check-is-whole="(pattern: string, value: string) => isReplyAI ? checkAiReplyWhole(chat.msgForm.content, pattern, value) : checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="setting.isMobileSize ? 1 : 6"
-          :maxlength="500"
+          :maxlength="maxContentLen"
           :placeholder="chat.theContact.hotFlag ? '输入 / 唤起AI助手' : ''"
           :autosize="setting.isMobileSize"
           type="textarea"

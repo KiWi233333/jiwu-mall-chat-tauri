@@ -63,11 +63,12 @@ export function httpRequest<T = unknown>(
     // 请求错误
     onRequestError() {
       (() => {
-        ElMessage.error({
-          grouping: true,
-          repeatNum: 0,
-          message: "请求出错，请稍后重试！",
-        });
+        // ElMessage.error({
+        //   grouping: true,
+        //   repeatNum: 0,
+        //   message: "请求出错，请稍后重试！",
+        // });
+        // console.error("请求出错，请稍后重试！", e);
       })();
     },
     // 不同响应码
