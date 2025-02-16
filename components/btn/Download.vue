@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { dayjs } from "element-plus";
 
+defineProps<{
+  iconClass?: string
+}>();
+
 const [autoAnimateRef, enable] = useAutoAnimate();
 const scollRef = ref();
 const inputRef = ref();
@@ -49,14 +53,15 @@ onMounted(() => {
     v-model:visible="setting.showDownloadPanel"
     placement="top"
     width="fit-content"
-    :teleported="true" popper-class="popover"
+    :teleported="true"
+    popper-class="popover"
     transition="popper-fade"
     trigger="click"
     append-to="body"
     :hide-after="0"
   >
     <template #reference>
-      <i class="i-solar-download-minimalistic-broken p-0.6rem btn-info" title="下载管理" />
+      <i class="i-solar-download-minimalistic-broken btn-info" :class="iconClass" title="下载管理" />
     </template>
     <template #default>
       <div class="w-90vw sm:w-350px">

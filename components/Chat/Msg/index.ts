@@ -108,7 +108,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO<any>, onDown
         label: "搜一搜",
         hidden: !data.message.content, // 暂时只支持文本消息
         customClass: "group",
-        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold-duotone) group-btn-success",
+        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold) group-btn-info",
         onClick: () => {
           if (!txt) {
             return ElMessage.error("选择内容为空，无法搜索！");
@@ -343,7 +343,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO<any>, onDown
         label: "搜一搜",
         hidden: !data.message.content, // 暂时只支持文本消息
         customClass: "group",
-        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold-duotone) group-btn-success",
+        icon: "i-solar:magnifer-linear group-hover:(rotate-15 i-solar:magnifer-bold) group-btn-info",
         onClick: () => {
           if (!txt) {
             return ElMessage.error("选择内容为空，无法搜索！");

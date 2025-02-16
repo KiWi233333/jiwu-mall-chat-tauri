@@ -3,7 +3,7 @@
   --at-apply: "w-full max-w-full flex gap-2 px-2 py-3 leading-1.4em";
   transition: background-color 0.2s;
   .body {
-    --at-apply: "flex-1 max-w-4/5 sm:max-w-full overflow-hidden lg:max-w-30em";
+    --at-apply: "flex-1 max-w-4/5 sm:max-w-full  lg:max-w-30em";
   }
   // 头像
   .avatar {
@@ -21,7 +21,7 @@
     }
   }
   .msg-popper {
-    --at-apply: "text-0.9rem max-w-full w-fit  p-2 px-3 leading-1.5em bg-color";
+    --at-apply: "overflow-x-hidden  text-0.9rem max-w-full w-fit  p-2 px-3 leading-1.5em bg-color shadow-md";
     box-shadow:
       rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;

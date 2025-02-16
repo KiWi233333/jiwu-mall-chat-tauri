@@ -155,7 +155,7 @@ const activeMenu = computed({
         :width="30"
         transition="popper-fade-up"
         :offset="25"
-        trigger="hover"
+        trigger="click"
       >
         <template #reference>
           <el-badge

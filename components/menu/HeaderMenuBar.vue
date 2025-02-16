@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-const user = useUserStore();
 const isTop = ref(false);
 const setting = useSettingStore();
 const chat = useChatStore();
@@ -22,24 +21,6 @@ async function toggleContactOpen() {
   }
   chat.isOpenContact = !chat.isOpenContact;
 }
-
-const isPageReload = ref(false);
-function reloadPage() {
-  isPageReload.value = true;
-  location.reload();
-  setTimeout(() => {
-    isPageReload.value = false;
-  }, 500);
-}
-
-async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | "min" | "max") => Promise<{ isMaximized: boolean; isAlwaysOnTopVal: boolean; } | undefined> }) {
-  if (data.handleWindow) {
-    const val = await data.handleWindow("alwaysOnTop");
-    if (val) {
-      isTop.value = val.isAlwaysOnTopVal;
-    }
-  }
-}
 </script>
 
 <template>
@@ -52,13 +33,13 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
         <NuxtLink to="/" class="hidden flex-row-c-c sm:flex">
           <img src="/logo.png" class="h-2rem w-2rem" alt="logo">
         </NuxtLink>
+        <strong hidden sm:block>极物聊天</strong>
         <div
           class="btn-primary"
           :class="!chat.isOpenContact ? 'flex-row-c-c animate-zoom-in animate-duration-200 sm:hidden' : 'hidden '" @click="toggleContactOpen"
         >
           <i i-solar-alt-arrow-left-line-duotone p-3 />
         </div>
-        <strong hidden sm:block>极物聊天</strong>
       </div>
     </slot>
     <!-- 拖拽区域 -->
@@ -77,98 +58,53 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div v-if="setting.isDesktop || setting.isWeb" id="header-menu-right" class="relative z-1000 flex flex-shrink-0 items-center gap-2 text-small">
-        <BtnAppDownload />
-        <div class="flex items-center gap-3 rounded-2rem px-2.2 py-1.5 border-default card-default">
-          <!-- 刷新页面 -->
-          <div
-            v-show="!isPageReload"
-            title="刷新页面"
-            class="i-solar:refresh-outline h-4.5 w-4.5 cursor-pointer transition-300 hover:rotate-180 btn-info"
-            @click="reloadPage"
-          />
-          <!-- 下载（部分端） -->
-          <BtnDownload v-if="!setting.isWeb" class="flex items-center gap-2 pl-3 border-default-l" />
-          <!-- 主题 -->
-          <BtnTheme
-            id="toggle-theme-btn"
-            class="relative z-1 btn-primary"
-            title="切换主题"
-          />
-          <!-- 退出登录 -->
-          <i
-            class="cursor-pointer btn-danger"
-            title="退出登录"
-            transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-            plain circle i-solar:logout-3-broken mr-1 p-2 @click="user.exitLogin()"
-          />
-        </div>
-        <!-- 关闭按钮 -->
-        <div v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)" class="ml-2 max-w-9em flex items-center gap-0 pl-3 sm:(max-w-fit gap-2) border-default-l">
-          <MenuController>
-            <template #start="{ data }">
-              <ElButton
-                text
-                size="small"
-                style="font-size: 0.9rem;padding: 0;width: 2.6rem;height: 1.8rem;margin: 0;" @click="toggleTop(data)"
-              >
-                <i
-                  :title="isTop ? '取消置顶' : '置顶'"
-                  i-solar:pin-broken cursor-pointer
-                  transition-200
-                  :class="isTop ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
-                />
-              </ElButton>
-            </template>
-          </MenuController>
-        </div>
-      </div>
-      <!-- 移动尺寸 -->
-      <el-dropdown v-else placement="bottom-end" popper-class="dropdown-btns">
-        <div class="p-1">
-          <i i-solar:menu-dots-circle-linear p-2.6 btn-primary />
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>
-              <div class="group flex items-center py-1" @click="reloadPage">
-                <div
-                  title="刷新页面"
-                  class="i-solar:refresh-outline h-4.5 w-4.5 transition-transform group-hover:rotate-180"
-                />
-                <span ml-2>刷新页面</span>
-              </div>
-            </el-dropdown-item>
-            <el-dropdown-item divided>
-              <BtnTheme
-                id="toggle-theme-btn"
-                class="relative z-1 py-1"
-                title="切换主题"
-              >
-                <span ml-2>切换主题</span>
-              </BtnTheme>
-            </el-dropdown-item>
-            <el-dropdown-item divided>
-              <div class="group flex items-center py-1" @click="user.exitLogin">
-                <i
-                  class="cursor-pointer btn-danger"
-                  title="退出登录"
-                  transition="all cubic-bezier(0.61, 0.225, 0.195, 1.3)"
-                  circle plain i-solar:logout-3-broken mr-1 p-2
-                />
-                <span ml-2>退出登录</span>
-              </div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
+      <div class="right flex items-center gap-1 sm:gap-3">
+        <!-- 下载（部分端） -->
+        <BtnDownload v-if="!setting.isWeb" icon-class="block mx-1 w-5 h-5" />
+        <!-- 折叠菜单 -->
+        <MenuDots>
+          <template #btn>
+            <div
+              text
+              class="mx-1 w-2em flex-row-c-c sm:w-2.2em btn-primary"
+              size="small"
+              title="菜单"
+            >
+              <i class="i-solar:add-circle-linear p-2.8 sm:i-solar:hamburger-menu-outline" />
+            </div>
+          </template>
+        </MenuDots>
+        <template v-if="setting.isDesktop || setting.isWeb">
+          <!-- web下载推广菜单 -->
+          <BtnAppDownload />
+          <!-- 菜单按钮 -->
+          <template v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)">
+            <div class="h-1.2em border-default-l" />
+            <MenuController>
+              <template #start="{ data }">
+                <ElButton
+                  text
+                  size="small"
+                  :style="data.btnStyle"
+                >
+                  <i
+                    :title="isTop ? '取消置顶' : '置顶'"
+                    class="i-solar:pin-broken cursor-pointer text-0.8em transition-200"
+                    :class="isTop ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
+                  />
+                </ElButton>
+              </template>
+            </MenuController>
+          </template>
         </template>
-      </el-dropdown>
+      </div>
     </slot>
   </menu>
 </template>
 
 <style lang="scss" scoped>
 .nav {
-  --at-apply: "h-56px sm:h-50px relative left-0 top-0 flex-row-bt-c select-none gap-4 rounded-b-0 px-3  ";
+  --at-apply: "h-56px sm:h-50px relative left-0 top-0 flex-row-bt-c select-none gap-4 rounded-b-0 px-3  border-default-b  bg-color";
   z-index: 999;
   background-size: 3px 3px;
   backdrop-filter: blur(1rem);
@@ -177,5 +113,13 @@ async function toggleTop(data: { handleWindow: (type: "close" | "alwaysOnTop" | 
 .dark .nav {
   backdrop-filter: blur(1rem);
   background-size: 3px 3px;
+}
+@media screen and (max-width: 768px) {
+  .menus {
+
+    :deep(.el-button) {
+      background-color: transparent !important;
+    }
+  }
 }
 </style>

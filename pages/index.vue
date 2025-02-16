@@ -6,17 +6,16 @@ import { WsStatusEnum } from "~/types/chat/WsType";
 const user = useUserStore();
 const ws = useWsStore();
 const setting = useSettingStore();
-const online = useOnline();
 const chat = useChatStore();
 const showVideoDialog = ref(false);
-
-useMsgLinear(); // 聊天页面初始化
+const showWsStatusBtns = computed(() => ws.status !== WsStatusEnum.OPEN || !user.isLogin);
+useMsgLinear(); // 监听消息
 </script>
 
 <template>
   <main
     v-loading.fullscreen.lock="!user.isLogin"
-    class="relative flex flex-col !overflow-hidden"
+    class="main relative flex flex-col !overflow-hidden"
     element-loading-text="退出登录中..."
     element-loading-background="transparent"
     :element-loading-spinner="defaultLoadingIcon"
@@ -25,47 +24,12 @@ useMsgLinear(); // 聊天页面初始化
       v-if="user.isLogin"
       class="h-full flex flex-1 flex-col overflow-hidden"
     >
-      <MenuHeaderMenuBar class="flex-shrink-0">
+      <MenuHeaderMenuBar class="flex-shrink-0 bg-color">
         <template #center>
           <div v-if="setting.isMobile" class="block tracking-0.1em absolute-center-center sm:hidden" data-tauri-drag-region>
             {{ appName }}
           </div>
-        </template>
-        <template #drag-content>
-          <div
-            v-if="ws.status !== WsStatusEnum.OPEN || !user.isLogin"
-            class="group relative h-2/3 flex-row-c-c overflow-hidden rounded-8 px-2 text-center sm:px-4"
-            w-10em animate-zoom-in-down shadow-md shadow-inset
-          >
-            <small truncate text-10px tracking-0.1em el-color-danger>
-              {{ ws.status !== WsStatusEnum.OPEN ? "会话断开" : (!user.isLogin && !user.getToken) ? "未登录" : '网络错误' }}
-              <span v-if="online" class="text-[var(--el-color-danger)]">(无网络)</span>
-            </small>
-            <div class="absolute h-full w-full flex-row-bt-c scale-80 px-1.5 op-0 transition-all group-hover:(scale-100 op-100) bg-color">
-              <BtnElButton
-                icon-class="i-solar:refresh-outline mr-1"
-                class="hover:shadow-md"
-                type="primary"
-                round
-                size="small"
-                style="padding: 0 0.8em;height: 1.8em;line-height: 1.8em;"
-                @click="ws.reload()"
-              >
-                重连
-              </BtnElButton>
-              <BtnElButton
-                icon-class="i-solar:power-bold mr-1"
-                class="hover:shadow-md"
-                type="danger"
-                round
-                size="small"
-                style="padding: 0 0.8em;height: 1.8em;line-height: 1.8em;"
-                @click="navigateTo('/login')"
-              >
-                登录
-              </BtnElButton>
-            </div>
-          </div>
+          <BtnWsStatusBtns v-if="showWsStatusBtns" class="offline" />
         </template>
       </MenuHeaderMenuBar>
       <div
@@ -78,17 +42,24 @@ useMsgLinear(); // 聊天页面初始化
           :transition="setting.isMobileSize && !setting.settingPage.isCloseAllTransition ? chat.pageTransition : false"
         />
       </div>
-      <!-- 视频播放器 -->
-      <LazyUtilVideoPlayerDialog v-model="showVideoDialog" />
-      <!-- 扩展菜单 -->
-      <LazyMenuExtensionMenu v-model:show="chat.showExtension" />
-      <!-- RTC通话弹窗 -->
-      <LazyChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
-      <!-- 移动端菜单 -->
-      <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
     </div>
+    <!-- 视频播放器 -->
+    <LazyUtilVideoPlayerDialog v-model="showVideoDialog" />
+    <!-- 扩展菜单 -->
+    <LazyMenuExtensionMenu v-model:show="chat.showExtension" />
+    <!-- RTC通话弹窗 -->
+    <LazyChatRtcCallDialog v-model="chat.showRtcCall" v-model:call-type="chat.rtcCallType" />
+    <!-- 移动端菜单 -->
+    <LazyMenuBottomMenu v-if="setting.isMobileSize && chat.isOpenContact" class="grid sm:hidden" />
   </main>
 </template>
 
 <style lang="scss" scoped>
+.main:hover {
+  .offline {
+    :deep(.btns) {
+      --at-apply: "scale-100 op-100";
+    }
+  }
+}
 </style>

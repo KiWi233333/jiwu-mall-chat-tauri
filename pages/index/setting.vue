@@ -84,9 +84,10 @@ const {
         </el-select>
       </div>
       <!-- 黑暗 -->
-      <div :id="DEFAULT_THEME_TOGGLE_ID" class="group h-8 flex-row-bt-c">
+      <div class="group h-8 flex-row-bt-c">
         深色模式
         <el-segmented
+          :id="DEFAULT_THEME_TOGGLE_ID"
           v-model="theme"
           class="inputs border-default"
           style="width:13rem;background-color: transparent;--el-segmented-item-selected-color: #fff;--el-border-radius-base: 2rem;"

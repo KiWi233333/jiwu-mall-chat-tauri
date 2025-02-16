@@ -7,7 +7,7 @@ defineProps<{
 <template>
   <div class="content relative max-wfull flex flex-col">
     <!-- 房间信息 -->
-    <ChatRoomInfo class="border-default-b card-bg-color" />
+    <ChatRoomInfo class="relative z-10 shadow-sm card-bg-color" />
     <!-- 消息列表 -->
     <ChatMessageList />
     <!-- 发送 -->

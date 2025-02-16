@@ -248,7 +248,7 @@ body .el-message {
   .mx-icon-placeholder {
     i {
       font-size: 0.9em;
-      transition: all 0.2s;
+      transition: transform 0.2s;
     }
   }
 
@@ -350,4 +350,19 @@ body .el-message {
   100% {
     opacity: 1;
   }
+}
+
+
+// 阴影
+.shadow-b {
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.05);
+}
+.shadow-t {
+  box-shadow: 0px -1px 4px rgba(0, 0, 0, 0.05);
+}
+.shadow-l {
+  box-shadow: -1px 0px 4px rgba(0, 0, 0, 0.05);
+}
+.shadow-r {
+  box-shadow: 1px 0px 4px rgba(0, 0, 0, 0.05);
 }

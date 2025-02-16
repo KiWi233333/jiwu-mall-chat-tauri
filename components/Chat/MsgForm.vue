@@ -506,7 +506,9 @@ onUnmounted(() => {
       <!-- 滚动底部 -->
       <div
         v-if="chat.theContact?.msgList?.length > 20"
-        data-fade mb-2 ml-a mr-2 w-fit rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover @click="setReadAndScrollBottom"
+        data-fade
+        class="mb-2 ml-a mr-2 w-fit rounded-full px-3 text-right shadow-lg btn-info card-bg-color border-default-hover"
+        @click="setReadAndScrollBottom"
       >
         <i class="i-solar:double-alt-arrow-down-line-duotone block h-5 w-5 transition-200" />
       </div>
@@ -788,7 +790,7 @@ onUnmounted(() => {
           :check-is-whole="(pattern: string, value: string) => isReplyAI ? checkAiReplyWhole(chat.msgForm.content, pattern, value) : checkAtUserWhole(chat.msgForm.content, pattern, value)"
           :rows="setting.isMobileSize ? 1 : 6"
           :maxlength="500"
-          :placeholder="chat.theContact.hotFlag ? '/ 唤起AI助手' : ''"
+          :placeholder="chat.theContact.hotFlag ? '输入 / 唤起AI助手' : ''"
           :autosize="setting.isMobileSize"
           type="textarea"
           resize="none"
@@ -843,11 +845,11 @@ onUnmounted(() => {
           Enter发送, Shift+Enter换行
         </div>
         <BtnElButton
-          :disabled="!user.isLogin || isSending || isNotExistOrNorFriend"
           class="group ml-a overflow-hidden tracking-0.2em shadow sm:ml-2"
           type="primary"
           round
-          icon-class="i-solar:chat-line-bold mr-1.5"
+          :disable="isNotExistOrNorFriend"
+          :icon-class="isSending || isNotExistOrNorFriend ? '' : 'i-solar:chat-round-dots-linear mr-1'"
           size="small"
           :loading="isBtnLoading"
           style="padding: 0.8rem;width: 6rem;"
@@ -872,7 +874,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .form-tools {
-    --at-apply: "relative sm:h-62 flex flex-col justify-center p-2 border-default-t";
+    --at-apply: "relative sm:h-62 flex flex-col justify-center p-2 border-default-t shadow-sm";
     .tip {
     --at-apply: "op-0";
   }

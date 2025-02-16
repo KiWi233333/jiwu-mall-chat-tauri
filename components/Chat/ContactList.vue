@@ -20,9 +20,7 @@ const pageInfo = ref({
 const isLoadRoomMap: Record<number, boolean> = {};
 
 // 添加群聊
-const showDialog = ref(false);
 const ChatNewGroupDialogRef = ref();
-
 // 计算
 const theContactId = computed({
   get() {
@@ -147,7 +145,7 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
         ChatNewGroupDialogRef.value?.reload && ChatNewGroupDialogRef.value?.reload();
         if (ChatNewGroupDialogRef.value?.form) {
           ChatNewGroupDialogRef.value.form.roomId = item.roomId;
-          showDialog.value = true;
+          chat.showNewGroupDialog = true;
         }
       },
     });
@@ -238,13 +236,19 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
         <template #default>
           <div w-fit p-1>
             <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="toFriendPage">
-              <ElIconUser size="1.2em" class="mr-2" />
+              <div
+                title="添加好友"
+                class="i-tabler:user-plus mr-2 h-4.5 w-4.5"
+              />
               添加好友
             </div>
             <div my-1 border-default-t />
-            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="() => { showDialog = true; visiblePopper = false }">
-              <ElIconPlus size="1.2em" class="mr-2" />
-              新建群聊
+            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="() => { chat.showNewGroupDialog = true; visiblePopper = false }">
+              <div
+                title="发起群聊"
+                class="i-solar:chat-round-dots-outline mr-2 h-4.5 w-4.5"
+              />
+              发起群聊
             </div>
           </div>
         </template>
@@ -319,7 +323,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
       </ListAutoIncre>
     </el-scrollbar>
     <!-- 新建群聊 -->
-    <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="showDialog" />
+    <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="chat.showNewGroupDialog" />
   </div>
 </template>
 

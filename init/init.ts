@@ -146,7 +146,7 @@ export async function useMsgBoxWebViewInit() {
   });
   const online = useOnline();
 
-  watch(() => user.isLogin && online.value, (newVal, oldVal) => {
+  watch(() => user.isLogin && online.value && ws.status === WsStatusEnum.OPEN, (newVal, oldVal) => {
     activeIcon.value = newVal ? onlineUrl : offlineUrl;
   }, {
     immediate: true,

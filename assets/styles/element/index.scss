@@ -1,6 +1,26 @@
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   //  node_modules/element-plus/theme-chalk/src/common/var.scss"
   $border-radius: ("base": 6px, "small": 12px, "round": 20px, "circle": 100%),
+  // 阴影
+  $box-shadow:
+    (
+      "": (
+        0px 12px 32px 4px rgba(0, 0, 0, 0.04),
+        0px 8px 20px rgba(0, 0, 0, 0.08)
+      ),
+      "light": (
+        0px 0px 12px rgba(0, 0, 0, 0.1)
+      ),
+      "lighter": (
+        0px 0px 6px rgba(0, 0, 0, 0.1)
+      ),
+      "dark": (
+        0px 16px 48px 16px rgba(0, 0, 0, 0.05),
+        0px 12px 32px rgba(0, 0, 0, 0.08),
+        0px 8px 16px -8px rgba(0, 0, 0, 0.12)
+      )
+    ),
+
   $loading: ("spinner-size": 1.8rem, "fullscreen-spinner-size": 2rem),
   $colors: (
     "white": #f9fafb,

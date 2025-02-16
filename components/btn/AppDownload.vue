@@ -48,7 +48,7 @@ onMounted(async () => {
         class="h-2rem w-2rem flex-row-c-c cursor-pointer rounded-full shadow-sm border-default card-default"
         v-bind="$attrs"
       >
-        <i i-carbon:earth-southeast-asia p-3 text-color />
+        <i i-solar:home-smile-outline p-2 text-color />
       </a>
     </el-tooltip>
     <el-popconfirm

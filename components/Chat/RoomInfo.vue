@@ -27,7 +27,7 @@ const getType = computed(() => {
         :preview-src-list="[BaseUrlImg + chat.theContact.avatar]"
         :alt="chat.theContact.name"
         :src="BaseUrlImg + chat.theContact.avatar"
-        class="h-2.2em w-2.2em flex-shrink-0 object-cover sm:(h-2.4em w-2.4em) border-default card-default"
+        class="h-2.2em w-2.2em flex-shrink-0 object-cover sm:(h-2em w-2em) border-default card-default"
       />
       <span truncate text-sm font-500>
         {{ chat.theContact.name }}

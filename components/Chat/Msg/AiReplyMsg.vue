@@ -15,12 +15,14 @@ const {
 }>();
 const OVERFLOW_LENGTH = 250;
 const chat = useChatStore();
+const user = useUserStore();
+
 const initFold = data.message?.content?.length && data.message?.content?.length > 200 && chat.theContact.lastMsgId !== data.message.id;
 const initReasonFold = data.message?.body?.reasoningContent?.length && data.message?.body?.reasoningContent?.length > 200 && chat.theContact.lastMsgId !== data.message.id;
 const isFold = ref(initFold);
 const isResonFold = ref(initReasonFold);
 const showReasonLoading = computed(() => data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && !data.message?.content);
-const showContentLoading = computed(() => (data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && (data.message?.content || !data.message?.body?.reasoningContent)));
+const showContentLoading = computed(() => (data?.message?.body?.status !== undefined && data?.message?.body?.status === AiReplyStatusEnum.IN_PROGRESS && (data.message?.content || !data.message?.body?.reasoningContent)));
 </script>
 
 <template>
@@ -78,9 +80,9 @@ const showContentLoading = computed(() => (data?.message?.body?.status === AiRep
       </div>
       <!-- 状态 -->
       <small
-        v-if="data.message.body?.status === AiReplyStatusEnum.COTINUE"
+        v-if="data.message.body?.status === AiReplyStatusEnum.COTINUE && data.message.body.reply?.uid === user.userId"
         ctx-name="ai-status"
-        class="at-list flex-mr-a border-default-hover"
+        class="at-list flex-mr-a border-default"
         @click.stop="ElMessage.warning('此问答已达最大回答长度，该能力敬请期待！')"
       >
         继续

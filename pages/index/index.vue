@@ -49,7 +49,7 @@ const openRoomDrawer = computed({
       </el-drawer>
       <template v-else>
         <ChatRoomGroupPopup
-          class="ml-a h-full max-w-300px w-1/4 flex flex-col gap-2 border-r-0 rounded-r-0 p-4 border-default-l bg-color"
+          class="ml-a h-full w-1/4 w-260px flex flex-col gap-2 border-r-0 rounded-r-0 p-4 border-default-l bg-color"
         />
       </template>
     </template>

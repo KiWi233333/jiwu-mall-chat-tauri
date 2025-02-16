@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const props = withDefaults(defineProps<{
-  noMore?: boolean
+  noMore: boolean
   immediate?: boolean
   delay?: number
   loadingClass?: string
@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   immediate: true,
   ssr: true,
   autoStop: true,
-  delay: 800,
+  delay: 1000,
   loadingClass: "mx-a my-0.6em h-1.2em w-1.2em animate-[spin_2s_infinite_linear] rounded-6px bg-[var(--el-color-primary)]",
   appendLoadingClass: "",
 });
@@ -29,24 +29,28 @@ const { stop, isSupported } = useIntersectionObserver(
   (arr) => {
     const obj = arr[arr.length - 1];
     isSee.value = !!obj?.isIntersecting;
-    callBack();
   },
 );
 // 监听
 watch(isSee, (val) => {
-  emit("load");
-  callBack();
+  if (val) {
+    callBack();
+  }
+  else {
+    clearInterval(timer);
+  }
 });
 
 
 function callBack() {
-  if (showLoad.value && isSee.value) {
-    emit("load");
-    timer = setInterval(callBack, props.delay);
-  }
-  else if (props.noMore && props.autoStop) {
+  if (props.noMore && props.autoStop) {
     stop && stop();
     clearInterval(timer);
+  }
+  else if (isSee.value) {
+    clearInterval(timer);
+    emit("load");
+    timer = setInterval(callBack, props.delay);
   }
 }
 

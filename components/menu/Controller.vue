@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Window } from "@tauri-apps/api/window";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
@@ -19,33 +20,37 @@ const {
   // 关闭是否销毁
   destroyOnClose?: boolean
 }>();
-const defaultSize = size === "default" || size === "" || size === undefined;
+const isSmallSize = computed(() => size === "default" || size === "" || size === undefined);
 const btnStyle = computed(() => ({
-  fontSize: defaultSize ? "1.2em" : "1em",
-  width: defaultSize ? "2.6em" : "2em",
-  height: defaultSize ? "1.8em" : "1.5em",
+  fontSize: isSmallSize.value ? "1.2em" : "1.2em",
+  width: isSmallSize.value ? "2.4em" : "1.8em",
+  height: isSmallSize.value ? "1.6em" : "1.5em",
   // font-size: 1.2rem;padding: 0;width: 2.6rem;height: 1.8rem;;
   padding: 0,
   margin: 0,
 }));
-const appWindow = getCurrentWindow();
+const appWindow = shallowRef<Window>();
 const isMaximized = ref(false);
 const isAlwaysOnTopVal = ref(false);
+
 /**
  * 处理窗口事件
  * @param type 事件类型
  */
 async function handleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
+  if (!appWindow?.value) {
+    return;
+  }
   if (type === "min") {
-    await appWindow.minimize();
+    await appWindow.value?.minimize();
   }
   if (type === "max") {
-    await appWindow.toggleMaximize();
-    const isMax = await appWindow.isMaximized();
-    isMaximized.value = isMax;
+    await appWindow.value?.toggleMaximize();
+    const isMax = await appWindow.value?.isMaximized();
+    isMaximized.value = !!isMax;
   };
   if (type === "close") {
-    if (destroyOnClose || EXIT_APP_WINDOW_LABELS.includes(appWindow.label)) {
+    if (destroyOnClose || EXIT_APP_WINDOW_LABELS.includes(appWindow?.value?.label)) {
       ElMessageBox.confirm(`确定要关闭${appName}程序吗？`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -58,7 +63,7 @@ async function handleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
       });
       return;
     }
-    else if (CLOSE_DESTORY_WINDOW_LABELS.includes(appWindow.label)) {
+    else if (CLOSE_DESTORY_WINDOW_LABELS.includes(appWindow.value?.label)) {
       ElMessageBox.confirm(`是否关闭当前扩展程序？`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -71,30 +76,35 @@ async function handleWindow(type: "min" | "max" | "close" | "alwaysOnTop") {
               mainWindow.setFocus();
             }
             // 销毁当前窗口
-            await appWindow.destroy();
+            await appWindow.value?.destroy();
           }
         },
       });
       return;
     }
-    await appWindow.hide();
+    await appWindow.value?.hide();
   }
   if (type === "alwaysOnTop") {
     isAlwaysOnTopVal.value = !isAlwaysOnTopVal.value;
-    appWindow.setAlwaysOnTop(isAlwaysOnTopVal.value);
+    appWindow.value?.setAlwaysOnTop(isAlwaysOnTopVal.value);
   }
   return {
     isMaximized: isMaximized.value,
     isAlwaysOnTopVal: isAlwaysOnTopVal.value,
   };
 }
-const data = {
+const data = ref({
   handleWindow,
-};
+  size,
+  btnStyle,
+});
 const setting = useSettingStore();
+
+
 onMounted(async () => {
   if (setting.isWeb)
     return;
+  appWindow.value = getCurrentWindow();
   try {
     const info = platform();
     if (["windows", "macos", "linux"].includes(info)) {

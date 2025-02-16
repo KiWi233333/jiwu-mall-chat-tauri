@@ -14,7 +14,6 @@ defineProps<{
 const user = useUserStore();
 </script>
 
-
 <template>
   <ChatMsgTemplate
     :prev-msg="prevMsg"
@@ -25,7 +24,7 @@ const user = useUserStore();
     <template #body>
       <!-- 内容 -->
       <template v-if="data.fromUser.userId === user.userInfo.id">
-        <p class="msg-popper mt-2">
+        <p class="msg-popper">
           {{ data.message?.content }}
         </p>
       </template>

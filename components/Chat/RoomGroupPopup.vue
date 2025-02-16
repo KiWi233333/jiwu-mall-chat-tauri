@@ -561,7 +561,7 @@ onMounted(() => {
         </div>
       </div>
       <!-- <small
-        class="shadow-bt fixed bottom-0 left-0 block h-2em w-full cursor-pointer text-center"
+        class="shadow-linear fixed bottom-0 left-0 block h-2em w-full cursor-pointer text-center"
         @click="scrollTo(chat.currentMemberList.length - 1)"
       >
         <i i-solar:alt-arrow-down-outline p-2 btn-info />
@@ -718,11 +718,11 @@ onMounted(() => {
     resize:none;
   }
 }
-.shadow-bt {
+.shadow-linear {
   // 渐变色
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 }
-.dark .shadow-bt {
+.dark .shadow-linear {
   background: linear-gradient(to bottom, rgba(31, 31, 31, 0) 0%, rgba(31, 31, 31, 1) 100%);
 }
 
