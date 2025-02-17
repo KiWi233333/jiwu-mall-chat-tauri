@@ -458,31 +458,47 @@ const MIME_TYPE_MAP: Record<string, string> = {
   m4a: "audio/x-m4a",
 
   // 其他文件类型
-  txt: "text/plain",
-  xls: "application/vnd.ms-excel",
-  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  ppt: "application/vnd.ms-powerpoint",
-  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  doc: "application/msword",
-  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  pdf: "application/pdf",
+  txt: "file:text/plain",
+  xls: "file:application/vnd.ms-excel",
+  xlsx: "file:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ppt: "file:application/vnd.ms-powerpoint",
+  pptx: "file:application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  doc: "file:application/msword",
+  docx: "file:application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  pdf: "file:application/pdf",
 };
 
 // 判断文件类型
-export function getSimpleOssTypeByExtName(fileName: string): OssConstantItemType | null {
+export function getSimpleOssTypeByExtName(fileName: string): { type: OssConstantItemType, mineType: string } | null {
   const extension = fileName.split(".").pop()?.toLowerCase(); // 获取文件后缀
   if (!extension)
     return null; // 如果没有后缀，默认为文件
 
-  const mimeType = MIME_TYPE_MAP[extension] || "application/octet-stream"; // 获取 MIME Type
-
+  const mimeType = MIME_TYPE_MAP[extension] || ""; // 获取 MIME Type
   // 判断文件类型
-  if (mimeType.startsWith("image/"))
-    return "image";
-  if (mimeType.startsWith("video/"))
-    return "video";
-  if (mimeType.startsWith("audio/"))
-    return "audio";
-
+  if (mimeType.startsWith("image/")) {
+    return {
+      type: "image",
+      mineType: mimeType,
+    };
+  }
+  if (mimeType.startsWith("video/")) {
+    return {
+      type: "video",
+      mineType: mimeType,
+    };
+  }
+  if (mimeType.startsWith("audio/")) {
+    return {
+      type: "audio",
+      mineType: mimeType,
+    };
+  }
+  if (mimeType.startsWith("file:")) {
+    return {
+      type: "file",
+      mineType: mimeType.replace("file:", ""),
+    };
+  }
   return null;
 }

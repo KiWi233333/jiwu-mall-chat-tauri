@@ -1,7 +1,6 @@
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import type { ShallowRef } from "vue";
 import type { OssConstantItemType } from "~/init/system";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { readFile, stat } from "@tauri-apps/plugin-fs";
 
@@ -547,12 +546,12 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
               }
               const setting = useSettingStore();
               // 判断类型
-              const type = getSimpleOssTypeByExtName(ext);
-              if (!type || type === "audio") { // TODO: 暂不支持音频文件直接上传
+              const typeInfo = getSimpleOssTypeByExtName(ext);
+              if (!typeInfo?.type || typeInfo.type === "audio") { // TODO: 暂不支持音频文件直接上传
                 ElMessage.warning("暂不支持该文件类型上传！");
                 return;
               }
-              const ossInfo = setting?.systemConstant?.ossInfo?.[type];
+              const ossInfo = setting?.systemConstant?.ossInfo?.[typeInfo.type];
               if (!ossInfo?.fileSize) {
                 return;
               }
@@ -560,10 +559,13 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
                 ElMessage.warning(`文件大小超过限制，最大支持${formatFileSize(ossInfo.fileSize)}`);
                 return;
               }
-              const url = convertFileSrc(path); // 生成本地url
+              // const url = convertFileSrc(path); // 生成本地url
               readFile(path).then((blod) => {
-                const file = new File([blod], path.replaceAll("\\", "/")?.split("/").pop() || `${Date.now()}.${path.split(".").pop()}`);
-                uploadFile(type, file, url); // 上传文件
+                const file = new File([blod], path.replaceAll("\\", "/")?.split("/").pop() || `${Date.now()}.${path.split(".").pop()}`, {
+                  type: typeInfo.mineType || "application/octet-stream",
+                });
+                const url = URL.createObjectURL(file);
+                uploadFile(typeInfo.type, file, url); // 上传文件
               });
             }
           });
