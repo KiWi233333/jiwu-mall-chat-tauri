@@ -214,69 +214,67 @@ export const useChatStore = defineStore(
       if (!len)
         return;
       // 成员变动消息
-      if (ws.wsMsgList.memberMsg.length) {
-        for (const p of ws.wsMsgList.memberMsg) {
-          if (p.changeType === WSMemberStatusEnum.JOIN) { // 新加入
-            if (contactMap.value[p.roomId] || p.uid !== user.userId) {
-              // 本地大群获取物料插入
-              const exsitUser = roomMapCache.value[1]?.userList.find(item => item.userId === p.uid);
-              if (exsitUser && roomMapCache.value[1]) {
-                roomMapCache.value[1].userList.unshift(exsitUser);
-                return;
-              }
-              mitter.emit(MittEventType.RELOAD_MEMBER_LIST, {
-                type: "reload",
-                payload: {
-                  roomId: p.roomId,
-                  userId: p.uid,
-                },
-              });
+      for (const p of ws.wsMsgList.memberMsg) {
+        if (p.changeType === WSMemberStatusEnum.JOIN) { // 新加入
+          if (contactMap.value[p.roomId] || p.uid !== user.userId) {
+            // 本地大群获取物料插入
+            const exsitUser = roomMapCache.value[1]?.userList.find(item => item.userId === p.uid);
+            if (exsitUser && roomMapCache.value[1]) {
+              roomMapCache.value[1].userList.unshift(exsitUser);
               return;
             }
-            setTimeout(() => { // 创建会话有一定延迟
-              // 如果会话已经存在就不请求
-              if (contactMap.value[p.roomId])
-                return;
-              getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
-                if (res) {
-                  const item = contactMap.value[p.roomId];
-                  if (item) { // 更新
-                    contactMap.value[p.roomId] = res.data;
-                  }
-                  else { // 添加
-                    res.data.unreadCount = 1;
-                    contactMap.value[res.data.roomId] = res.data;
-                    // unshift();
-                  }
+            mitter.emit(MittEventType.RELOAD_MEMBER_LIST, {
+              type: "reload",
+              payload: {
+                roomId: p.roomId,
+                userId: p.uid,
+              },
+            });
+            return;
+          }
+          setTimeout(() => { // 创建会话有一定延迟
+            // 如果会话已经存在就不请求
+            if (contactMap.value[p.roomId])
+              return;
+            getChatContactInfo(p.roomId, user.getToken, RoomType.GROUP)?.then((res) => {
+              if (res) {
+                const item = contactMap.value[p.roomId];
+                if (item) { // 更新
+                  contactMap.value[p.roomId] = res.data;
                 }
-              }).finally(() => {
-              });
-            }, 300);
-          }
-          else if (p.changeType === WSMemberStatusEnum.LEAVE) {
-            if (user.userId === p.uid) { // 自己被退出
-              if (!contactMap.value[p.roomId])
-                return;
-              contactMap.value[p.roomId]!.selfExist = isTrue.FALESE;
-              // await removeContact(p.roomId);
+                else { // 添加
+                  res.data.unreadCount = 1;
+                  contactMap.value[res.data.roomId] = res.data;
+                  // unshift();
+                }
+              }
+            }).finally(() => {
+            });
+          }, 300);
+        }
+        else if (p.changeType === WSMemberStatusEnum.LEAVE) {
+          if (user.userId === p.uid) { // 自己被退出
+            if (!contactMap.value[p.roomId])
               return;
-            }
-            if (!roomMapCache.value[p.roomId]?.userList) {
-              return;
-            }
-            // 别人退出
-            const index = roomMapCache.value[p.roomId]!.userList.findIndex(item => item.userId === p.uid);
-            if (index !== -1) {
-              roomMapCache.value[p.roomId]!.userList.splice(index, 1);
-            }
+            contactMap.value[p.roomId]!.selfExist = isTrue.FALESE;
+            // await removeContact(p.roomId);
+            return;
           }
-          else if (p.changeType === WSMemberStatusEnum.DEL) {
-            // 删除会话
-            await removeContact(p.roomId);
+          if (!roomMapCache.value[p.roomId]?.userList) {
+            return;
+          }
+          // 别人退出
+          const index = roomMapCache.value[p.roomId]!.userList.findIndex(item => item.userId === p.uid);
+          if (index !== -1) {
+            roomMapCache.value[p.roomId]!.userList.splice(index, 1);
           }
         }
-        ws.wsMsgList.memberMsg.splice(0);
+        else if (p.changeType === WSMemberStatusEnum.DEL) {
+          // 删除会话
+          await removeContact(p.roomId);
+        }
       }
+      ws.wsMsgList.memberMsg.splice(0);
     }
 
     /* ------------------------------------------- 会话操作 ------------------------------------------- */

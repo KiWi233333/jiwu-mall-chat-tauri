@@ -45,7 +45,7 @@ async function addFrendApplyById() {
       targetUid: "",
     };
     emit("submit", props.userId);
-    ElNotification.success("好友申请已发送！");
+    ElMessage.success("好友申请已发送！");
   });
 }
 </script>

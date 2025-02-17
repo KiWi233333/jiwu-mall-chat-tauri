@@ -106,7 +106,6 @@ function deleteFriend(userId: string) {
       if (action === "confirm") {
         const res = await deleteFriendById(userId, store.getToken);
         if (res.code === StatusCode.SUCCESS) {
-          ElNotification.success("删除成功！");
           chat.setTheFriendOpt(FriendOptType.Empty, {});
           chat.setDelUserId(userId);// 删除的好友 好友列表也前端移除
           chat.setIsAddNewFriend(true);// 设置未非好友

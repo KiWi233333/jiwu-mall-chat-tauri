@@ -70,10 +70,10 @@ async function toFriendPage() {
         </div>
         <div class="btn" @click="reloadPage">
           <div
-            title="刷新页面"
+            title="重载应用"
             class="i-solar:refresh-outline h-4.5 w-4.5 transition-transform group-hover:rotate-180"
           />
-          <span ml-2>刷新页面</span>
+          <span ml-2>重载应用</span>
         </div>
         <!-- 切换主题 -->
         <div

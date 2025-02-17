@@ -171,11 +171,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
               if (action === "confirm") {
                 const res = await exitRoomGroupByUid(data.roomId, item.userId, user.getToken);
                 if (res.code === StatusCode.SUCCESS) {
-                  ElNotification.success("踢出成功！");
                   memberList.value = memberList.value.filter(e => e.userId !== item.userId);
-                }
-                else {
-                  ElMessage.error(res.msg || "操作失败，请稍后再试！");
                 }
               }
             },
@@ -317,7 +313,7 @@ function onAdd() {
       </ListAutoIncre>
     </el-scrollbar>
     <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
       @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
         chat.removeContact(data.roomId);
       })"

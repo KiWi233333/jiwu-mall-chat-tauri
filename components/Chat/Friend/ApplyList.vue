@@ -50,7 +50,6 @@ function onArgeeFriend(applyId: number) {
       if (action === "confirm") {
         const res = await argeeFriendApply({ applyId }, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
-          ElNotification.success("已添加好友！");
           for (const p of list.value) {
             if (p.userId && p.applyId === applyId)
               p.status = ChatApplyStatusType.Argee;

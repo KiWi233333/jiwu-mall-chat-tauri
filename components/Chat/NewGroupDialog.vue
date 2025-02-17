@@ -68,14 +68,16 @@ function addGroupApply() {
       return;
 
     show.value = false;
-    ElNotification.success({
-      title: "发起邀请提醒",
-      message: +res.data === form.value.uidList.length ? "群聊邀请已发送！" : "部分邀请未送达！",
+    // ElNotification.success({
+    //   title: "发起邀请提醒",
+    //   message: +res.data === form.value.uidList.length ? "群聊邀请已发送！" : "部分邀请未送达！",
+    // });
+    const diff = form.value.uidList.length - (+res?.data || 0);
+    ElMessage({
+      type: !diff ? "success" : "warning",
+      message: !diff ? "群聊邀请已发送！" : `部分邀请未送达（${res.data || 0}/${form.value.uidList.length}）！`,
     });
-    form.value.roomId = null;
-    form.value.uidList = [];
-    form.value.avatar = null;
-    showImg.value = false;
+    reset();
   });
 }
 
@@ -119,6 +121,18 @@ function reload(uidList = []) {
   loadData();
 }
 
+// 重载
+function reset() {
+  form.value.roomId = null;
+  form.value.uidList = [];
+  form.value.avatar = null;
+  showImg.value = false;
+  userList.value = [];
+  pageInfo.value.cursor = null;
+  pageInfo.value.isLast = false;
+  pageInfo.value.total = -1;
+}
+
 // 下一步fn
 function next() {
   if (form.value.roomId) {
@@ -134,6 +148,7 @@ function next() {
 defineExpose({
   form,
   reload,
+  reset,
 });
 </script>
 
