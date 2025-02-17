@@ -300,6 +300,10 @@ body .el-message {
     }
   }
 }
+.el-loading-mask {
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6px);
+}
 .dark {
   .el-loading-mask {
     background-color: rgba(0, 0, 0, 0.2);
@@ -351,7 +355,6 @@ body .el-message {
     opacity: 1;
   }
 }
-
 
 // 阴影
 .shadow-b {

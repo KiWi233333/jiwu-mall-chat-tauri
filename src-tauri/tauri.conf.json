@@ -8,7 +8,15 @@
     "windows": [
     ],
     "security": {
-      "csp": null,
+      "csp": {
+        "default-src": "'self' customprotocol: asset:",
+        "img-src": "'self' asset: http://asset.localhost blob: data:",
+        "connect-src": "ipc: http://ipc.localhost"
+      },
+      "assetProtocol": {
+        "enable": true,
+        "scope": []
+      },
       "capabilities": [
         "default-capability",
         "desktop-capability",

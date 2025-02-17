@@ -6,7 +6,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 #[tauri::command]
 pub async fn exist_file(path: PathBuf) -> bool {
     path.exists()
-}
+} 
 
 #[tauri::command]
 pub async fn remove_file(path: PathBuf) -> bool {

@@ -44,6 +44,7 @@ const {
   isUploadImg,
   isUploadFile,
   isUploadVideo,
+  isDragDropOver,
   onSubmitImg,
   onSubmitFile,
   onSubmitVideo,
@@ -52,7 +53,7 @@ const {
   inputOssImgUploadRef,
   inputOssVideoUploadRef,
   inputOssFileUploadRef,
-} = useFileUpload({ img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" });
+} = useFileUpload({ img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, isAiRoom);
 // 录音
 const {
   isChating,
@@ -503,6 +504,30 @@ onUnmounted(() => {
     v-bind="$attrs"
     :disabled="isDisabledFile"
   >
+    <!-- 拖拽上传遮罩 -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="isDragDropOver"
+          key="drag-over"
+          data-tauri-drag-region
+          class="fixed left-0 top-0 z-3000 h-full w-full flex select-none items-center justify-center card-rounded-df backdrop-blur border-default"
+        >
+          <div class="flex-row-c-c flex-col border-(1px [--el-border-color] dashed) rounded-4 p-6 transition-all hover:(border-1px border-[--el-color-primary] border-solid) card-default-br sm:p-12 text-small !hover:text-color">
+            <i class="i-solar:upload-minimalistic-linear p-4" />
+            <p class="mt-4 text-0.8rem sm:text-1rem">
+              拖拽文件到此处上传
+            </p>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+    <!-- <span
+      v-loading.fullscreen.lock="isDragDropOver"
+      element-loading-text="拖拽此上传"
+      element-loading-background="transparent"
+      :element-loading-svg="false"
+    /> -->
     <div class="absolute w-full flex flex-col p-2 -transform-translate-y-full" @click.prevent="() => {}">
       <!-- 滚动底部 -->
       <div

@@ -1,3 +1,4 @@
+import type { OssConstantItemType } from "~/init/system";
 import { invoke } from "@tauri-apps/api/core";
 import { download } from "@tauri-apps/plugin-upload";
 import streamSaver from "streamsaver";
@@ -32,9 +33,9 @@ export const FILE_TYPE_ICON_DEFAULT = "/images/icon/DEFAULT.png";
 
 
 // 定制fs实现任意路径 https://github.com/lencx/tauri-tutorial/discussions/13
-export const existsFile = (path: string) => invoke("exist_file", { path });
-export const removeFile = (path: string) => invoke("remove_file", { path });
-export const mkdirFile = (path: string) => invoke("mkdir_file", { path });
+export const existsFile = (path: string) => invoke<boolean>("exist_file", { path });
+export const removeFile = (path: string) => invoke<boolean>("remove_file", { path });
+export const mkdirFile = (path: string) => invoke<boolean>("mkdir_file", { path });
 /**
  * 格式化文件大小
  * @param size 字节大小
@@ -424,4 +425,64 @@ export interface VideoFileInfo {
   width: number;
   height: number;
   size: number;
+}
+
+
+// 文件后缀到 MIME 类型的映射
+const MIME_TYPE_MAP: Record<string, string> = {
+  // 图片
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  svg: "image/svg+xml",
+  bmp: "image/bmp",
+  tiff: "image/tiff",
+  webp: "image/webp",
+
+  // 视频
+  mp4: "video/mp4",
+  avi: "video/avi",
+  mov: "video/quicktime",
+  wmv: "video/x-ms-wmv",
+  mkv: "video/x-matroska",
+  flv: "video/x-flv",
+  m4v: "video/x-m4v",
+
+  // 音频
+  mp3: "audio/mpeg",
+  wav: "audio/wav",
+  ogg: "audio/ogg",
+  flac: "audio/flac",
+  aac: "audio/aac",
+  m4a: "audio/x-m4a",
+
+  // 其他文件类型
+  txt: "text/plain",
+  xls: "application/vnd.ms-excel",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ppt: "application/vnd.ms-powerpoint",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  pdf: "application/pdf",
+};
+
+// 判断文件类型
+export function getSimpleOssTypeByExtName(fileName: string): OssConstantItemType | null {
+  const extension = fileName.split(".").pop()?.toLowerCase(); // 获取文件后缀
+  if (!extension)
+    return null; // 如果没有后缀，默认为文件
+
+  const mimeType = MIME_TYPE_MAP[extension] || "application/octet-stream"; // 获取 MIME Type
+
+  // 判断文件类型
+  if (mimeType.startsWith("image/"))
+    return "image";
+  if (mimeType.startsWith("video/"))
+    return "video";
+  if (mimeType.startsWith("audio/"))
+    return "audio";
+
+  return null;
 }

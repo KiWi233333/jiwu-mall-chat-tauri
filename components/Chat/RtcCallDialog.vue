@@ -318,7 +318,7 @@ defineExpose({
     v-if="show"
     ref="dragRef"
     style="touch-action: none;--el-dialog-padding-info: 0;"
-    class="group rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-fit w-340px)"
+    class="group rtc-dialog rounded-dialog fixed z-1099 h-fit w-fit select-none border-(1px #2d2d2d solid) bg-dark text-white sm:(h-600px max-h-full w-340px)"
     :style="style" :class="{
       'is-mini active:cursor-move': isMinWind && !isMaxWind,
       'is-mobile-mini  cursor-pointer hover:shadow-lg': setting.isMobileSize && isMinWind && !isMaxWind,
@@ -578,10 +578,9 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
 }
 
 .rtc-dialog {
-
   transition: var(--call-wind-transition, width 0.2s, height 0.2s ease);
-  width: max(18vw, 24rem);
-  height: min(60vh, 40rem);
+  width: 340px;
+  height: 450px;
   &.is-mini {
     width: 10rem;
     height: 14rem;

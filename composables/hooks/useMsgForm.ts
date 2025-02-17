@@ -1,5 +1,9 @@
 import type { UnlistenFn } from "@tauri-apps/api/event";
+import type { ShallowRef } from "vue";
+import type { OssConstantItemType } from "~/init/system";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
+import { readFile, stat } from "@tauri-apps/plugin-fs";
 
 const MAX_CHAT_SECONDS = 120;
 const MimeType = "audio/mp3";
@@ -274,7 +278,7 @@ export function useRecording(options: { timeslice?: number, pressHandleRefName?:
  *  onSubmitFile: 文件上传回调
  *  onSubmitVideo: 视频上传回调
  */
-export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, disabled?: Ref<boolean>) {
+export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, disabled?: ShallowRef<boolean>) {
   const {
     img: imgRefName = "inputOssImgUploadRef",
     file: fileRefName = "inputOssFileUploadRef",
@@ -413,59 +417,84 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     // 判断粘贴上传
     if (!e.clipboardData?.items?.length)
       return;
-    if (chat.theContact.type === RoomType.AICHAT) {
-      return;
-    }
     // 拿到粘贴板上的 image file 对象
     const fileArr = Array.from(e.clipboardData.items);
-    const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
-    const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
-    const video = fileArr.find(v => v.type.includes("video"))?.getAsFile();
-    if ((!img && !file && !video) || !inputOssImgUploadRef.value)
+    if (fileArr.length > 1 || fileArr.length < 0) {
+      fileArr.length > 1 && ElMessage.warning("只支持单个文件上传！");
       return;
-    if (video) {
+    }
+    const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
+    img && uploadFile("image", img);
+    const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
+    file && uploadFile("file", file);
+    const video = fileArr.find(v => v.type.includes("video"))?.getAsFile();
+    video && uploadFile("video", video);
+    if (!file && !img && !video) { // 非文件
+      ElMessage.warning("暂不支持该文件类型粘贴上传！");
+    }
+  }
+
+  /**
+   * 上传文件
+   *
+   * @param type 文件类型
+   * @param file 文件对象
+   * @returns void
+   */
+  async function uploadFile(type: OssConstantItemType, file: File, showUrl?: string) {
+    if (type === "video") {
       inputOssImgUploadRef.value?.resetInput?.();
       inputOssFileUploadRef.value?.resetInput?.();
       await inputOssVideoUploadRef.value?.onUpload({
-        id: URL.createObjectURL(video),
+        id: showUrl || URL.createObjectURL(file),
         key: undefined,
         status: "",
         percent: 0,
-        file: video,
+        file,
       });
       chat.msgForm.msgType = MessageType.VIDEO; // 视频
     }
-    else
-      if (file) {
-        if (isUploadFile.value) {
-          ElMessage.warning("文件正在上传中，请稍后再试！");
-          return;
-        }
-        inputOssImgUploadRef.value?.resetInput?.();
-        inputOssFileUploadRef.value?.resetInput?.();
-        fileList.value = [];
-        await inputOssFileUploadRef.value?.onUpload({
-          id: URL.createObjectURL(file),
-          key: undefined,
-          status: "",
-          percent: 0,
-          file,
-        });
-        chat.msgForm.msgType = MessageType.FILE; // 文件
+    else if (type === "file") {
+      if (isUploadFile.value) {
+        ElMessage.warning("文件正在上传中，请稍后再试！");
+        return;
       }
-      else
-        if (img) {
-          inputOssImgUploadRef.value?.resetInput?.();
-          inputOssFileUploadRef.value?.resetInput?.();
-          await inputOssImgUploadRef.value?.onUpload({
-            id: URL.createObjectURL(img),
-            key: undefined,
-            status: "",
-            percent: 0,
-            file: img,
-          });
-          chat.msgForm.msgType = MessageType.IMG; // 图片
-        }
+      inputOssImgUploadRef.value?.resetInput?.();
+      inputOssFileUploadRef.value?.resetInput?.();
+      fileList.value = [];
+      await inputOssFileUploadRef.value?.onUpload({
+        id: showUrl || URL.createObjectURL(file),
+        key: undefined,
+        status: "",
+        percent: 0,
+        file,
+      });
+      chat.msgForm.msgType = MessageType.FILE; // 文件
+    }
+    else if (type === "image") {
+      inputOssImgUploadRef.value?.resetInput?.();
+      inputOssFileUploadRef.value?.resetInput?.();
+      await inputOssImgUploadRef.value?.onUpload({
+        id: showUrl || URL.createObjectURL(file),
+        key: undefined,
+        status: "",
+        percent: 0,
+        file,
+      });
+      chat.msgForm.msgType = MessageType.IMG; // 图片
+    }
+    // else if (type === "audio") {
+    //   inputOssImgUploadRef.value?.resetInput?.();
+    //   inputOssFileUploadRef.value?.resetInput?.();
+    //   await inputOssImgUploadRef.value?.onUpload({
+    //     id: showUrl || URL.createObjectURL(file),
+    //     key: undefined,
+    //     status: "",
+    //     percent: 0,
+    //     file,
+    //   });
+    //   chat.msgForm.msgType = MessageType.SOUND; // 语音
+    // }
   }
 
   // 监听拖拽上传
@@ -478,27 +507,67 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     position: undefined,
   });
   const dragDropFileList = ref<File[]>([]);
-  let unlisten: UnlistenFn;
+  let unlisten: UnlistenFn | undefined;
+  const isListend = ref(false);
   async function listenDragDrop() {
     const setting = useSettingStore();
-    if (!setting.isDesktop) {
+    if (!setting.isDesktop || unlisten || isListend.value) {
       return;
     }
+    isListend.value = true;
     unlisten = await getCurrentWebview().onDragDropEvent(async (event) => {
       if (event.payload.type === "over") {
         if (!isDragDropOver.value) {
-          isDragDropOver.value = true;
-          const { x, y } = event.payload.position;
-          console.log(`User is dragging over ${x}, ${y}`);
+          isDragDropOver.value = !disabled?.value;
+          // const { x, y } = event.payload.position;
+          // console.log(`User is dragging over ${x}, ${y}`);
         }
       }
       else if (event.payload.type === "drop") {
         if (isDragDropOver.value) {
           isDragDropOver.value = false;
           const { x, y } = event.payload.position;
-          console.log(`User dropped ${x}, ${y}`);
+          console.log(`User dropped ${x}, ${y}, ${event.payload.paths}`);
+          // 获取文件
+          event.payload.paths.forEach(async (path) => {
+            if (await existsFile(path)) {
+              if (!path) {
+                return;
+              }
+              // 根据后缀简单判断文件类型
+              const ext = path.split(".").pop();
+              if (!ext) {
+                ElMessage.warning("无法判断该文件类型！");
+                return;
+              }
+              const info = await stat(path);
+              if (info.isDirectory) {
+                ElMessage.warning("暂不支持文件夹上传！");
+                return;
+              }
+              const setting = useSettingStore();
+              // 判断类型
+              const type = getSimpleOssTypeByExtName(ext);
+              if (!type || type === "audio") { // TODO: 暂不支持音频文件直接上传
+                ElMessage.warning("暂不支持该文件类型上传！");
+                return;
+              }
+              const ossInfo = setting?.systemConstant?.ossInfo?.[type];
+              if (!ossInfo?.fileSize) {
+                return;
+              }
+              if (info.size > ossInfo.fileSize) { // 20MB
+                ElMessage.warning(`文件大小超过限制，最大支持${formatFileSize(ossInfo.fileSize)}`);
+                return;
+              }
+              const url = convertFileSrc(path); // 生成本地url
+              readFile(path).then((blod) => {
+                const file = new File([blod], path.replaceAll("\\", "/")?.split("/").pop() || `${Date.now()}.${path.split(".").pop()}`);
+                uploadFile(type, file, url); // 上传文件
+              });
+            }
+          });
         }
-        console.log("User dropped", event.payload.position);
       }
       else {
         console.log("File drop cancelled");
@@ -508,9 +577,16 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
   }
   // 生命周期
   onMounted(listenDragDrop);
-  onActivated(listenDragDrop);
-  onBeforeUnmount(() => unlisten?.());
-  onDeactivated(() => unlisten?.());
+  // onActivated(listenDragDrop);
+  onBeforeUnmount(() => {
+    unlisten?.();
+    unlisten = undefined;
+    isListend.value = false;
+  });
+  // onDeactivated(() => {
+  //   unlisten?.();
+  //   unlisten = undefined;
+  // });
 
 
   return {
