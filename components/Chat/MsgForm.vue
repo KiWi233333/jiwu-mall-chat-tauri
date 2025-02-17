@@ -342,40 +342,45 @@ function onContextMenu(e: MouseEvent, key?: string, index: number = 0, type: Oss
       {
         customClass: "group",
         icon: "i-solar:trash-bin-minimalistic-outline group-btn-danger",
-        label: `删除${textMap[type]}`,
+        label: `撤销${textMap[type]}`,
         onClick: async () => {
           if (!key)
             return;
-          const filesMap: Record<OssFileType, (Ref<OssFile[]> | undefined)> = {
-            [OssFileType.IMAGE]: imgList,
-            [OssFileType.FILE]: fileList,
-            [OssFileType.VIDEO]: videoList,
-            [OssFileType.SOUND]: undefined,
-            [OssFileType.FONT]: undefined,
-          };
-          const item = filesMap?.[type]?.value.find(f => f.key === key);
-          if (item)
-            item.subscribe.unsubscribe();
-          const keys = [key, ...(item?.children || []).map(f => f.key)];
-          keys.forEach(k => k && deleteOssFile(k, user.getToken));
-          ElMessage.closeAll("error");
-          if (type === OssFileType.IMAGE) {
-            imgList.value.splice(
-              index,
-              1,
-            );
-            inputOssImgUploadRef?.value?.resetInput?.();
-          }
-          filesMap?.[type]?.value.splice(
-            index,
-            1,
-          );
-          inputOssFileUploadRef?.value?.resetInput?.();
+          removeOssFile(type, key, index);
         },
       },
     ],
   };
   ContextMenu.showContextMenu(opt);
+}
+
+function removeOssFile(type: OssFileType = OssFileType.IMAGE, key?: string, index: number = 0) {
+  console.log("removeOssFile", type, key, index);
+
+  const filesMap: Record<OssFileType, (Ref<OssFile[]> | undefined)> = {
+    [OssFileType.IMAGE]: imgList,
+    [OssFileType.FILE]: fileList,
+    [OssFileType.VIDEO]: videoList,
+    [OssFileType.SOUND]: undefined,
+    [OssFileType.FONT]: undefined,
+  };
+  const item = filesMap?.[type]?.value.find(f => f.key === key);
+  if (item && key)
+    item.subscribe.unsubscribe();
+  const keys = [key, ...(item?.children || []).map(f => f.key)];
+  keys.forEach(k => k && deleteOssFile(k, user.getToken));
+  ElMessage.closeAll("error");
+  inputOssFileUploadRef?.value?.resetInput?.();
+  inputOssImgUploadRef?.value?.resetInput?.();
+  inputOssVideoUploadRef?.value?.resetInput?.();
+  filesMap?.[type]?.value.splice(
+    index,
+    1,
+  );
+  if (filesMap?.[type]?.value?.length === 0) {
+    chat.msgForm.msgType = MessageType.TEXT; // 默认
+    chat.msgForm.body.url = undefined;
+  }
 }
 
 // 到底部并消费消息
@@ -556,11 +561,14 @@ onUnmounted(() => {
       >
         <div
           v-for="(img, i) in imgList" :key="i" v-loading="img.status !== 'success'"
-          class="relative flex-row-c-c shadow-sm transition-shadow border-default card-default hover:shadow"
+          class="group relative flex-row-c-c shadow-sm transition-shadow border-default card-default hover:shadow"
           :element-loading-spinner="defaultLoadingIcon"
           element-loading-background="transparent"
           @contextmenu="onContextMenu($event, img.key, i, OssFileType.IMAGE)"
         >
+          <div title="撤销图片" class="absolute right-2 top-2 z-5 h-6 w-6 transition-opacity !rounded-full card-default-br group-hover-op-80 hover-op-100 sm:op-0" @click.stop="removeOssFile(OssFileType.IMAGE, img.key, i)">
+            <i i-solar:minus-circle-linear block h-full w-full />
+          </div>
           <CardElImage
             preview-teleported
             loading="lazy"

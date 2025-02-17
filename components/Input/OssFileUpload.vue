@@ -324,6 +324,7 @@ async function removeItem(t: OssFile) {
         flag = true;
       }
       else if (res.code === StatusCode.DELETE_NOEXIST_ERR) {
+        // ElMessage.closeAll("error");
         fileList.value.splice(
           fileList.value.findIndex(item => item.key === t.key),
           1,

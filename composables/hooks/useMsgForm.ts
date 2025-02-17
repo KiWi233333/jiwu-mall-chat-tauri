@@ -414,22 +414,39 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     if (disabled?.value === true)
       return;
     // 判断粘贴上传
-    if (!e.clipboardData?.items?.length)
-      return;
-    // 拿到粘贴板上的 image file 对象
-    const fileArr = Array.from(e.clipboardData.items);
-    if (fileArr.length > 1 || fileArr.length < 0) {
-      fileArr.length > 1 && ElMessage.warning("只支持单个文件上传！");
+    if (!e.clipboardData?.items?.length) {
       return;
     }
-    const img = fileArr.find(v => v.type.includes("image"))?.getAsFile();
-    img && uploadFile("image", img);
-    const file = fileArr.find(v => FILE_TYPE_ICON_MAP[v.type])?.getAsFile();
-    file && uploadFile("file", file);
-    const video = fileArr.find(v => v.type.includes("video"))?.getAsFile();
-    video && uploadFile("video", video);
-    if (!file && !img && !video) { // 非文件
-      ElMessage.warning("暂不支持该文件类型粘贴上传！");
+    // 拿到粘贴板上的 image file 对象
+    const fileArr = Array.from(e.clipboardData.items).filter(v => v.kind === "file");
+    if (!fileArr.length)
+      return;
+
+    // if (fileArr.length > 1 || fileArr.length < 0) {
+    //   fileArr.length > 1 && ElMessage.warning("不支持批量上传！");
+    //   return;
+    // }
+    for (let i = 0; i < fileArr.length; i++) {
+      const item = fileArr[i];
+      if (!item || item.kind !== "file") {
+        continue;
+      }
+      if (item.type.includes("image")) {
+        const file = item.getAsFile();
+        file && uploadFile("image", file);
+      }
+      else if (item.type.includes("video")) {
+        const file = item.getAsFile();
+        file && uploadFile("video", file);
+        // 单文件
+        return;
+      }
+      else if (FILE_TYPE_ICON_MAP[item.type]) {
+        const file = item.getAsFile();
+        file && uploadFile("file", file);
+        // 单文件
+        return;
+      }
     }
   }
 

@@ -86,6 +86,7 @@ async function toggleContactOpen() {
                   text
                   size="small"
                   :style="data.btnStyle"
+                  @click="data.handleWindow('alwaysOnTop')"
                 >
                   <i
                     :title="isTop ? '取消置顶' : '置顶'"
