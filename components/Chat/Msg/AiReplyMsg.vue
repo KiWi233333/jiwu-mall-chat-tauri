@@ -130,8 +130,8 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
         margin: 0.4em 0 0 0;
       }
 
-      p:first-of-type {
-        margin: 0;
+      p:nth-child(1) {
+        margin: 0 !important;
       }
 
       .md-editor-code {

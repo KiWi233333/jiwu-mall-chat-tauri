@@ -43,7 +43,7 @@ onMounted(async () => {
       class="hidden h-full w-full select-none border-0 border-r-1px shadow-md shadow-inset md:block border-default"
     >
       <ElImage
-        src="/images/login_bg.jpg" fit="cover"
+        src="https://quang.kiwi2333.top/user_bg/login_bg.jpg" fit="cover"
         class="h-full w-full select-none overflow-hidden rounded-r-0 card-default"
       />
     </div>
@@ -94,7 +94,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @media (max-width: 640px) {
   .main-box:not(.img-none) {
-    background-image: url("/images/login_bg.jpg");
+    background-image: url("https://quang.kiwi2333.top/user_bg/login_bg.jpg");
     background-repeat: no-repeat;
     background-position: top center;
     background-size: contain;

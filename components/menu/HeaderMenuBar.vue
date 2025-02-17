@@ -58,7 +58,7 @@ async function toggleContactOpen() {
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div class="right flex items-center gap-1 sm:gap-3">
+      <div class="right relative z-1 flex items-center gap-1 sm:gap-3">
         <!-- 下载（部分端） -->
         <BtnDownload v-if="!setting.isWeb" icon-class="block mx-1 w-5 h-5" />
         <!-- 折叠菜单 -->
