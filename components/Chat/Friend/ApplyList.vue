@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 const isLoading = ref<boolean>(false);
+const isReload = ref<boolean>(false);
 const user = useUserStore();
 const pageInfo = ref({
   cursor: null as null | string,
@@ -10,13 +11,12 @@ const pageInfo = ref({
 });
 const list = ref<ChatUserFriendApplyVO[]>([]);
 
-const [autoAnimateRef, enable] = useAutoAnimate({});
 onMounted(async () => {
-  const setting = useSettingStore();
-  enable(false);
-  await loadData(async () => {
-    await nextTick();
-    enable(!setting.settingPage.isCloseAllTransition);
+  isReload.value = true;
+  await loadData(() => {
+    nextTick(() => {
+      isReload.value = false;
+    });
   });
 });
 // 加载数据
@@ -56,8 +56,6 @@ function onArgeeFriend(applyId: number) {
           }
           chat.setIsAddNewFriend(true);
         }
-
-        else { ElMessage.error(res.message); }
       }
     },
   });
@@ -65,16 +63,27 @@ function onArgeeFriend(applyId: number) {
 </script>
 
 <template>
-  <div ref="autoAnimateRef" class="list w-full flex flex-col px-2 text-sm">
+  <div class="list w-full flex flex-col animate-(fade-in duration-200) px-2 text-sm">
+    <!-- 骨架屏 -->
+    <div v-if="isReload">
+      <div v-for="p in 10" :key="p" class="item">
+        <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4" />
+        <div>
+          <div class="h-3 w-8em rounded bg-gray-1 dark:bg-dark-4" />
+          <div class="mt-2 h-3 w-4em rounded bg-gray-1 dark:bg-dark-4" />
+        </div>
+        <div class="ml-a h-4 w-3em rounded bg-gray-1 dark:bg-dark-4" />
+      </div>
+    </div>
     <ListAutoIncre
-      :immediate="true"
+      :immediate="false"
       :auto-stop="true"
       :no-more="pageInfo.isLast"
       @load="loadData"
     >
       <div
         v-for="p in list" :key="p.applyId"
-        class="item mb-4"
+        class="item"
       >
         <div
           class="avatar-icon cursor-pointer"
@@ -85,10 +94,10 @@ function onArgeeFriend(applyId: number) {
           <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.user?.avatar" fit="cover" />
         </div>
         <div class="flex flex-col truncate">
-          <p cursor-pointer text-sm>
+          <p cursor-pointer truncate text-sm>
             {{ p.user?.nickName || "未填写" }}
           </p>
-          <small mt-1 cursor-pointer text-mini>{{ p.msg || "" }}</small>
+          <small mt-1 cursor-pointer text-mini>留言：{{ p.msg || "" }}</small>
         </div>
         <div class="ml-a flex-row-c-c flex-shrink-0">
           <el-button v-if="p.status === ChatApplyStatusType.Load" size="small" @click="onArgeeFriend(p.applyId)">
@@ -111,6 +120,6 @@ function onArgeeFriend(applyId: number) {
   --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "card-default flex items-center gap-4 p-3 cursor-pointer rounded-6px hover:(!bg-color-3 shadow) transition-200";
+  --at-apply: "card-default flex items-center gap-4 p-4 cursor-pointer rounded-6px hover:(!bg-color-3 shadow) transition-200 mb-4";
 }
 </style>
