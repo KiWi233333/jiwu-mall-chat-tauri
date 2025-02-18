@@ -8,9 +8,9 @@ const showMarkPhone = ref(true);
 const isLoading = ref<boolean>(false);
 async function reloadUserInfo() {
   isLoading.value = true;
-  (await user.loadUserWallet(user.getToken))
-    ? ElMessage.success("刷新成功🎉")
-    : ElMessage.success("刷新失败，请稍后重试！");
+  if (await user.loadUserWallet(user.getToken)) {
+    ElMessage.success("刷新成功🎉");
+  }
   setTimeout(() => {
     isLoading.value = false;
   }, 300);

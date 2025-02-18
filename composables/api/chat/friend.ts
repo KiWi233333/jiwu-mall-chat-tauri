@@ -153,6 +153,8 @@ export interface ChatUserFriendApplyVO {
    * 申请类型 1加好友
    */
   type: number;
+
+  createTime: number;
   /**
    * 申请人uid
    */

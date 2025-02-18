@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-const isTop = ref(false);
 const setting = useSettingStore();
 const chat = useChatStore();
 // @unocss-include
@@ -89,9 +88,9 @@ async function toggleContactOpen() {
                   @click="data.handleWindow('alwaysOnTop')"
                 >
                   <i
-                    :title="isTop ? '取消置顶' : '置顶'"
+                    :title="data.isAlwaysOnTopVal ? '取消置顶' : '置顶'"
                     class="i-solar:pin-broken cursor-pointer text-0.8em transition-200"
-                    :class="isTop ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
+                    :class="data.isAlwaysOnTopVal ? ' mb-1 color-[var(--el-color-warning)] -rotate-45' : 'mb-0 btn-primary'"
                   />
                 </ElButton>
               </template>

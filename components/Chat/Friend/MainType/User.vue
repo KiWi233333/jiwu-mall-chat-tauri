@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { dayjs } from "element-plus";
-
 /**
  * 用户适配器
  */
@@ -19,53 +17,10 @@ const isFrend = ref<boolean | undefined>(false);
 const userId = computed(() => panelData.data.id);
 const isSelf = computed(() => userId.value === store.userId);
 const targetUserInfo = ref<Partial<CommUserVO>>({});
-const getAgeText = computed(() => {
-  if (!targetUserInfo.value?.birthday) {
-    return "未知";
-  }
-  return `${dayjs().diff(dayjs(targetUserInfo.value.birthday), "years")}岁`;
-});
-// 星座
-const getConstellation = computed(() => {
-  if (!targetUserInfo.value?.birthday) {
-    return "未知";
-  }
-  const date = dayjs(targetUserInfo.value.birthday);
-  const month = date.month() + 1;
-  const day = date.date();
-  const constellationArr = [
-    "摩羯座",
-    "水瓶座",
-    "双鱼座",
-    "白羊座",
-    "金牛座",
-    "双子座",
-    "巨蟹座",
-    "狮子座",
-    "处女座",
-    "天秤座",
-    "天蝎座",
-    "射手座",
-  ];
-  const constellation = constellationArr[
-    (month * 10 + day) % 12
-  ];
-  return constellation;
-});
-// 生日还有xx天
-const getBirthdayCount = computed(() => {
-  if (!targetUserInfo.value?.birthday)
-    return undefined;
-  const today = dayjs(); // 当前日期
-  const birthDay = dayjs(targetUserInfo.value?.birthday); // 生日日期
-  const thisYearBirthday = birthDay.set("year", today.year());
-  let nextBirthday = thisYearBirthday;
-  if (today.isAfter(thisYearBirthday)) {
-    nextBirthday = birthDay.set("year", today.year() + 1);
-  }
-  return nextBirthday.diff(today, "day");
-});
-
+// 年龄
+const getAgeText = computed(() => calculateAge(targetUserInfo.value?.birthday));
+const getConstellation = computed(() => computeConstellation(targetUserInfo.value?.birthday));
+const getBirthdayCount = computed(() => calculateBirthdayCount(targetUserInfo.value?.birthday));
 
 // 加载用户数据
 async function loadData(val: string) {
@@ -165,13 +120,12 @@ async function toSend(uid: string) {
 
 <template>
   <div
-    v-loading="isLoading"
-    element-loading-text="加载中..."
-    :element-loading-spinner="defaultLoadingIcon"
-    element-loading-background="transparent"
-    :class="{ 'op-100': !isLoading }"
     v-bind="$attrs"
-    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-24 op-0 transition-120 bg-color sm:px-1/4"
+    :class="{
+      'op-100': !isLoading,
+      'op-0': isLoading,
+    }"
+    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 bg-color sm:px-1/4"
   >
     <!-- 信息 -->
     <div flex gap-4 pb-6 sm:gap-6 border-default-b>
@@ -180,14 +134,14 @@ async function toSend(uid: string) {
         :preview-src-list="[BaseUrlImg + targetUserInfo.avatar]"
         preview-teleported
         loading="lazy"
-        class="h-4.6rem w-4.6rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-5rem w-5rem) border-default card-default"
+        class="h-4rem w-4rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-4.8rem w-4.8rem) border-default card-default"
       />
-      <div flex flex-col py-1>
+      <div flex flex-col gap-1 py-1>
         <strong truncate text-1.4rem>{{ targetUserInfo.nickname }}</strong>
         <p mt-a truncate text-mini :title="userId">
           ID：{{ userId }}
         </p>
-        <p mt-1 truncate text-mini :title="targetUserInfo.email">
+        <p truncate text-mini :title="targetUserInfo.email">
           邮箱：{{ (isFrend || isSelf) ? targetUserInfo.email : ' - ' }}
         </p>
       </div>

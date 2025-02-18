@@ -473,3 +473,53 @@ export interface ImageScaleOptions {
   maxWidth?: number; // 最大宽度
   maxHeight?: number; // 最大高度
 };
+
+
+// 计算年龄的函数
+export function calculateAge(birthday?: string) {
+  if (!birthday) {
+    return "未知";
+  }
+  return `${dayjs().diff(dayjs(birthday), "years")}岁`;
+}
+
+// 计算星座的函数
+export function computeConstellation(birthday?: number | string | Date | null) {
+  if (!birthday) {
+    return "未知";
+  }
+  const date = dayjs(birthday);
+  const month = date.month() + 1;
+  const day = date.date();
+  const constellationArr = [
+    "摩羯座",
+    "水瓶座",
+    "双鱼座",
+    "白羊座",
+    "金牛座",
+    "双子座",
+    "巨蟹座",
+    "狮子座",
+    "处女座",
+    "天秤座",
+    "天蝎座",
+    "射手座",
+  ];
+  const constellation = constellationArr[(month * 10 + day) % 12];
+  return constellation;
+}
+
+// 计算生日还有多少天的函数
+export function calculateBirthdayCount(birthday?: number | string | Date | null) {
+  if (!birthday) {
+    return undefined;
+  }
+  const today = dayjs(); // 当前日期
+  const birthDay = dayjs(birthday); // 生日日期
+  const thisYearBirthday = birthDay.set("year", today.year());
+  let nextBirthday = thisYearBirthday;
+  if (today.isAfter(thisYearBirthday)) {
+    nextBirthday = birthDay.set("year", today.year() + 1);
+  }
+  return nextBirthday.diff(today, "day");
+}

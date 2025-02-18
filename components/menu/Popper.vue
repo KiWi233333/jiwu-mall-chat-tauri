@@ -11,8 +11,10 @@
     append-to-body
     v-bind="$attrs"
   >
-    <slot name="reference" />
-    <slot />
+    <template #reference>
+      <slot name="reference" />
+    </template>
+    <slot name="default" />
   </el-popover>
 </template>
 

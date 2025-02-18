@@ -85,19 +85,20 @@ function onArgeeFriend(applyId: number) {
         v-for="p in list" :key="p.applyId"
         class="item"
       >
-        <div
+        <CardElImage
           class="avatar-icon cursor-pointer"
-          @click="chat.setTheFriendOpt(FriendOptType.User, {
+          :src="BaseUrlImg + p.user?.avatar" fit="cover" @click="chat.setTheFriendOpt(FriendOptType.User, {
             id: p.userId,
           })"
-        >
-          <CardElImage class="h-full w-full overflow-hidden rounded-6px" :src="BaseUrlImg + p.user?.avatar" fit="cover" />
-        </div>
+        />
+
         <div class="flex flex-col truncate">
-          <p cursor-pointer truncate text-sm>
+          <p truncate text-sm>
             {{ p.user?.nickName || "未填写" }}
           </p>
-          <small mt-1 cursor-pointer text-mini>留言：{{ p.msg || "" }}</small>
+          <small mt-1 cursor-pointer text-mini>留言：{{ p.msg || "" }}&nbsp;
+            <span v-if="p.createTime" class="text-mini">{{ formatContactDate(p.createTime) }}</span>
+          </small>
         </div>
         <div class="ml-a flex-row-c-c flex-shrink-0">
           <el-button v-if="p.status === ChatApplyStatusType.Load" size="small" @click="onArgeeFriend(p.applyId)">
@@ -117,7 +118,7 @@ function onArgeeFriend(applyId: number) {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
+  --at-apply: "h-2.4rem bg-color-2 overflow-hidden rounded-full w-2.4rem flex-row-c-c  shadow-sm";
 }
 .item {
   --at-apply: "card-default flex items-center gap-4 p-4 cursor-pointer rounded-6px hover:(!bg-color-3 shadow) transition-200 mb-4";

@@ -115,12 +115,10 @@ export interface MenuItem {
   >
     <!-- 顶部 -->
     <div class="grid grid-cols-1 w-full w-full grid-gap-6 px-2 pt-4 hover:bg-transparent">
-      <NuxtLink to="/user" class="z-100 mx-a h-8 w-8 sm:mr-a card-default">
-        <CardElImage
-          :src="BaseUrlImg + user?.userInfo?.avatar"
-          class="relative z-100 mx-a h-8 w-8 sm:mr-a border-default card-default" alt="头像"
-        />
-      </NuxtLink>
+      <UserInfoPopper
+        :data="user.userInfo"
+        :is-edit="true"
+      />
     </div>
     <div class="mx-a my-4 w-5/6 border-0 border-b-1px px-2 border-default" />
     <!-- 菜单 -->

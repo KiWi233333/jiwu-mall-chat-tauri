@@ -95,7 +95,7 @@ async function toFriendPage() {
           <i
             class="cursor-pointer"
             title="退出登录"
-            circle plain i-solar:logout-3-broken mr-1 p-2
+            plain circle i-solar:logout-3-broken mr-1 p-2
           />
           <span ml-2>退出登录</span>
         </div>
@@ -106,6 +106,6 @@ async function toFriendPage() {
 
 <style lang="scss" scoped>
 .btn {
-  --at-apply: "w-8em flex-row-c-c py-1.5 text-sm cursor-pointer hover:card-bg-color-2 card-rounded-df";
+  --at-apply: "flex-row-c-c sm:(w-8em py-1.5  pr-2 text-sm) w-10em py-3 pr-4 text-1rem cursor-pointer hover:(bg-color-3 op-80) card-rounded-df";
 }
 </style>

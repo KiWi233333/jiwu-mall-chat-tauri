@@ -97,6 +97,7 @@ const data = ref({
   handleWindow,
   size,
   btnStyle,
+  isAlwaysOnTopVal,
 });
 const setting = useSettingStore();
 

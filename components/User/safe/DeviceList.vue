@@ -26,8 +26,9 @@ async function reload() {
   if (isLoading.value)
     return;
   deviceList.value.splice(0);
-  const flag = await getDeviceList();
-  ElMessage.success(flag ? "刷新成功🎉！" : "刷新失败，请稍后重试！");
+  if (await getDeviceList()) {
+    ElMessage.success("刷新成功🎉");
+  }
   setTimeout(() => {
     enable(!setting.settingPage.isCloseAllTransition);
   }, 500);
