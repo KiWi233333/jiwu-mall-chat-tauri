@@ -336,7 +336,9 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
   --at-apply: "sm:p-2 p-0";
 
   .contact {
-    --at-apply: "border-(1px solid transparent) flex items-center gap-3 p-3 sm:(w-full text-color card-rounded-df mb-2) card-bg-color  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
+    // 底部浅色的0.5px
+    border-top: 1px solid #7e7e7e0e;
+    --at-apply: "card-bg-color dark:bg-transparent flex items-center gap-3 p-4 sm:(border-transparent p-3 w-full text-color card-rounded-df mb-2 card-bg-color)  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
     .text {
       --at-apply: "transition-none";
     }
@@ -345,7 +347,7 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
       --at-apply: "mx-0.5em pt-2px h-1.4em w-1.4em text-theme-primary dark:text-theme-info";
     }
     &.is-pin {
-      --at-apply: "sm:border-default";
+      --at-apply: "bg-transparent dark:bg-dark-5 sm:(!border-default-2 shdow-sm card-bg-color)";
     }
     &.is-checked {
       --at-apply: "!sm:(bg-[var(--el-color-primary)] color-white dark:text-light  dark:bg-[var(--el-color-primary-light-3)] hover:op-90)  ";
@@ -372,6 +374,12 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
 }
 
 :deep(.el-scrollbar__bar) {
-  opacity: 0.4;
+  right: 1px;
+  --at-apply: "!hidden sm:block";
+  --el-scrollbar-bg-color: #9292928a;
+
+  .el-scrollbar__thumb {
+    width: 6px;
+  }
 }
 </style>

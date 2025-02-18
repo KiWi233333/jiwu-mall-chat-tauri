@@ -323,9 +323,9 @@ onActivated(() => active());
 //   // }
 // }
 .form {
-  --at-apply: "absolute bottom-0 w-full left-0 sm:p-4 p-2";
+  --at-apply: "absolute bottom-0 w-full left-0 sm:p-4 ";
   .form-wrapper {
-    --at-apply: "flex border-default-2 items-end gap-2 p-4  sm:gap-4 bg-color-br card-rounded-df";
+    --at-apply: "flex border-default-t sm:(border-default shadow-sm card-rounded-df) items-end gap-2 p-4  sm:gap-4 bg-color-br ";
   }
   :deep(.content.el-textarea) {
     .el-textarea__inner {

@@ -44,7 +44,9 @@ async function loadData() {
   }
   finally {
     isLoading.value = false;
-    isReload.value = false;
+    nextTick(() => {
+      isReload.value = false;
+    });
   }
 }
 

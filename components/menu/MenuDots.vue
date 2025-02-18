@@ -68,10 +68,10 @@ async function toFriendPage() {
           />
           <span ml-2>添加好友</span>
         </div>
-        <div class="btn" @click="reloadPage">
+        <div class="btn group" @click="reloadPage">
           <div
             title="重载应用"
-            class="i-solar:refresh-outline h-4.5 w-4.5 transition-transform group-hover:rotate-180"
+            class="i-solar:restart-circle-outline h-4.5 w-4.5 transition-transform group-hover:rotate-180"
           />
           <span ml-2>重载应用</span>
         </div>
@@ -95,7 +95,7 @@ async function toFriendPage() {
           <i
             class="cursor-pointer"
             title="退出登录"
-            plain circle i-solar:logout-3-broken mr-1 p-2
+            circle plain i-solar:logout-3-broken mr-1 p-2
           />
           <span ml-2>退出登录</span>
         </div>

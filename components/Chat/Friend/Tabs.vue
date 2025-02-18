@@ -73,6 +73,11 @@ const activeNames = useLocalStorage(`${route.fullPath}_activeNames`, {
   }
 }
 :deep(.el-collapse) {
+  --at-apply: "border-default-t";
+
+  .el-collapse-item__header {
+    --at-apply: "h-3em";
+  }
   .el-collapse-item__header:not(.is-active) {
     --at-apply: "border-default-b";
   }
