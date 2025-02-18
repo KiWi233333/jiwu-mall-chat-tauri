@@ -29,6 +29,22 @@ export enum UserStatus {
   FALESE = "禁用",
 }
 
+// 用户类型
+export enum UserType {
+  CUSTOMER = 0,
+  ADMIN = 1,
+  SERVICE = 2,
+  ROBOT = 3,
+}
+
+export const userTypeTextMap: Record<UserType | "undefined", string> = {
+  [UserType.CUSTOMER]: "普通用户",
+  [UserType.SERVICE]: "客服",
+  [UserType.ADMIN]: "管理员",
+  [UserType.ROBOT]: "机器人",
+  undefined: "",
+};
+
 // ids
 export type ids = string[];
 

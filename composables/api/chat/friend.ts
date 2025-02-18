@@ -30,6 +30,8 @@ export interface ChatUserFriendVO {
   userId: string;
   nickName?: string;
   avatar?: string;
+
+  type: UserType
   /**
    * 在线状态 1在线 0离线
    */

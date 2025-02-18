@@ -4,7 +4,9 @@ interface Props {
   immediate?: boolean
   autoStop?: boolean
 }
-type DataVO = { type: "friend"; data: ChatUserFriendVO } | { type: "group"; data: ChatRoomGroupVO };
+//  { type: "friend"; data: ChatUserFriendVO } | { type: "group"; data: ChatRoomGroupVO };
+// 根据type判断数据类型
+type DataVO = ChatUserFriendVO | ChatRoomGroupVO;
 
 const props = withDefaults(defineProps<Props>(), {
   immediate: true,
@@ -21,7 +23,7 @@ const pageInfo = ref({
   isLast: false,
   size: 10,
 });
-const list = ref<ChatUserFriendVO[] | ChatRoomGroupVO[]>([]);
+const list = ref<DataVO[]>([]);
 const isReload = ref(true);
 
 // 加载数据
@@ -44,9 +46,6 @@ async function loadData() {
   }
   finally {
     isLoading.value = false;
-    nextTick(() => {
-      isReload.value = false;
-    });
   }
 }
 
@@ -56,7 +55,11 @@ async function reloadData() {
   pageInfo.value.isLast = false;
   lastLoadTime.value = Date.now();
   list.value = [];
+  isReload.value = true;
   await loadData();
+  nextTick(() => {
+    isReload.value = false;
+  });
 }
 
 
@@ -87,7 +90,7 @@ else if (props.type === "group") { // 群组相关监听
 const isFirstLoad = ref(false);
 const isFriendPanel = computed(() => props.type === "friend");
 onMounted(() => {
-  loadData();
+  reloadData();
   isFirstLoad.value = true;
 });
 onUnmounted(() => {
@@ -117,15 +120,16 @@ onActivated(() => {
       @load="loadData"
     >
       <!-- 骨架屏 -->
-      <div v-if="isReload" class="animate-(fade-in duration-200)">
-        <div v-for="p in 2" :key="p" class="item">
-          <div class="avatar-icon !bg-skeleton" />
-          <span class="h-1.2em w-8em rounded-4px bg-skeleton" />
+      <!-- <div v-if="isReload" class="animate-(fade-in duration-200)">
+        <div v-for="p in 4" :key="p" class="item">
+          <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4" />
+          <div class="nickname-skeleton h-4 w-8em rounded bg-gray-1 dark:bg-dark-4" />
         </div>
-      </div>
+      </div> -->
       <div
         v-for="p in list"
         :key="p.id"
+        v-memo="[]"
         class="item"
         :class="{ focus: (isFriendPanel ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId) }"
         @click="chat.setTheFriendOpt(
@@ -139,6 +143,11 @@ onActivated(() => {
           fit="cover"
         />
         <span>{{ isFriendPanel ? (p as ChatUserFriendVO).nickName : (p as ChatRoomGroupVO).name || '未填写' }}</span>
+        <svg
+          v-if="(p as ChatUserFriendVO).type === UserType.ROBOT"
+          title="机器人"
+          xmlns="http://www.w3.org/2000/svg" class="ai-icon" viewBox="0 0 24 24"
+        ><path fill="currentColor" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M6 7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-4 3H0v6h2zm20 0h2v6h-2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m6 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" /></svg>
       </div>
     </ListAutoIncre>
   </div>
@@ -153,5 +162,9 @@ onActivated(() => {
   &.focus {
     --at-apply: "bg-menu-color";
   }
+}
+
+.ai-icon {
+  --at-apply: "h-1.4em w-1.4em text-theme-primary dark:text-theme-info";
 }
 </style>
