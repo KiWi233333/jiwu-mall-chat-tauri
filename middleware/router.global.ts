@@ -33,6 +33,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
   }
   else { // 移动、web端
+    // 聊天详情页移动端返回处理
+    if (from.path === "/" && to.path !== "/" && !useChatStore().isOpenContact && useSettingStore().isMobileSize) { // 当遇到
+      useChatStore().isOpenContact = true;
+      return "/";
+    }
     if (to.path !== "/login") {
       if (!user.isLogin) {
         user.showLoginAndRegister = "login";

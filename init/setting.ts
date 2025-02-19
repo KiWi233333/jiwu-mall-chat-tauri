@@ -106,7 +106,6 @@ export function useSettingInit() {
 
   // 6、窗口大小变化
   setting.isMobileSize = window.innerWidth < 640;
-  const saving = ref(false);
   let timer: NodeJS.Timeout | null = null;
   function onResize() {
     const setting = useSettingStore();
