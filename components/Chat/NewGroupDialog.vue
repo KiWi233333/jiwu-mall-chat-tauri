@@ -68,11 +68,7 @@ function addGroupApply() {
       return;
 
     show.value = false;
-    // ElNotification.success({
-    //   title: "发起邀请提醒",
-    //   message: +res.data === form.value.uidList.length ? "群聊邀请已发送！" : "部分邀请未送达！",
-    // });
-    const diff = form.value.uidList.length - (+res?.data || 0);
+    const diff = form.value.uidList.length - (+res?.data || form.value.uidList.length);
     ElMessage({
       type: !diff ? "success" : "warning",
       message: !diff ? "群聊邀请已发送！" : `部分邀请未送达（${res.data || 0}/${form.value.uidList.length}）！`,

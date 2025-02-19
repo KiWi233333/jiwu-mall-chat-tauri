@@ -190,7 +190,7 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
         <div v-show="!isLoading" class="flex-row-bt-c">
           <BtnElButton
             v-if="isEdit"
-            icon-class="i-solar:pen-2-line-duotone"
+            icon-class="i-solar:pen-2-line-duotone mr-2"
             style="transition: .2s;font-size: 0.85em;height: 2.5em; width: 10em;text-align: center;letter-spacing: 1px;--el-color-primary: var(--el-color-success);"
             plain
             @click.stop="navigateTo('/user')"
@@ -215,7 +215,7 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
 
 <style scoped lang="scss">
 .card-bg-linear {
-  background-image: linear-gradient(160deg, #6d60e04b, transparent, transparent, transparent, transparent);
+  background-image: linear-gradient(160deg, #c9d7ffc9, transparent, transparent, transparent, transparent);
 }
 .dark {
   .card-bg-linear {
