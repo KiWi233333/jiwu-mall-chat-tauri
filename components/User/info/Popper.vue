@@ -80,7 +80,12 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
           error-class="i-solar-user-line-duotone p-2 "
           class="relative z-100 h-full w-full cursor-pointer overflow-hidden rounded-1/2" alt="头像"
         />
-        <div class="absolute bottom-0 right-0 z-101 h-3 w-3 border-(1px light solid) rounded-1/2 shadow" :class="{ 'bg-theme-info': ws.status === WsStatusEnum.OPEN }" />
+        <UserInfoStatus
+          :show-text="false"
+          :status="ws.status"
+          class="absolute z-101 rounded-1/2 shadow -bottom-2px -right-2px"
+          dot-class="w-3  h-3 border-(2px light solid) rounded-1/2"
+        />
       </div>
     </template>
     <template #default>
@@ -131,7 +136,13 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
             <p mt-2 truncate class="text" :title="data.username">
               {{ data.username || ' - ' }}
             </p>
-            <UserInfoStatus v-if="isEdit" :status="ws.status" title="状态" class="mt-1 text-xs" />
+            <UserInfoStatus
+              v-if="isEdit"
+              class="mt-1 text-xs"
+              :status="ws.status"
+              title="状态"
+              dot-class="w-2.8 h-2.8 rounded-full"
+            />
           </div>
         </div>
         <!-- 详情 -->

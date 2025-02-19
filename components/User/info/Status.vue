@@ -1,36 +1,44 @@
 <script lang="ts" setup>
-const { status } = defineProps<{
+const {
+  status,
+  showText = true,
+  dotClass = "block w-0.8em h-0.8em rounded-1/2",
+  textCalss = "ml-1",
+} = defineProps<{
   status?: WsStatusEnum
+  showText?: boolean
+  textCalss?: string
+  dotClass?: string
 }>();
 
-const statusMap = {
-  [WsStatusEnum.CONNECTION]: "连接中",
-  [WsStatusEnum.OPEN]: "在线",
-  [WsStatusEnum.SAFE_CLOSE]: "离线",
-  [WsStatusEnum.CLOSE]: "离线",
+const statusMap: Record<WsStatusEnum, { text: string, color: string, icon?: string }> = {
+  [WsStatusEnum.CONNECTION]: {
+    text: "连接中",
+    color: "bg-gray-500",
+    icon: "i-solar:menu-dots-outline",
+  },
+  [WsStatusEnum.OPEN]: {
+    text: "在线",
+    color: "bg-theme-info",
+  },
+  [WsStatusEnum.SAFE_CLOSE]: {
+    text: "离线",
+    color: "bg-theme-danger",
+  },
+  [WsStatusEnum.CLOSE]: {
+    text: "离线",
+    color: "bg-theme-danger",
+  },
 };
-const statusText = computed(() => status !== undefined ? statusMap[status] : "未知");
-
-const getStatusClass = computed(() => {
-  switch (status) {
-    case WsStatusEnum.CONNECTION:
-      return "bg-gray-500";
-    case WsStatusEnum.OPEN:
-      return "bg-theme-info";
-    case WsStatusEnum.SAFE_CLOSE:
-      return "bg-gray-500";
-    case WsStatusEnum.CLOSE:
-      return "bg-theme-danger";
-    default:
-      return "bg-gray-500";
-  }
-});
+const statusText = computed(() => status !== undefined ? statusMap[status]?.text : "未知");
 </script>
 
 <template>
   <div flex items-center>
-    <span class="mr-1 h-2.4 w-2.4 rounded-1/2" :class="getStatusClass" />
-    {{ statusText }}
+    <span
+      :class="[status !== undefined ? statusMap?.[status]?.color : '', dotClass]"
+    />
+    <span v-if="showText" :class="textCalss">{{ statusText }}</span>
   </div>
 </template>
 

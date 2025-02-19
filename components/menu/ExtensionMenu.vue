@@ -141,7 +141,7 @@ function createItem() {
     center
     width="fit-content"
     append-to-body
-    class="border-default !bg-color-2"
+    class="border-default-2 !bg-color-2"
   >
     <template #header>
       <i i-solar:widget-line-duotone mr-2 p-2.5 text-small />
@@ -151,7 +151,7 @@ function createItem() {
     <ListTransitionGroup
       tag="div"
       name="pop-list"
-      class="grid grid-auto-rows-min cols-4 mb-4 mt-2 min-h-14em select-none items-start gap-2 sm:gap-4"
+      class="grid grid-auto-rows-min cols-4 mb-4 mt-2 min-h-14em select-none items-start gap-2 px-2 sm:gap-4"
     >
       <!-- 固定菜单标题 -->
       <small v-if="extendMenuSaveList.length" key="fix-title" class="col-span-full block text-mini">
@@ -169,11 +169,13 @@ function createItem() {
             [`${item.class || ''}`]: item.class,
           }"
         >
-          <i
-            class="mx-a block h-1.6em w-1.6em"
-            :class="item.icon"
-            @click.stop="!item.disabled && open(item)"
-          />
+          <div mx-a h-1.8em w-1.8em flex-row-c-c>
+            <i
+              class="block h-full w-full"
+              :class="item.icon"
+              @click.stop="!item.disabled && open(item)"
+            />
+          </div>
           <div
             class="absolute right-1 top-1 op-0 btn-danger-bg bg-color group-hover:(op-100)"
             @click.stop="onRemove(item)"

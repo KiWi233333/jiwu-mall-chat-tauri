@@ -188,10 +188,27 @@ function onClickContact(room: ChatContactVO) {
 reload();
 
 const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
-  // [RoomType.GROUP]: "primary",
-  // [RoomType.SELFT]: "",
   [RoomType.AICHAT]: "warning",
 };
+
+// @unocss-include
+const menuList = [
+  {
+    label: "添加好友",
+    icon: "i-tabler:user-plus",
+    onClick: () => {
+      toFriendPage();
+    },
+  },
+  {
+    label: "发起群聊",
+    icon: "i-solar:chat-round-dots-outline",
+    onClick: () => {
+      chat.showNewGroupDialog = true;
+      visiblePopper.value = false;
+    },
+  },
+];
 </script>
 
 <template>
@@ -218,42 +235,19 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
         placeholder="搜索"
       />
       <!-- 添加 -->
-      <el-popover
+      <MenuPopper
         v-model:visible="visiblePopper"
         placement="bottom-end"
-        width="fit-content"
-        :teleported="true"
-        popper-class="dropdown-btns shadow-sm"
-        popper-style="padding:0;min-width: 0;"
         transition="popper-fade"
         trigger="click"
-        append-to-body
+        :menu-list="menuList"
       >
         <template #reference>
           <div class="icon">
             <i i-carbon:add-large p-2 />
           </div>
         </template>
-        <template #default>
-          <div w-fit p-1>
-            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="toFriendPage">
-              <div
-                title="添加好友"
-                class="i-tabler:user-plus mr-2 h-4.5 w-4.5"
-              />
-              添加好友
-            </div>
-            <div my-1 border-default-t />
-            <div class="w-8em flex-row-c-c py-1.5 text-sm btn-primary-bg" @click="() => { chat.showNewGroupDialog = true; visiblePopper = false }">
-              <div
-                title="发起群聊"
-                class="i-solar:chat-round-dots-outline mr-2 h-4.5 w-4.5"
-              />
-              发起群聊
-            </div>
-          </div>
-        </template>
-      </el-popover>
+      </MenuPopper>
     </div>
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list" wrapper-class="relative">
@@ -360,7 +354,6 @@ const RoomTypeTagType: Record<number, "" | "primary" | "info" | any> = {
     }
   }
 }
-
 .header {
   --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height  card-bg-color";
   :deep(.el-input) {
