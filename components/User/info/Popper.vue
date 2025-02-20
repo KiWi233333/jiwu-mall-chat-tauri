@@ -74,7 +74,7 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
     popper-class="!border-default !card-default-br-2"
   >
     <template #reference>
-      <div class="relative mx-a h-10 w-10 rounded-1/2 card-default border-default-hover">
+      <div class="relative mx-a h-9 w-9 rounded-1/2 shadow card-default border-default-hover">
         <CardElImage
           :default-src="data?.avatar"
           error-class="i-solar-user-line-duotone p-2 "
@@ -83,7 +83,7 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
         <UserInfoStatus
           :show-text="false"
           :status="ws.status"
-          class="absolute z-101 rounded-1/2 shadow -bottom-2px -right-2px"
+          class="absolute z-101 rounded-1/2 shadow -bottom-1px -right-1px"
           dot-class="w-3  h-3 border-(2px light solid) rounded-1/2"
         />
       </div>

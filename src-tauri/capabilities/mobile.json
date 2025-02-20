@@ -1,10 +1,83 @@
 {
-  "$schema": "../gen/schemas/mobile-schema.json",
+  "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "mobile-capability",
-  "windows": [
-    "main"
-  ],
+  "description": "Capability for the main window",
   "platforms": ["iOS", "android"],
+  "windows": ["*"],
   "permissions": [
+    "core:default",
+    "os:default",
+    "os:allow-os-type",
+    "os:allow-arch",
+    "os:allow-version",
+    "os:allow-hostname",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "powershell",
+          "cmd": "powershell",
+          "args": true
+        },
+        {
+          "name": "systemPath",
+          "cmd": "cmd",
+          "args": [
+            "-c",
+            {
+              "validator": "\\S+"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:read-dirs",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:read-files",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-copy-file",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:write-files",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    }
   ]
 }

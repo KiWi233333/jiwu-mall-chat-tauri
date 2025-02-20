@@ -5,12 +5,14 @@ import { appDescription, appName } from "./constants/index";
 import * as packageJson from "./package.json";
 import "dayjs/locale/zh-cn";
 
+const platform = process.env.TAURI_PLATFORM;
+const isMobile = !!/android|ios/.exec(platform || "");
 const BASE_URL = process.env.NUXT_PUBLIC_API_BASE_URL;
 const isSSR = process.env.NUXT_PUBLIC_SPA;
 const mode = process.env.NUXT_PUBLIC_NODE_ENV as "development" | "production" | "test";
 const version = packageJson?.version;
 // 打印
-console.log(`mode:${mode} api_url:${BASE_URL} SSR:${isSSR}`);
+console.log(`mode:${mode} api_url:${BASE_URL} SSR:${isSSR} platform: ${platform}`);
 export default defineNuxtConfig({
   ssr: false,
   future: {
@@ -22,6 +24,7 @@ export default defineNuxtConfig({
       baseUrl: BASE_URL,
       mode,
       version,
+      isMobile,
     },
   },
   build: {
@@ -125,6 +128,15 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
+  // hooks: {
+  //   "vite:extend": function ({ config }) {
+  //     if (config.server && config.server.hmr && config.server.hmr !== true) {
+  //       config.server.hmr.protocol = "ws";
+  //       config.server.hmr.host = "192.168.31.14";
+  //       config.server.hmr.port = 3000;
+  //     }
+  //   },
+  // },
   // vite
   vite: {
     // 为 Tauri 命令输出提供更好的支持
@@ -134,6 +146,22 @@ export default defineNuxtConfig({
     server: {
       // Tauri需要一个确定的端口
       strictPort: true,
+      // hmr: {
+      //   host: "192.168.31.14",
+      //   port: 3000,
+      //   protocol: "ws",
+      // }, // 热更新
+      // watch: {
+      //   ignored: [
+      //     "**/src-tauri/**",
+      //     "**/node_modules/**",
+      //     "**/dist/**",
+      //     "**/.git/**",
+      //     "**/.nuxt/**",
+      //     "**/public/**",
+      //     "**/.output/**",
+      //   ],
+      // },
     },
     css: {
       preprocessorOptions: {

@@ -1,12 +1,14 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default-capability",
-  "description": "Capability for the main window",
-  "windows": [
-    "main",
-    "msgbox",
-    "login",
-    "extend"
+  "description": "Capability for the all window",
+  "windows": ["*"],
+  "platforms": [
+    "windows",
+    "linux",
+    "macOS",
+    "iOS",
+    "macOS"
   ],
   "permissions": [
     "core:default",
@@ -34,7 +36,6 @@
     "os:allow-version",
     "os:allow-locale",
     "os:allow-platform",
-    "upload:default",
     "fs:default",
     "fs:read-all",
     "fs:allow-read",
@@ -45,20 +46,38 @@
     "shell:allow-execute",
     "shell:allow-open",
     "shell:allow-stdin-write",
-    "notification:default",
-    "notification:allow-get-active",
+
+    "upload:default",
+    "upload:allow-download",
+    "upload:allow-upload",
+    
     "notification:allow-is-permission-granted",
+    "notification:allow-request-permission",
+    "notification:allow-notify",
+    "notification:allow-register-action-types",
+    "notification:allow-register-listener",
+    "notification:allow-cancel",
+    "notification:allow-get-pending",
+    "notification:allow-remove-active",
+    "notification:allow-get-active",
+    "notification:allow-check-permissions",
+    "notification:allow-show",
+    "notification:allow-batch",
+    "notification:allow-list-channels",
+    "notification:allow-delete-channel",
+    "notification:allow-create-channel",
+    "notification:allow-permission-state",
+    
     "dialog:default",
+    "dialog:allow-ask",
+    "dialog:allow-confirm",
+    "dialog:allow-message",
+    "dialog:allow-open",
+    "dialog:allow-save",
+
     "websocket:default",
     "websocket:allow-connect",
     "websocket:allow-send"
-  ],
-  "platforms": [
-    "windows",
-    "linux",
-    "macOS",
-    "android",
-    "iOS"
   ],
   "local": true,
   "remote": {

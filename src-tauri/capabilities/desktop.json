@@ -2,26 +2,33 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "desktop-capability",
   "description": "Capability for the main window",
-  "windows": [
-    "main",
-    "msgbox",
-    "login",
-    "extend"
-  ],
+  "local": true,
+  "windows": ["*"],
+  "webviews": [],
+  "platforms": ["macOS", "windows", "linux"],
+  "remote": {
+    "urls": [
+      "https://*.kiwi2333.top",
+      "https://*.kiwi233.top"
+    ]
+  },
   "permissions": [
     "updater:default",
     "updater:allow-check",
     "updater:allow-download",
     "updater:allow-install",
     "updater:allow-download-and-install",
+
     "autostart:default",
     "autostart:allow-enable",
     "autostart:allow-disable",
     "autostart:allow-is-enabled",
+
     "window-state:default",
     "window-state:allow-restore-state",
     "window-state:allow-save-window-state",
     "window-state:allow-filename",
+
     "core:default",
     "core:window:allow-close",
     "core:window:allow-center",
@@ -40,7 +47,6 @@
     "core:window:allow-is-visible",
     "core:window:allow-get-all-windows",
     "core:window:allow-set-always-on-top",
-    "core:window:allow-start-dragging",
     "core:window:allow-unmaximize",
     "core:window:allow-unminimize",
     "core:window:allow-set-title",
@@ -58,25 +64,51 @@
     "core:window:allow-is-decorated",
     "core:window:allow-set-closable",
     "core:window:allow-set-focus",
-    "core:webview:allow-create-webview",
     "core:window:allow-set-position",
     "core:window:allow-set-always-on-bottom",
+    "core:window:allow-create",
+    "core:window:allow-available-monitors",
+    "core:window:allow-current-monitor",
+    "core:window:allow-cursor-position",
+    "core:window:allow-internal-toggle-maximize",
+    "core:window:allow-is-focused",
+    "core:window:allow-is-minimized",
+    "core:window:allow-monitor-from-point",
+    "core:window:allow-outer-position",
+    "core:window:allow-outer-size",
+    "core:window:allow-primary-monitor",
+    "core:window:allow-request-user-attention",
+    "core:window:allow-scale-factor",
+    "core:window:allow-set-background-color",
+    "core:window:allow-set-badge-count",
+    "core:window:allow-set-badge-label",
+    "core:window:allow-set-content-protected",
+    "core:window:allow-set-cursor-grab",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging",
+    "core:window:allow-title",
+    "core:window:allow-set-cursor-icon",
+    "core:window:allow-set-cursor-position",
+    "core:window:allow-set-cursor-visible",
+    "core:window:allow-set-effects",
+    "core:window:allow-set-enabled",
+    "core:window:allow-set-ignore-cursor-events",
+    "core:window:allow-set-maximizable",
+    "core:window:allow-set-minimizable",
+    "core:window:allow-set-overlay-icon",
+    "core:window:allow-set-progress-bar",
+    "core:window:allow-set-size-constraints",
+    "core:window:allow-set-skip-taskbar",
+    "core:window:allow-set-theme",
+    "core:window:allow-set-title-bar-style",
+    "core:window:allow-set-visible-on-all-workspaces",
+    "core:window:allow-theme",
+
+    "core:webview:allow-create-webview",
     "core:webview:allow-create-webview-window",
+
     "process:default",
     "process:allow-restart",
     "process:allow-exit"
-],
-  "platforms": [
-    "windows",
-    "linux",
-    "macOS"
-  ],
-  "local": true,
-  "remote": {
-    "urls": [
-      "https://*.kiwi2333.top",
-      "https://*.kiwi233.top"
-    ]
-  },
-  "webviews": []
+  ]
 }
