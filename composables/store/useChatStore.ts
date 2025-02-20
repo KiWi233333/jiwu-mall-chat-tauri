@@ -46,7 +46,6 @@ export const useChatStore = defineStore(
 
     /** ---------------------------- 会话 ---------------------------- */
     const theContactId = ref<number | undefined>(undefined); // 当前会话id
-    const showNewGroupDialog = ref(false); // 新建群聊
     const isOpenContact = ref(true); // 用于移动尺寸
     const searchKeyWords = ref("");
     const contactMap = ref<Record<number, ChatContactDetailVO>>({});
@@ -206,6 +205,24 @@ export const useChatStore = defineStore(
       isLast: false,
       size: 15,
     });
+    // 邀请或添加群成员
+    const inviteMemberForm = ref<{
+      show: boolean,
+      roomId: number | undefined,
+      uidList: string[]
+    }>({
+      show: false,
+      roomId: undefined,
+      uidList: [] as string[],
+    });
+    function inviteMemberFormReset() {
+      inviteMemberForm.value = {
+        show: false,
+        roomId: undefined,
+        uidList: [],
+      };
+    }
+
     // 成员变动消息
     watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
       immediate: false,
@@ -606,22 +623,21 @@ export const useChatStore = defineStore(
 
     /** --------------------------- 回复消息 --------------------------- */
     const replyMsg = ref<Partial<ChatMessageVO>>();
-
     // 回复消息
     function setReplyMsg(item: Partial<ChatMessageVO>) {
       replyMsg.value = item;
     }
-
 
     /** ------------------------------------------- 联系人面板管理 ------------------------------------------- */
     const theFriendOpt = ref<TheFriendOpt>({
       type: -1,
       data: {},
     });
-
     function setTheFriendOpt(type: FriendOptType, data?: any) {
-      theFriendOpt.value.type = type;
-      theFriendOpt.value.data = data;
+      theFriendOpt.value = {
+        type,
+        data,
+      };
     }
 
 
@@ -786,6 +802,7 @@ export const useChatStore = defineStore(
       contactDetailMapCache.value = {};
       currentMemberList.value = [];
       updateContactList.value = {};
+      inviteMemberFormReset();
       isMemberLoading.value = false;
       isMemberReload.value = false;
     }
@@ -816,7 +833,6 @@ export const useChatStore = defineStore(
       delUserId,
       isAddNewFriend,
       isOpenContact,
-      showNewGroupDialog,
       isMsgListScroll,
       roomGroupPageInfo,
       playSounder,
@@ -830,8 +846,10 @@ export const useChatStore = defineStore(
       currentMemberList,
       isMemberLoading,
       isMemberReload,
+      inviteMemberForm,
       roomMapCache,
       // 方法
+      inviteMemberFormReset,
       setContact,
       updateContact,
       reloadContact,

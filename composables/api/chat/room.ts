@@ -205,6 +205,15 @@ export function updateGroupRoomInfo(roomId: number, dto: UpdateRoomGroupDTO, tok
  */
 export interface ChatRoomInfoVO {
   /**
+   * 房间id
+   */
+  roomId: number
+
+  role: ChatRoomRoleEnum
+
+  hotFlag: isTrue
+
+  /**
    * 群头像
    */
   avatar?: null | string
@@ -215,14 +224,20 @@ export interface ChatRoomInfoVO {
   /**
    * 在线人数
    */
-  onlineNum?: number | null
-  /**
-   * 房间id
-   */
-  roomId?: number | null
+  onlineNum: number
 
-  role: ChatRoomRoleEnum
+  allUserNum: number
+
+  createTime: string
+
+  detail?: ChatGroupRoomExtra
+
 }
+
+export interface ChatGroupRoomExtra {
+  notice?: null | string
+}
+
 
 export interface ChatATMemberVO {
 
@@ -291,6 +306,11 @@ export enum ChatRoomRoleEnum {
    */
   MEMBER = 3,
 }
+export const chatRoomRoleTextMap = {
+  [ChatRoomRoleEnum.OWNER]: "群主",
+  [ChatRoomRoleEnum.ADMIN]: "管理员",
+  [ChatRoomRoleEnum.MEMBER]: "成员",
+};
 /**
  * InsertRoomGroupDTO
  */

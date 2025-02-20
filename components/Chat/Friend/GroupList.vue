@@ -106,12 +106,15 @@ onActivated(() => {
     reloadData();
   }
 });
+
+// 页面是否有焦点
+function checkIsFocus(p: DataVO) {
+  return isFriendPanel.value ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId;
+}
 </script>
 
 <template>
-  <div
-    :class="{ 'animate-(fade-in duration-200)': isFirstLoad }"
-  >
+  <div>
     <ListAutoIncre
       :immediate="immediate"
       :auto-stop="autoStop"
@@ -120,8 +123,8 @@ onActivated(() => {
       @load="loadData"
     >
       <!-- 骨架屏 -->
-      <div v-if="isReload" class="animate-(fade-in duration-200)">
-        <div v-for="p in 4" :key="p" class="item">
+      <div v-if="isReload">
+        <div v-for="p in 9" :key="p" class="item">
           <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4" />
           <div class="nickname-skeleton h-4 w-8em rounded bg-gray-1 dark:bg-dark-4" />
         </div>
@@ -130,9 +133,8 @@ onActivated(() => {
         <div
           v-for="p in list"
           :key="p.id"
-          v-memo="[]"
           class="item"
-          :class="{ focus: (isFriendPanel ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId) }"
+          :class="{ focus: checkIsFocus(p) }"
           @click="chat.setTheFriendOpt(
             isFriendPanel ? FriendOptType.User : FriendOptType.Group,
             isFriendPanel ? { id: (p as ChatUserFriendVO).userId } : p,
@@ -157,12 +159,12 @@ onActivated(() => {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply: "h-2.4rem card-default w-2.4rem flex-row-c-c rounded-6px shadow-sm";
+  --at-apply: "h-2.4rem card-rounded-df card-bg-color-2 w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mt-2 hover:(bg-menu-color) ";
+  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mb-2 hover:(bg-menu-color) ";
   &.focus {
-    --at-apply: "bg-menu-color";
+    --at-apply: "!bg-menu-color";
   }
 }
 

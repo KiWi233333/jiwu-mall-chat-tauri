@@ -19,8 +19,6 @@ const pageInfo = ref({
 });
 const isLoadRoomMap: Record<number, boolean> = {};
 
-// 添加群聊
-const ChatNewGroupDialogRef = ref();
 // 计算
 const theContactId = computed({
   get() {
@@ -143,11 +141,11 @@ function onContextMenu(e: MouseEvent, item: ChatContactVO) {
       icon: "i-solar:user-speak-broken group-btn-warning group-hover:i-solar:user-speak-bold-duotone",
       label: "邀请好友",
       onClick: () => {
-        ChatNewGroupDialogRef.value?.reload && ChatNewGroupDialogRef.value?.reload();
-        if (ChatNewGroupDialogRef.value?.form) {
-          ChatNewGroupDialogRef.value.form.roomId = item.roomId;
-          chat.showNewGroupDialog = true;
-        }
+        chat.inviteMemberForm = {
+          show: true,
+          roomId: item.roomId,
+          uidList: [],
+        };
       },
     });
   }
@@ -204,8 +202,12 @@ const menuList = [
     label: "发起群聊",
     icon: "i-solar:chat-round-dots-outline",
     onClick: () => {
-      chat.showNewGroupDialog = true;
       visiblePopper.value = false;
+      chat.inviteMemberForm = {
+        show: true,
+        roomId: undefined,
+        uidList: [],
+      };
     },
   },
 ];
@@ -252,7 +254,7 @@ const menuList = [
     <!-- 会话列表 -->
     <el-scrollbar wrap-class="w-full h-full" class="contact-list" wrapper-class="relative">
       <!-- 添加骨架屏 -->
-      <div v-if="isReload" class="animate-(fade-in duration-120) overflow-y-auto">
+      <div v-if="isReload" class="animate-(fade-in duration-150) overflow-y-auto">
         <ChatContactSkeleton v-for="i in 10" :key="i" />
       </div>
       <ListAutoIncre
@@ -317,8 +319,6 @@ const menuList = [
         </template>
       </ListAutoIncre>
     </el-scrollbar>
-    <!-- 新建群聊 -->
-    <LazyChatNewGroupDialog ref="ChatNewGroupDialogRef" v-model="chat.showNewGroupDialog" />
   </div>
 </template>
 
@@ -338,7 +338,7 @@ const menuList = [
     }
 
     .ai-icon {
-      --at-apply: "mx-0.5em pt-2px h-1.4em w-1.4em text-theme-primary dark:text-theme-info";
+      --at-apply: "mx-0.5em pt-0.2em h-1.4em w-1.4em text-theme-primary dark:text-theme-info";
     }
     &.is-pin {
       --at-apply: "bg-transparent dark:bg-dark-5 sm:(!border-default-2 shdow-sm card-bg-color)";

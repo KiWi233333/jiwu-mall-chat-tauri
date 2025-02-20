@@ -2,8 +2,15 @@
 /**
  * 添加群聊dialog
  */
-const props = defineProps<{
+const {
+  modelValue = false,
+  form: formData,
+} = defineProps<{
   modelValue: boolean
+  form?: {
+    roomId: number | null | undefined
+    uidList: string[]
+  }
 }>();
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void
@@ -22,7 +29,7 @@ const chat = useChatStore();
 
 const show = computed({
   get() {
-    return props.modelValue;
+    return modelValue;
   },
   set(val) {
     emit("update:modelValue", val);
@@ -40,12 +47,22 @@ const pageInfo = ref({
 const userList = ref<ChatUserFriendVO[]>([]);
 const showImg = ref(false);
 // 表单相关
-const form = ref({
-  roomId: null as number | null | undefined,
-  avatar: null as string | null | undefined,
+const form = ref<{
+  roomId: number | null | undefined
+  avatar: string | null | undefined
+  uidList: string[]
+}>({
+  roomId: undefined,
+  avatar: undefined,
   uidList: [],
 });
 const formRef = ref();
+watch(() => formData, (val) => {
+  if (!val)
+    return;
+  form.value.roomId = val?.roomId;
+  form.value.uidList = val?.uidList || [];
+});
 
 // 添加群聊
 function addGroupApply() {
@@ -106,14 +123,7 @@ function onSubmitImages(key: string, pathList: string[], fileList: OssFile[]) {
 
 // 重载
 function reload(uidList = []) {
-  form.value.roomId = null;
-  form.value.uidList = uidList;
-  form.value.avatar = null;
-  showImg.value = false;
-  userList.value = [];
-  pageInfo.value.cursor = null;
-  pageInfo.value.isLast = false;
-  pageInfo.value.total = -1;
+  reset();
   loadData();
 }
 

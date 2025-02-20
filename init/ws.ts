@@ -15,7 +15,6 @@ export async function useWsInit() {
     [WsMsgBodyType.APPLY]: true, // 好友消息
   } as Record<WsMsgBodyType, boolean>;
   const chat = useChatStore();
-
   const isReload = ref(false);
   const worker = shallowRef<Worker>();
 

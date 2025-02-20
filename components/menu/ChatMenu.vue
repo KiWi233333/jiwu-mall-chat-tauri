@@ -114,13 +114,12 @@ export interface MenuItem {
     class="relative z-998 h-full border-default-r card-bg-color"
   >
     <!-- 顶部 -->
-    <div class="grid grid-cols-1 w-full w-full grid-gap-6 px-2 pt-4 hover:bg-transparent">
+    <div mx-a mb-2 h-16 w-fit flex-row-c-c border-default-b>
       <UserInfoPopper
         :data="user.userInfo"
         :is-edit="true"
       />
     </div>
-    <div class="mx-a my-4 w-5/6 border-0 border-b-1px px-2 border-default" />
     <!-- 菜单 -->
     <div name="pop-list" tag="div" class="flex flex-col gap-3 overflow-y-auto px-2">
       <component

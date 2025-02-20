@@ -4,6 +4,7 @@ const props = withDefaults(defineProps<{
   immediate?: boolean
   delay?: number
   loadingClass?: string
+  loadingParentClass?: string
   appendLoadingClass?: string
   ssr?: boolean
   autoStop?: boolean
@@ -77,7 +78,10 @@ defineExpose({
     class="z-9 min-h-1em"
   >
     <slot name="load">
-      <div key="load" w-full flex-row-c-c py-2 text-center text-bluegray>
+      <div
+        key="load" class="w-full flex-row-c-c py-2 text-center text-small"
+        :class="{ [`${loadingParentClass}`]: loadingParentClass }"
+      >
         <div
           :class="`${loadingClass} ${appendLoadingClass}`"
         />
@@ -87,7 +91,7 @@ defineExpose({
   <!-- 完成 -->
   <div v-else>
     <slot name="done">
-      <div v-if="!noMore " key="done" h-2 w-full text-center text-bluegray @click="!isSupported && $emit('load')" />
+      <div v-if="!noMore " key="done" h-2 w-full text-center text-small @click="!isSupported && $emit('load')" />
     </slot>
   </div>
 </template>

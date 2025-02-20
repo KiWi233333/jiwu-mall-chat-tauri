@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 const { text, pretext, icon } = defineProps<{
-  text: string | number
+  text?: string | number
   pretext?: string
   icon?: string
 }>();
 </script>
 
 <template>
-  <small class="cursor-pointer transition-300 hover:text-[var(--el-color-info)]">
+  <div v-copying.toast="text" class="cursor-pointer transition-200 hover:text-theme-info">
     <div inline>
       {{ pretext }}
     </div>
     <div
-      v-copying.toast="text" ml-a
+      ml-a
       inline
     >
       {{ text }}
@@ -22,7 +22,7 @@ const { text, pretext, icon } = defineProps<{
       class="ml-1 p-0.5em opacity-60"
       :class="icon"
     />
-  </small>
+  </div>
 </template>
 
 <style scoped lang="scss"></style>

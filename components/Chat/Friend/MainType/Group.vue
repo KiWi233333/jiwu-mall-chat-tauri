@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { dayjs } from "element-plus";
+
 /**
  * 群聊适配器
  */
@@ -62,6 +64,9 @@ async function toSend(roomId: number) {
     });
   });
 }
+
+const getCreateTime = computed(() => room.value.createTime ? dayjs(room.value.createTime).format("YYYY年MM月DD日") : "未知");
+const getRoleText = computed(() => room.value.role !== undefined ? chatRoomRoleTextMap[room.value.role] : "成员");
 </script>
 
 <template>
@@ -70,52 +75,112 @@ async function toSend(roomId: number) {
     element-loading-text="加载中..."
     element-loading-background="transparent"
     :element-loading-spinner="defaultLoadingIcon"
+    v-bind="$attrs"
+    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 !card-bg-color sm:px-1/4"
   >
-    <div
-      v-show="!isLoading"
-      class="h-full w-full flex-1 animate-[0.3s_fade-in] px-2 py-1px"
-      v-bind="$attrs"
-    >
-      <!-- 顶部 -->
-      <div absolute left-0 top-0 h-4.2rem w-full flex items-center gap-2 px-5 shadow-sm card-bg-color>
-        <CardElImage
-          :src="BaseUrlImg + data.data.avatar" fit="cover"
-          class="h-2em w-2em flex-shrink-0 overflow-auto object-cover shadow-sm border-default card-default"
-        />
-        <strong text-0.9em font-500>{{ room.groupName }}</strong>
-        <small op-60 el-color-info>在线：{{ room.onlineNum || "0" }}</small>
+    <!-- 顶部信息 -->
+    <div flex gap-4 pb-6 sm:gap-6 border-default-b>
+      <CardElImage
+        :src="BaseUrlImg + data.data.avatar" fit="cover"
+        :preview-src-list="[BaseUrlImg + data.data.avatar]"
+        preview-teleported
+        loading="lazy"
+        class="h-4rem w-4rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-4.8rem w-4.8rem) border-default card-default"
+      />
+      <div flex flex-col gap-1 py-1>
+        <strong h-1.2em truncate text-1.2rem leading-1em>{{ room.groupName }}</strong>
+        <p mt-a truncate text-mini>
+          群号：
+          <BtnCopyText icon="i-solar:copy-bold-duotone" :text="room.roomId" class="inline">
+            {{ room.roomId }}
+          </BtnCopyText>
+        </p>
       </div>
-      <!-- 群成员 -->
-      <ChatRoomGroupGrid class="mx-a mt-24 max-h-50vh sm:w-2/3" :data="data.data" />
-      <div class="mx-a my-6 w-4/5 sm:(my-10 w-3/5) border-default-b" />
-      <!-- 按钮 -->
-      <div flex-row-c-c gap-4>
-        <BtnElButton
-          key="delete"
-          icon-class="i-solar:trash-bin-trash-outline p-2 mr-2"
-          style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;--el-color-primary: var(--el-color-danger);"
-          plain
-          class="mr-4 op-60 hover:op-100"
-          @click="chat.exitGroupConfirm(chat.theContact.roomId, isGroupOwner, () => {
-            chat.setTheFriendOpt(FriendOptType.Empty, {});
-            chat.setDelGroupId(roomId); // 清除房间
-          })"
-        >
-          {{ isGroupOwner ? "解散群聊" : "退出群聊" }}&ensp;
-        </BtnElButton>
-        <BtnElButton
-          key="send"
-          icon-class="i-solar:chat-line-bold p-2 mr-2"
-          style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
-          type="primary"
-          @click="toSend(roomId)"
-        >
-          发送消息&ensp;
-        </BtnElButton>
-      </div>
+    </div>
+    <!-- 群详情 -->
+    <div gap-6 truncate pb-6 border-default-b>
+      <!-- <p class="line">
+        <i class="i-solar:pen-2-linear icon" />
+        备注：
+        <span text-mini :class="{ 'op-60': !room.remark }">{{ room.remark || '设置群聊备注' }}</span>
+      </p> -->
+      <p class="line">
+        <i class="icon i-solar:shield-user-outline" />
+        群中的角色：
+        <span class="content" :title="getRoleText">
+          {{ getRoleText }}
+        </span>
+      </p>
+      <p class="line">
+        <i class="icon i-carbon:bullhorn" />
+        群公告：
+        <span class="content" :title="room.detail?.notice || '-'">
+          {{ room.detail?.notice || '暂无公告' }}
+        </span>
+        <i i-solar:alt-arrow-right-linear p-2 />
+      </p>
+      <p class="line">
+        <i class="icon i-solar:calendar-line-duotone" />
+        创建于：
+        <span class="content" :title="getCreateTime">
+          {{ getCreateTime }}
+        </span>
+      </p>
+      <p class="line">
+        <i class="icon i-solar:users-group-two-rounded-line-duotone" />
+        群成员：<span v-if="room.hotFlag !== isTrue.TRUE">( {{ room.allUserNum || 0 }}人 )</span>
+        <span class="ml-a text-xs btn-primary" @click="chat.setTheFriendOpt(FriendOptType.GROUP_MEMBER, data.data)">查看全员</span>
+      </p>
+      <ChatRoomGroupLine :data="data.data" />
+    </div>
+    <!-- 按钮操作 -->
+    <div v-show="!isLoading" class="mx-a">
+      <BtnElButton
+        key="delete"
+        icon-class="i-solar:trash-bin-trash-outline p-2 mr-2"
+        style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;--el-color-primary: var(--el-color-danger);"
+        plain
+        class="mr-4 op-60 hover:op-100"
+        @click="chat.exitGroupConfirm(chat.theContact.roomId, isGroupOwner, () => {
+          chat.setTheFriendOpt(FriendOptType.Empty, {});
+          chat.setDelGroupId(roomId);
+        })"
+      >
+        {{ isGroupOwner ? "解散群聊" : "退出群聊" }}&ensp;
+      </BtnElButton>
+      <BtnElButton
+        key="send"
+        icon-class="i-solar:chat-line-bold p-2 mr-2"
+        style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
+        type="primary"
+        @click="toSend(roomId)"
+      >
+        发送消息&ensp;
+      </BtnElButton>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+/* 保持与私聊页面一致的样式 */
+.border-default-b {
+  border-bottom: 1px solid var(--el-border-color);
+}
+.text-mini {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.line {
+  --at-apply: "mb-6 flex text-sm items-center";
+  .icon {
+    --at-apply: "shrink-0 mr-3 p-2.2"
+  }
+  .content {
+    --at-apply: "cursor-pointer text-small max-w-20em truncate ml-a"
+  }
+  .arrow {
+    --at-apply: "shrink-0 cursor-pointer";
+  }
+}
 </style>

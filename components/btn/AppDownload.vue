@@ -56,7 +56,6 @@ onMounted(async () => {
       confirm-button-text="前往"
       cancel-button-text="下次一定"
       :width="300"
-      @cancel="handleRepo('github', false)"
       @confirm="handleRepo('github')"
     >
       <template #reference>
@@ -77,7 +76,6 @@ onMounted(async () => {
       confirm-button-text="前往"
       cancel-button-text="下次一定"
       :width="300"
-      @cancel="handleRepo('gitee', false)"
       @confirm="handleRepo('gitee')"
     >
       <template #reference>

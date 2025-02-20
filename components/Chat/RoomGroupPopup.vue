@@ -9,7 +9,6 @@ const setting = useSettingStore();
 const user = useUserStore();
 
 // ref
-const chatNewGroupDialogRef = useTemplateRef("chatNewGroupDialogRef");
 const searchInputRef = useTemplateRef("searchInputRef");
 const noticeInputRef = useTemplateRef("noticeInputRef");
 const nameInputRef = useTemplateRef("nameInputRef");
@@ -56,16 +55,13 @@ const {
 } = useRoomGroupPopup({
   editFormField,
 });
-const showAddDialog = ref(false);
-
 // 邀请进群
 function showJoinGroup() {
-  if (chatNewGroupDialogRef.value) {
-    chatNewGroupDialogRef.value?.reload();
-    if (chatNewGroupDialogRef.value?.form)
-      chatNewGroupDialogRef.value.form.roomId = chat.theContact.roomId;
-    showAddDialog.value = true;
-  }
+  chat.inviteMemberForm = {
+    show: true,
+    roomId: chat.theContact.roomId,
+    uidList: [],
+  };
 };
 </script>
 
@@ -236,8 +232,6 @@ function showJoinGroup() {
         {{ isNotExistOrNorFriend ? '不显示聊天' : isTheGroupOwner ? '解散群聊' : '退出群聊' }}
       </span>
     </btn-el-button>
-    <!-- 邀请进群 -->
-    <LazyChatNewGroupDialog ref="chatNewGroupDialogRef" v-model="showAddDialog" />
     <!-- 好友申请 -->
     <LazyChatFriendApplyDialog v-model:show="isShowApply" :user-id="theUser?.userId" />
   </div>

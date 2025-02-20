@@ -13,7 +13,6 @@ definePageMeta({
 });
 
 const setting = useSettingStore();
-
 onMounted(async () => {
   user.showLoginAndRegister = "login";
 });

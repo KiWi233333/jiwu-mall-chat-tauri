@@ -120,12 +120,12 @@ async function toSend(uid: string) {
 
 <template>
   <div
+    v-loading="isLoading"
+    element-loading-text="加载中..."
+    element-loading-background="transparent"
+    :element-loading-spinner="defaultLoadingIcon"
     v-bind="$attrs"
-    :class="{
-      'op-100': !isLoading,
-      'op-0': isLoading,
-    }"
-    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 bg-color sm:px-1/4"
+    class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 !card-bg-color sm:px-1/4"
   >
     <!-- 信息 -->
     <div flex gap-4 pb-6 sm:gap-6 border-default-b>
@@ -137,7 +137,7 @@ async function toSend(uid: string) {
         class="h-4rem w-4rem flex-shrink-0 overflow-auto object-cover shadow-sm sm:(h-4.8rem w-4.8rem) border-default card-default"
       />
       <div flex flex-col gap-1 py-1>
-        <strong truncate text-1.4rem>{{ targetUserInfo.nickname }}</strong>
+        <strong truncate text-1.2rem>{{ targetUserInfo.nickname }}</strong>
         <p mt-a truncate text-mini :title="userId">
           ID：{{ userId }}
         </p>
@@ -173,10 +173,9 @@ async function toSend(uid: string) {
         <i class="i-tabler:calendar mr-3 p-2" />
         距离生日还有：{{ getBirthdayCount || ' - ' }}天
       </p>
-      <p v-if="isFrend" mt-6 truncate text-sm>
+      <!-- <p mt-6 truncate text-sm>
         <i class="i-carbon:phone-incoming mr-3 p-2" />
-        手机号：-
-      </p>
+      </p> -->
       <p mt-6 truncate text-small>
         <i class="i-carbon:user mr-3 p-2" />
         上次在线：

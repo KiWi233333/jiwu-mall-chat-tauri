@@ -13,15 +13,23 @@ const chat = useChatStore();
 const isReload = ref(false); // 是否正在重新加载
 const isLoading = ref(false); // 是否正在加载
 const pageInfo = ref<PageInfo>({
-  size: 20,
+  size: 15,
   cursor: undefined,
   isLast: false,
 });
 const memberList = ref<ChatMemberVO[]>([]);
+const memberFilterList = computed(() => memberList.value.sort((a, b) => b.activeStatus - a.activeStatus));
+const { list: vMemberList, scrollTo, containerProps, wrapperProps } = useVirtualList(
+  memberFilterList,
+  {
+    itemWidth: 42,
+    overscan: 10,
+  },
+);
 
 // 加载数据
 async function loadData() {
-  if (isReload.value || isLoading.value || pageInfo.value.isLast) {
+  if (isLoading.value || pageInfo.value.isLast) {
     return;
   }
   isLoading.value = true;
@@ -38,9 +46,6 @@ async function loadData() {
       memberList.value.push(...res.data.list);
     }
   }
-  else {
-    ElMessage.error(res.msg || "加载失败，请稍后再试！");
-  }
   isLoading.value = false;
 }
 
@@ -49,11 +54,11 @@ async function reload() {
   memberList.value = [];
   pageInfo.value.cursor = undefined;
   pageInfo.value.isLast = false;
-  if (!isReload.value) {
-    isReload.value = true;
-    await loadData();
-    isReload.value = false;
-  }
+  isReload.value = true;
+  scrollTo(0);
+  containerProps.onScroll();
+  await loadData();
+  isReload.value = false;
 }
 
 // 添加好友
@@ -243,10 +248,6 @@ watchThrottled(() => ws.wsMsgList.onlineNotice, (list) => {
   immediate: true,
 });
 
-const memberFilterList = computed(() => {
-  return memberList.value.sort((a, b) => b.activeStatus - a.activeStatus);
-});
-
 // 邀请进群
 function onInviteMember() {
   chat.inviteMemberForm = {
@@ -258,65 +259,32 @@ function onInviteMember() {
 </script>
 
 <template>
-  <div
-    v-bind="$attrs"
-  >
-    <div flex-row-bt-c class="mx-a w-3/4 pb-4">
-      <i class="sm:(h-1.8em w-1.8em)" />
-      <span>
-        群成员
-      </span>
-      <i class="block h-1.8em w-1.8em rounded-2rem sm:(h-1.6em w-1.6em) btn-info border-default" i-carbon:add-large @click="onInviteMember" />
-    </div>
-    <el-scrollbar
-      height="45vh"
-      wrap-class="shadow-in"
-    >
-      <ListAutoIncre
-        :immediate="true"
-        :auto-stop="true"
-        :no-more="!isLoading && chat.roomGroupPageInfo.isLast"
-        loading-class="mx-a mb-2 h-1rem w-1rem animate-[spin_2s_infinite_linear] rounded-4px py-2"
-        @load="loadData"
-      >
-        <div class="grid grid-cols-4 mx-a lg:(grid-cols-6 gap-4)">
-          <div
-            v-for="p in memberFilterList"
-            :key="p.userId"
-            :title="p.nickName"
-            :class="p.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
-            class="item"
-            @contextmenu="onContextMenu($event, p)"
-            @click="chat.setTheFriendOpt(FriendOptType.User, {
-              id: p.userId,
-            })"
-          >
-            <div relative h-3.2em w-3.2em flex-row-c-c>
-              <CardElImage
-                v-if="p.avatar"
-                :src="BaseUrlImg + p.avatar" fit="cover"
-                class="h-2.4rem w-2.4rem flex-shrink-0 overflow-auto object-cover border-default card-default"
-              />
-              <div v-else class="h-2.4rem w-2.4rem text-center leading-2.4rem border-default card-default text-small">
-                <i class="i-solar-user-line-duotone p-2.5 op-80" />
-              </div>
-              <span class="g-avatar" />
-            </div>
-            <small mx-a mt-2 w-5em truncate text-center>{{ p.nickName }}</small>
-          </div>
+  <!-- <i class="block h-1.8em w-1.8em rounded-2rem sm:(h-1.6em w-1.6em) btn-info border-default" i-carbon:add-large @click="onAdd" /> -->
+  <div class="relative">
+    <div v-if="!isReload" class="h-42px w-500px overflow-hidden" v-bind="wrapperProps">
+      <!-- you can get current item of list here -->
+      <div class="w-500px flex items-center overflow-x-auto" v-bind="containerProps">
+        <div
+          v-for="p in vMemberList"
+          :key="`${data.roomId}_${p.data.userId}`"
+          class="item"
+          :class="p.data.activeStatus === ChatOfflineType.ONLINE ? 'live' : 'op-50 filter-grayscale filter-grayscale-100 '"
+          :title="p.data.nickName"
+          @contextmenu="($event) => onContextMenu($event, p.data)"
+        >
+          <CardElImage
+            :default-src="p.data.avatar"
+            fit="cover"
+            error-class="i-solar-user-line-duotone"
+            class="avatar"
+          />
+          <span class="g-avatar" />
         </div>
-      </ListAutoIncre>
-    </el-scrollbar>
-    <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
-      @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
-        chat.removeContact(data.roomId);
-      })"
-    >
-      <span hidden sm:block>
-        {{ getTheRoleType === ChatRoomRoleEnum.OWNER ? '解散群聊' : '退出群聊' }}
-      </span>
-    </BtnElButton>
+      </div>
+      <div class="right" @click="onInviteMember">
+        <i class="i-carbon:add p-3" />
+      </div>
+    </div>
     <!-- 好友申请 -->
     <LazyChatFriendApplyDialog v-model:show="isShowApply" :user-id="theUser?.userId" />
   </div>
@@ -324,17 +292,22 @@ function onInviteMember() {
 
 <style lang="scss" scoped>
 .item {
-  --at-apply: "flex-row-c-c flex-col shadow-sm btn-primary-bg py-4";
+  --at-apply: "cursor-pointer transition-none  active:(scale-90 transition-150) hover:(transition-150) h-42px w-42px py-3px pr-6px  flex-shrink-0";
+  .avatar {
+    --at-apply: "flex-shrink-0 rounded-1/2 shadow-md bg-color-2 block w-38px h-38px rounded-1/2";
+  }
   .g-avatar {
     --at-apply: "border-default z-1 block w-0.6em h-0.6em rounded-full absolute right-0.2em bottom-0.2em";
   }
   &.live {
     --at-apply: "relative filter-none";
-
     .g-avatar {
       background-color: var(--el-color-info);
     }
   }
+}
+.right {
+  --at-apply: "absolute z-1 border-default !border-r-0 shadow flex-row-c-c card-default rounded-[25px_0_0_25px] -right-2 top-3px  cursor-pointer transition-right hover:right-0 h-38px w-38px p-3px flex-shrink-0";
 }
 :deep(.el-scrollbar__thumb) {
   display: none;

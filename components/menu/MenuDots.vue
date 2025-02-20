@@ -42,7 +42,11 @@ const menuList = reactive([
     icon: "i-solar:chat-round-dots-outline",
     hidden: computed(() => !setting.isMobileSize),
     onClick: () => {
-      chat.showNewGroupDialog = true;
+      chat.inviteMemberForm = {
+        show: true,
+        roomId: undefined,
+        uidList: [],
+      };
     },
   },
   {

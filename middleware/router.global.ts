@@ -5,11 +5,26 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // 消息页
   if ((from.path !== "/msg" && to.path === "/msg")) // 页面进出禁止
     return abortNavigation();
-  const user = useUserStore();
-  // 极物圈商品页
-  // if (to.path.startsWith("/goods/detail")) {
+    // 极物圈商品页
+    // if (to.path.startsWith("/goods/detail")) {
   //   return abortNavigation();
   // }
+  // 移动尺寸
+  const setting = useSettingStore();
+  if (setting.isMobileSize) {
+    // 聊天详情页移动端返回处理
+    const chat = useChatStore();
+    if (from.path === "/" && to.path !== "/" && !chat.isOpenContact && useSettingStore().isMobileSize) { // 当遇到
+      chat.isOpenContact = true;
+      return abortNavigation();
+    }
+    else if (from.path === "/friend" && to.path !== "/friend" && chat.showTheFriendPanel && useSettingStore().isMobileSize) { // 当遇到
+      chat.showTheFriendPanel = false;
+      return abortNavigation();
+    }
+  }
+
+  const user = useUserStore();
   // 页面动画
   resolveTransition(to.path, from.path);
   if (checkDesktop()) { // 桌面端
@@ -33,11 +48,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
   }
   else { // 移动、web端
-    // 聊天详情页移动端返回处理
-    if (from.path === "/" && to.path !== "/" && !useChatStore().isOpenContact && useSettingStore().isMobileSize) { // 当遇到
-      useChatStore().isOpenContact = true;
-      return "/";
-    }
     if (to.path !== "/login") {
       if (!user.isLogin) {
         user.showLoginAndRegister = "login";

@@ -9,7 +9,25 @@ const setting = useSettingStore();
 const chat = useChatStore();
 const showVideoDialog = ref(false);
 const showWsStatusBtns = computed(() => ws.status !== WsStatusEnum.OPEN || !user.isLogin);
-useMsgLinear(); // 监听消息
+const showGroupDialog = computed({
+  get() {
+    return chat.inviteMemberForm.show;
+  },
+  set(val) {
+    chat.inviteMemberForm = val
+      ? {
+          ...chat.inviteMemberForm,
+          show: true,
+        }
+      : {
+          show: false,
+          roomId: undefined,
+          uidList: [],
+        };
+  },
+});
+// 监听消息
+useMsgLinear();
 </script>
 
 <template>
@@ -43,6 +61,8 @@ useMsgLinear(); // 监听消息
         />
       </div>
     </div>
+    <!-- 邀请进群 -->
+    <LazyChatNewGroupDialog v-model="showGroupDialog" :form="chat.inviteMemberForm" />
     <!-- 视频播放器 -->
     <LazyUtilVideoPlayerDialog v-model="showVideoDialog" />
     <!-- 扩展菜单 -->
