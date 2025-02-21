@@ -6,7 +6,8 @@
 
 <div>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri" target="_blank">
-        <img class="disabled-img-view" src="https://img.shields.io/badge/Github-Project-blueviolet.svg?style=plasticr">
+        <img class="disabled-img-view"
+        alt="GitHub" src="https://img.shields.io/badge/Github-Project-blueviolet.svg?style=plasticr">
       </a>
       <a href="https://github.com/Kiwi233333/jiwu-mall-chat-tauri/stargazers" target="_blank">
         <img class="disabled-img-view" alt="License"
@@ -45,6 +46,7 @@ JiwuChat is a lightweight `(~10MB)` multi-platform chat application built with T
 ![Multi-platform Adaptation](.doc/previews.png)
 
 ## Default Account
+
 - Username: ikun233
 - Password: 123456
 - Experience: [Web Version](https://chat.jiwu.kiwi233.top/)
@@ -85,10 +87,9 @@ JiwuChat is a lightweight `(~10MB)` multi-platform chat application built with T
 
 ![AI Chatbot](./.doc/group-ai-ds.png)
 
-![AI Chatbot](./.doc/group-ai-3.png)
+![AI Chatbot](./.doc/group-ai-2.png)
 
 ![AI Chatbot](./.doc/group-ai-1.png)
-
 
 - Audio/Video Chat (WebRTC)
 
