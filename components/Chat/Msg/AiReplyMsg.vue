@@ -37,7 +37,7 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
       <!-- 折叠 -->
       <span
         v-if="!isFold && data.message?.content && data.message?.content.length > 40"
-        class="flex-res mx-2 ml-a flex-shrink-0 btn-info text-small sm:(op-0 group-hover:op-100)"
+        class="flex-shrink-0 btn-info text-small sm:(op-0 group-hover:op-100)"
         @click="isFold = !isFold"
       >
         收起
@@ -45,7 +45,7 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
       </span>
     </template>
     <template #body>
-      <div class="msg-popper relative min-h-2.5em min-w-2.6em">
+      <div class="ai-reply-msg-popper relative min-h-2.5em min-w-2.6em">
         <!-- 思考内容 -->
         <p v-if="data?.message?.body?.reasoningContent && !isFold" :class="isResonFold ? 'h-2.5em truncate is-reson-open' : ''" class="reson-content" style="white-space: pre-wrap;">
           思考：

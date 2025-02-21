@@ -5,10 +5,11 @@
  */
 export function getAiRobotList(
   token: string,
+  showDetail: isTrue = isTrue.FALESE,
 ) {
   return useHttp.get<Result<RobotUserVO[]>>(
     `/chat/ai/robot/list`,
-    {},
+    { showDetail: showDetail || isTrue.FALESE },
     { headers: { Authorization: token } },
   );
 }
@@ -44,4 +45,8 @@ export interface RobotUserVO {
    * 用户名
    */
   username: string;
+
+  isFriend?: isTrue;
+
+  description?: string;
 }

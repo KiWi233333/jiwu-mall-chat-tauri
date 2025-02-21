@@ -361,6 +361,61 @@ export const useChatStore = defineStore(
         reloadContact(roomId);
       }
     }
+    /**
+     * 发送消息
+     * @param type 发送类型
+     * @param id 发送对象id
+     */
+    async function toContactSendMsg(type: "roomId" | "userId", id: string | number) {
+      const user = useUserStore();
+      const setting = useSettingStore();
+      let contact: ChatContactDetailVO;
+      if (type === "userId") {
+        const res = await getSelfContactInfoByFriendUid(id as string, user.getToken);
+        if (!res)
+          return;
+        contact = res.data;
+        if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
+          ElMessage.closeAll("error");
+          // 记录已删除，重新拉取会话
+          const newRes = await restoreSelfContact(id as string, user.getToken);
+          if (newRes.code !== StatusCode.SUCCESS) {
+            return;
+          }
+          contact = newRes.data;
+        }
+        await setContact(contact);
+      }
+      else if (type === "roomId") {
+        const res = await getChatContactInfo(id as number, user.getToken, RoomType.GROUP);
+        if (!res)
+          return;
+        let contact: ChatContactDetailVO | undefined = res.data;
+        if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
+          ElMessage.closeAll("error");
+          // 记录已删除，重新拉取会话
+          const newRes = await restoreGroupContact(id as number, user.getToken);
+          if (newRes.code !== StatusCode.SUCCESS) {
+            return;
+          }
+          contact = newRes.data;
+        }
+        await nextTick(() => {
+          navigateTo({
+            path: "/",
+          });
+        });
+      }
+      if (setting.isMobileSize) {
+        isOpenContact.value = false;
+      }
+      await nextTick(() => {
+        navigateTo({
+          path: "/",
+        });
+      });
+    }
+
     // 删除会话
     async function removeContact(roomId: number) {
       if (roomId && roomId === theContactId.value)
@@ -370,7 +425,7 @@ export const useChatStore = defineStore(
       delete roomMapCache.value[roomId];
     }
     /**
-     * 删除会话（不影响接收）
+     * 主动删除会话（不影响接收）
      * @param roomId 房间id
      * @param successCallBack
      */
@@ -639,29 +694,25 @@ export const useChatStore = defineStore(
         data,
       };
     }
-
-
-    // 面板删除好友|退出群聊操作
-    const delUserId = ref("");
-    function setDelUserId(userId: string) {
-      delUserId.value = userId;
-    }
-    const delGroupId = ref<number | undefined>(undefined);
-    function setDelGroupId(groupId: number | undefined) {
-      delGroupId.value = groupId;
-    }
-    // 添加好友
-    const isAddNewFriend = ref(false);
-    function setIsAddNewFriend(val: boolean) {
-      isAddNewFriend.value = val;
-    }
-
     const showTheFriendPanel = computed({
       get: () => theFriendOpt.value.type !== FriendOptType.Empty,
       set: (val) => {
-        setTheFriendOpt(FriendOptType.Empty);
+        if (!val) {
+          setTheFriendOpt(FriendOptType.Empty);
+        }
       },
     }) as Ref<boolean>;
+    // 退出群聊操作
+    function setDelGroupId(roomId: number | undefined) {
+      if (!roomId)
+        return;
+      mitter.emit(MittEventType.GROUP_CONTRONLLER, {
+        type: "delete",
+        payload: {
+          roomId,
+        },
+      });
+    }
 
     /** ---------------------------- RTC通话 ---------------------------- */
     const showRtcCall = ref(false);
@@ -749,8 +800,6 @@ export const useChatStore = defineStore(
         isLoading: false,
         pageInfo: { cursor: undefined, isLast: false, size: 20 } as PageInfo,
       };
-      delUserId.value = "";
-      isAddNewFriend.value = false;
       showExtension.value = false;
       isOpenContact.value = true;
       roomGroupPageInfo.value = {
@@ -782,7 +831,6 @@ export const useChatStore = defineStore(
         data: {},
       };
       showTheFriendPanel.value = false;
-      delGroupId.value = undefined;
       isMsgListScroll.value = false;
       isVisible.value = false;
       scrollTopSize.value = 0;
@@ -830,14 +878,11 @@ export const useChatStore = defineStore(
       removeAskAiByUsername,
       theFriendOpt,
       showTheFriendPanel,
-      delUserId,
-      isAddNewFriend,
       isOpenContact,
       isMsgListScroll,
       roomGroupPageInfo,
       playSounder,
       isVisible,
-      delGroupId,
       contactDetailMapCache,
 
       // 群成员
@@ -856,15 +901,14 @@ export const useChatStore = defineStore(
       setRecallMsg,
       findMsg,
       removeContact,
+      toContactSendMsg,
       deleteContactConfirm,
       exitGroupConfirm,
       setReadList,
       clearAllUnread,
-      setIsAddNewFriend,
       setAtUid,
       removeAtByUsername,
       setReplyMsg,
-      setDelUserId,
       setDelGroupId,
       setTheFriendOpt,
       resetStore,

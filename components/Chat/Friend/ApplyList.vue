@@ -50,11 +50,16 @@ function onArgeeFriend(applyId: number) {
       if (action === "confirm") {
         const res = await argeeFriendApply({ applyId }, user.getToken);
         if (res.code === StatusCode.SUCCESS) {
-          for (const p of list.value) {
-            if (p.userId && p.applyId === applyId)
-              p.status = ChatApplyStatusType.Argee;
+          const item = list.value.find(p => p.applyId === applyId);
+          if (item) {
+            item.status = ChatApplyStatusType.Argee;
+            mitter.emit(MittEventType.FRIEND_CONTROLLER, { // 添加好友成功
+              type: "add",
+              payload: {
+                userId: item?.userId,
+              },
+            });
           }
-          chat.setIsAddNewFriend(true);
         }
       }
     },
@@ -63,9 +68,9 @@ function onArgeeFriend(applyId: number) {
 </script>
 
 <template>
-  <div class="list w-full flex flex-col animate-(fade-in duration-200) px-2 text-sm">
+  <div class="list w-full flex flex-col text-sm">
     <!-- 骨架屏 -->
-    <div v-if="isReload">
+    <template v-if="isReload">
       <div v-for="p in 10" :key="p" class="item">
         <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4" />
         <div>
@@ -74,7 +79,7 @@ function onArgeeFriend(applyId: number) {
         </div>
         <div class="ml-a h-4 w-3em rounded bg-gray-1 dark:bg-dark-4" />
       </div>
-    </div>
+    </template>
     <ListAutoIncre
       :immediate="false"
       :auto-stop="true"

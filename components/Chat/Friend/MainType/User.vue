@@ -62,8 +62,11 @@ function deleteFriend(userId: string) {
         const res = await deleteFriendById(userId, store.getToken);
         if (res.code === StatusCode.SUCCESS) {
           chat.setTheFriendOpt(FriendOptType.Empty, {});
-          chat.setDelUserId(userId);// 删除的好友 好友列表也前端移除
-          chat.setIsAddNewFriend(true);// 设置未非好友
+          // 记录删除 + 删除对应会话
+          mitter.emit(MittEventType.FRIEND_CONTROLLER, {
+            type: "delete",
+            payload: { userId },
+          });
           const contactInfoRes = await getSelfContactInfoByFriendUid(userId, store.getToken);
           if (contactInfoRes && contactInfoRes.code !== StatusCode.SUCCESS) {
             return ElMessage.closeAll("error");
@@ -72,7 +75,6 @@ function deleteFriend(userId: string) {
             chat.removeContact(contactInfoRes.data.roomId); // 清除对应会话
           }
         }
-        chat.setIsAddNewFriend(true);
       }
     },
   });
@@ -88,42 +90,11 @@ watch(userId, (val: string) => {
   loadData(val);
 }, { immediate: true });
 
-// 去发消息
-async function toSend(uid: string) {
-  if (!isFrend.value)
-    return;
-  const res = await getSelfContactInfoByFriendUid(uid, store.getToken);
-  if (!res)
-    return;
-  let contact: ChatContactDetailVO | undefined = res.data;
-  if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
-    ElMessage.closeAll("error");
-    // 记录已删除，重新拉取会话
-    const newRes = await restoreSelfContact(uid, store.getToken);
-    if (newRes.code !== StatusCode.SUCCESS) {
-      return;
-    }
-    contact = newRes.data;
-  }
-  await chat.setContact(contact);
-  if (setting.isMobileSize) {
-    chat.isOpenContact = false;
-  }
-  await nextTick(() => {
-    navigateTo({
-      path: "/",
-    });
-  });
-}
 // @unocss-include
 </script>
 
 <template>
   <div
-    v-loading="isLoading"
-    element-loading-text="加载中..."
-    element-loading-background="transparent"
-    :element-loading-spinner="defaultLoadingIcon"
     v-bind="$attrs"
     class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 !card-bg-color sm:px-1/4"
   >
@@ -141,9 +112,9 @@ async function toSend(uid: string) {
         <p mt-a truncate text-mini :title="userId">
           ID：{{ userId }}
         </p>
-        <p truncate text-mini :title="targetUserInfo.email">
+        <!-- <p truncate text-mini :title="targetUserInfo.email">
           邮箱：{{ (isFrend || isSelf) ? targetUserInfo.email : ' - ' }}
-        </p>
+        </p> -->
       </div>
     </div>
     <!-- 详情 -->
@@ -201,7 +172,7 @@ async function toSend(uid: string) {
         icon-class="i-solar:chat-line-bold p-2 mr-2"
         style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
         type="primary"
-        @click="toSend(userId)"
+        @click="chat.toContactSendMsg('userId', userId)"
       >
         发送消息&ensp;
       </BtnElButton>

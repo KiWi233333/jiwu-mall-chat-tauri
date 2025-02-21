@@ -927,7 +927,7 @@ html.stop-transition-all {
 @keyframes latter-slice-top {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
 
   to {
@@ -937,7 +937,7 @@ html.stop-transition-all {
 @keyframes latter-slice-bottom {
   0% {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-10px);
   }
 
   to {
@@ -948,7 +948,7 @@ html.stop-transition-all {
 @keyframes latter-slice-left {
   0% {
     opacity: 0;
-    transform: translateX(12px);
+    transform: translateX(10px);
   }
   to {
     transform: none;
@@ -957,7 +957,7 @@ html.stop-transition-all {
 @keyframes latter-slice-right {
   0% {
     opacity: 0;
-    transform: translateX(-12px);
+    transform: translateX(-10px);
   }
   to {
     transform: none;

@@ -24,6 +24,11 @@ export enum MittEventType {
   VIDEO_READY = "video-ready",
   // 成员列表事件
   RELOAD_MEMBER_LIST = "chat-reload-member-list", // 重新加载成员列表
+  // 好友
+  FRIEND_CONTROLLER = "chat-delete-friend", // 好友控制
+  // 群聊
+  GROUP_CONTRONLLER = "chat-group-controller", // 群聊控制
+
 }
 
 // 组件滚动事件载荷
@@ -89,6 +94,10 @@ type EventPayloadMap = {
   [MittEventType.VIDEO_READY]: VideoReadyPayload;
   // 成员列表事件
   [MittEventType.RELOAD_MEMBER_LIST]: { type: "reload", payload: { userId: string, roomId: number } };
+  // 好友
+  [MittEventType.FRIEND_CONTROLLER]: { type: "delete" | "add", payload: { userId: string } };
+  // 群聊
+  [MittEventType.GROUP_CONTRONLLER]: { type: "delete" | "add", payload: { roomId: number } };
 };
 
 export type MittEvents = {

@@ -62,33 +62,14 @@ async function reloadData() {
   });
 }
 
-
-// 好友相关监听
-if (props.type === "friend") {
-  watch(() => chat.isAddNewFriend, (val) => {
-    if (val && !isLoading.value) {
-      reloadData();
-      chat.isAddNewFriend = false;
-    }
-  });
-  watch(() => chat.delUserId, (val) => {
-    if (val) {
-      list.value = list.value.filter(p => (p as ChatUserFriendVO).userId !== val) as ChatUserFriendVO[];
-      chat.setDelUserId("");
-    }
-  });
-}
-else if (props.type === "group") { // 群组相关监听
-  watchDebounced(() => chat.delGroupId, (val) => {
-    if (val) {
-      list.value = list.value.filter(p => (p as ChatRoomGroupVO).roomId !== val) as ChatRoomGroupVO[];
-      chat.setDelGroupId(undefined);
-    }
-  });
-}
 // 首次加载动画
 const isFirstLoad = ref(false);
 const isFriendPanel = computed(() => props.type === "friend");
+// 页面是否有焦点
+function checkIsFocus(p: DataVO) {
+  return isFriendPanel.value ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId;
+}
+
 onMounted(() => {
   reloadData();
   isFirstLoad.value = true;
@@ -99,7 +80,6 @@ onUnmounted(() => {
 onDeactivated(() => {
   isFirstLoad.value = false;
 });
-
 // 页面激活 5分钟内不重新加载
 onActivated(() => {
   if (lastLoadTime.value && Date.now() - lastLoadTime.value > 1000 * 60 * 5) { // 5分钟内不再加载
@@ -107,9 +87,30 @@ onActivated(() => {
   }
 });
 
-// 页面是否有焦点
-function checkIsFocus(p: DataVO) {
-  return isFriendPanel.value ? chat.theFriendOpt?.data?.id === (p as ChatUserFriendVO).userId : chat.theFriendOpt?.data?.roomId === p.roomId;
+
+/**
+ * 好友相关监听
+ */
+if (props.type === "friend") {
+  // 监听好友删除
+  mitter.on(MittEventType.FRIEND_CONTROLLER, ({ type, payload }) => {
+    if (type === "delete") {
+      list.value = list.value.filter(p => (p as ChatUserFriendVO).userId !== payload.userId) as ChatUserFriendVO[];
+    }
+    else if (type === "add") { // 新增好友
+      reloadData();
+    }
+  });
+}
+else if (props.type === "group") { // 群组相关监听
+  mitter.on(MittEventType.GROUP_CONTRONLLER, ({ type, payload }) => {
+    if (type === "delete") {
+      list.value = list.value.filter(p => (p as ChatRoomGroupVO).roomId !== payload.roomId) as ChatUserFriendVO[];
+    }
+    else if (type === "add") { // 新增群组
+      reloadData();
+    }
+  });
 }
 </script>
 
@@ -125,7 +126,7 @@ function checkIsFocus(p: DataVO) {
       <!-- 骨架屏 -->
       <div v-if="isReload">
         <div v-for="p in 9" :key="p" class="item">
-          <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded bg-gray-1 object-cover dark:bg-dark-4" />
+          <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 bg-gray-1 object-cover dark:bg-dark-4" />
           <div class="nickname-skeleton h-4 w-8em rounded bg-gray-1 dark:bg-dark-4" />
         </div>
       </div>
@@ -159,10 +160,10 @@ function checkIsFocus(p: DataVO) {
 
 <style lang="scss" scoped>
 .avatar-icon {
-  --at-apply: "h-2.4rem card-rounded-df card-bg-color-2 w-2.4rem flex-row-c-c rounded-6px shadow-sm";
+  --at-apply: "h-2.4rem card-rounded-df bg-color-2 w-2.4rem flex-row-c-c rounded-6px shadow-sm";
 }
 .item {
-  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mb-2 hover:(bg-menu-color) ";
+  --at-apply: "flex items-center gap-4 p-2 cursor-pointer rounded-6px mb-2 hover:(bg-menu-color)";
   &.focus {
     --at-apply: "!bg-menu-color";
   }

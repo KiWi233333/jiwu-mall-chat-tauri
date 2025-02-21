@@ -15,8 +15,8 @@ defineProps<{
         新的朋友
       </strong>
     </div>
-    <el-scrollbar class="card-bg-color-2" view-class="p-2rem md:w-2/3 mx-a" wrap-class="w-full flex-1 h-full">
-      <ChatFriendApplyList />
+    <el-scrollbar view-class="p-2rem md:w-2/3 mx-a" wrap-class="w-full flex-1 h-full">
+      <ChatFriendApplyList data-fade />
     </el-scrollbar>
   </div>
 </template>

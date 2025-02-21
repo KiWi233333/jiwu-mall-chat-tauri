@@ -7,6 +7,7 @@ useSeoMeta({
   keywords: appKeywords,
 });
 const chat = useChatStore();
+const setting = useSettingStore();
 const theFriendOpt = computed({
   get: () => chat.theFriendOpt,
   set: (val) => {
@@ -50,11 +51,13 @@ async function clearHistory() {
       <!-- 面板 -->
       <ChatFriendMainType
         v-if="chat.theFriendOpt.type !== FriendOptType.Empty"
+        key="chat-friend-main-type"
         :data="chat.theFriendOpt"
-        class="relative z-999 mx-a h-full w-full flex-1 flex-shrink-0 card-bg-color-2"
+        class="bg relative z-999 mx-a h-full w-full flex-1 flex-shrink-0"
       />
       <div
         v-else
+        key="chat-friend-empty"
         class="flex-row-c-c flex-1 flex-shrink-0 card-bg-color-2"
       >
         <div data-fades class="h-full w-full flex flex-col items-center justify-center text-gray-600 op-80 dark:(text-gray-300 op-50)">
@@ -70,5 +73,16 @@ async function clearHistory() {
 .main {
   height: 100%;
   width: 100%;
+}
+
+.bg {
+  // background-image: linear-gradient(160deg, #e8e8fb, #f7f7f7);
+  //  background: radial-gradient(63.44% 82.03% at 55.58% -15.63%, #e8e8fb 0%, #b5d1ea80 53.72%, rgba(90, 221, 230, 0)), linear-gradient(26.62deg, rgba(249, 124, 89, 0.1) 20.64%, rgba(249, 124, 89, 0) 49.82%), linear-gradient(56.79deg, #b5d0ea 33.79%, rgba(185, 91, 230, 0) 72.67%), linear-gradient(301.08deg, rgba(252, 178, 91, 0.91) 20.42%, rgba(252, 178, 91, 0) 60.38%), linear-gradient(141.57deg, rgba(78, 173, 235, 0.1) 19.08%, rgba(148, 158, 165, 0) 98.72%, #d3e4ffa9);
+  //  background-blend-mode: normal,normal,darken,normal,normal,normal;
+  // background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #eff6ff 100%);
+  background-image: linear-gradient(160deg, #a2cbff, transparent, transparent, transparent, transparent, transparent, #beb6ff);
+}
+.dark .bg {
+  background-image: linear-gradient(160deg, #262626 0%, transparent, transparent, transparent, transparent, transparent, transparent, transparent);
 }
 </style>

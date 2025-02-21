@@ -36,35 +36,6 @@ async function loadData(val: number) {
 const roomId = computed(() => data.data.roomId);
 watch(roomId, val => loadData(val), { immediate: true });
 
-
-// 去发消息
-async function toSend(roomId: number) {
-  if (!isOnGroup.value)
-    return;
-  const res = await getChatContactInfo(roomId, user.getToken, RoomType.GROUP);
-  if (!res)
-    return;
-  let contact: ChatContactDetailVO | undefined = res.data;
-  if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
-    ElMessage.closeAll("error");
-    // 记录已删除，重新拉取会话
-    const newRes = await restoreGroupContact(roomId, user.getToken);
-    if (newRes.code !== StatusCode.SUCCESS) {
-      return;
-    }
-    contact = newRes.data;
-  }
-  await chat.setContact(contact);
-  if (setting.isMobileSize) {
-    chat.isOpenContact = false;
-  }
-  await nextTick(() => {
-    navigateTo({
-      path: "/",
-    });
-  });
-}
-
 const getCreateTime = computed(() => room.value.createTime ? dayjs(room.value.createTime).format("YYYY年MM月DD日") : "未知");
 const getRoleText = computed(() => room.value.role !== undefined ? chatRoomRoleTextMap[room.value.role] : "成员");
 </script>
@@ -153,7 +124,7 @@ const getRoleText = computed(() => room.value.role !== undefined ? chatRoomRoleT
         icon-class="i-solar:chat-line-bold p-2 mr-2"
         style="transition: .2s; max-width: 9em;text-align: center;letter-spacing: 1px;"
         type="primary"
-        @click="toSend(roomId)"
+        @click="chat.toContactSendMsg('roomId', roomId)"
       >
         发送消息&ensp;
       </BtnElButton>
