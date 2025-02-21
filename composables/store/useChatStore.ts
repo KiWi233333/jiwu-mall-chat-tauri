@@ -224,7 +224,7 @@ export const useChatStore = defineStore(
     }
 
     // 成员变动消息
-    watchDebounced(() => ws.wsMsgList.memberMsg.length, watchMemberChange, {
+    watchDebounced(() => ws.wsMsgList?.memberMsg?.length, watchMemberChange, {
       immediate: false,
     });
     async function watchMemberChange(len: number) {

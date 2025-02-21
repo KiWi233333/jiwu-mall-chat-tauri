@@ -3,7 +3,6 @@ import type { WSAiStreamMsg, WSFriendApply, WSMemberChange, WsMsgBodyVO, WSMsgDe
 import type { ChatMessageVO } from "../api/chat/message";
 import BackWebSocket from "@tauri-apps/plugin-websocket";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { notification } from "~/init/ws";
 import { WsMsgBodyType, WsMsgType, WsStatusEnum } from "../../types/chat/WsType";
 
 
@@ -91,109 +90,10 @@ export const useWsStore = defineStore(
       aiStreamMsg: [] as WSAiStreamMsg[],
       other: [] as object[],
     });
-    const { reload } = useWsInit();
+
     const isNewMsg = computed(() => wsMsgList.value.newMsg.length > 0);
 
-    // 初始化 ws
-    function useWsInit() {
-      // 聊天模块
-      const user = useUserStore();
-      const setting = useSettingStore();
-
-      // 通知消息类型  WsMsgBodyType
-      const noticeType = {
-        [WsMsgBodyType.MESSAGE]: true, // 普通消息
-        [WsMsgBodyType.APPLY]: true, // 好友消息
-      } as Record<WsMsgBodyType, boolean>;
-      const chat = useChatStore();
-      const isReload = ref(false);
-      const worker = shallowRef<Worker>();
-
-      // 初始化 Web Worker
-      async function reload() {
-        if (isReload.value) {
-          return;
-        }
-        // 创建 Web Worker
-        console.log("web worker reload");
-        isReload.value = true;
-        worker.value?.terminate?.(); // 关闭 WebSocket 连接
-        await close?.(false); // 关闭 WebSocket 连接
-        if (!user?.getTokenFn()) {
-          isReload.value = false;
-          return;
-        }
-        worker.value = new Worker("/useWsWorker.js");
-        // 初始化 WebSocket 连接
-        initDefault(() => {
-          onMessage(async (msg) => {
-            // 消息通知
-            if (noticeType[msg.type]) {
-              const body = msg.data as ChatMessageVO;
-              if (body.fromUser?.userId && body.fromUser?.userId === user?.userId) { // 非当前用户消息通知
-                return;
-              }
-              // 系统通知
-              if (setting.settingPage.notificationType !== NotificationEnums.SYSTEM)
-                return;
-              if (!setting.isWeb || (setting.isWeb && !chat.isVisible)) // 非托盘通知且聊天显示
-                notification(body);
-            }
-          });
-          if (!worker.value) {
-            return;
-          }
-          // 将 WebSocket 状态和noticeType发送给 Web Worker 初始化状态
-          worker.value.postMessage({
-            status: status.value,
-            noticeType,
-          });
-        });
-        // Web Worker 消息处理
-        worker.value.onmessage = (e) => {
-          if (e.data.type === "reload")
-            reload();
-          if (e.data.type === "heart") {
-            if (status.value !== WsStatusEnum.OPEN || !webSocketHandler)
-              return reload();
-            sendHeart();
-          }
-          if (e.data.type === "log")
-            console.log(e.data.data);
-        };
-        // Web Worker 错误处理
-        worker.value.onerror = (e) => {
-          console.error(e);
-          reload();
-        };
-        // Web Worker 消息错误处理
-        worker.value.onmessageerror = (e) => {
-          console.error(e);
-          reload();
-        };
-        isReload.value = false;
-      }
-      // 自动重连
-      reload();
-      watchDebounced([status, () => user.isLogin], ([status, isLogin]: [WsStatusEnum, boolean]) => {
-        if (status !== WsStatusEnum.OPEN && isLogin) {
-          reload();
-        }
-        else if (!isLogin) {
-          worker.value?.terminate?.();
-          close(false);
-          worker.value = undefined;
-        }
-      }, {
-        debounce: 3000,
-        deep: true,
-      });
-
-      return {
-        reload,
-      };
-    }
-
+    const reload = () => {};
     // 默认初始化
     async function initDefault(call: () => any) {
       const setting = useSettingStore();

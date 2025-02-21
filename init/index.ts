@@ -3,7 +3,7 @@ import { useIframeInit } from "./iframe";
 import { useAuthInit, useMsgBoxWebViewInit, userTauriInit } from "./init";
 import { useHotkeyInit, useSettingInit, useWindowVisibilityInit } from "./setting";
 import { initSystemConstant } from "./system";
-import { useWSUnmounted } from "./ws";
+import { useWsInit, useWSUnmounted } from "./ws";
 
 let unMountedMsgBoxWebView: (() => void) | undefined;
 let unMountedTauri: (() => void) | undefined;
@@ -37,6 +37,8 @@ export async function useDefaultInit() {
 export async function useInit() {
   // 通用初始化
   useDefaultInit();
+  // 会话
+  useWsInit();
   // Tauri
   userTauriInit().then((call) => {
     unMountedTauri = call || (() => {});
