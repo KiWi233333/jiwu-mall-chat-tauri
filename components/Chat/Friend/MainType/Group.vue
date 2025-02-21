@@ -60,7 +60,13 @@ const getRoleText = computed(() => room.value.role !== undefined ? chatRoomRoleT
       />
       <div flex flex-col gap-1 py-1>
         <strong h-1.2em truncate text-1.2rem leading-1em>{{ room.groupName }}</strong>
-        <p mt-a truncate text-mini>
+        <p mt-a truncate text-xs text-color>
+          在线：
+          <span class="content" :title="getCreateTime">
+            {{ room.onlineNum || 0 }}人
+          </span>
+        </p>
+        <p truncate text-mini>
           群号：
           <BtnCopyText icon="i-solar:copy-bold-duotone" :text="room.roomId" class="inline">
             {{ room.roomId }}
@@ -76,8 +82,8 @@ const getRoleText = computed(() => room.value.role !== undefined ? chatRoomRoleT
         <span text-mini :class="{ 'op-60': !room.remark }">{{ room.remark || '设置群聊备注' }}</span>
       </p> -->
       <p class="line">
-        <i class="icon i-solar:shield-user-outline" />
-        群中的角色：
+        <i class="icon i-solar:user-check-linear" />
+        职责：
         <span class="content" :title="getRoleText">
           {{ getRoleText }}
         </span>

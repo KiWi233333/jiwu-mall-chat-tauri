@@ -282,7 +282,7 @@ const menuList = [
             >
               <CardElImage
                 :default-src="room.avatar" fit="cover"
-                class="h-full w-full object-cover shadow-sm card-default"
+                class="h-full w-full card-rounded-df object-cover shadow-sm card-bg-color-2"
               />
             </el-badge>
             <div class="flex flex-1 flex-col justify-between truncate">
@@ -305,7 +305,7 @@ const menuList = [
                 >
                   {{ room.text }}
                 </small>
-                <small v-if="room.pinTime" class="text ml-a flex-shrink-0 text-dark dark:text-light-500">
+                <small v-if="room.pinTime" class="text ml-a flex-shrink-0 overflow-hidden text-color">
                   &nbsp;置顶
                 </small>
               </p>
@@ -330,9 +330,7 @@ const menuList = [
   --at-apply: "sm:p-2 p-0";
 
   .contact {
-    // 底部浅色的0.5px
-    border-top: 1px solid #7e7e7e0e;
-    --at-apply: "card-bg-color dark:bg-transparent flex items-center gap-3 p-4 sm:(border-transparent p-3 w-full text-color card-rounded-df mb-2 card-bg-color)  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
+    --at-apply: "h-18 card-bg-color dark:bg-transparent flex items-center gap-3 p-4 sm:(border-transparent p-3 w-full text-color card-rounded-df mb-2 card-bg-color)  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
     .text {
       --at-apply: "transition-none";
     }
@@ -363,6 +361,15 @@ const menuList = [
   }
   .icon {
     --at-apply: "h-2rem px-2 w-2rem  !btn-primary-bg flex-row-c-c bg-color-2 dark:bg-dark-7";
+  }
+}
+// 影响高度变化
+@media screen and (max-width: 768px) {
+  .contact {
+    border-top: 1px solid #7e7e7e0e !important;
+    border-bottom: 1px solid transparent !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
   }
 }
 

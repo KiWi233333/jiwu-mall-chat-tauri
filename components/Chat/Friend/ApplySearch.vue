@@ -140,6 +140,9 @@ function clickTag(val: string, i: number) {
   searchKeyWords.value = val;
   onSearch();
 }
+onDeactivated(() => {
+  isShowModel.value = false;
+});
 </script>
 
 <template>

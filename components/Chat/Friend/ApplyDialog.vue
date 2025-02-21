@@ -71,7 +71,7 @@ async function addFrendApplyById() {
       >
         <el-input
           v-model="applyForm.msg"
-          class="text-input card-rounded-df border-default-hover"
+          class="text-input"
           type="textarea"
           :rows="4"
           placeholder="发送一条有趣的问候语吧~"
@@ -106,6 +106,7 @@ async function addFrendApplyById() {
     box-shadow: none !important;
     background-color: transparent;
     caret-color: var(--el-color-primary);
+    --at-apply: "!shadow-none !outline-none bg-light-500 dark:bg-dark-7";
   }
 }
 </style>

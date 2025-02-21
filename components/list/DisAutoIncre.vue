@@ -69,10 +69,7 @@ if (props.immediate) {
 }
 
 // 展示加载
-const showLoad = computed(() => {
-  return !props.noMore && !props.loading;
-});
-
+const showLoad = computed(() => !props.noMore);
 
 // 是否没有更多
 watch(() => props.noMore, (val) => {
@@ -93,11 +90,14 @@ defineExpose({
 <template>
   <!-- 加载 -->
   <div
-    v-if="showLoad" relative
-    pt-4
+    v-if="showLoad"
+    relative
+    pt-6
   >
     <div
-      ref="loadMoreRef" key="loadMoreRef" absolute top-0 w-full py-4
+      ref="loadMoreRef"
+      key="loadMoreRef"
+      class="absolute top-0 z-1 w-full"
       :style="{ height: `${thresholdHeight}px` }"
     >
       <slot name="load">

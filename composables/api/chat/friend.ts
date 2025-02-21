@@ -21,6 +21,25 @@ export function getChatFriendPage(pageSize = 10, cursor: string | number | null,
 }
 
 /**
+ * 获取好友列表（分页）
+ *
+ * @param page 页码
+ * @param size 个数
+ * @param dto 参数
+ * @param token token
+ * @returns 分页
+ */
+export function getChatFriendPageV2(page = 1, size = 10, dto: ChatUserFriendPageDTO, token: string) {
+  return useHttp.post<Result<IPage<ChatUserFriendVO>>>(
+    `/chat/user/friend/page/${page}/${size}`,
+    dto,
+    { headers: { Authorization: token } },
+  );
+}
+export interface ChatUserFriendPageDTO {
+  keyWord?: string;
+}
+/**
  * 好友VO
  */
 export interface ChatUserFriendVO {

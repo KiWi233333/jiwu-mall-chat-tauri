@@ -67,7 +67,7 @@ async function addMsg() {
       >
         <el-input
           v-model="applyForm.content"
-          class="text-input card-rounded-df border-default-hover"
+          class="text-input"
           autofocus type="textarea" :rows="4"
           placeholder="请输入群通知内容"
           @keydown.enter.exact.stop.prevent="addMsg"
@@ -103,9 +103,8 @@ async function addMsg() {
 .text-input {
   :deep(.el-textarea__inner) {
     resize: none;
-    box-shadow: none !important;
-    background-color: transparent;
     caret-color: var(--el-color-primary);
+    --at-apply: "!shadow-none !outline-none bg-light-500 dark:bg-dark-7";
   }
 }
 </style>

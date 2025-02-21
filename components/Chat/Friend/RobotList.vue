@@ -93,7 +93,7 @@ onDeactivated(() => {
     <!-- 骨架屏 -->
     <template v-if="isReload">
       <div v-for="p in 6" :key="p" class="item">
-        <div class="h-3rem w-3rem flex-shrink-0 rounded-1/2 bg-gray-1 object-cover sm:(h-3.5rem w-3.5rem) dark:bg-dark-4" />
+        <div class="h-3rem w-3rem flex-shrink-0 rounded-1/2 bg-gray-1 object-cover sm:(h-3.2rem w-3.2rem) dark:bg-dark-4" />
         <div>
           <div class="h-3 w-8em bg-gray-1 dark:bg-dark-4" />
           <div class="mt-2 h-3 w-4em rounded bg-gray-1 dark:bg-dark-4" />
@@ -112,9 +112,6 @@ onDeactivated(() => {
         class="avatar-icon" :src="BaseUrlImg + p?.avatar"
         fit="cover"
         title="点击查看详情"
-        element-loading-text="加载中..."
-        element-loading-background="transparent"
-        :element-loading-spinner="defaultLoadingIcon"
       />
       <div>
         <p truncate text-sm>
@@ -140,7 +137,7 @@ onDeactivated(() => {
 }
 @media (min-width: 640px) {
   .list {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
 .item {

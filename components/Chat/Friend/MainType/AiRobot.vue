@@ -19,13 +19,12 @@ defineProps<{
       wrap-class="w-full flex-1 h-full px-6 sm:px-8 flex justify-center"
       view-class="w-full flex-1 h-full"
       class="w-full flex-1"
+      data-fades
     >
-      <div data-fades>
-        <h3 mb-4 mt-2 text-center text-1.2em sm:mb-8 sm:text-1.4em>
-          AI点亮日常，智趣触手可及
-        </h3>
-        <ChatFriendRobotList />
-      </div>
+      <h3 mb-4 mt-2 text-center text-1.2em tracking-0.1em sm:mb-8>
+        AI点亮日常，智趣触手可及
+      </h3>
+      <ChatFriendRobotList />
     </el-scrollbar>
   </div>
 </template>
