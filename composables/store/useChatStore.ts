@@ -369,7 +369,7 @@ export const useChatStore = defineStore(
     async function toContactSendMsg(type: "roomId" | "userId", id: string | number) {
       const user = useUserStore();
       const setting = useSettingStore();
-      let contact: ChatContactDetailVO;
+      let contact: ChatContactDetailVO | null = null;
       if (type === "userId") {
         const res = await getSelfContactInfoByFriendUid(id as string, user.getToken);
         if (!res)
@@ -384,13 +384,11 @@ export const useChatStore = defineStore(
           }
           contact = newRes.data;
         }
-        await setContact(contact);
       }
       else if (type === "roomId") {
         const res = await getChatContactInfo(id as number, user.getToken, RoomType.GROUP);
         if (!res)
           return;
-        let contact: ChatContactDetailVO | undefined = res.data;
         if (res.code === StatusCode.DELETE_NOEXIST_ERR) { // 发送消息拉取会话
           ElMessage.closeAll("error");
           // 记录已删除，重新拉取会话
@@ -400,19 +398,15 @@ export const useChatStore = defineStore(
           }
           contact = newRes.data;
         }
-        await nextTick(() => {
-          navigateTo({
-            path: "/",
-          });
-        });
       }
-      if (setting.isMobileSize) {
+      contact && (await setContact(contact));
+      if (setting.isMobileSize) { // 移动尺寸 - 清空模板 + 打开聊天页面
+        setTheFriendOpt(FriendOptType.Empty);
         isOpenContact.value = false;
       }
-      await nextTick(() => {
-        navigateTo({
-          path: "/",
-        });
+      await nextTick();
+      await navigateTo({
+        path: "/",
       });
     }
 

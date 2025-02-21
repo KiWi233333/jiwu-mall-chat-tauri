@@ -3,6 +3,7 @@
 const user = useUserStore();
 const store = useUserStore();
 const chat = useChatStore();
+const setting = useSettingStore();
 
 // 机器人列表
 const isReload = ref<boolean>(false);
@@ -23,11 +24,11 @@ async function loadData(call?: () => void) {
 }
 
 // 添加机器人
-function onHandelRobot(robot: RobotUserVO) {
+async function onHandelRobot(robot: RobotUserVO) {
   const { userId } = robot;
   if (robot.isFriend === isTrue.TRUE) {
-    chat.toContactSendMsg("userId", userId);
     isLoadRobot.value = userId;
+    await chat.toContactSendMsg("userId", userId);
     return;
   }
   ElMessageBox.confirm("是否添加该 AI ？", {
