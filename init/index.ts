@@ -3,7 +3,7 @@ import { useIframeInit } from "./iframe";
 import { useAuthInit, useMsgBoxWebViewInit, userTauriInit } from "./init";
 import { useHotkeyInit, useSettingInit, useWindowVisibilityInit } from "./setting";
 import { initSystemConstant } from "./system";
-import { useWsInit, useWSUnmounted } from "./ws";
+import { useWSUnmounted } from "./ws";
 
 let unMountedMsgBoxWebView: (() => void) | undefined;
 let unMountedTauri: (() => void) | undefined;
@@ -41,8 +41,6 @@ export async function useInit() {
   userTauriInit().then((call) => {
     unMountedTauri = call || (() => {});
   });
-  // 会话
-  useWsInit();
   // 窗口
   unMountedMsgBoxWebView = await useMsgBoxWebViewInit();
 }

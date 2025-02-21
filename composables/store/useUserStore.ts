@@ -93,6 +93,11 @@ export const useUserStore = defineStore(
         userInfo.value = res.data as UserInfoVO;
         isLogin.value = true;
         token.value = t;
+        const setting = useSettingStore();
+        if (setting.isWeb || setting.isMobile) {
+          const ws = useWsStore();
+          ws.reload();
+        }
         callback && callback(res.data);
         if (redirectTo)
           await navigateTo(redirectTo);
