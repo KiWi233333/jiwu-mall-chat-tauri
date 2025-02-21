@@ -7,8 +7,8 @@
     "windows",
     "linux",
     "macOS",
-    "iOS",
-    "macOS"
+    "android",
+    "iOS"
   ],
   "permissions": [
     "core:default",
