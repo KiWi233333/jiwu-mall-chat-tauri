@@ -42,7 +42,7 @@
     "@tauri-apps/plugin-websocket": "^2.3.0",
     "@tauri-apps/plugin-window-state": "^2.2.1",
     "element-china-area-data": "^6.1.0",
-    "md-editor-v3": "^5.2.3",
+    "md-editor-v3": "^5.3.2",
     "qiniu-js": "^3.4.2",
     "streamsaver": "^2.0.6"
   },
@@ -70,7 +70,7 @@
     "@unocss/nuxt": "^66.0.0",
     "@vueuse/core": "^12.7.0",
     "@vueuse/nuxt": "^12.7.0",
-    "element-plus": "^2.9.4",
+    "element-plus": "^2.9.5",
     "eslint": "^9.20.1",
     "eslint-plugin-format": "^1.0.1",
     "husky": "^9.1.7",
