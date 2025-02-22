@@ -97,7 +97,7 @@ export async function useWsInit() {
     deep: true,
     immediate: true,
   });
-
+  reload(); // 初始化
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
   return {
     ws,
