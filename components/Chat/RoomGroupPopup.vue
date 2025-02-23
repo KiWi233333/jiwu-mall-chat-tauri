@@ -312,11 +312,11 @@ function showJoinGroup() {
 .header {
   :deep(.el-input) {
     .el-input__wrapper {
-      --at-apply: "!shadow-none text-sm !outline-none bg-color-2 dark:bg-dark-7";
+      --at-apply: "!shadow-none text-sm !outline-none input-bg-color";
     }
   }
   .icon {
-    --at-apply: "h-2rem w-2rem flex-row-c-c btn-primary-bg  bg-color-2 dark:bg-dark-7";
+    --at-apply: "h-2rem w-2rem flex-row-c-c btn-primary-bg  input-bg-color";
   }
 }
 </style>

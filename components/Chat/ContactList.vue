@@ -330,6 +330,7 @@ const menuList = [
   --at-apply: "sm:p-2 p-0";
 
   .contact {
+    // transition: background-color 100ms ease-in-out;
     --at-apply: "h-18 card-bg-color dark:bg-transparent flex items-center gap-3 p-4 sm:(border-transparent p-3 w-full text-color card-rounded-df mb-2 card-bg-color)  w-full text-sm  cursor-pointer  !hover:bg-[#f8f8f8] !dark:hover:bg-[#151515]";
     .text {
       --at-apply: "transition-none";
@@ -356,11 +357,11 @@ const menuList = [
   --at-apply: "sm:(h-16 px-4) h-14 px-3 flex-row-c-c flex-shrink-0 transition-200 transition-height  card-bg-color";
   :deep(.el-input) {
     .el-input__wrapper {
-      --at-apply: "!shadow-none !outline-none bg-color-2 dark:bg-dark-7";
+      --at-apply: "!shadow-none !outline-none !input-bg-color";
     }
   }
   .icon {
-    --at-apply: "h-2rem px-2 w-2rem  !btn-primary-bg flex-row-c-c bg-color-2 dark:bg-dark-7";
+    --at-apply: "h-2rem px-2 w-2rem  !btn-primary-bg flex-row-c-c input-bg-color";
   }
 }
 // 影响高度变化

@@ -45,34 +45,10 @@ export const useChatStore = defineStore(
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});
 
     /** ---------------------------- 会话 ---------------------------- */
-    const theContactId = ref<number | undefined>(undefined); // 当前会话id
-    const isOpenContact = ref(true); // 用于移动尺寸
     const searchKeyWords = ref("");
+    const isOpenContact = ref(true); // 用于移动尺寸
+    const theContactId = ref<number | undefined>(undefined); // 当前会话id
     const contactMap = ref<Record<number, ChatContactDetailVO>>({});
-    const sortedContacts = computed(() => Object.values(contactMap.value).sort((a, b) => {
-      const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
-      if (pinDiff !== 0)
-        return pinDiff;
-      return b.activeTime - a.activeTime;
-    }));
-
-    const getContactList = computed(() => {
-      if (searchKeyWords.value) {
-        const lowerCaseSearchKey = searchKeyWords.value.toLowerCase();
-        return sortedContacts.value.filter(item =>
-          item.name.toLowerCase().includes(lowerCaseSearchKey),
-        );
-      }
-      return sortedContacts.value;
-    });
-    const unReadContactList = computed(() => {
-      const list = sortedContacts.value.filter(p => p.unreadCount);
-      localStorage.setItem("unReadContactList", JSON.stringify(list));
-      return list;
-    });
-    const isNewMsg = computed(() => unReadContactList.value.length > 0);
-    const isVisible = ref(false); // 是否可见
-    const isMsgListScroll = ref(false); // 消息列表是否滚动
     const contactDetailMapCache = ref<Record<number, ChatContactExtra>>({}); // 缓存会话描述
     const theContact = computed<ChatContactExtra>({
       get: () => {
@@ -105,6 +81,30 @@ export const useChatStore = defineStore(
         }
       },
     });
+    const sortedContacts = computed(() => Object.values(contactMap.value).sort((a, b) => {
+      const pinDiff = (b.pinTime || 0) - (a.pinTime || 0);
+      if (pinDiff !== 0)
+        return pinDiff;
+      return b.activeTime - a.activeTime;
+    }));
+
+    const getContactList = computed(() => {
+      if (searchKeyWords.value) {
+        const lowerCaseSearchKey = searchKeyWords.value.toLowerCase();
+        return sortedContacts.value.filter(item =>
+          item.name.toLowerCase().includes(lowerCaseSearchKey),
+        );
+      }
+      return sortedContacts.value;
+    });
+    const unReadContactList = computed(() => {
+      const list = sortedContacts.value.filter(p => p.unreadCount);
+      localStorage.setItem("unReadContactList", JSON.stringify(list));
+      return list;
+    });
+    const isNewMsg = computed(() => unReadContactList.value.length > 0);
+    const isVisible = ref(false); // 是否可见
+    const isMsgListScroll = ref(false); // 消息列表是否滚动
     const playSounder = ref<PlaySounder>({
       state: "stop",
       url: "",

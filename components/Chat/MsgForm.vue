@@ -8,6 +8,7 @@ const emit = defineEmits<{
 const user = useUserStore();
 const chat = useChatStore();
 const setting = useSettingStore();
+const route = useRoute();
 
 // 读取@用户列表 hook
 const { userOptions, userAtOptions, loadUser } = useLoadAtUserList();
@@ -20,7 +21,7 @@ const isNotExistOrNorFriend = computed(() => chat.theContact.selfExist === isTru
 const isLord = computed(() => chat.theContact.type === RoomType.GROUP && chat.theContact.member?.role === ChatRoomRoleEnum.OWNER); // 群主
 const isSelfRoom = computed(() => chat.theContact.type === RoomType.SELFT); // 私聊
 const isAiRoom = computed(() => chat.theContact.type === RoomType.AICHAT); // 机器人
-const maxContentLen = computed(() => chat.theContact.type === RoomType.AICHAT ? 512 : 500);
+const maxContentLen = computed(() => chat.theContact.type === RoomType.AICHAT ? 2048 : 512); // 对话文本长度
 // 状态
 const showGroupNoticeDialog = ref(false);
 const loadInputDone = ref(false); // 用于移动尺寸动画
@@ -36,6 +37,7 @@ const setReadListDebounce = useDebounceFn(() => {
 }, 400);
 
 // hooks
+const isDisableUpload = computed(() => isAiRoom.value || route.path !== "/");
 // Oss上传
 const {
   imgList,
@@ -53,7 +55,7 @@ const {
   inputOssImgUploadRef,
   inputOssVideoUploadRef,
   inputOssFileUploadRef,
-} = useFileUpload({ img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, isAiRoom);
+} = useFileUpload({ img: "inputOssImgUploadRef", file: "inputOssFileUploadRef", video: "inputOssVideoUploadRef" }, isDisableUpload);
 // 录音
 const {
   isChating,

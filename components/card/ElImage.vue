@@ -43,6 +43,6 @@ const src = computed(() => props.defaultSrc ? BaseUrlImg + props.defaultSrc : pr
 
 <style scoped lang="scss">
 .icon {
-  --at-apply: "block max-w-4/5 min-h-5 min-w-5"
+  --at-apply: "block max-w-4/5 min-h-5 min-w-5 text-gray"
 }
 </style>

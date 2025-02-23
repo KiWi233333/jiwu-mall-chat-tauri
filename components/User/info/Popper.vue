@@ -173,15 +173,15 @@ const getBirthdayCount = computed(() => calculateBirthdayCount(data.birthday));
             距离生日还有：{{ getBirthdayCount || ' - ' }}天
           </p>
           <p class="text">
-            <i class="i-carbon:phone-incoming mr-3 p-2" />
+            <i class="i-solar:mailbox-line-duotone mr-3 p-2" />
             邮箱：{{ data.email || ' - ' }}
           </p>
           <p class="text" btn-primary title="切换隐藏" @click="showMarkPhone = !showMarkPhone">
-            <i class="i-carbon:phone-incoming mr-3 p-2" />
+            <i class="i-solar:phone-linear mr-3 p-2" />
             手机号：{{ data.phone ? showMarkPhone ? data.phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") : data.phone : ' - ' }}
           </p>
           <p class="text op-80">
-            <i class="i-carbon:user mr-3 p-2" />
+            <i class="i-solar:user-speak-outline mr-3 p-2" />
             上次在线：
             {{ data.lastLoginTime || ' - ' }}
           </p>

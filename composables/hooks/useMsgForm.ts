@@ -522,15 +522,16 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     type: undefined,
     position: undefined,
   });
-  const dragDropFileList = ref<File[]>([]);
   let unlisten: UnlistenFn | undefined;
   const isListend = ref(false);
   async function listenDragDrop() {
     const setting = useSettingStore();
+    unlisten?.();
     if (!setting.isDesktop || unlisten || isListend.value) {
       return;
     }
     isListend.value = true;
+
     unlisten = await getCurrentWebview().onDragDropEvent(async (event) => {
       if (event.payload.type === "over") {
         if (!isDragDropOver.value) {
@@ -602,18 +603,12 @@ export function useFileUpload(refsDom: RefDoms = { img: "inputOssImgUploadRef", 
     unlisten = undefined;
     isListend.value = false;
   });
-  // onDeactivated(() => {
-  //   unlisten?.();
-  //   unlisten = undefined;
-  // });
-
 
   return {
     imgList,
     fileList,
     videoList,
     isDragDropOver,
-    dragDropFileList,
 
     isUploadImg,
     isUploadFile,

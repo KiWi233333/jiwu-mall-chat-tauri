@@ -162,7 +162,7 @@ const showContentLoading = computed(() => (data?.message?.body?.status !== undef
 }
 
 .reson-content {
-  --at-apply: "my-1 relative z-0 leading-1.5em overflow-hidden card-rounded-df p-2 shadow-(sm inset) bg-color-2 text-small";
+  --at-apply: "mt-1 relative mb-2 z-0 leading-1.5em overflow-hidden card-rounded-df p-2 shadow-(sm inset) bg-color-2 text-small";
 
   &::after {
     content: "";
