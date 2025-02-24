@@ -319,7 +319,7 @@ onDeactivated(() => {
     .el-input__wrapper {
       box-shadow: none !important;
       outline: none !important;
-      --at-apply: "input-bg-color";
+      --at-apply: "!input-bg-color";
     }
   }
 

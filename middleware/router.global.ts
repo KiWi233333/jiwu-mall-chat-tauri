@@ -5,17 +5,18 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // 消息页
   if ((from.path !== "/msg" && to.path === "/msg")) // 页面进出禁止
     return abortNavigation();
-    // 极物圈商品页
-    // if (to.path.startsWith("/goods/detail")) {
-  //   return abortNavigation();
-  // }
+  // 极物圈商品页
+  if (to.path.startsWith("/goods/detail")) {
+    return abortNavigation("请使用「极物圈」查看商品详情");
+  }
   // 移动尺寸
   const setting = useSettingStore();
   if (setting.isMobileSize) {
     // 聊天详情页移动端返回处理
     const chat = useChatStore();
-    if (from.path === "/" && to.path !== "/" && !chat.isOpenContact && useSettingStore().isMobileSize) { // 当遇到
+    if (from.path === "/" && to.path !== "/" && !to.query?.dis && !chat.isOpenContact && useSettingStore().isMobileSize) { // 当遇到
       chat.isOpenContact = true;
+      useSettingStore().isOpenGroupMember = false;
       return abortNavigation();
     }
     else if (from.path === "/friend" && to.path !== "/friend" && chat.showTheFriendPanel && useSettingStore().isMobileSize) { // 当遇到
@@ -23,10 +24,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return abortNavigation();
     }
   }
-
   const user = useUserStore();
   // 页面动画
-  resolveTransition(to.path, from.path);
+  resolveRouteTransition(to.path, from.path);
   if (checkDesktop()) { // 桌面端
     if ((!from.path.startsWith("/extend") && to.path.startsWith("/extend")) || (to.path.startsWith("/extend") && !user.isLogin)) // 页面进出禁止
       return abortNavigation();
@@ -87,7 +87,7 @@ const mainRoutes: Record<string, number> = {
   "/setting": 5,
   // "/user/safe": 6,
 };
-function resolveTransition(toPath: string, fromPath: string) {
+function resolveRouteTransition(toPath: string, fromPath: string) {
   if (mainRoutes[toPath] && mainRoutes[fromPath]) {
     if (mainRoutes[toPath] > mainRoutes[fromPath]) {
       useChatStore().pageTransition.name = "page-slide-left";

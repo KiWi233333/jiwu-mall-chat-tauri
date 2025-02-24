@@ -229,10 +229,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO<any>, onDown
         icon: "i-solar:user-broken group-hover:(scale-110 i-solar:user-bold) group-btn-info",
         customClass: "group",
         hidden: isSelf,
-        onClick: () => {
-          chat.setTheFriendOpt(FriendOptType.User, { id: data.fromUser.userId });
-          navigateTo("/friend");
-        },
+        onClick: () => navigateToUserDetail(data.fromUser.userId),
       },
       {
         label: "TA",
@@ -247,15 +244,7 @@ export function onMsgContextMenu(e: MouseEvent, data: ChatMessageVO<any>, onDown
         label: isSelf ? "查看自己" : "个人资料",
         icon: "i-solar:user-broken group-btn-info",
         customClass: "group",
-        onClick: () => {
-          if (isSelf) {
-            navigateTo("/user");
-          }
-          else {
-            chat.setTheFriendOpt(FriendOptType.User, { id: data.fromUser.userId });
-            navigateTo("/friend");
-          }
-        },
+        onClick: () => navigateToUserDetail(data.fromUser.userId),
       },
       {
         label: "TA",

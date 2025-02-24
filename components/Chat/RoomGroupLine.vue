@@ -82,19 +82,13 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
       {
         label: "@ 他",
         hidden: isSelf,
-        onClick: () => {
-          // 模拟设置 @ 功能
-          console.log(`@ 用户：${item.nickName}`);
-        },
+        onClick: () => navigateToUserDetail(item.userId),
       },
       {
         icon: "btn-info i-solar:user-bold ",
         label: "联系他",
         hidden: isSelf,
-        onClick: () => {
-          // 模拟导航到用户详情
-          console.log(`导航到用户详情：${item.userId}`);
-        },
+        onClick: () => navigateToUserDetail(item.userId),
       },
       {
         label: "添加好友",

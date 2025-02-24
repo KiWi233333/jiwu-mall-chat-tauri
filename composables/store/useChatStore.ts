@@ -38,8 +38,11 @@ export const useChatStore = defineStore(
     const showExtension = ref(false);
     const pageTransition = ref<{
       name?: string
+      mode?: "in-out" | "out-in"
+      duration?: number
     }>({
       name: "",
+      duration: 200,
     });
     /** ---------------------------- 撤回的消息map ---------------------------- */
     const recallMsgMap = ref<Record<number, ChatMessageVO>>({});

@@ -46,7 +46,12 @@ function onClickAvatar() {
     id: data.fromUser.userId,
   });
   nextTick(() => {
-    navigateTo("/friend");
+    navigateTo({
+      path: "/friend",
+      query: {
+        dis: 1,
+      },
+    });
   });
 }
 

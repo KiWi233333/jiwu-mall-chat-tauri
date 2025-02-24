@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="content relative max-wfull flex flex-col">
+  <div class="content flex-1">
     <!-- 房间信息 -->
     <ChatRoomInfo class="relative z-10 shadow-sm card-bg-color" />
     <!-- 消息列表 -->
@@ -17,7 +17,7 @@ defineProps<{
 
 <style lang="scss" scoped>
 .content {
-  --at-apply: "bg-color-3";
+  --at-apply: "bg-color-3  relative w-full flex flex-col";
 
   :deep(.el-scrollbar) {
     .el-scrollbar__bar {

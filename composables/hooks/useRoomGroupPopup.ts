@@ -384,18 +384,7 @@ export function useRoomGroupPopup(opt: { editFormField: Ref<string> }) {
           label: "联系他",
           customClass: "group",
           hidden: isSelf,
-          onClick: () => {
-            chat.setTheFriendOpt(FriendOptType.User, {
-              id: item.userId,
-            });
-            navigateTo({
-              path: "/friend",
-              query: {
-                id: item.userId,
-              },
-              replace: false,
-            });
-          },
+          onClick: () => navigateToUserDetail(item.userId),
         },
         {
           label: "管理员",

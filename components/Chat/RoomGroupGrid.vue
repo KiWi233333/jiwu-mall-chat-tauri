@@ -86,10 +86,7 @@ function onContextMenu(e: MouseEvent, item: ChatMemberVO) {
         icon: "btn-info i-solar:user-bold ",
         label: "联系他",
         hidden: isSelf,
-        onClick: () => {
-          // 模拟导航到用户详情
-          console.log(`导航到用户详情：${item.userId}`);
-        },
+        onClick: () => navigateToUserDetail(item.userId),
       },
       {
         label: "添加好友",
@@ -308,7 +305,7 @@ function onInviteMember() {
       </ListAutoIncre>
     </el-scrollbar>
     <BtnElButton
-      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" plain round
+      class="op-0 group-hover:op-100" icon-class="i-solar:logout-3-broken mr-2" type="danger" round plain
       @click="chat.exitGroupConfirm(data.roomId, isTheGroupOwner, () => {
         chat.removeContact(data.roomId);
       })"
