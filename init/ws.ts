@@ -83,11 +83,12 @@ export async function useWsInit() {
     isReload.value = false;
   }
   // 自动重连
-  watchDebounced([() => ws.status, () => user.isLogin], ([status, isLogin]: [WsStatusEnum, boolean]) => {
-    if (status !== WsStatusEnum.OPEN && isLogin) {
+  const status = [WsStatusEnum.OPEN, WsStatusEnum.CONNECTION];
+  watchDebounced(() => !status.includes(ws.status) && user.isLogin, (bool) => {
+    if (bool) {
       reload();
     }
-    else if (!isLogin) {
+    else if (!user.isLogin) {
       worker.value?.terminate?.();
       ws.close(false);
       worker.value = undefined;
@@ -95,9 +96,10 @@ export async function useWsInit() {
   }, {
     debounce: 3000,
     deep: true,
-    immediate: true,
   });
-  reload(); // 初始化
+  // if (!status.includes(ws.status) && user.isLogin) {
+  //   reload();
+  // }
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
   return {
     ws,
