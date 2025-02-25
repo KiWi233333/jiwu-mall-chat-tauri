@@ -97,9 +97,9 @@ export async function useWsInit() {
     debounce: 3000,
     deep: true,
   });
-  // if (!status.includes(ws.status) && user.isLogin) {
-  //   reload();
-  // }
+  if (!status.includes(ws.status) && user.isLogin) {
+    reload();
+  }
   ws.reload = reload; // 暴露给外部调用，用于刷新Web Worker状态。
   return {
     ws,

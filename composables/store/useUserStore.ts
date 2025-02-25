@@ -87,14 +87,11 @@ export const useUserStore = defineStore(
      * @param t t
      */
     const onUserLogin = async (t: string, saveLocal?: boolean, redirectTo?: string, callback?: (data: UserInfoVO) => void) => {
-      // 用户信息
       const res = await getUserInfo(t);
       if (res.code && res.code === StatusCode.SUCCESS) {
         userInfo.value = res.data as UserInfoVO;
         isLogin.value = true;
         token.value = t;
-        const ws = useWsStore();
-        ws.reload(); // 重新加载websocket
         callback && callback(res.data);
         if (redirectTo)
           await navigateTo(redirectTo);
