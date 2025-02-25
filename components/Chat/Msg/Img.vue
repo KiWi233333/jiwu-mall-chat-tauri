@@ -24,7 +24,7 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
       <CardElImage
         v-if="body?.url"
         ctx-name="img"
-        error-root-class="h-9rem w-9rem"
+        error-root-class="min-h-9rem min-w-9rem"
         :src="BaseUrlImg + body?.url"
         load-class="sky-loading block !h-9rem !w-9rem absolute top-0"
         class="h-9rem max-w-16rem w-fit shadow-sm border-default card-default"

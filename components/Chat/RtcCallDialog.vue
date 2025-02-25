@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Position } from "@vueuse/core";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 const {
@@ -98,29 +99,27 @@ const dragRefStyle = ref({
   maxHeight: 0,
 });
 const disableDrag = computed(() => (setting.isMobileSize && !isMinWind.value) || !modelValue);
+const onMoveDb = useDebounceFn((position: Position) => {
+  const { innerWidth, innerHeight } = window;
+  // 限制不移出屏幕边缘
+  const newX = Math.min(Math.max(position.x, 0), innerWidth - (dragRef?.value?.offsetWidth || 0));
+  const newY = Math.min(Math.max(position.y, 0), innerHeight - (dragRef?.value?.offsetHeight || 0));
+  if (dragRef.value) {
+    if (newX >= innerWidth - (dragRefStyle.value.maxWidth || dragRef.value.offsetWidth) || newY >= innerHeight - (dragRefStyle.value.maxHeight || dragRef.value.offsetHeight)) {
+      if (!isMinWind.value) {
+        dragRefStyle.value.maxWidth = Math.max(dragRef.value.offsetWidth, dragRefStyle.value.maxWidth);
+        dragRefStyle.value.maxHeight = Math.max(dragRef.value.offsetHeight, dragRefStyle.value.maxHeight);
+        isMinWind.value = true;
+      }
+    }
+    position.x = newX;
+    position.y = newY;
+  }
+}, 300);
 const { x, y, style } = useDraggable(dragRef, {
   disabled: disableDrag,
   stopPropagation: true,
-  onMove: (position) => {
-    const { innerWidth, innerHeight } = window;
-    // 限制不移出屏幕边缘
-    const newX = Math.min(Math.max(position.x, 0), innerWidth - (dragRef?.value?.offsetWidth || 0));
-    const newY = Math.min(Math.max(position.y, 0), innerHeight - (dragRef?.value?.offsetHeight || 0));
-    if (dragRef.value) {
-      if (newX <= 50 || newY <= 50) {
-        //
-      }
-      else if (newX >= innerWidth - (dragRefStyle.value.maxWidth || dragRef.value.offsetWidth) || newY >= innerHeight - (dragRefStyle.value.maxHeight || dragRef.value.offsetHeight)) {
-        if (!isMinWind.value) {
-          dragRefStyle.value.maxWidth = Math.max(dragRef.value.offsetWidth, dragRefStyle.value.maxWidth);
-          dragRefStyle.value.maxHeight = Math.max(dragRef.value.offsetHeight, dragRefStyle.value.maxHeight);
-          isMinWind.value = true;
-        }
-      }
-      position.x = newX;
-      position.y = newY;
-    }
-  },
+  onMove: onMoveDb,
   onEnd: (position) => {
     const { innerWidth, innerHeight } = window;
     const dragRefElement = dragRef.value;
@@ -574,7 +573,7 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
 }
 
 .rounded-dialog {
-  border-radius: 0.6rem;
+  border-radius: 0.5rem;
 }
 
 .rtc-dialog {
@@ -617,9 +616,9 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
     }
     .btns {
       --mini-btn-size: 2.4rem;
-      --mini-btn-icon-size: .6rem;
-      gap: .6rem;
-      grid-gap: .6rem;
+      --mini-btn-icon-size: .5rem;
+      gap: .5rem;
+      grid-gap: .5rem;
       width: 100%;
       padding: 0 0.875rem 0.875rem 0.875rem ;
       .mini-hidden {
@@ -647,8 +646,7 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
     height: 100%;
 
     &.rounded-dialog {
-      border-radius: 0;
-      border: none;
+      --at-apply: "rounded-0 border-none";
     }
   }
   .rtc-dialog.is-mobile-mini {
@@ -661,7 +659,7 @@ $call-wind-transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.
       display: none;
     }
     &.rounded-dialog {
-      border-radius: 0.6rem !important;
+      border-radius: 0.5rem !important;
       border: 1px solid #2d2d2d;
     }
     .avatar {
