@@ -26,8 +26,8 @@ const body: Partial<ImgBodyMsgVO> | undefined = props.data.message?.body || {};
         ctx-name="img"
         error-root-class="min-h-9rem min-w-9rem"
         :src="BaseUrlImg + body?.url"
-        load-class="sky-loading block !h-9rem !w-9rem absolute top-0"
-        class="h-9rem max-w-16rem w-fit shadow-sm border-default card-default"
+        load-class="sky-loading block !min-h-9rem !min-w-9rem absolute top-0"
+        class="h-9rem max-w-16rem w-fit shadow-sm transition-shadow border-default card-default hover:shadow"
         preview-teleported
         :alt="body?.url"
         :preview-src-list="[BaseUrlImg + body?.url]"

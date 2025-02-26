@@ -28,7 +28,7 @@ const { message } = useRouteAnnouncer({
         <template #left>
           <div class="left relative z-1000 flex-row-c-c gap-3 tracking-0.2em">
             <span class="hidden flex-row-c-c sm:flex">
-              <CardElImage src="/logo.png" class="h-1.8rem w-1.8rem" />
+              <CardElImage src="/logo.png" class="h-2rem w-2rem" />
             </span>
             <strong hidden sm:block>{{ message }}</strong>
           </div>

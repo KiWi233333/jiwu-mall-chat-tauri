@@ -95,6 +95,10 @@ watch(userId, (val: string) => {
 
 <template>
   <div
+    v-loading="isLoading"
+    element-loading-text="加载中..."
+    element-loading-background="transparent"
+    :element-loading-spinner="defaultLoadingIcon"
     v-bind="$attrs"
     class="h-full w-full flex flex-1 flex-col gap-6 px-10 pt-14vh transition-300 !card-bg-color sm:px-1/4"
   >
