@@ -14,6 +14,7 @@ export default defineConfig({
   shortcuts: [
     ["card-default", "bg-white dark:bg-dark-5 rounded-1.5"],
     ["card-bg-color", "bg-white dark:bg-dark-5"],
+    ["form-bg-color", "bg-white  dark:bg-[#1b1b1b]"],
     ["card-bg-color-2", "bg-[#f2f2f2]  dark:bg-[#1b1b1b]"],
     ["input-bg-color", "bg-[#f2f2f2] dark:bg-dark-8"],
     ["card-default-br", "bg-[#ffffff93] dark:(bg-dark-5 bg-op-60) rounded-1.5 backdrop-blur-12px backdrop-saturate-180"],
@@ -30,10 +31,10 @@ export default defineConfig({
     ["bg-color-df", "bg-[#f2f2f2]  dark:bg-dark-9"],
     ["bg-menu-color", "bg-[#f6f6f6]  dark:bg-dark-8"],
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
-    ["text-color", "text-dark dark:text-white"],
     ["bg-skeleton", "bg-gray-1 dark:bg-[#1f1f1f]"],
     // 文本颜色
-    ["text-default", "text-1em text-dark dark:text-white"],
+    ["text-color", "text-black dark:text-white"],
+    ["text-default", "text-1em text-black dark:text-white"],
     ["text-mini", "text-dark-50 dark:text-[#979898] text-xs"],
     ["text-mini-50", "text-xs text-[#717171] dark:text-[#979898]"],
     ["text-color-primary", "text-[var(--el-color-primary)]"],

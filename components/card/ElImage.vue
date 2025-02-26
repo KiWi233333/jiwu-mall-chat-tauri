@@ -36,7 +36,7 @@ const src = computed(() => props.defaultSrc ? BaseUrlImg + props.defaultSrc : pr
   </el-image>
   <template v-else>
     <div :ctx-name="ctxName" class="flex-row-c-c text-mini" :class="$attrs.class">
-      <i :ctx-name="ctxName" class="icon i-solar-gallery-add-bold-duotone op-60" :class="errorClass" />
+      <i :ctx-name="ctxName" class="icon i-solar-gallery-remove-bold-duotone op-60" :class="errorClass" />
     </div>
   </template>
 </template>

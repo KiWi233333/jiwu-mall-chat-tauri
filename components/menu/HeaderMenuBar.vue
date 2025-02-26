@@ -57,7 +57,7 @@ async function toggleContactOpen() {
     </slot>
     <!-- 菜单栏右侧 -->
     <slot name="right">
-      <div class="right relative z-1 flex items-center gap-1 sm:gap-3">
+      <div class="right relative z-1 flex items-center gap-1 sm:gap-0">
         <!-- 下载（部分端） -->
         <BtnDownload v-if="!setting.isWeb" icon-class="block mx-1 w-5 h-5" />
         <!-- 折叠菜单 -->
@@ -69,7 +69,7 @@ async function toggleContactOpen() {
               size="small"
               title="菜单"
             >
-              <i class="i-solar:add-circle-linear p-2.8 sm:i-solar:hamburger-menu-outline" />
+              <i class="i-solar:add-circle-linear p-2.6 sm:i-solar:hamburger-menu-outline" />
             </div>
           </template>
         </MenuDots>
@@ -78,7 +78,7 @@ async function toggleContactOpen() {
           <BtnAppDownload />
           <!-- 菜单按钮 -->
           <template v-if="!['android', 'web', 'ios'].includes(setting.appPlatform)">
-            <div class="h-1.2em border-default-l" />
+            <div class="mx-1 h-1.2em sm:mx-2 border-default-l" />
             <MenuController>
               <template #start="{ data }">
                 <ElButton
