@@ -93,10 +93,10 @@ onDeactivated(() => {
     <!-- 骨架屏 -->
     <template v-if="isReload">
       <div v-for="p in 6" :key="p" class="item">
-        <div class="h-3rem w-3rem flex-shrink-0 rounded-1/2 bg-gray-1 object-cover sm:(h-3.2rem w-3.2rem) dark:bg-dark-4" />
+        <div class="h-3rem w-3rem flex-row-c-c flex-shrink-0 cursor-pointer rounded-1/2 sm:(h-3.5rem w-3.5rem) card-bg-color-2" />
         <div>
           <div class="h-3 w-8em bg-gray-1 dark:bg-dark-4" />
-          <div class="mt-2 h-3 w-4em rounded bg-gray-1 dark:bg-dark-4" />
+          <div class="mt-2 h-3 w-12em rounded bg-gray-1 dark:bg-dark-4" />
         </div>
         <div class="ml-a h-4 w-3em rounded bg-gray-1 dark:bg-dark-4" />
       </div>
@@ -117,7 +117,7 @@ onDeactivated(() => {
         <p truncate text-sm>
           {{ p?.nickname || "未填写" }}
         </p>
-        <p class="text-overflow-3 mt-2 max-h-4em text-mini" :title="p.description || ''">
+        <p class="text-overflow-3 mt-1 max-h-4em text-mini" :title="p.description || ''">
           {{ p.description || "" }}
         </p>
       </div>

@@ -57,9 +57,7 @@ async function reloadData() {
   list.value = [];
   isReload.value = true;
   await loadData();
-  nextTick(() => {
-    isReload.value = false;
-  });
+  isReload.value = false;
 }
 
 // 首次加载动画
@@ -126,7 +124,7 @@ else if (props.type === "group") { // 群组相关监听
       <!-- 骨架屏 -->
       <div v-if="isReload">
         <div v-for="p in 9" :key="p" class="item">
-          <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded-1/2 bg-gray-1 object-cover dark:bg-dark-4" />
+          <div class="h-2.4rem w-2.4rem flex-shrink-0 rounded-2 bg-gray-1 object-cover dark:bg-dark-4" />
           <div class="nickname-skeleton h-4 w-8em rounded bg-gray-1 dark:bg-dark-4" />
         </div>
       </div>
