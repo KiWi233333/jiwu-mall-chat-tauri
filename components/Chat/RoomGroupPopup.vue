@@ -152,7 +152,7 @@ function showJoinGroup() {
       </small> -->
       </div>
     </div>
-    <div class="mt-2 w-full flex-1 border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em border-default">
+    <div class="mt-2 w-full flex-1 overflow-y-auto border-0 border-t-1px px-2 pt-2 text-3.5 leading-1.8em border-default">
       <div relative mt-3>
         群头像
         <InputOssFileUpload
@@ -211,7 +211,7 @@ function showJoinGroup() {
           autofocus
           :rows="8"
           :maxlength="200"
-          class="mt-2 border-0 bg-transparent dark:op-70"
+          class="mt-2 border-0 bg-transparent"
           type="textarea"
           style="resize:none;width: 100%;"
           placeholder="未填写"

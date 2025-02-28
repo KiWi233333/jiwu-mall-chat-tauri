@@ -258,7 +258,7 @@ defineExpose({
             class="right h-fit flex-1 sm:pr-4"
             style="display: flex;;flex-direction: column;"
           >
-            <ListTransitionGroup v-show="getCheckList.length > 0" tag="div" class="scroll-bar grid grid-cols-3 mt-0 max-h-200px min-h-200px w-full items-start gap-col-2 overflow-y-auto card-rounded-df p-2 sm:(grid-cols-4 max-h-300px min-h-300px) bg-color-3">
+            <ListTransitionGroup v-show="getCheckList.length > 0" tag="div" class="scroll-bar grid grid-cols-3 mt-0 max-h-200px min-h-200px w-full items-start gap-col-2 overflow-y-auto card-rounded-df p-2 sm:(grid-cols-4 max-h-300px min-h-300px) bg-color-2">
               <div v-for="p in getCheckList" :key="p.userId" class="item" :label="p.userId">
                 <i i-solar:close-circle-bold p-2 btn-primary class="absolute right-2px top-2px z-1" @click="remove(p.userId)" />
                 <div class="avatar-icon">
@@ -268,7 +268,7 @@ defineExpose({
               </div>
             </ListTransitionGroup>
             <!-- 空白 -->
-            <div v-show="getCheckList.length <= 0" class="h-200px w-full flex-row-c-c card-rounded-df sm:h-300px bg-color-3 text-small-50">
+            <div v-show="getCheckList.length <= 0" class="h-200px w-full flex-row-c-c card-rounded-df sm:h-300px bg-color-2 text-small-50">
               <i i-solar:user-plus-broken mr-2 p-2.5 />
               <p>未选择成员</p>
             </div>

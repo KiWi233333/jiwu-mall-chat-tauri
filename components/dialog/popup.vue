@@ -40,7 +40,7 @@ const {
   closeOnClickModal = true,
   contentClass = "",
   duration = 300,
-  center = true,
+  center = false,
   destroyOnClose = false,
 } = defineProps<DialogProps>();
 
