@@ -213,6 +213,9 @@ async function onLogin(formEl: any | undefined) {
       if (res.data) {
         await store.onUserLogin(res.data, autoLogin.value);
         done();
+        // 初始化
+        useWsStore().reload();
+        // 跳转
         await navigateTo("/");
       }
       // 登录失败

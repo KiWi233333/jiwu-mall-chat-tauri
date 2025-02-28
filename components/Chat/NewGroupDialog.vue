@@ -190,23 +190,25 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog
+  <DialogPopup
     v-model="show"
-    :title="form.roomId ? '邀请成员' : '新建群聊'"
-    width="fit-content"
-    class="overflow-hidden"
-    center
-    append-to-body
     destroy-on-close
+    content-class="max-w-90vw rounded-2 sm:w-fit p-4 border-default-2 dialog-bg-color"
   >
+    <template #title>
+      <div data-tauri-drag-region select-none text-center>
+        <i :class="form.roomId ? 'i-solar:users-group-rounded-bold' : 'i-solar:users-group-rounded-line-duotone'" class="mr-2 p-3 text-small" />
+        {{ form.roomId ? '邀请成员' : '新建群聊' }}
+      </div>
+    </template>
     <el-form
       ref="formRef"
       label-position="top"
       :model="form"
-      class="relative"
+      class="relative pt-4"
     >
       <div ref="autoAnimateRef">
-        <div v-show="!imgStep" key="first" class="mt-4 w-84vw flex flex flex-col gap-4 px-4 md:w-800px md:flex-row">
+        <div v-show="!imgStep" key="first" class="mt-4 w-84vw flex flex flex-col gap-4 md:w-800px md:flex-row">
           <!-- 未选列表 -->
           <el-form-item
             class="left flex-1"
@@ -224,7 +226,7 @@ defineExpose({
               </div>
             </template>
             <el-checkbox-group v-model="form.uidList" class="w-full">
-              <div class="max-h-200px flex flex-col overflow-y-auto sm:max-h-300px sm:pr-2">
+              <div class="scroll-bar max-h-200px flex flex-col overflow-y-auto sm:max-h-300px sm:pr-2">
                 <ListAutoIncre
                   :immediate="false"
                   :auto-stop="false"
@@ -253,10 +255,10 @@ defineExpose({
                 trigger: ['blur'],
                 message: '群成员不能为空！',
               }]"
-            class="right h-fit flex-1"
+            class="right h-fit flex-1 sm:pr-4"
             style="display: flex;;flex-direction: column;"
           >
-            <ListTransitionGroup v-show="getCheckList.length > 0" tag="div" class="grid grid-cols-3 mt-0 max-h-200px min-h-200px w-full items-start gap-col-2 overflow-y-auto card-rounded-df p-2 sm:(grid-cols-4 max-h-300px min-h-300px) bg-color-2">
+            <ListTransitionGroup v-show="getCheckList.length > 0" tag="div" class="scroll-bar grid grid-cols-3 mt-0 max-h-200px min-h-200px w-full items-start gap-col-2 overflow-y-auto card-rounded-df p-2 sm:(grid-cols-4 max-h-300px min-h-300px) bg-color-3">
               <div v-for="p in getCheckList" :key="p.userId" class="item" :label="p.userId">
                 <i i-solar:close-circle-bold p-2 btn-primary class="absolute right-2px top-2px z-1" @click="remove(p.userId)" />
                 <div class="avatar-icon">
@@ -266,7 +268,7 @@ defineExpose({
               </div>
             </ListTransitionGroup>
             <!-- 空白 -->
-            <div v-show="getCheckList.length <= 0" class="h-200px w-full flex-row-c-c card-rounded-df sm:h-300px bg-color-2 text-small-50">
+            <div v-show="getCheckList.length <= 0" class="h-200px w-full flex-row-c-c card-rounded-df sm:h-300px bg-color-3 text-small-50">
               <i i-solar:user-plus-broken mr-2 p-2.5 />
               <p>未选择成员</p>
             </div>
@@ -330,7 +332,7 @@ defineExpose({
         </div>
       </div>
     </el-form>
-  </el-dialog>
+  </DialogPopup>
 </template>
 
 <style lang="scss" scoped>

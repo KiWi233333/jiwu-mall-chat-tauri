@@ -87,8 +87,8 @@ function onRemove(item: ExtendItem) {
   }
 }
 
+// 加载扩展菜单
 onMounted(() => {
-  // 加载扩展菜单
   extendMenuSaveList.value = setting.selectExtendMenuList.map(item => extendMenuAllList.value.find(menu => menu.title === item.title)).filter(item => item) as ExtendItem[];
 });
 // 保存菜单设置
@@ -136,22 +136,22 @@ function createItem() {
 </script>
 
 <template>
-  <el-dialog
+  <DialogPopup
     v-model="isShow"
-    center
-    width="fit-content"
-    append-to-body
-    class="border-default-2 !bg-color-2"
+    :duration="400"
+    content-class="w-94vw rounded-2 p-4 sm:w-420px border-default-2 !bg-color-2"
   >
-    <template #header>
-      <i i-solar:widget-line-duotone mr-2 p-2.5 text-small />
-      扩展菜单
+    <template #title>
+      <h3 data-tauri-drag-region mb-4 text-center>
+        <i i-solar:widget-line-duotone mr-2 p-2.5 text-small />
+        扩展菜单
+      </h3>
     </template>
     <!-- 合并后的菜单 -->
     <ListTransitionGroup
       tag="div"
       name="pop-list"
-      class="grid grid-auto-rows-min cols-4 mb-4 mt-2 min-h-14em select-none items-start gap-2 px-2 sm:gap-4"
+      class="grid grid-auto-rows-min cols-3 mb-4 mt-2 min-h-14em select-none items-start gap-3 sm:(cols-4 gap-4)"
     >
       <!-- 固定菜单标题 -->
       <small v-if="extendMenuSaveList.length" key="fix-title" class="col-span-full block text-mini">
@@ -162,7 +162,7 @@ function createItem() {
           v-loading="item.loading"
           :element-loading-spinner="defaultLoadingIcon"
           element-loading-custom-class="text-.5em"
-          class="group relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer rounded text-center bg-color hover:shadow border-default-hover"
+          class="item group"
           :title="item.title"
           :class="{
             'not-link': item.disabled,
@@ -177,7 +177,7 @@ function createItem() {
             />
           </div>
           <div
-            class="absolute right-1 top-1 op-0 btn-danger-bg bg-color group-hover:(op-100)"
+            class="absolute right-1 top-1 btn-danger-bg group-hover:(op-100) sm:op-0"
             @click.stop="onRemove(item)"
           >
             <i class="i-carbon:subtract p-2 p-2.2" />
@@ -200,7 +200,7 @@ function createItem() {
           v-loading="item.loading"
           :element-loading-spinner="defaultLoadingIcon"
           element-loading-custom-class="text-.5em"
-          class="group relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer rounded text-center bg-color hover:shadow border-default-hover"
+          class="group item"
           :title="item.title"
           :class="{
             'not-link': item.disabled,
@@ -213,7 +213,7 @@ function createItem() {
           />
           <div
             v-if="!item.disabled && !setting.isMobileSize"
-            class="absolute right-1 top-1 hidden op-0 sm:block btn-primary-bg bg-color group-hover:(op-100)"
+            class="add"
             @click.stop="onAdd(item)"
           >
             <i class="i-carbon:add p-2 p-2.2" />
@@ -255,7 +255,7 @@ function createItem() {
         此为预览功能，正式上线前将调整。
       </div>
     </template>
-  </el-dialog>
+  </DialogPopup>
 </template>
 
 <style lang="scss" scoped>
@@ -277,6 +277,13 @@ function createItem() {
     background-color: transparent;
     caret-color: var(--el-color-primary);
   }
+}
+.item {
+  --at-apply: "relative h-6em w-5.5em flex-row-c-c flex-col cursor-pointer card-rounded-df text-center transition-shadow bg-color hover:shadow-sm";
+
+}
+.add {
+  --at-apply: "absolute right-1 top-1 hidden op-0 sm:block btn-primary-bg group-hover:(op-100)";
 }
 .not-link {
   &,

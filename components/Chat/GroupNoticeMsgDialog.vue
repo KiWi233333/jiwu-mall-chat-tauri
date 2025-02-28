@@ -42,8 +42,13 @@ async function addMsg() {
 </script>
 
 <template>
-  <el-dialog v-model="isShow" width="fit-content" center append-to-body>
-    <template #header>
+  <DialogPopup
+    v-model="isShow"
+    :duration="360"
+    destroy-on-close
+    content-class="rounded-2 p-4 w-fit border-default-2 dialog-bg-color"
+  >
+    <template #title>
       <div class="flex-row-c-c">
         <i i-carbon:bullhorn p-2 />
         <span ml-2>群通知</span>
@@ -52,7 +57,7 @@ async function addMsg() {
     <el-form ref="applyFormRef" :model="applyForm">
       <el-form-item
         label=""
-        style="margin: 0.5rem 0 0 0;"
+        style="margin: 1rem 0;"
         prop="content"
         :rules="[{
                    min: 1,
@@ -70,7 +75,6 @@ async function addMsg() {
           class="text-input"
           autofocus type="textarea" :rows="4"
           placeholder="请输入群通知内容"
-          @keydown.enter.exact.stop.prevent="addMsg"
         />
       </el-form-item>
       <el-form-item
@@ -89,14 +93,16 @@ async function addMsg() {
       </el-form-item>
     </el-form>
     <template #footer>
-      <span class="dialog-footer">
-        <el-button class="mr-4 w-5rem" @click="isShow = false">取消</el-button>
+      <div class="flex-row-c-c">
+        <el-button class="mr-4 w-5rem" @click="isShow = false">
+          取消
+        </el-button>
         <el-button class="w-5rem" type="primary" @click="addMsg">
           发送
         </el-button>
-      </span>
+      </div>
     </template>
-  </el-dialog>
+  </DialogPopup>
 </template>
 
 <style lang="scss" scoped>

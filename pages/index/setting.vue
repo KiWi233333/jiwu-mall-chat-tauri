@@ -254,42 +254,14 @@ const {
         退出登录
       </BtnElButton>
     </div>
-    <el-dialog
-      v-model="showNotice"
-      center
-      width="fit-content"
-    >
-      <template #header>
-        <h3>&emsp;版本公告 🔔</h3>
-      </template>
-      <div class="max-h-60vh min-h-30vh w-90vw overflow-y-auto sm:w-500px">
-        <MdPreview
-          language="zh-CN"
-          editor-id="notice-toast"
-          show-code-row-number
-          :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
-          preview-theme="smart-blue"
-          :code-foldable="false"
-          code-theme="a11y"
-          class="mt-2 px-4 text-1em !bg-transparent"
-          :model-value="notice"
-        />
-      </div>
-      <div class="mt-2 mt-4 flex-row-c-c">
-        <el-button type="primary" @click="showNotice = false">
-          &emsp;我知道了 🎉
-        </el-button>
-      </div>
-    </el-dialog>
     <!-- 版本的时间线 -->
-    <el-dialog
+    <DialogPopup
       v-model="showUpateNoticeLine"
-      center
       destroy-on-close
       width="fit-content"
     >
-      <template #header>
-        <h3>
+      <template #title>
+        <h3 mb-6>
           更新日志
           <i i-solar:notebook-bold ml-2 p-2.5 />
         </h3>
@@ -372,7 +344,36 @@ const {
           {{ setting.appUploader.isUpdating ? '正在更新' : '检查更新' }}
         </BtnElButton>
       </div>
-    </el-dialog>
+    </DialogPopup>
+    <DialogPopup
+      v-model="showNotice"
+      center
+      width="fit-content"
+    >
+      <template #title>
+        <h3 mb-4>
+          &emsp;版本公告 🔔
+        </h3>
+      </template>
+      <div class="max-h-60vh min-h-30vh w-90vw overflow-y-auto sm:w-500px">
+        <MdPreview
+          language="zh-CN"
+          editor-id="notice-toast"
+          show-code-row-number
+          :theme="$colorMode.value === 'dark' ? 'dark' : 'light'"
+          preview-theme="smart-blue"
+          :code-foldable="false"
+          code-theme="a11y"
+          class="mt-2 px-4 text-1em !bg-transparent"
+          :model-value="notice"
+        />
+      </div>
+      <div class="mt-2 mt-4 flex-row-c-c">
+        <el-button type="primary" @click="showNotice = false">
+          &emsp;我知道了 🎉
+        </el-button>
+      </div>
+    </DialogPopup>
   </main>
 </template>
 

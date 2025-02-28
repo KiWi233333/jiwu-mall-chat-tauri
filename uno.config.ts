@@ -32,6 +32,8 @@ export default defineConfig({
     ["bg-menu-color", "bg-[#f6f6f6]  dark:bg-dark-8"],
     ["bg-color-second", "bg-light-5 dark:bg-dark"],
     ["bg-skeleton", "bg-gray-1 dark:bg-[#1f1f1f]"],
+    // dialog颜色
+    ["dialog-bg-color", "bg-white dark:bg-dark-9"],
     // 文本颜色
     ["text-color", "text-black dark:text-white"],
     ["text-default", "text-1em text-black dark:text-white"],

@@ -51,7 +51,12 @@ async function addFrendApplyById() {
 </script>
 
 <template>
-  <el-dialog v-model="isShowApply" title="好友申请" width="fit-content" center append-to-body>
+  <DialogPopup
+    v-model="isShowApply"
+    title="好友申请"
+    center
+    :duration="360"
+  >
     <el-form ref="applyFormRef" :model="applyForm">
       <el-form-item
         label=""
@@ -68,6 +73,7 @@ async function addFrendApplyById() {
                    message: '申请理由不能为空！',
                  }]"
         class="w-20rem"
+        style="margin: 1em 0 1.5em 0;"
       >
         <el-input
           v-model="applyForm.msg"
@@ -80,7 +86,7 @@ async function addFrendApplyById() {
       </el-form-item>
     </el-form>
     <template #footer>
-      <span class="dialog-footer">
+      <span class="-footer">
         <BtnElButton
           style="transition: .2s; width: 7em;letter-spacing: 1px;"
           @click="isShowApply = false"
@@ -96,7 +102,7 @@ async function addFrendApplyById() {
         </BtnElButton>
       </span>
     </template>
-  </el-dialog>
+  </DialogPopup>
 </template>
 
 <style lang="scss" scoped>
